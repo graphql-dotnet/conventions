@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>GraphQLParser</id>
+        <version></version>
+        <title>Parser for GraphQL</title>
+        <description>Library containing lexer and parser for GraphQL syntax</description>
+        <authors>Marek Magdziak</authors>
+        <language>en-US</language>
+        <tags>GraphQL</tags>
+        <dependencies>
+            <group targetFramework=".NETFramework4.5" />
+            <group targetFramework=".NETFramework4.5.1" />
+            <group targetFramework=".NETFramework4.5.2" />
+            <group targetFramework=".NETFramework4.6" />
+            <group targetFramework=".NETStandard1.0">
+                <dependency id="Microsoft.CSharp" version="4.0.1" />
+                <dependency id="System.Collections" version="4.0.11" />
+                <dependency id="System.Diagnostics.Debug" version="4.0.11" />
+                <dependency id="System.Dynamic.Runtime" version="4.0.11" />
+                <dependency id="System.Globalization" version="4.0.11" />
+                <dependency id="System.IO" version="4.1.0" />
+                <dependency id="System.Linq" version="4.1.0" />
+                <dependency id="System.Linq.Expressions" version="4.1.0" />
+                <dependency id="System.ObjectModel" version="4.0.12" />
+                <dependency id="System.Reflection" version="4.1.0" />
+                <dependency id="System.Reflection.Extensions" version="4.0.1" />
+                <dependency id="System.Resources.ResourceManager" version="4.0.1" />
+                <dependency id="System.Runtime" version="4.1.0" />
+                <dependency id="System.Runtime.Extensions" version="4.1.0" />
+                <dependency id="System.Runtime.Serialization.Primitives" version="4.1.1" />
+                <dependency id="System.Text.Encoding" version="4.0.11" />
+                <dependency id="System.Text.Encoding.Extensions" version="4.0.11" />
+                <dependency id="System.Text.RegularExpressions" version="4.1.0" />
+                <dependency id="System.Threading" version="4.0.11" />
+                <dependency id="System.Threading.Tasks" version="4.0.11" />
+                <dependency id="System.Xml.ReaderWriter" version="4.0.11" />
+                <dependency id="System.Xml.XDocument" version="4.0.11" />
+            </group>
+        </dependencies>
+    </metadata>
+</package>
