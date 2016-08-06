@@ -888,7 +888,8 @@
             {
                 Variable = this.ParseVariable(),
                 Type = this.AdvanceThroughColonAndParseType(),
-                DefaultValue = this.SkipEqualsAndParseValueLiteral()
+                DefaultValue = this.SkipEqualsAndParseValueLiteral(),
+                Location = this.GetLocation(start)
             };
         }
 
