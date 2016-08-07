@@ -264,9 +264,12 @@ function GetNuGetVersion()
   if ($nugetPrerelease -ne $null)
   {
     $nugetVersion = $nugetVersion + "-" + $nugetPrerelease
+    $nugetVersion = $nugetVersion + "-" + $revision
   }
-
-  $nugetVersion = $nugetVersion + "-" + $revision
+  else
+  {
+      $nugetVersion = $nugetVersion + "." + $revision
+  }
 
   return $nugetVersion
 }
