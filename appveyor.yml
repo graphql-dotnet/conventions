@@ -1,15 +1,19 @@
 # version format
 version: 1.0.{build}
-
+pull_requests:
+  do_not_increment_build_number: true
+nuget:
+  disable_publish_on_pr: true
 branches:
   only:
     - master
     - develop
 build_script:
   - ps: .\build\runbuild.ps1
-test: off
+test_script:
+  - ps: .\build\uploadTestsToAppveyor.ps1
 artifacts:
-- path: .\Working\**\*.nupkg
+- path: .\Working\NuGet\*.nupkg
   name: NuGet
 deploy:
 - provider: NuGet

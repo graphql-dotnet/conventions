@@ -12,6 +12,8 @@ properties {
   $treatWarningsAsErrors = $false
   $workingName = if ($workingName) {$workingName} else {"Working"}
   $netCliVersion = "1.0.0-preview3-003171"
+  $revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
+  $revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
 
   $baseDir  = resolve-path ..
   $buildDir = "$baseDir\Build"
@@ -263,6 +265,8 @@ function GetNuGetVersion()
   {
     $nugetVersion = $nugetVersion + "-" + $nugetPrerelease
   }
+
+  $nugetVersion = $nugetVersion + "-" + $revision
 
   return $nugetVersion
 }
