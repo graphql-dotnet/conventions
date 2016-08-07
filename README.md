@@ -1,5 +1,5 @@
 # GraphQL Dotnet Parser
-<img src="https://ci.appveyor.com/api/projects/status/?svg=true"/>
+[![Coverage Status](https://coveralls.io/repos/github/graphql-dotnet/parser/badge.svg?branch=master)](https://coveralls.io/github/graphql-dotnet/parser?branch=master)
 
 This library contains a lexer and parser classes as well as the complete GraphQL AST model.
 
