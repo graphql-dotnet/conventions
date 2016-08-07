@@ -4,7 +4,7 @@ properties {
   $majorWithReleaseVersion = "1.0.0"
   $nugetPrerelease = $null
   $version = GetVersion $majorWithReleaseVersion
-  $packageId = "GraphQLParser"
+  $packageId = "GraphQL-Parser"
   $signAssemblies = $false
   $signKeyPath = "notspecified"
   $buildDocumentation = $false

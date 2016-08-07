@@ -1,6 +1,7 @@
 # GraphQL Dotnet Parser
 [![AppVeyor](https://img.shields.io/appveyor/ci/graphql-dotnet-ci/parser.svg)](https://ci.appveyor.com/project/graphql-dotnet-ci/parser)
 [![Coverage Status](https://coveralls.io/repos/github/graphql-dotnet/parser/badge.svg?branch=master)](https://coveralls.io/github/graphql-dotnet/parser?branch=master)
+[![NuGet](https://img.shields.io/nuget/v/GraphQL-Parser.svg)](https://www.nuget.org/packages/GraphQL-Parser/)
 [![MyGet Pre Release](https://img.shields.io/myget/graphql-dotnet/vpre/GraphQLParser.svg)](https://www.myget.org/F/graphql-dotnet/api/v3/index.json)
 
 This library contains a lexer and parser classes as well as the complete GraphQL AST model.
