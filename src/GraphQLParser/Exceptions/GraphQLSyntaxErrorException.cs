@@ -15,10 +15,10 @@
             var location = new Location(source, loc);
 
             return $"Syntax Error GraphQL ({location.Line}:{location.Column}) {description}" +
-                "\n" + HighlihtSourceAtLocation(source, location);
+                "\n" + HighlightSourceAtLocation(source, location);
         }
 
-        private static string HighlihtSourceAtLocation(ISource source, Location location)
+        private static string HighlightSourceAtLocation(ISource source, Location location)
         {
             var line = location.Line;
             var prevLineNum = (line - 1).ToString();
