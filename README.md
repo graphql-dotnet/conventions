@@ -14,7 +14,6 @@ var lexer = new Lexer();
 var token = lexer.Lex(new Source("\"str\""));
 ```
 Lex method always returns the first token it finds. In this case case the result would look like following.
-<img src="/Doc/lexer-example.png"/>
 ![lexer example](/Doc/lexer-example.png)
 
 ## Parser
