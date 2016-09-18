@@ -1,14 +1,15 @@
 ﻿{
-  "version": "1.0.0-*",
+  "buildOptions": {
+    "nowarn": [ "1591" ]
+  },
   "dependencies": {
     "NETStandard.Library": "1.6.0"
   },
   "frameworks": {
-    "netstandard1.6": {
-      "imports": "dnxcore50"
+    "net45": {
+    },
+    "netstandard1.1": {
     }
   },
-  "buildOptions": {
-    "nowarn": [ "1591" ]
-  }
+  "version": "1.0.0-*"
 }
