@@ -28,11 +28,7 @@ properties {
   $workingDir = "$baseDir\$workingName"
   $workingSourceDir = "$workingDir\Src"
   $builds = @(
-    @{Name = "GraphQLParser.Dotnet"; TestsName = "GraphQLParser.Dotnet"; BuildFunction = "NetCliBuild"; TestsFunction = "NetCliTests"; Constants="dotnet"; FinalDir="netstandard1.6"; NuGetDir = "netstandard1.6"; Framework=$null},
-    @{Name = "GraphQLParser.Net46"; TestsName = "GraphQLParser.Net46.Tests"; BuildFunction = "MSBuildBuild"; TestsFunction = "NUnitTests"; Constants=""; FinalDir="Net46"; NuGetDir = "net46"; Framework="net-4.6"}
-    @{Name = "GraphQLParser.Net452"; TestsName = "GraphQLParser.Net452.Tests"; BuildFunction = "MSBuildBuild"; TestsFunction = "NUnitTests"; Constants=""; FinalDir="Net452"; NuGetDir = "net452"; Framework="net-4.5.2"}
-    @{Name = "GraphQLParser.Net451"; TestsName = "GraphQLParser.Net451.Tests"; BuildFunction = "MSBuildBuild"; TestsFunction = "NUnitTests"; Constants=""; FinalDir="Net451"; NuGetDir = "net451"; Framework="net-4.5.1"}
-    @{Name = "GraphQLParser.Net45"; TestsName = "GraphQLParser.Net45.Tests"; BuildFunction = "MSBuildBuild"; TestsFunction = "NUnitTests"; Constants=""; FinalDir="Net45"; NuGetDir = "net45"; Framework="net-4.5"}
+    @{Name = "GraphQLParser"; TestsName = "GraphQLParser.Tests"; BuildFunction = "NetCliBuild"; TestsFunction = "NetCliTests"; Constants="dotnet"; FinalDir="netstandard1.1"; NuGetDir = "netstandard1.1"; Framework=$null}
   )
 }
 
@@ -209,7 +205,7 @@ function NetCliBuild($build)
   $name = $build.Name
   $projectPath = "$workingSourceDir\GraphQLParser\project.json"
 
-  exec { .\Tools\Dotnet\dotnet-install.ps1 -Version $netCliVersion | Out-Default }
+  # exec { .\Tools\Dotnet\dotnet-install.ps1 -Version $netCliVersion | Out-Default }
   exec { dotnet --version | Out-Default }
 
   Write-Host -ForegroundColor Green "Restoring packages for $name"
@@ -217,14 +213,14 @@ function NetCliBuild($build)
   exec { dotnet restore $projectPath | Out-Default }
 
   Write-Host -ForegroundColor Green "Building $projectPath"
-  exec { dotnet build $projectPath -f netstandard1.6 -c Release -o bin\Release\netstandard1.6 | Out-Default }
+  exec { dotnet build $projectPath -c Release | Out-Default }
 }
 
 function NetCliTests($build)
 {
   $name = $build.TestsName
 
-  exec { .\Tools\Dotnet\dotnet-install.ps1 -Version $netCliVersion | Out-Default }
+  # exec { .\Tools\Dotnet\dotnet-install.ps1 -Version $netCliVersion | Out-Default }
   exec { dotnet --version | Out-Default }
 
   Write-Host -ForegroundColor Green "Restoring packages for $name"
@@ -237,7 +233,7 @@ function NetCliTests($build)
   try
   {
     Set-Location "$workingSourceDir\GraphQLParser.Tests"
-    exec { dotnet test "$workingSourceDir\GraphQLParser.Tests\project.json" -f netcoreapp1.0 -c Release | Out-Default }
+    exec { dotnet test "$workingSourceDir\GraphQLParser.Tests" -c Release | Out-Default }
   }
   finally
   {
