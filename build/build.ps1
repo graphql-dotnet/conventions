@@ -1,7 +1,7 @@
 properties {
   $zipFileName = "GraphQLParser.zip"
-  $majorVersion = "1.0"
-  $majorWithReleaseVersion = "1.0.0"
+  $majorVersion = "1.1"
+  $majorWithReleaseVersion = "1.1.0"
   $nugetPrerelease = $null
   $version = GetVersion $majorWithReleaseVersion
   $packageId = "GraphQL-Parser"
@@ -15,7 +15,7 @@ properties {
   $revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
   $revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
 
-  if ($env:APPVEYOR_REPO_BRANCH -eq "develop") {
+  if ($env:APPVEYOR_REPO_BRANCH -ne "master") {
     $nugetPrerelease = "build" + $revision
   }
 
@@ -28,7 +28,7 @@ properties {
   $workingDir = "$baseDir\$workingName"
   $workingSourceDir = "$workingDir\Src"
   $builds = @(
-    @{Name = "GraphQLParser"; TestsName = "GraphQLParser.Tests"; BuildFunction = "NetCliBuild"; TestsFunction = "NetCliTests"; Constants="dotnet"; FinalDir="netstandard1.1"; NuGetDir = "netstandard1.1"; Framework=$null}
+    @{Name = "GraphQLParser"; TestsName = "GraphQLParser.Tests"; BuildFunction = "NetCliBuild"; TestsFunction = "NetCliTests"; Constants="dotnet"; FinalDir="netstandard1.1"; NuGetDir = "net45,netstandard1.1"; Framework=$null}
   )
 }
 
@@ -89,50 +89,9 @@ task Package -depends Build {
 
   if ($buildNuGet)
   {
-    $nugetVersion = GetNuGetVersion
-
-    New-Item -Path $workingDir\NuGet -ItemType Directory
-
-    $nuspecPath = "$workingDir\NuGet\GraphQLParser.nuspec"
-    Copy-Item -Path "$buildDir\GraphQLParser.nuspec" -Destination $nuspecPath -recurse
-
-    Write-Host "Updating nuspec file at $nuspecPath" -ForegroundColor Green
+    Write-Host -ForegroundColor Green "Building NuGet"
     Write-Host
-
-    $xml = [xml](Get-Content $nuspecPath)
-    Edit-XmlNodes -doc $xml -xpath "//*[local-name() = 'id']" -value $packageId
-    Edit-XmlNodes -doc $xml -xpath "//*[local-name() = 'version']" -value $nugetVersion
-
-    Write-Host $xml.OuterXml
-
-    $xml.save($nuspecPath)
-
-    New-Item -Path $workingDir\NuGet\tools -ItemType Directory
-    Copy-Item -Path "$buildDir\install.ps1" -Destination $workingDir\NuGet\tools\install.ps1 -recurse
-
-    foreach ($build in $builds)
-    {
-      if ($build.NuGetDir)
-      {
-        $name = $build.TestsName
-        $finalDir = $build.FinalDir
-        $frameworkDirs = $build.NuGetDir.Split(",")
-
-        foreach ($frameworkDir in $frameworkDirs)
-        {
-          robocopy "$workingSourceDir\GraphQLParser\bin\Release\$finalDir" $workingDir\NuGet\lib\$frameworkDir *.dll *.pdb *.xml /NFL /NDL /NJS /NC /NS /NP /XO /XF *.CodeAnalysisLog.xml | Out-Default
-        }
-      }
-    }
-
-    robocopy $workingSourceDir $workingDir\NuGet\src *.cs /S /NFL /NDL /NJS /NC /NS /NP /XD GraphQLParser.Tests GraphQLParser.TestConsole obj .vs artifacts | Out-Default
-
-    Write-Host "Building NuGet package with ID $packageId and version $nugetVersion" -ForegroundColor Green
-    Write-Host
-
-    exec { .\Tools\NuGet\NuGet.exe pack $nuspecPath -Symbols }
-    exec { dotnet pack $workingSourceDir\GraphQLParser\project.json -c Release }
-    move -Path .\*.nupkg -Destination $workingDir\NuGet
+    exec { dotnet pack "$workingSourceDir\GraphQLParser" -o "$workingDir\NuGet" -c Release --version-suffix $revision  | Out-Default }
   }
 
   Write-Host "Build documentation: $buildDocumentation"

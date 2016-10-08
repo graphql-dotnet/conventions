@@ -1,15 +1,39 @@
 ﻿{
+  "name": "GraphQL-Parser",
+  "title": "Parser for GraphQL",
+  "description": "Library containing lexer and parser for GraphQL syntax",
+  "authors": [
+    "Marek Magdziak"
+  ],
+  "packOptions": {
+    "authors": [
+      "Marek Magdziak"
+    ],
+    "owners": [
+      "mkmarek",
+      "joemcbride"
+    ],
+    "tags": [
+      "GraphQL",
+      "json",
+      "api"
+    ],
+    "projectUrl": "https://github.com/graphql-dotnet/parser",
+    "licenseUrl": "https://github.com/graphql-dotnet/parser/blob/master/LICENSE.md"
+  },
   "buildOptions": {
     "nowarn": [ "1591" ]
   },
   "dependencies": {
-    "NETStandard.Library": "1.6.0"
   },
   "frameworks": {
-    "net451": {
+    "net45": {
     },
     "netstandard1.1": {
+      "dependencies": {
+        "NETStandard.Library": "1.6.0"
+      }
     }
   },
-  "version": "1.0.0-*"
+  "version": "1.1.0-*"
 }

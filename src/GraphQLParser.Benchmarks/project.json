@@ -4,7 +4,7 @@
   },
   "dependencies": {
     "BenchmarkDotNet": "0.9.9",
-    "GraphQLParser": "1.0.0-*"
+    "GraphQLParser": { "target": "project" }
   },
   "frameworks": {
     "net45": {
