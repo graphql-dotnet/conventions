@@ -1,9 +1,7 @@
 properties {
   $zipFileName = "GraphQLParser.zip"
-  $majorVersion = "1.1"
-  $majorWithReleaseVersion = "1.1.0"
+  $majorWithReleaseVersion = "2.0.0"
   $nugetPrerelease = $null
-  $version = GetVersion $majorWithReleaseVersion
   $packageId = "GraphQL-Parser"
   $signAssemblies = $false
   $signKeyPath = "notspecified"
@@ -13,9 +11,8 @@ properties {
   $workingName = if ($workingName) {$workingName} else {"Working"}
   $netCliVersion = "1.0.0-preview3-003171"
   $revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
-  $revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
 
-  if ($env:APPVEYOR_REPO_BRANCH -ne "master") {
+  if ($env:APPVEYOR_REPO_BRANCH -ne "master" -or $env:APPVEYOR_PULL_REQUEST_NUMBER -ne $NULL) {
     $nugetPrerelease = "build" + $revision
   }
 
@@ -59,7 +56,7 @@ task Build -depends Clean {
 
   Write-Host -ForegroundColor Green "Updating assembly version"
   Write-Host
-  Update-AssemblyInfoFiles $workingSourceDir ($majorVersion + '.0.0') $version
+  Update-AssemblyInfoFiles $workingSourceDir ($majorWithReleaseVersion + '.' + $revision)
 
   Update-Project $workingSourceDir\GraphQLParser\project.json $signAssemblies
 
@@ -93,6 +90,7 @@ task Package -depends Build {
     Write-Host
     exec { dotnet pack "$workingSourceDir\GraphQLParser" -o "$workingDir\NuGet" -c Release --version-suffix $revision  | Out-Default }
   }
+
 
   Write-Host "Build documentation: $buildDocumentation"
 
@@ -235,35 +233,17 @@ function GetConstants($constants, $includeSigned)
   return "CODE_ANALYSIS;TRACE;$constants$signed"
 }
 
-function GetVersion($majorVersion)
-{
-    $now = [DateTime]::Now
-
-    $year = $now.Year - 2000
-    $month = $now.Month
-    $totalMonthsSince2000 = ($year * 12) + $month
-    $day = $now.Day
-    $minor = "{0}{1:00}" -f $totalMonthsSince2000, $day
-
-    $hour = $now.Hour
-    $minute = $now.Minute
-    $revision = "{0:00}{1:00}" -f $hour, $minute
-
-    return $majorVersion + "." + $minor
-}
-
-function Update-AssemblyInfoFiles ([string] $workingSourceDir, [string] $assemblyVersionNumber, [string] $fileVersionNumber)
+function Update-AssemblyInfoFiles ([string] $workingSourceDir, [string] $assemblyVersionNumber)
 {
     $assemblyVersionPattern = 'AssemblyVersion\("[0-9]+(\.([0-9]+|\*)){1,3}"\)'
     $fileVersionPattern = 'AssemblyFileVersion\("[0-9]+(\.([0-9]+|\*)){1,3}"\)'
     $assemblyVersion = 'AssemblyVersion("' + $assemblyVersionNumber + '")';
-    $fileVersion = 'AssemblyFileVersion("' + $fileVersionNumber + '")';
+    $fileVersion = 'AssemblyFileVersion("' + $assemblyVersionNumber + '")';
 
     Get-ChildItem -Path $workingSourceDir -r -filter AssemblyInfo.cs | ForEach-Object {
 
         $filename = $_.Directory.ToString() + '\' + $_.Name
-        Write-Host $filename
-        $filename + ' -> ' + $version
+        Write-Host $filename + ' -> ' + $assemblyVersionNumber
 
         (Get-Content $filename) | ForEach-Object {
             % {$_ -replace $assemblyVersionPattern, $assemblyVersion } |
