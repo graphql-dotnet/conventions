@@ -49,7 +49,7 @@
 
         private static string ReplaceWithUnicodeRepresentation(string str)
         {
-            foreach (var code in str.ToList())
+            foreach (var code in str)
             {
                 if (code < 0x0020 && code != 0x0009 && code != 0x000A && code != 0x000D)
                     str = str.Replace(string.Empty + code, "\\u" + ((int)code).ToString("D4"));

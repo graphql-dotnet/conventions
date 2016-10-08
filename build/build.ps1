@@ -1,9 +1,7 @@
 properties {
   $zipFileName = "GraphQLParser.zip"
-  $majorVersion = "1.0"
-  $majorWithReleaseVersion = "1.0.0"
+  $majorWithReleaseVersion = "2.0.0"
   $nugetPrerelease = $null
-  $version = GetVersion $majorWithReleaseVersion
   $packageId = "GraphQL-Parser"
   $signAssemblies = $false
   $signKeyPath = "notspecified"
@@ -13,9 +11,8 @@ properties {
   $workingName = if ($workingName) {$workingName} else {"Working"}
   $netCliVersion = "1.0.0-preview3-003171"
   $revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
-  $revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
 
-  if ($env:APPVEYOR_REPO_BRANCH -eq "develop") {
+  if ($env:APPVEYOR_REPO_BRANCH -ne "master" -or $env:APPVEYOR_PULL_REQUEST_NUMBER -ne $NULL) {
     $nugetPrerelease = "build" + $revision
   }
 
@@ -28,11 +25,7 @@ properties {
   $workingDir = "$baseDir\$workingName"
   $workingSourceDir = "$workingDir\Src"
   $builds = @(
-    @{Name = "GraphQLParser.Dotnet"; TestsName = "GraphQLParser.Dotnet"; BuildFunction = "NetCliBuild"; TestsFunction = "NetCliTests"; Constants="dotnet"; FinalDir="netstandard1.6"; NuGetDir = "netstandard1.6"; Framework=$null},
-    @{Name = "GraphQLParser.Net46"; TestsName = "GraphQLParser.Net46.Tests"; BuildFunction = "MSBuildBuild"; TestsFunction = "NUnitTests"; Constants=""; FinalDir="Net46"; NuGetDir = "net46"; Framework="net-4.6"}
-    @{Name = "GraphQLParser.Net452"; TestsName = "GraphQLParser.Net452.Tests"; BuildFunction = "MSBuildBuild"; TestsFunction = "NUnitTests"; Constants=""; FinalDir="Net452"; NuGetDir = "net452"; Framework="net-4.5.2"}
-    @{Name = "GraphQLParser.Net451"; TestsName = "GraphQLParser.Net451.Tests"; BuildFunction = "MSBuildBuild"; TestsFunction = "NUnitTests"; Constants=""; FinalDir="Net451"; NuGetDir = "net451"; Framework="net-4.5.1"}
-    @{Name = "GraphQLParser.Net45"; TestsName = "GraphQLParser.Net45.Tests"; BuildFunction = "MSBuildBuild"; TestsFunction = "NUnitTests"; Constants=""; FinalDir="Net45"; NuGetDir = "net45"; Framework="net-4.5"}
+    @{Name = "GraphQLParser"; TestsName = "GraphQLParser.Tests"; BuildFunction = "NetCliBuild"; TestsFunction = "NetCliTests"; Constants="dotnet"; FinalDir="netstandard1.1"; NuGetDir = "net45,netstandard1.1"; Framework=$null}
   )
 }
 
@@ -63,7 +56,7 @@ task Build -depends Clean {
 
   Write-Host -ForegroundColor Green "Updating assembly version"
   Write-Host
-  Update-AssemblyInfoFiles $workingSourceDir ($majorVersion + '.0.0') $version
+  Update-AssemblyInfoFiles $workingSourceDir ($majorWithReleaseVersion + '.' + $revision)
 
   Update-Project $workingSourceDir\GraphQLParser\project.json $signAssemblies
 
@@ -93,51 +86,11 @@ task Package -depends Build {
 
   if ($buildNuGet)
   {
-    $nugetVersion = GetNuGetVersion
-
-    New-Item -Path $workingDir\NuGet -ItemType Directory
-
-    $nuspecPath = "$workingDir\NuGet\GraphQLParser.nuspec"
-    Copy-Item -Path "$buildDir\GraphQLParser.nuspec" -Destination $nuspecPath -recurse
-
-    Write-Host "Updating nuspec file at $nuspecPath" -ForegroundColor Green
+    Write-Host -ForegroundColor Green "Building NuGet"
     Write-Host
-
-    $xml = [xml](Get-Content $nuspecPath)
-    Edit-XmlNodes -doc $xml -xpath "//*[local-name() = 'id']" -value $packageId
-    Edit-XmlNodes -doc $xml -xpath "//*[local-name() = 'version']" -value $nugetVersion
-
-    Write-Host $xml.OuterXml
-
-    $xml.save($nuspecPath)
-
-    New-Item -Path $workingDir\NuGet\tools -ItemType Directory
-    Copy-Item -Path "$buildDir\install.ps1" -Destination $workingDir\NuGet\tools\install.ps1 -recurse
-
-    foreach ($build in $builds)
-    {
-      if ($build.NuGetDir)
-      {
-        $name = $build.TestsName
-        $finalDir = $build.FinalDir
-        $frameworkDirs = $build.NuGetDir.Split(",")
-
-        foreach ($frameworkDir in $frameworkDirs)
-        {
-          robocopy "$workingSourceDir\GraphQLParser\bin\Release\$finalDir" $workingDir\NuGet\lib\$frameworkDir *.dll *.pdb *.xml /NFL /NDL /NJS /NC /NS /NP /XO /XF *.CodeAnalysisLog.xml | Out-Default
-        }
-      }
-    }
-
-    robocopy $workingSourceDir $workingDir\NuGet\src *.cs /S /NFL /NDL /NJS /NC /NS /NP /XD GraphQLParser.Tests GraphQLParser.TestConsole obj .vs artifacts | Out-Default
-
-    Write-Host "Building NuGet package with ID $packageId and version $nugetVersion" -ForegroundColor Green
-    Write-Host
-
-    exec { .\Tools\NuGet\NuGet.exe pack $nuspecPath -Symbols }
-    exec { dotnet pack $workingSourceDir\GraphQLParser\project.json -c Release }
-    move -Path .\*.nupkg -Destination $workingDir\NuGet
+    exec { dotnet pack "$workingSourceDir\GraphQLParser" -o "$workingDir\NuGet" -c Release --version-suffix $revision  | Out-Default }
   }
+
 
   Write-Host "Build documentation: $buildDocumentation"
 
@@ -209,7 +162,7 @@ function NetCliBuild($build)
   $name = $build.Name
   $projectPath = "$workingSourceDir\GraphQLParser\project.json"
 
-  exec { .\Tools\Dotnet\dotnet-install.ps1 -Version $netCliVersion | Out-Default }
+  # exec { .\Tools\Dotnet\dotnet-install.ps1 -Version $netCliVersion | Out-Default }
   exec { dotnet --version | Out-Default }
 
   Write-Host -ForegroundColor Green "Restoring packages for $name"
@@ -217,14 +170,15 @@ function NetCliBuild($build)
   exec { dotnet restore $projectPath | Out-Default }
 
   Write-Host -ForegroundColor Green "Building $projectPath"
-  exec { dotnet build $projectPath -f netstandard1.6 -c Release -o bin\Release\netstandard1.6 | Out-Default }
+  exec { dotnet build $projectPath -c Release | Out-Default }
+  exec { dotnet build $projectPath -c Debug | Out-Default }
 }
 
 function NetCliTests($build)
 {
   $name = $build.TestsName
 
-  exec { .\Tools\Dotnet\dotnet-install.ps1 -Version $netCliVersion | Out-Default }
+  # exec { .\Tools\Dotnet\dotnet-install.ps1 -Version $netCliVersion | Out-Default }
   exec { dotnet --version | Out-Default }
 
   Write-Host -ForegroundColor Green "Restoring packages for $name"
@@ -237,7 +191,7 @@ function NetCliTests($build)
   try
   {
     Set-Location "$workingSourceDir\GraphQLParser.Tests"
-    exec { dotnet test "$workingSourceDir\GraphQLParser.Tests\project.json" -f netcoreapp1.0 -c Release | Out-Default }
+    exec { dotnet test "$workingSourceDir\GraphQLParser.Tests" -c Release | Out-Default }
   }
   finally
   {
@@ -280,35 +234,17 @@ function GetConstants($constants, $includeSigned)
   return "CODE_ANALYSIS;TRACE;$constants$signed"
 }
 
-function GetVersion($majorVersion)
-{
-    $now = [DateTime]::Now
-
-    $year = $now.Year - 2000
-    $month = $now.Month
-    $totalMonthsSince2000 = ($year * 12) + $month
-    $day = $now.Day
-    $minor = "{0}{1:00}" -f $totalMonthsSince2000, $day
-
-    $hour = $now.Hour
-    $minute = $now.Minute
-    $revision = "{0:00}{1:00}" -f $hour, $minute
-
-    return $majorVersion + "." + $minor
-}
-
-function Update-AssemblyInfoFiles ([string] $workingSourceDir, [string] $assemblyVersionNumber, [string] $fileVersionNumber)
+function Update-AssemblyInfoFiles ([string] $workingSourceDir, [string] $assemblyVersionNumber)
 {
     $assemblyVersionPattern = 'AssemblyVersion\("[0-9]+(\.([0-9]+|\*)){1,3}"\)'
     $fileVersionPattern = 'AssemblyFileVersion\("[0-9]+(\.([0-9]+|\*)){1,3}"\)'
     $assemblyVersion = 'AssemblyVersion("' + $assemblyVersionNumber + '")';
-    $fileVersion = 'AssemblyFileVersion("' + $fileVersionNumber + '")';
+    $fileVersion = 'AssemblyFileVersion("' + $assemblyVersionNumber + '")';
 
     Get-ChildItem -Path $workingSourceDir -r -filter AssemblyInfo.cs | ForEach-Object {
 
         $filename = $_.Directory.ToString() + '\' + $_.Name
-        Write-Host $filename
-        $filename + ' -> ' + $version
+        Write-Host $filename + ' -> ' + $assemblyVersionNumber
 
         (Get-Content $filename) | ForEach-Object {
             % {$_ -replace $assemblyVersionPattern, $assemblyVersion } |
