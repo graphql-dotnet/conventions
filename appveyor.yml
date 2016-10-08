@@ -1,5 +1,5 @@
 # version format
-version: 1.0.{build}
+version: 2.0.{build}
 environment:
   COVERALLS_REPO_TOKEN:
     secure: KIo3DW9EO/LoE4EgLzM8vj0Eh4h1o+joUJXml4/F7g1Lhwndfkg6u+PrN++LPdvz
