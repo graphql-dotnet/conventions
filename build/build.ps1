@@ -171,6 +171,7 @@ function NetCliBuild($build)
 
   Write-Host -ForegroundColor Green "Building $projectPath"
   exec { dotnet build $projectPath -c Release | Out-Default }
+  exec { dotnet build $projectPath -c Debug | Out-Default }
 }
 
 function NetCliTests($build)
