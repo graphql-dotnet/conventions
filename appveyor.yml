@@ -2,7 +2,7 @@
 version: 1.0.{build}
 environment:
   COVERALLS_REPO_TOKEN:
-    secure: OOHuk90+WRWFPhXeTIqUZGigsmFg0xuqkevpunO4ZL4D71LNJH/Qhl0g5gV+Y8Xn
+    secure: KIo3DW9EO/LoE4EgLzM8vj0Eh4h1o+joUJXml4/F7g1Lhwndfkg6u+PrN++LPdvz
 pull_requests:
   do_not_increment_build_number: true
 nuget:
