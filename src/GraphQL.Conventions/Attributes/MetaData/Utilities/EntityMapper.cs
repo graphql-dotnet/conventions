@@ -15,7 +15,7 @@ namespace GraphQL.Conventions.Attributes.MetaData.Utilities
 
         public void MapEntity(GraphEntityInfo entity)
         {
-            var argumentEntity = entity as GraphArgumentInfo;            
+            var argumentEntity = entity as GraphArgumentInfo;
             var parameterInfo = entity.AttributeProvider as ParameterInfo;
             if (argumentEntity != null && parameterInfo != null)
             {
@@ -48,7 +48,7 @@ namespace GraphQL.Conventions.Attributes.MetaData.Utilities
                 }
             }
 
-            var typeEntity = entity as GraphTypeInfo;            
+            var typeEntity = entity as GraphTypeInfo;
             var typeInfo = entity.AttributeProvider as TypeInfo;
             if (typeEntity != null && typeInfo != null)
             {
@@ -56,7 +56,7 @@ namespace GraphQL.Conventions.Attributes.MetaData.Utilities
                 return;
             }
 
-            throw new ArgumentException("Unable to map provided object", nameof(entity.AttributeProvider));
+            throw new ArgumentException("Unable to map provided object.");
         }
     }
 }

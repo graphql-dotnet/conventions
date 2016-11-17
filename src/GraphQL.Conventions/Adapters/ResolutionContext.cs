@@ -44,7 +44,7 @@ namespace GraphQL.Conventions.Adapters
 
         public object RootValue => FieldContext.RootValue;
 
-        public object UserContext => FieldContext.UserContext;
+        public IUserContext UserContext => FieldContext.UserContext as IUserContext;
 
         public CancellationToken CancellationToken => FieldContext.CancellationToken;
 

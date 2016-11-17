@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using GraphQL.Conventions.Adapters.Engine;
 using GraphQL.Conventions.Types.Resolution;
+using GraphQL.Conventions.Adapters.Types;
 
 namespace GraphQL.Conventions.Tests.Server
 {
@@ -15,27 +16,32 @@ namespace GraphQL.Conventions.Tests.Server
 
         public GraphQLRequestHandler(IDependencyInjector dependencyInjector, params Type[] schemaTypes)
         {
-            _engine = new GraphQLEngine(schemaTypes);
+            _engine = new GraphQLEngine();
+            _engine.BuildSchema(schemaTypes);
             _dependencyInjector = dependencyInjector;
         }
 
         public async Task HandleRequest(HttpContext context)
         {
-            if (context.Request.Method != "POST")
+            if (string.Compare(context.Request.Method, "POST", true) != 0)
             {
                 context.Response.StatusCode = 400;
                 return;
             }
 
+            var userContext = new UserContext();
             using (var streamReader = new StreamReader(context.Request.Body))
             {
                 var requestBody = streamReader.ReadToEnd();
-                var responseBody = await _engine
+                var result = await _engine
                     .NewExecutor()
+                    .WithUserContext(userContext)
                     .WithDependencyInjector(_dependencyInjector)
                     .WithRequest(requestBody)
-                    .ExecuteAndSerializeResponse();
+                    .Execute();
+                var responseBody = _engine.SerializeResult(result);
                 context.Response.Headers.Add("Content-Type", "application/json; charset=utf-8");
+                context.Response.StatusCode = result.Errors?.Count > 0 ? 400 : 200;
                 await context.Response.WriteAsync(responseBody);
             }
         }

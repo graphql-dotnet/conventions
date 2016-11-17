@@ -33,7 +33,7 @@ namespace GraphQL.Conventions.Types
             _unencodedIdentifier = Utilities.Identifier.Decode(encodedIdentifier);
             if (string.IsNullOrWhiteSpace(_unencodedIdentifier))
             {
-                throw new ArgumentException($"Unable to decode identifier '{encodedIdentifier}'", nameof(encodedIdentifier));
+                throw new ArgumentException($"Unable to decode identifier '{encodedIdentifier}'.");
             }
         }
 
@@ -67,7 +67,7 @@ namespace GraphQL.Conventions.Types
             if (!IsIdentifierForType(type))
             {
                 throw new ArgumentException(
-                    $"Expected identifier of type '{typeName}' (unencoded identifier '{_unencodedIdentifier}')", nameof(type));
+                    $"Expected identifier of type '{typeName}' (unencoded identifier '{_unencodedIdentifier}').");
             }
             return _unencodedIdentifier.Remove(0, typeName.Length).TrimStart(':');
         }

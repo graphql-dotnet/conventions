@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace GraphQL.Conventions.Adapters.Engine.Utilities
 {
-    public class Query
+    public class QueryInput
     {
         public string QueryString { get; set; }
 

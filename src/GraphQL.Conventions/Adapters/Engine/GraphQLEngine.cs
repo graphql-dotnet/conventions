@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader;
 using GraphQL.Conventions.Adapters.Engine.Utilities;
 using GraphQL.Conventions.Builders;
+using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Profiling;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution;
@@ -31,9 +33,9 @@ namespace GraphQL.Conventions.Adapters.Engine
 
         private readonly DocumentWriter _documentWriter = new DocumentWriter();
 
-        private readonly SchemaPrinter _schemaPrinter;
+        private SchemaPrinter _schemaPrinter;
 
-        private readonly ISchema _schema;
+        private ISchema _schema;
 
         private class NoopValidationRule : IValidationRule
         {
@@ -43,15 +45,14 @@ namespace GraphQL.Conventions.Adapters.Engine
             }
         }
 
-        public GraphQLEngine(params Type[] schemaTypes)
-            : this(null, schemaTypes)
-        {
-        }
-
-        public GraphQLEngine(Func<Type, object> typeResolutionDelegate, params Type[] schemaTypes)
+        public GraphQLEngine(Func<Type, object> typeResolutionDelegate = null)
         {
             _constructor = new SchemaConstructor<ISchema, IGraphType>(_graphTypeAdapter, _typeResolver);
             _constructor.TypeResolutionDelegate = typeResolutionDelegate;
+        }
+
+        public void BuildSchema(params Type[] schemaTypes)
+        {
             _schema = _constructor.Build(schemaTypes);
             _schemaPrinter = new SchemaPrinter(_schema, new[] { TypeNames.Url, TypeNames.Uri, TypeNames.TimeSpan });
         }
@@ -64,6 +65,17 @@ namespace GraphQL.Conventions.Adapters.Engine
         public GraphQLExecutor NewExecutor(IRequestDeserializer requestDeserializer = null)
         {
             return new GraphQLExecutor(this, requestDeserializer ?? new RequestDeserializer());
+        }
+
+        public void RegisterScalarType<TType, TGraphType>(string name = null)
+        {
+            _typeResolver.RegisterScalarType<TType>(name ?? typeof(TType).Name);
+            _graphTypeAdapter.RegisterScalarType<TGraphType>(name ?? typeof(TType).Name);
+        }
+
+        public string SerializeResult(ExecutionResult result)
+        {
+            return _documentWriter.Write(result);
         }
 
         internal IDependencyInjector DependencyInjector
@@ -82,7 +94,7 @@ namespace GraphQL.Conventions.Adapters.Engine
             string query,
             string operationName,
             Inputs inputs,
-            object userContext,
+            IUserContext userContext,
             bool useValidation = true,
             IEnumerable<IValidationRule> rules = null,
             CancellationToken cancellationToken = default(CancellationToken))
@@ -91,20 +103,30 @@ namespace GraphQL.Conventions.Adapters.Engine
             {
                 rules = new[] { new NoopValidationRule() };
             }
-            return await _documentExecutor
-                .ExecuteAsync(_schema, rootObject, query, operationName, inputs, userContext, cancellationToken, rules)
-                .ConfigureAwait(false);
+            var configuration = new ExecutionOptions
+            {
+                Schema = _schema,
+                Root = rootObject,
+                Query = query,
+                OperationName = operationName,
+                Inputs = inputs,
+                UserContext = userContext,
+                ValidationRules = rules,
+                CancellationToken = cancellationToken,
+            };
+
+            if (userContext is IDataLoaderContextProvider)
+            {
+                configuration.Listeners.Add(new DataLoaderListener());
+            }
+
+            return await _documentExecutor.ExecuteAsync(configuration).ConfigureAwait(false);
         }
 
         internal IValidationResult Validate(string queryString)
         {
             var document = _documentBuilder.Build(queryString);
             return _documentValidator.Validate(queryString, _schema, document);
-        }
-
-        internal string ConvertResultToString(ExecutionResult result)
-        {
-            return _documentWriter.Write(result);
         }
     }
 }

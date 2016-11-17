@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using GraphQL.Conventions.Adapters.Engine;
+using GraphQL.Conventions.Tests.Adapters.Engine.Types;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Types;
@@ -13,11 +14,12 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         [Fact]
         public void Can_Construct_And_Describe_Basic_Schema()
         {
-            var engine = new GraphQLEngine(typeof(SchemaDefinition<BasicQuery>));
+            var engine = new GraphQLEngine();
+            engine.BuildSchema(typeof(SchemaDefinition<BasicQuery>));
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
             schema {
-                query: BasicQuery
+              query: BasicQuery
             }
             type BasicQuery {
               booleanField1: Boolean
@@ -48,7 +50,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         [Fact]
         public void Can_Construct_And_Describe_Polymorphic_Schema()
         {
-            var engine = new GraphQLEngine(typeof(SchemaDefinition<Query>));
+            var engine = new GraphQLEngine();
+            engine.BuildSchema(typeof(SchemaDefinition<Query>));
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
             type Actor {
@@ -82,6 +85,20 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             }
             union SearchResultItem = Movie | Actor
             ");
+        }
+
+        [Fact]
+        public async void Can_Register_And_Use_Custom_Scalar_Types()
+        {
+            var engine = new GraphQLEngine();
+            engine.RegisterScalarType<Custom, CustomGraphType>();
+            engine.BuildSchema(typeof(SchemaDefinition<CustomTypesQuery>));
+            var result = await engine
+                .NewExecutor()
+                .WithQueryString(@"{ customScalarType(arg:""CUSTOM:Test"") }")
+                .Execute();
+            result.ShouldHaveNoErrors();
+            result.Data.ShouldHaveFieldWithValue("customScalarType", "CUSTOM:WRAPPED:Test");
         }
 
         class BasicQuery
@@ -203,6 +220,12 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             public double Score { get; set; }
 
             public SearchResultItem Node { get; set; }
+        }
+
+        class CustomTypesQuery
+        {
+            public Custom CustomScalarType(Custom arg) =>
+                new Custom { Value = $"WRAPPED:{arg.Value}" };
         }
     }
 }

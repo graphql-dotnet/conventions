@@ -42,7 +42,7 @@ namespace GraphQL.Conventions.Types.Resolution
 
             if (queryField == null)
             {
-                throw new ArgumentException("Schema has no query type");
+                throw new ArgumentException("Schema has no query type.");
             }
 
             var schemaInfo = new GraphSchemaInfo();
@@ -122,10 +122,17 @@ namespace GraphQL.Conventions.Types.Resolution
         private void DeriveInterfaces(GraphTypeInfo type)
         {
             var typeInfo = GetTypeInfo(type);
-            var interfaces = typeInfo
-                .GetInterfaces()
+            var nativeInterfaces = typeInfo.GetInterfaces();
+
+            if (nativeInterfaces.Any(iface => iface == typeof(IUserContext)))
+            {
+                return;
+            }
+
+            var interfaces = nativeInterfaces
                 .Select(iface => GetType(iface.GetTypeInfo()))
                 .Where(iface => iface.IsInterfaceType && !iface.IsIgnored);
+
             foreach (var iface in interfaces)
             {
                 type.AddInterface(iface);
@@ -224,8 +231,17 @@ namespace GraphQL.Conventions.Types.Resolution
 
         private GraphArgumentInfo DeriveArgument(ParameterInfo parameterInfo)
         {
+            var parameterTypeInfo = parameterInfo.ParameterType.GetTypeInfo();
             var argument = new GraphArgumentInfo(_typeResolver, parameterInfo);
-            argument.Type = GetType(parameterInfo.ParameterType.GetTypeInfo());
+            if (parameterTypeInfo.GetInterfaces().Any(iface => iface == typeof(IUserContext)))
+            {
+                argument.Type = GetType(typeof(IUserContext).GetTypeInfo());
+                argument.IsInjected = true;
+            }
+            else
+            {
+                argument.Type = GetType(parameterInfo.ParameterType.GetTypeInfo());
+            }
             if (argument.Type.TypeRepresentation.AsType() == typeof(IResolutionContext))
             {
                 argument.IsInjected = true;

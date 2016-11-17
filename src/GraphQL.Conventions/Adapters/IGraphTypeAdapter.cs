@@ -7,5 +7,7 @@ namespace GraphQL.Conventions.Adapters
         TSchemaType DeriveSchema(GraphSchemaInfo schemaInfo);
 
         TGraphType DeriveType(GraphTypeInfo typeInfo);
+
+        void RegisterScalarType<TType>(string name);
     }
 }

@@ -391,7 +391,8 @@ namespace GraphQL.Conventions.Tests.Adapters
 
         private async Task<ExecutionResult> ExecuteQuery(string query)
         {
-            var engine = new GraphQLEngine(typeof(SchemaDefinition<Query>));
+            var engine = new GraphQLEngine();
+            engine.BuildSchema(typeof(SchemaDefinition<Query>));
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(query)

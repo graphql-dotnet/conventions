@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using GraphQL.Conventions.Types;
 using GraphQL.Conventions.Types.Descriptors;
@@ -20,6 +21,8 @@ namespace GraphQL.Conventions.Adapters
         }
 
         private readonly CachedRegistry<Type, IGraphType> _typeDescriptors = new CachedRegistry<Type, IGraphType>();
+
+        private readonly Dictionary<string, Type> _registeredScalarTypes = new Dictionary<string, Type>();
 
         public ISchema DeriveSchema(GraphSchemaInfo schemaInfo)
         {
@@ -49,6 +52,11 @@ namespace GraphQL.Conventions.Adapters
                 ? WrapNonNullableType(typeInfo, Activator.CreateInstance(primitiveType) as GraphType)
                 : _typeDescriptors.GetEntity(typeInfo.TypeRepresentation.AsType());
             return graphType ?? GetComplexType(typeInfo);
+        }
+
+        public void RegisterScalarType<TType>(string name)
+        {
+            _registeredScalarTypes.Add(name, typeof(TType));
         }
 
         private IGraphType DeriveTypeFromTypeInfo(Type type)
@@ -113,6 +121,12 @@ namespace GraphQL.Conventions.Adapters
                 case TypeNames.Uri:
                     return typeof(Types.UriGraphType);
                 default:
+                    Type type;
+                    if (!string.IsNullOrWhiteSpace(typeInfo.Name) &&
+                        _registeredScalarTypes.TryGetValue(typeInfo.Name, out type))
+                    {
+                        return type;
+                    }
                     return null;
             }
         }
@@ -146,8 +160,7 @@ namespace GraphQL.Conventions.Adapters
             else
             {
                 throw new ArgumentException(
-                    $"Unable to derive graph type for '{typeInfo.TypeRepresentation.Name}'",
-                    nameof(typeInfo));
+                    $"Unable to derive graph type for '{typeInfo.TypeRepresentation.Name}'.");
             }
         }
 

@@ -12,7 +12,7 @@ namespace GraphQL.Conventions.Execution
 
         object RootValue { get; }
 
-        object UserContext { get; }
+        IUserContext UserContext { get; }
 
         CancellationToken CancellationToken { get; }
     }

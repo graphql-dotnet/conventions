@@ -59,7 +59,8 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
 
         private async Task<ExecutionResult> ExecuteQuery(string query, Dictionary<string, object> inputs = null)
         {
-            var engine = new GraphQLEngine(typeof(SchemaDefinitionWithMutation<Mutation>));
+            var engine = new GraphQLEngine();
+            engine.BuildSchema(typeof(SchemaDefinitionWithMutation<Mutation>));
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(query)

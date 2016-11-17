@@ -24,11 +24,6 @@ namespace GraphQL.Conventions.Tests.Server
             var requestHandler = new GraphQLRequestHandler(dependencyInjector,
                 typeof(SchemaDefinition<Schema.Query, Schema.Mutation>));
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
             app.Run(requestHandler.HandleRequest);
         }
     }

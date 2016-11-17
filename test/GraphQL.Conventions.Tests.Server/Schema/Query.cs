@@ -76,6 +76,7 @@ namespace GraphQL.Conventions.Tests.Server.Schema
 
         [Description("Search for books and authors.")]
         public Connection<SearchResult> Search(
+            UserContext userContext,
             [Inject] IBookRepository bookRepository,
             [Inject] IAuthorRepository authorRepository,
             [Description("Title or last name.")] NonNull<string> forString)
@@ -90,6 +91,8 @@ namespace GraphQL.Conventions.Tests.Server.Schema
             {
                 results.Add(new SearchResult { Instance = new Author(author) });
             }
+
+            userContext.TouchedIds.AddRange(results.Select(result => ((INode)result.Instance).Id.ToString()));
 
             return new Connection<SearchResult>
             {

@@ -9,7 +9,7 @@ namespace GraphQL.Conventions.Types
         {
             if (!IsAbsoluteUri || HostNameType == UriHostNameType.Unknown)
             {
-                throw new ArgumentException($"Invalid URL \"{url}\"", nameof(url));
+                throw new ArgumentException($"Invalid URL \"{url}\".");
             }
         }
     }

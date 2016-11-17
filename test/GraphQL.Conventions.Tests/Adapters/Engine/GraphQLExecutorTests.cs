@@ -13,7 +13,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         [Fact]
         public async void Can_Disable_Validation()
         {
-            var engine = new GraphQLEngine(typeof(SchemaDefinition<Query>));
+            var engine = new GraphQLEngine();
+            engine.BuildSchema(typeof(SchemaDefinition<Query>));
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("{ test }")
@@ -30,7 +31,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         [Fact]
         public async void Can_Enable_Validation()
         {
-            var engine = new GraphQLEngine(typeof(SchemaDefinition<Query>));
+            var engine = new GraphQLEngine();
+            engine.BuildSchema(typeof(SchemaDefinition<Query>));
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("{ test }")

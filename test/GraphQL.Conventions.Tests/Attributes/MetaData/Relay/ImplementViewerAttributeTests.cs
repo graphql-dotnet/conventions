@@ -15,14 +15,14 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData.Relay
         {
             GetSchemaDefinition(false).ShouldEqualWhenReformatted(@"
             schema {
-                query: Query1
+              query: Query1
             }
             type Query1 {
-                intToString(value: Int!): String
-                viewer: QueryViewer
+              intToString(value: Int!): String
+              viewer: QueryViewer
             }
             type QueryViewer {
-                intToString(value: Int!): String
+              intToString(value: Int!): String
             }
             ");
         }
@@ -32,10 +32,10 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData.Relay
         {
             var result = await ExecuteQuery(false, @"
             {
+              intToString(value: 5)
+              viewer {
                 intToString(value: 5)
-                viewer {
-                    intToString(value: 5)
-                }
+              }
             }");
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("intToString", "5");
@@ -47,13 +47,13 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData.Relay
         {
             GetSchemaDefinition(true).ShouldEqualWhenReformatted(@"
             type Query {
-                floatToString(value: Float!): String
-                intToString(value: Int!): String
-                viewer: QueryViewer
+              floatToString(value: Float!): String
+              intToString(value: Int!): String
+              viewer: QueryViewer
             }
             type QueryViewer {
-                floatToString(value: Float!): String
-                intToString(value: Int!): String
+              floatToString(value: Float!): String
+              intToString(value: Int!): String
             }
             ");
         }
@@ -63,12 +63,12 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData.Relay
         {
             var result = await ExecuteQuery(true, @"
             {
+              floatToString(value: 3.14)
+              intToString(value: 5)
+              viewer {
                 floatToString(value: 3.14)
                 intToString(value: 5)
-                viewer {
-                    floatToString(value: 3.14)
-                    intToString(value: 5)
-                }
+              }
             }");
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("intToString", "5");
@@ -82,22 +82,22 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData.Relay
         {
             GetSchemaDefinition(true, true).ShouldEqualWhenReformatted(@"
             type Mutation {
-                doSomething(value: Boolean): Boolean
-                doSomethingElse(value: Boolean): Boolean
-                viewer: MutationViewer
+              doSomething(value: Boolean): Boolean
+              doSomethingElse(value: Boolean): Boolean
+              viewer: MutationViewer
             }
             type MutationViewer {
-                doSomething(value: Boolean): Boolean
-                doSomethingElse(value: Boolean): Boolean
+              doSomething(value: Boolean): Boolean
+              doSomethingElse(value: Boolean): Boolean
             }
             type Query {
-                floatToString(value: Float!): String
-                intToString(value: Int!): String
-                viewer: QueryViewer
+              floatToString(value: Float!): String
+              intToString(value: Int!): String
+              viewer: QueryViewer
             }
             type QueryViewer {
-                floatToString(value: Float!): String
-                intToString(value: Int!): String
+              floatToString(value: Float!): String
+              intToString(value: Int!): String
             }
             ");
         }
@@ -106,25 +106,38 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData.Relay
         {
             if (includeMutations)
             {
-                var engine = new GraphQLEngine(
+                var engine = new GraphQLEngine();
+                engine.BuildSchema(
                     typeof(SchemaDefinition<Query1, Mutation1>),
                     typeof(SchemaDefinition<Query2, Mutation2>));
                 return engine.Describe();
             }
             else
             {
-                var engine = useMultiple
-                    ? new GraphQLEngine(typeof(SchemaDefinition<Query1>), typeof(SchemaDefinition<Query2>))
-                    : new GraphQLEngine(typeof(SchemaDefinition<Query1>));
+                var engine = new GraphQLEngine();
+                if (useMultiple)
+                {
+                    engine.BuildSchema(typeof(SchemaDefinition<Query1>), typeof(SchemaDefinition<Query2>));
+                }
+                else
+                {
+                    engine.BuildSchema(typeof(SchemaDefinition<Query1>));
+                }
                 return engine.Describe();
             }
         }
 
         private async Task<ExecutionResult> ExecuteQuery(bool useMultiple, string query)
         {
-            var engine = useMultiple
-                ? new GraphQLEngine(typeof(SchemaDefinition<Query1>), typeof(SchemaDefinition<Query2>))
-                : new GraphQLEngine(typeof(SchemaDefinition<Query1>));
+            var engine = new GraphQLEngine();
+            if (useMultiple)
+            {
+                engine.BuildSchema(typeof(SchemaDefinition<Query1>), typeof(SchemaDefinition<Query2>));
+            }
+            else
+            {
+                engine.BuildSchema(typeof(SchemaDefinition<Query1>));
+            }
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(query)

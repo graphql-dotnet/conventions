@@ -643,15 +643,18 @@ namespace GraphQL.Conventions.Tests.Adapters
         [Fact]
         public async void Can_Resolve_Resolution_Context_Argument()
         {
-            var result = await ExecuteQuery(@"{ contextField }", userContext: 15 + 10);
+            var result = await ExecuteQuery(
+                @"{ contextField }",
+                userContext: new UserContext { SomeValue = 15 + 10 });
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("contextField", "25");
         }
 
         private async Task<ExecutionResult> ExecuteQuery(
-            string query, Dictionary<string, object> inputs = null, object userContext = null)
+            string query, Dictionary<string, object> inputs = null, IUserContext userContext = null)
         {
-            var engine = new GraphQLEngine(typeof(SchemaDefinition<Query>));
+            var engine = new GraphQLEngine();
+            engine.BuildSchema(typeof(SchemaDefinition<Query>));
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(query)
@@ -660,6 +663,11 @@ namespace GraphQL.Conventions.Tests.Adapters
                 .WithDependencyInjector(new DependencyInjector())
                 .Execute();
             return result;
+        }
+
+        class UserContext : IUserContext
+        {
+            public int SomeValue { get; set; }
         }
 
         class DependencyInjector : IDependencyInjector
@@ -753,8 +761,8 @@ namespace GraphQL.Conventions.Tests.Adapters
                 $"{arg.Value.Identifier.UnencodedIdentifier}-{arg.Value.NullableObjects.First().Field1}-" +
                 $"{arg.Value.NonNullableObjects.Last().Value.Field3}-{arg.Value.ListOfEnums.Value.First()}";
 
-            public string ContextField(IResolutionContext context) =>
-                context.UserContext?.ToString();
+            public string ContextField(UserContext context) =>
+                context.SomeValue.ToString();
         }
 
         enum TestEnum

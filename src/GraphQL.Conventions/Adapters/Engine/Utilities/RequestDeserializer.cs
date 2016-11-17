@@ -8,17 +8,17 @@ namespace GraphQL.Conventions.Adapters.Engine.Utilities
 {
     public class RequestDeserializer : IRequestDeserializer
     {
-        public Query GetQueryFromRequestBody(string requestBody)
+        public QueryInput GetQueryFromRequestBody(string requestBody)
         {
             var request = ConvertJsonToDictionary(requestBody);
-            var query = new Query
+            var query = new QueryInput
             {
                 QueryString = string.Empty,
             };
 
             if (request == null)
             {
-                throw new ArgumentException($"Unable to deserialize JSON '{requestBody}'", nameof(requestBody));
+                throw new ArgumentException($"Unable to deserialize JSON '{requestBody}'.");
             }
 
             object queryString;

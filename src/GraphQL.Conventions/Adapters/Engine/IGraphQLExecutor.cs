@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Profiling;
 using GraphQL.Conventions.Types.Resolution;
 
@@ -18,7 +19,7 @@ namespace GraphQL.Conventions.Adapters.Engine
 
         IGraphQLExecutor<TResult> WithRootObject(object rootValue);
 
-        IGraphQLExecutor<TResult> WithUserContext(object userContext);
+        IGraphQLExecutor<TResult> WithUserContext(IUserContext userContext);
 
         IGraphQLExecutor<TResult> WithCancellationToken(CancellationToken token);
 
@@ -29,7 +30,5 @@ namespace GraphQL.Conventions.Adapters.Engine
         IGraphQLExecutor<TResult> UseValidation(bool useValidation = true);
 
         Task<TResult> Execute();
-
-        Task<string> ExecuteAndSerializeResponse();
     }
 }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Adapters.Engine.Utilities;
+using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Profiling;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Validation;
@@ -16,7 +17,7 @@ namespace GraphQL.Conventions.Adapters.Engine
 
         private object _rootObject;
 
-        private object _userContext;
+        private IUserContext _userContext;
 
         private string _queryString;
 
@@ -66,7 +67,7 @@ namespace GraphQL.Conventions.Adapters.Engine
             return this;
         }
 
-        public IGraphQLExecutor<ExecutionResult> WithUserContext(object userContext)
+        public IGraphQLExecutor<ExecutionResult> WithUserContext(IUserContext userContext)
         {
             _userContext = userContext;
             return this;
@@ -100,8 +101,6 @@ namespace GraphQL.Conventions.Adapters.Engine
             await _engine
                 .Execute(_rootObject, _queryString, _operationName, _inputs, _userContext, _useValidation, null, _cancellationToken)
                 .ConfigureAwait(false);
-
-        public async Task<string> ExecuteAndSerializeResponse() => _engine.ConvertResultToString(await Execute());
 
         public IValidationResult Validate() => _engine.Validate(_queryString);
     }

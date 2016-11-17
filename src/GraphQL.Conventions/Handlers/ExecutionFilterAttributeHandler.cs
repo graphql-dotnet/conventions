@@ -93,10 +93,20 @@ namespace GraphQL.Conventions.Handlers
 
             if (argument.IsInjected)
             {
+                object obj;
                 var argumentType = argument.Type.AttributeProvider as TypeInfo;
-                var obj = argumentType.AsType() == typeof(IResolutionContext)
-                    ? resolutionContext
-                    : argument.TypeResolver.DependencyInjector?.Resolve(argumentType);
+                if (argumentType.AsType() == typeof(IResolutionContext))
+                {
+                    obj = resolutionContext;
+                }
+                else if (argumentType.AsType() == typeof(IUserContext))
+                {
+                    obj = resolutionContext.UserContext;
+                }
+                else
+                {
+                    obj = argument.TypeResolver.DependencyInjector?.Resolve(argumentType);
+                }
                 resolutionContext.SetArgument(argument.Name, obj);
                 return executionContext;
             }

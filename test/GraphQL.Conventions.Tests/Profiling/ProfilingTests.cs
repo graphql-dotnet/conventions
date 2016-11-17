@@ -38,7 +38,8 @@ namespace GraphQL.Conventions.Tests.Profiling
 
         private async Task<ExecutionResult> ExecuteQuery(string query, IProfiler profiler)
         {
-            var engine = new GraphQLEngine(typeof(SchemaDefinition<Query>));
+            var engine = new GraphQLEngine();
+            engine.BuildSchema(typeof(SchemaDefinition<Query>));
             var result = await engine
                 .NewExecutor()
                 .WithProfiler(profiler)

@@ -50,7 +50,7 @@ namespace GraphQL.Conventions.Types.Relay
             if (!_id.IsIdentifierForType(type))
             {
                 throw new ArgumentException(
-                    $"Expected cursor of type '{typeName}' (unencoded identifier '{_id.UnencodedIdentifier}')", nameof(type));
+                    $"Expected cursor of type '{typeName}' (unencoded identifier '{_id.UnencodedIdentifier}').");
             }
             return _id.IdentifierForType(type);
         }

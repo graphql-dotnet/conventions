@@ -84,7 +84,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine.Utilities
             obj["field2"].ShouldEqual(null);
         }
 
-        private Query Query(string requestBody) => _deserializer.GetQueryFromRequestBody(requestBody);
+        private QueryInput Query(string requestBody) => _deserializer.GetQueryFromRequestBody(requestBody);
 
         private const string QueryString = "query T($bool: Boolean!) {\n  version @include(if: $bool)\n}";
 
