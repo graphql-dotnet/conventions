@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace GraphQL.Conventions.Types.Descriptors.Extensions
 {
     public static class DescriptorExtensions

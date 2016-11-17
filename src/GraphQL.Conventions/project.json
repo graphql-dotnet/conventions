@@ -47,6 +47,9 @@
         "dnxcore50",
         "portable-net45+win8"
       ]
+    },
+    "net45": {
+      "System.Threading.Tasks": ""
     }
   },
   "runtimes": {

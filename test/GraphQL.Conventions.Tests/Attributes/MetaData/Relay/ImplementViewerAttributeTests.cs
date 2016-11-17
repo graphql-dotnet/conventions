@@ -14,6 +14,9 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData.Relay
         public void Can_Generate_A_Viewer_Node_For_A_Schema()
         {
             GetSchemaDefinition(false).ShouldEqualWhenReformatted(@"
+            schema {
+                query: Query1
+            }
             type Query1 {
                 intToString(value: Int!): String
                 viewer: QueryViewer

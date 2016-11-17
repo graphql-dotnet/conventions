@@ -16,6 +16,9 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var engine = new GraphQLEngine(typeof(SchemaDefinition<BasicQuery>));
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
+            schema {
+                query: BasicQuery
+            }
             type BasicQuery {
               booleanField1: Boolean
               booleanField2: Boolean!
@@ -48,11 +51,6 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var engine = new GraphQLEngine(typeof(SchemaDefinition<Query>));
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
-            interface ISemanticVersion {
-              majorVersion: Int!
-              minorVersion: Int!
-              revision: Int!
-            }
             type Actor {
               dateOfBirth: Date
               firstName: String
@@ -60,6 +58,11 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             }
             type ExtendedVersion implements ISemanticVersion {
               branchName: String!
+              majorVersion: Int!
+              minorVersion: Int!
+              revision: Int!
+            }
+            interface ISemanticVersion {
               majorVersion: Int!
               minorVersion: Int!
               revision: Int!
