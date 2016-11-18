@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Adapters.Engine.Utilities;
 using GraphQL.Conventions.Execution;
-using GraphQL.Conventions.Profiling;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Validation;
 
@@ -82,12 +81,6 @@ namespace GraphQL.Conventions.Adapters.Engine
         public IGraphQLExecutor<ExecutionResult> WithDependencyInjector(IDependencyInjector injector)
         {
             _engine.DependencyInjector = injector;
-            return this;
-        }
-
-        public IGraphQLExecutor<ExecutionResult> WithProfiler(IProfiler profiler)
-        {
-            _engine.AddProfiler(profiler);
             return this;
         }
 

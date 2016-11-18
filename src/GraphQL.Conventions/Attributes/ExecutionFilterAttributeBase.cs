@@ -1,9 +1,13 @@
+using System.Threading.Tasks;
+using GraphQL.Conventions.Attributes.Execution.Unwrappers;
 using GraphQL.Conventions.Execution;
 
 namespace GraphQL.Conventions.Attributes
 {
     public abstract class ExecutionFilterAttributeBase : AttributeBase, IExecutionFilterAttribute
     {
+        private readonly IUnwrapper _unwrapper = new ValueUnwrapper();
+
         protected ExecutionFilterAttributeBase()
             : base(AttributeApplicationPhase.ExecutionFilter)
         {
@@ -14,22 +18,12 @@ namespace GraphQL.Conventions.Attributes
         {
         }
 
-        public virtual bool IsEnabled(ExecutionContext context)
+        public virtual Task<object> Execute(IResolutionContext context, FieldResolutionDelegate next)
         {
-            return true;
+            return next(context);
         }
 
-        public virtual void AfterExecution(ExecutionContext context, long correlationId)
-        {
-        }
-
-        public virtual void BeforeExecution(ExecutionContext context, long correlationId)
-        {
-        }
-
-        public virtual bool ShouldExecute(ExecutionContext context)
-        {
-            return true;
-        }
+        protected object Unwrap(object value) =>
+            _unwrapper.Unwrap(value);
     }
 }

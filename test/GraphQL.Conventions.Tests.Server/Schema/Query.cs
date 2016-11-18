@@ -14,65 +14,23 @@ namespace GraphQL.Conventions.Tests.Server.Schema
     [ImplementViewer(OperationType.Query)]
     public class Query
     {
-        public async Task<INode> Node(
-            [Inject] IBookRepository bookRepository,
-            [Inject] IAuthorRepository authorRepository,
-            Id id)
-        {
-            await Task.Delay(10); // no-op
-            if (id.IsIdentifierForType<Book>())
-            {
-                return Book(bookRepository, id);
-            }
-            if (id.IsIdentifierForType<Author>())
-            {
-                return Author(authorRepository, id);
-            }
-            return null;
-        }
+        public Task<INode> Node(UserContext context, Id id) =>
+            context.Get<INode>(id);
 
         [Description("Retrieve book by its globally unique ID.")]
-        public Book Book(
-            [Inject] IBookRepository bookRepository,
-            Id id)
-        {
-            return new Book(bookRepository.GetBookById(int.Parse(id.IdentifierForType<Book>())));
-        }
+        public Task<Book> Book(UserContext context, Id id) =>
+            context.Get<Book>(id);
 
         [Description("Retrieve books by their globally unique IDs.")]
-        public IEnumerable<Book> Books(
-            [Inject] IBookRepository bookRepository,
-            IEnumerable<Id> ids)
-        {
-            var internalIds = ids
-                .Select(id => int.Parse(id.IdentifierForType<Book>()))
-                .ToList();
-            foreach (var book in bookRepository.GetBooksByIds(internalIds))
-            {
-                yield return new Book(book);
-            }
-        }
+        public IEnumerable<Task<Book>> Books(UserContext context, IEnumerable<Id> ids) =>
+            ids.Select(context.Get<Book>);
 
-        public Author Author(
-            [Inject] IAuthorRepository authorRepository,
-            Id id)
-        {
-            return new Author(authorRepository.GetAuthorById(int.Parse(id.IdentifierForType<Author>())));
-        }
+        public Task<Author> Author(UserContext context, Id id) =>
+            context.Get<Author>(id);
 
         [Description("Retrieve authors by their globally unique IDs.")]
-        public IEnumerable<Author> Authors(
-            [Inject] IAuthorRepository authorRepository,
-            IEnumerable<Id> ids)
-        {
-            var internalIds = ids
-                .Select(id => int.Parse(id.IdentifierForType<Book>()))
-                .ToList();
-            foreach (var author in authorRepository.GetAuthorsByIds(internalIds))
-            {
-                yield return new Author(author);
-            }
-        }
+        public IEnumerable<Task<Author>> Authors(UserContext context, IEnumerable<Id> ids) =>
+            ids.Select(context.Get<Author>);
 
         [Description("Search for books and authors.")]
         public Connection<SearchResult> Search(
@@ -91,8 +49,6 @@ namespace GraphQL.Conventions.Tests.Server.Schema
             {
                 results.Add(new SearchResult { Instance = new Author(author) });
             }
-
-            userContext.TouchedIds.AddRange(results.Select(result => ((INode)result.Instance).Id.ToString()));
 
             return new Connection<SearchResult>
             {

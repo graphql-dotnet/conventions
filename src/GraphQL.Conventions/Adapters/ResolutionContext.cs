@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using GraphQL.Conventions.Execution;
+using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Types;
 
 namespace GraphQL.Conventions.Adapters
@@ -9,9 +10,10 @@ namespace GraphQL.Conventions.Adapters
     {
         private static object _lock = new object();
 
-        public ResolutionContext(ResolveFieldContext fieldContext)
+        public ResolutionContext(GraphFieldInfo fieldInfo, ResolveFieldContext fieldContext)
         {
             FieldContext = fieldContext;
+            FieldInfo = fieldInfo;
         }
 
         public object Source => FieldContext.Source;
@@ -45,6 +47,8 @@ namespace GraphQL.Conventions.Adapters
         public object RootValue => FieldContext.RootValue;
 
         public IUserContext UserContext => FieldContext.UserContext as IUserContext;
+
+        public GraphFieldInfo FieldInfo { get; private set; }
 
         public CancellationToken CancellationToken => FieldContext.CancellationToken;
 

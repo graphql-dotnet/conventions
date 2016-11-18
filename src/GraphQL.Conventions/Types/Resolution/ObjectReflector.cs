@@ -130,6 +130,7 @@ namespace GraphQL.Conventions.Types.Resolution
             }
 
             var interfaces = nativeInterfaces
+                .Where(t => IsValidType(t.GetTypeInfo()))
                 .Select(iface => GetType(iface.GetTypeInfo()))
                 .Where(iface => iface.IsInterfaceType && !iface.IsIgnored);
 
@@ -231,9 +232,14 @@ namespace GraphQL.Conventions.Types.Resolution
 
         private GraphArgumentInfo DeriveArgument(ParameterInfo parameterInfo)
         {
-            var parameterTypeInfo = parameterInfo.ParameterType.GetTypeInfo();
+            var parameterType = parameterInfo.ParameterType;
+            var parameterTypeInfo = parameterType.GetTypeInfo();
             var argument = new GraphArgumentInfo(_typeResolver, parameterInfo);
-            if (parameterTypeInfo.GetInterfaces().Any(iface => iface == typeof(IUserContext)))
+            if (parameterType == typeof(object))
+            {
+                throw new ArgumentException($"Cannot construct argument '{parameterInfo.Name}' of type 'object'; invalid type.");
+            }
+            else if (parameterTypeInfo.GetInterfaces().Any(iface => iface == typeof(IUserContext)))
             {
                 argument.Type = GetType(typeof(IUserContext).GetTypeInfo());
                 argument.IsInjected = true;
@@ -263,11 +269,37 @@ namespace GraphQL.Conventions.Types.Resolution
             return enumValue;
         }
 
+        private static bool IsValidType(TypeInfo typeInfo)
+        {
+            return typeInfo.Namespace != nameof(System) &&
+                   !typeInfo.Namespace.StartsWith($"{nameof(System)}.");
+        }
+
         private static bool IsValidMember(MemberInfo memberInfo)
         {
             return memberInfo.DeclaringType.Namespace != nameof(System) &&
-                   !memberInfo.DeclaringType.Namespace.StartsWith(nameof(System)) &&
-                   !memberInfo.DeclaringType.GetTypeInfo().IsValueType;
+                   !memberInfo.DeclaringType.Namespace.StartsWith($"{nameof(System)}.") &&
+                   !memberInfo.DeclaringType.GetTypeInfo().IsValueType &&
+                   memberInfo.Name != nameof(object.ToString) &&
+                   HasValidReturnType(memberInfo);
+        }
+
+        private static bool HasValidReturnType(MemberInfo memberInfo)
+        {
+            Type returnType;
+            if (memberInfo is PropertyInfo)
+            {
+                returnType = ((PropertyInfo)memberInfo).PropertyType;
+            }
+            else if (memberInfo is MethodInfo)
+            {
+                returnType = ((MethodInfo)memberInfo).ReturnType;
+            }
+            else
+            {
+                return true;
+            }
+            return returnType != typeof(object);
         }
     }
 }

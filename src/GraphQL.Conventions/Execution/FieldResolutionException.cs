@@ -1,19 +1,37 @@
 using System;
-using GraphQL.Conventions.Types.Descriptors;
+using System.Reflection;
 
 namespace GraphQL.Conventions.Execution
 {
     public class FieldResolutionException : Exception
     {
-        public FieldResolutionException(GraphFieldInfo fieldInfo, IResolutionContext context, Exception exception)
-            : base($"Unable to resolve field '{fieldInfo.Name}' on type '{fieldInfo.DeclaringType.Name}': {exception.Message}", exception)
+        public FieldResolutionException(Exception exception)
+            : base(exception.Message, ExtractException(exception))
         {
-            FieldInfo = fieldInfo;
-            ResolutionContext = context;
         }
 
-        public GraphFieldInfo FieldInfo { get; private set; }
+        private static Exception ExtractException(Exception exception)
+        {
+            Exception innerException;
+            while ((innerException = ExtractInnerException(exception)) != null)
+            {
+                exception = innerException;
+            }
+            return exception;
+        }
 
-        public IResolutionContext ResolutionContext { get; private set; }
+        private static Exception ExtractInnerException(Exception exception)
+        {
+            if (exception is TargetInvocationException)
+            {
+                return exception.InnerException;
+            }
+            else if (exception is AggregateException &&
+                ((AggregateException)exception).InnerExceptions.Count == 1)
+            {
+                return exception.InnerException;
+            }
+            return null;
+        }
     }
 }

@@ -238,7 +238,6 @@ namespace GraphQL.Conventions.Tests.Adapters
             result.ShouldHaveErrors(1);
             var error = result.Errors.First();
             error.Message.ShouldContain("Error trying to resolve errorField");
-            error.InnerException.Message.ShouldContain($"Unable to resolve field 'errorField' on type '{nameof(Query)}'");
             error.InnerException.ToString().ShouldContain("System.NotImplementedException: The method or operation is not implemented");
             error.InnerException.ToString().ShouldContain("at GraphQL.Conventions.Tests.Adapters.FieldResolutionTests.Query.ErrorField() in");
             error.InnerException.ToString().ShouldContain("Adapters/FieldResolutionTests.cs:line");
@@ -251,7 +250,6 @@ namespace GraphQL.Conventions.Tests.Adapters
             result.ShouldHaveErrors(1);
             var error = result.Errors.First();
             error.Message.ShouldContain("Error trying to resolve errorTaskField");
-            error.InnerException.Message.ShouldContain($"Unable to resolve field 'errorTaskField' on type '{nameof(Query)}'");
             error.InnerException.ToString().ShouldContain("System.NotImplementedException: The method or operation is not implemented");
             error.InnerException.ToString().ShouldContain("at GraphQL.Conventions.Tests.Adapters.FieldResolutionTests.Query.ErrorTaskField() in");
             error.InnerException.ToString().ShouldContain("Adapters/FieldResolutionTests.cs:line");

@@ -1,43 +1,24 @@
+using System.Threading.Tasks;
 using GraphQL.Conventions.Execution;
-using GraphQL.Conventions.Types;
-using GraphQL.Conventions.Types.Descriptors.Extensions;
 using GraphQL.Conventions.Types.Relay;
 
 namespace GraphQL.Conventions.Attributes.Execution.Relay
 {
     public class RelayMutationAttribute : ExecutionFilterAttributeBase
     {
-        public override bool IsEnabled(ExecutionContext context)
+        public override async Task<object> Execute(IResolutionContext context, FieldResolutionDelegate next)
         {
-            var input = context?.ResolutionContext?.GetArgument("input");
-            if (input is INonNull)
-            {
-                input = ((INonNull)input).ObjectValue;
-            }
-            return input is IRelayMutationInputObject &&
-                   context.Entity.Type.HasField("clientMutationId");
-        }
+            var output = await next(context).ConfigureAwait(false);
+            var input = Unwrap(context.GetArgument("input"));
 
-        public override void AfterExecution(ExecutionContext context, long correlationId)
-        {
-            var inputRaw = context.ResolutionContext.GetArgument("input");
-            if (inputRaw is INonNull)
+            var inputObj = input as IRelayMutationInputObject;
+            var outputObj = output as IRelayMutationOutputObject;
+            if (inputObj != null && outputObj != null)
             {
-                inputRaw = ((INonNull)inputRaw).ObjectValue;
+                outputObj.ClientMutationId = inputObj.ClientMutationId;
             }
 
-            var outputRaw = context.Result;
-            if (outputRaw is INonNull)
-            {
-                outputRaw = ((INonNull)outputRaw).ObjectValue;
-            }
-
-            var input = inputRaw as IRelayMutationInputObject;
-            var output = outputRaw as IRelayMutationOutputObject;
-            if (input != null && output != null)
-            {
-                output.ClientMutationId = input.ClientMutationId;
-            }
+            return output;
         }
     }
 }

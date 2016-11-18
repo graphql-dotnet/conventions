@@ -2,6 +2,7 @@ using System;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Types;
+using GraphQL.Conventions.Types.Utilities;
 using Xunit;
 
 namespace GraphQL.Conventions.Tests.Types
@@ -46,7 +47,7 @@ namespace GraphQL.Conventions.Tests.Types
             var id3 = Id.New<IdTests>("99231", true);
             var id4 = Id.New<TestBase>("99231", true);
 
-            Assert.True(id0.UnencodedIdentifier.Contains(":"));
+            Assert.True(Identifier.Decode(id0.ToString()).Contains(":"));
             Assert.True(id0 == id1);
             Assert.True(id0 <= id1);
             Assert.True(id0 >= id1);
@@ -71,7 +72,7 @@ namespace GraphQL.Conventions.Tests.Types
             var id3 = Id.New<IdTests>("99231", false);
             var id4 = Id.New<TestBase>("99231", false);
 
-            Assert.False(id0.UnencodedIdentifier.Contains(":"));
+            Assert.False(Identifier.Decode(id0.ToString()).Contains(":"));
             Assert.True(id0 == id1);
             Assert.True(id0 <= id1);
             Assert.True(id0 >= id1);

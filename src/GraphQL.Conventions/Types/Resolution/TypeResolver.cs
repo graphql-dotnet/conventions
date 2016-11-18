@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using GraphQL.Conventions.Profiling;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Relay;
-using GraphQL.Conventions.Types.Resolution.Evaluators;
 
 namespace GraphQL.Conventions.Types.Resolution
 {
@@ -57,10 +55,6 @@ namespace GraphQL.Conventions.Types.Resolution
             }
             return null;
         }
-
-        public IFieldResolver FieldResolver { get; } = new FieldResolver();
-
-        public List<IProfiler> Profilers { get; } = new List<IProfiler>();
 
         public IDependencyInjector DependencyInjector { get; set; }
 

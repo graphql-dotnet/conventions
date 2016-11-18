@@ -10,7 +10,7 @@ namespace GraphQL.Conventions.Types
 
         private readonly static INameNormalizer _normalizer = new NameNormalizer();
 
-        private readonly string _unencodedIdentifier;
+        internal readonly string _unencodedIdentifier;
 
         private readonly string _encodedIdentifier;
 
@@ -74,8 +74,6 @@ namespace GraphQL.Conventions.Types
 
         public string IdentifierForType<TType>() =>
             IdentifierForType(typeof(TType));
-
-        public string UnencodedIdentifier => _unencodedIdentifier;
 
         public static Id New(Type type, string identifier, bool? serializeUsingColon = null) =>
             new Id(type, identifier, serializeUsingColon);

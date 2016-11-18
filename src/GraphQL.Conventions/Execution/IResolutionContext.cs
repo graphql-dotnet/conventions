@@ -1,4 +1,5 @@
 using System.Threading;
+using GraphQL.Conventions.Types.Descriptors;
 
 namespace GraphQL.Conventions.Execution
 {
@@ -13,6 +14,8 @@ namespace GraphQL.Conventions.Execution
         object RootValue { get; }
 
         IUserContext UserContext { get; }
+
+        GraphFieldInfo FieldInfo { get; }
 
         CancellationToken CancellationToken { get; }
     }

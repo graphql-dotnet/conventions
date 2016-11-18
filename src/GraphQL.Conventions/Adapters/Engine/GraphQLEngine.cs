@@ -6,7 +6,6 @@ using GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader;
 using GraphQL.Conventions.Adapters.Engine.Utilities;
 using GraphQL.Conventions.Builders;
 using GraphQL.Conventions.Execution;
-using GraphQL.Conventions.Profiling;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Execution;
@@ -84,11 +83,6 @@ namespace GraphQL.Conventions.Adapters.Engine
             set { _typeResolver.DependencyInjector = value; }
         }
 
-        internal void AddProfiler(IProfiler profiler)
-        {
-            _typeResolver.Profilers.Add(profiler);
-        }
-
         internal async Task<ExecutionResult> Execute(
             object rootObject,
             string query,
@@ -120,7 +114,25 @@ namespace GraphQL.Conventions.Adapters.Engine
                 configuration.Listeners.Add(new DataLoaderListener());
             }
 
-            return await _documentExecutor.ExecuteAsync(configuration).ConfigureAwait(false);
+            var result = await _documentExecutor.ExecuteAsync(configuration).ConfigureAwait(false);
+
+            if (result.Errors != null)
+            {
+                var errors = new ExecutionErrors();
+                foreach (var executionError in result.Errors)
+                {
+                    var exception = new FieldResolutionException(executionError);
+                    var error = new ExecutionError(executionError.Message, exception);
+                    foreach (var location in executionError.Locations ?? new ErrorLocation[0])
+                    {
+                        error.AddLocation(location.Line, location.Column);
+                    }
+                    errors.Add(error);
+                }
+                result.Errors = errors;
+            }
+
+            return result;
         }
 
         internal IValidationResult Validate(string queryString)

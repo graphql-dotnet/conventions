@@ -2,6 +2,7 @@ using System;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Types.Relay;
+using GraphQL.Conventions.Types.Utilities;
 using Xunit;
 
 namespace GraphQL.Conventions.Tests.Types.Relay
@@ -27,8 +28,6 @@ namespace GraphQL.Conventions.Tests.Types.Relay
         {
             Assert.Throws<ArgumentException>(() => new Cursor(null));
             Assert.Throws<ArgumentException>(() => new Cursor(string.Empty));
-            var nullableCursor = (Cursor?)null;
-            nullableCursor.HasValue.ShouldEqual(false);
         }
 
         [Fact]
@@ -46,7 +45,7 @@ namespace GraphQL.Conventions.Tests.Types.Relay
             var cursor3 = Cursor.New<IdTests>("99231", true);
             var cursor4 = Cursor.New<TestBase>("99231", true);
 
-            Assert.True(cursor0.UnencodedCursor.Contains(":"));
+            Assert.True(Identifier.Decode(cursor0.ToString()).Contains(":"));
             Assert.True(cursor0 == cursor1);
             Assert.True(cursor0 <= cursor1);
             Assert.True(cursor0 >= cursor1);
@@ -71,7 +70,7 @@ namespace GraphQL.Conventions.Tests.Types.Relay
             var cursor3 = Cursor.New<IdTests>("99231", false);
             var cursor4 = Cursor.New<TestBase>("99231", false);
 
-            Assert.False(cursor0.UnencodedCursor.Contains(":"));
+            Assert.False(Identifier.Decode(cursor0.ToString()).Contains(":"));
             Assert.True(cursor0 == cursor1);
             Assert.True(cursor0 <= cursor1);
             Assert.True(cursor0 >= cursor1);

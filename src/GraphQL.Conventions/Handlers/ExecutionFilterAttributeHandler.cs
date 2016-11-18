@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Attributes;
 using GraphQL.Conventions.Attributes.Execution.Unwrappers;
 using GraphQL.Conventions.Attributes.Execution.Wrappers;
 using GraphQL.Conventions.Execution;
@@ -13,84 +12,37 @@ namespace GraphQL.Conventions.Handlers
 {
     class ExecutionFilterAttributeHandler
     {
-        private static long _correlationId;
+        private static readonly IWrapper Wrapper = new ValueWrapper();
 
-        private static object _lock = new object();
+        private static readonly IUnwrapper Unwrapper = new ValueUnwrapper();
 
-        private static readonly IWrapper _wrapper = new ValueWrapper();
-
-        private static readonly IUnwrapper _unwrapper = new ValueUnwrapper();
-
-        public async Task<ExecutionContext> Execute(GraphFieldInfo field, IResolutionContext resolutionContext, Func<IResolutionContext, object> executor)
+        public Task<object> Execute(IResolutionContext resolutionContext, Func<IResolutionContext, object> executor)
         {
-            foreach (var argument in field.Arguments)
+            var fieldInfo = resolutionContext.FieldInfo;
+            foreach (var argument in fieldInfo.Arguments)
             {
-                var argumentExecutionContext = ResolveArgument(argument, resolutionContext);
-                if (argumentExecutionContext.Exception != null)
-                {
-                    return new ExecutionContext(field, resolutionContext)
-                    {
-                        Exception = argumentExecutionContext.Exception,
-                    };
-                }
+                ResolveArgument(argument, resolutionContext);
             }
-
-            var executionContext = new ExecutionContext(field, resolutionContext);
-            var filterAttributes = field
-                .ExecutionFilters
-                .Where(attribute => attribute.IsEnabled(executionContext))
-                .ToList();
-
-            if (Enumerable.Any(filterAttributes, attribute => !attribute.ShouldExecute(executionContext)))
+            var start = (FieldResolutionDelegate)(async ctx =>
             {
-                return executionContext;
-            }
-
-            var correlationId = GetNextCorrelationId();
-
-            ProtectedInvocation(executionContext, () =>
-            {
-                foreach (var attribute in filterAttributes)
-                {
-                    attribute.BeforeExecution(executionContext, correlationId);
-                }
-            });
-
-            ProtectedInvocation(executionContext, () =>
-            {
-                executionContext.Result = executor(executionContext.ResolutionContext);
-                executionContext.DidExecute = true;
-            });
-
-            if (executionContext.DidSucceed)
-            {
-                var result = executionContext.Result;
+                var result = executor(ctx);
                 if (result is Task)
                 {
-                    await ProtectedAsyncInvocation(executionContext, async () =>
-                    {
-                        executionContext.Result = await executionContext.Result.GetTaskResult().ConfigureAwait(false);
-                        return true;
-                    }).ConfigureAwait(false);
+                    result = await result.GetTaskResult().ConfigureAwait(false);
                 }
-            }
-
-            ProtectedInvocation(executionContext, () =>
-            {
-                foreach (var attribute in filterAttributes.Reverse<IExecutionFilterAttribute>())
-                {
-                    attribute.AfterExecution(executionContext, correlationId);
-                }
+                return Unwrapper.Unwrap(result);
             });
-
-            executionContext.Result = _unwrapper.Unwrap(executionContext.Result);
-            return executionContext;
+            var resolver = start;
+            foreach (var executionFilter in fieldInfo.ExecutionFilters.AsEnumerable().Reverse())
+            {
+                var previousResolver = resolver;
+                resolver = ctx => executionFilter.Execute(ctx, previousResolver);
+            }
+            return resolver(resolutionContext);
         }
 
-        private ExecutionContext ResolveArgument(GraphArgumentInfo argument, IResolutionContext resolutionContext)
+        private void ResolveArgument(GraphArgumentInfo argument, IResolutionContext resolutionContext)
         {
-            var executionContext = new ExecutionContext(argument, resolutionContext);
-
             if (argument.IsInjected)
             {
                 object obj;
@@ -108,77 +60,12 @@ namespace GraphQL.Conventions.Handlers
                     obj = argument.TypeResolver.DependencyInjector?.Resolve(argumentType);
                 }
                 resolutionContext.SetArgument(argument.Name, obj);
-                return executionContext;
             }
-
-            object argumentValue = resolutionContext.GetArgument(argument.Name, argument.DefaultValue);
-
-            var filterAttributes = argument
-                .ExecutionFilters
-                .Where(attribute => attribute.IsEnabled(executionContext))
-                .ToList();
-
-            var correlationId = GetNextCorrelationId();
-
-            ProtectedInvocation(executionContext, () =>
+            else
             {
-                foreach (var attribute in filterAttributes)
-                {
-                    attribute.BeforeExecution(executionContext, correlationId);
-                }
-
-                resolutionContext.SetArgument(argument.Name, _wrapper.Wrap(argument.Type, argumentValue));
-
-                foreach (var attribute in filterAttributes.Reverse<IExecutionFilterAttribute>())
-                {
-                    attribute.AfterExecution(executionContext, correlationId);
-                }
-            });
-
-            return executionContext;
-        }
-
-        private void ProtectedInvocation(ExecutionContext executionContext, Action action)
-        {
-            if (executionContext.Exception != null)
-            {
-                return;
+                var argumentValue = resolutionContext.GetArgument(argument.Name, argument.DefaultValue);
+                resolutionContext.SetArgument(argument.Name, Wrapper.Wrap(argument.Type, argumentValue));
             }
-            try
-            {
-                action();
-            }
-            catch (Exception ex)
-            {
-                executionContext.Exception = ex;
-            }
-        }
-
-        private async Task<bool> ProtectedAsyncInvocation(ExecutionContext executionContext, Func<Task<bool>> action)
-        {
-            if (executionContext.Exception != null)
-            {
-                return false;
-            }
-            try
-            {
-                return await action().ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                executionContext.Exception = ex;
-                return false;
-            }
-        }
-
-        private long GetNextCorrelationId()
-        {
-            long correlationId;
-            lock (_lock)
-            {
-                correlationId = ++_correlationId;
-            }
-            return correlationId;
         }
     }
 }

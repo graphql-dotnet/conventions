@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using GraphQL.Conventions.Adapters.Engine;
 using GraphQL.Conventions.Types.Resolution;
-using GraphQL.Conventions.Adapters.Types;
 
 namespace GraphQL.Conventions.Tests.Server
 {

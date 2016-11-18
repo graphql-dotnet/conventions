@@ -5,21 +5,12 @@ using GraphQL.Conventions.Types;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
 using GraphQL.Conventions.Utilities;
-using GraphQL.Resolvers;
 using GraphQL.Types;
 
 namespace GraphQL.Conventions.Adapters
 {
     public class GraphTypeAdapter : IGraphTypeAdapter<ISchema, IGraphType>
     {
-        private class FieldResolver : IFieldResolver
-        {
-            public GraphFieldInfo FieldInfo { get; set; }
-
-            public object Resolve(ResolveFieldContext context) =>
-                FieldInfo.ResolveDelegate(new ResolutionContext(context));
-        }
-
         private readonly CachedRegistry<Type, IGraphType> _typeDescriptors = new CachedRegistry<Type, IGraphType>();
 
         private readonly Dictionary<string, Type> _registeredScalarTypes = new Dictionary<string, Type>();

@@ -605,7 +605,7 @@ namespace GraphQL.Conventions.Tests.Adapters
                         })
                   }");
             result.ShouldHaveNoErrors();
-            result.Data.ShouldHaveFieldWithValue("result", "InputObject:12345-Foo-33-Bar");
+            result.Data.ShouldHaveFieldWithValue("result", "SW5wdXRPYmplY3Q6MTIzNDU=-Foo-33-Bar");
 
             var obj1 = new Dictionary<string, object>
             {
@@ -637,7 +637,7 @@ namespace GraphQL.Conventions.Tests.Adapters
                     }
                 });
             result.ShouldHaveNoErrors();
-            result.Data.ShouldHaveFieldWithValue("result", "InputObject:12345-Foo-33-Bar");
+            result.Data.ShouldHaveFieldWithValue("result", "SW5wdXRPYmplY3Q6MTIzNDU=-Foo-33-Bar");
         }
 
         [Fact]
@@ -758,7 +758,7 @@ namespace GraphQL.Conventions.Tests.Adapters
                 arg?.Select(obj => obj.Value.ToString());
 
             public string ComplexInputObjectField(NonNull<ComplexInputObject> arg) =>
-                $"{arg.Value.Identifier.UnencodedIdentifier}-{arg.Value.NullableObjects.First().Field1}-" +
+                $"{arg.Value.Identifier}-{arg.Value.NullableObjects.First().Field1}-" +
                 $"{arg.Value.NonNullableObjects.Last().Value.Field3}-{arg.Value.ListOfEnums.Value.First()}";
 
             public string ContextField(UserContext context) =>

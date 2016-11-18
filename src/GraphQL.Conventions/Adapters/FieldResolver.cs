@@ -1,27 +1,51 @@
+using System;
 using System.Linq;
 using System.Reflection;
 using GraphQL.Conventions.Attributes.Execution.Unwrappers;
 using GraphQL.Conventions.Attributes.Execution.Wrappers;
 using GraphQL.Conventions.Attributes.MetaData.Relay;
 using GraphQL.Conventions.Execution;
+using GraphQL.Conventions.Handlers;
 using GraphQL.Conventions.Types.Descriptors;
+using GraphQL.Resolvers;
+using GraphQL.Types;
 
-namespace GraphQL.Conventions.Types.Resolution.Evaluators
+namespace GraphQL.Conventions.Adapters
 {
     class FieldResolver : IFieldResolver
     {
-        private static readonly IWrapper _wrapper = new ValueWrapper();
+        private static readonly ExecutionFilterAttributeHandler ExecutionFilterHandler =
+            new ExecutionFilterAttributeHandler();
 
-        private static readonly IUnwrapper _unwrapper = new ValueUnwrapper();
+        private static readonly IWrapper Wrapper = new ValueWrapper();
 
-        public object GetValue(GraphFieldInfo fieldInfo, IResolutionContext context)
+        private static readonly IUnwrapper Unwrapper = new ValueUnwrapper();
+
+        public GraphFieldInfo FieldInfo { private get; set; }
+
+        public object Resolve(ResolveFieldContext context)
+        {
+            Func<IResolutionContext, object> resolver;
+            if (FieldInfo.IsMethod)
+            {
+                resolver = ctx => CallMethod(FieldInfo, ctx);
+            }
+            else
+            {
+                resolver = ctx => GetValue(FieldInfo, ctx);
+            }
+            var resolutionContext = new ResolutionContext(FieldInfo, context);
+            return ExecutionFilterHandler.Execute(resolutionContext, resolver);
+        }
+
+        private object GetValue(GraphFieldInfo fieldInfo, IResolutionContext context)
         {
             var source = GetSource(fieldInfo, context);
             var propertyInfo = fieldInfo.AttributeProvider as PropertyInfo;
-            return propertyInfo.GetValue(source);
+            return propertyInfo?.GetValue(source);
         }
 
-        public object CallMethod(GraphFieldInfo fieldInfo, IResolutionContext context)
+        private object CallMethod(GraphFieldInfo fieldInfo, IResolutionContext context)
         {
             var source = GetSource(fieldInfo, context);
             var methodInfo = fieldInfo.AttributeProvider as MethodInfo;
@@ -30,7 +54,7 @@ namespace GraphQL.Conventions.Types.Resolution.Evaluators
                 .Arguments
                 .Select(arg => context.GetArgument(arg.Name, arg.DefaultValue));
 
-            return methodInfo.Invoke(source, arguments.ToArray());
+            return methodInfo?.Invoke(source, arguments.ToArray());
         }
 
         private object GetSource(GraphFieldInfo fieldInfo, IResolutionContext context)
@@ -44,7 +68,7 @@ namespace GraphQL.Conventions.Types.Resolution.Evaluators
                 var declaringType = fieldInfo.DeclaringType.TypeRepresentation.AsType();
                 source = fieldInfo.SchemaInfo.TypeResolutionDelegate(declaringType);
             }
-            source = _unwrapper.Unwrap(source);
+            source = Unwrapper.Unwrap(source);
             return source;
         }
     }

@@ -1,8 +1,5 @@
-using System.Collections.Generic;
 using System.Reflection;
-using GraphQL.Conventions.Profiling;
 using GraphQL.Conventions.Types.Descriptors;
-using GraphQL.Conventions.Types.Resolution.Evaluators;
 
 namespace GraphQL.Conventions.Types.Resolution
 {
@@ -21,10 +18,6 @@ namespace GraphQL.Conventions.Types.Resolution
         void RegisterScalarType<TType>(string typeName);
 
         TypeRegistration LookupType(TypeInfo typeInfo);
-
-        IFieldResolver FieldResolver { get; }
-
-        List<IProfiler> Profilers { get; }
 
         IDependencyInjector DependencyInjector { get; set; }
 
