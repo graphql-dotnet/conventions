@@ -1,5 +1,7 @@
 using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+
 [assembly: AssemblyDescription("GraphQL for .NET")]
 [assembly: AssemblyTitle("GraphQL.Conventions")]
 [assembly: AssemblyProduct("GraphQL.Conventions")]
@@ -9,3 +11,4 @@ using System.Reflection;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: AssemblyInformationalVersion("1.0.0.0")]
 [assembly: CLSCompliant(false)]
+[assembly: InternalsVisibleTo("GraphQL.Conventions.Tests")]

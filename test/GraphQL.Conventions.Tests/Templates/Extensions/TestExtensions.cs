@@ -9,7 +9,7 @@ namespace GraphQL.Conventions.Tests.Templates.Extensions
 {
     static class TestExtensions
     {
-        private static readonly Regex _regexStripBlankPrefixes = new Regex(@"^[ \t]+", RegexOptions.Multiline);
+        private static readonly Regex RegexStripBlankPrefixes = new Regex(@"^[ \t]+", RegexOptions.Multiline);
 
         public static void ShouldEqualWhenReformatted(this string actual, string expected)
         {
@@ -60,6 +60,13 @@ namespace GraphQL.Conventions.Tests.Templates.Extensions
 
         public static void ShouldContain(this string str, string substring)
         {
+            Assert.Contains(substring, str);
+        }
+
+        public static void ShouldContainWhenReformatted(this string str, string substring)
+        {
+            str = CleanMultilineText(str);
+            substring = CleanMultilineText(substring);
             Assert.Contains(substring, str);
         }
 
@@ -208,6 +215,7 @@ namespace GraphQL.Conventions.Tests.Templates.Extensions
             var path = pathAndValue.Take(pathAndValue.Length - 1).Select(p => p.ToString()).ToList();
             result.ShouldNotBeNull();
             var obj = result as Dictionary<string, object>;
+            obj.ShouldNotBeNull();
             foreach (var key in path.Take(path.Count - 1))
             {
                 obj.Keys.ShouldContain(key);
@@ -221,11 +229,12 @@ namespace GraphQL.Conventions.Tests.Templates.Extensions
 
         private static string CleanMultilineText(string value)
         {
-            value = _regexStripBlankPrefixes.Replace(value, "").Trim();
+            value = RegexStripBlankPrefixes.Replace(value, "").Trim();
             var lines = value
                 .Trim()
                 .Split('\n')
-                .Where(line => line.Trim().Length > 0);
+                .Select(line => line.Trim(' ', '\t', '\r', '\n').Replace('\\', '/'))
+                .Where(line => line.Length > 0);
             return string.Join("\n", lines);
         }
     }
