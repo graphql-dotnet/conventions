@@ -22,7 +22,7 @@ namespace GraphQL.Conventions.Tests.Server
 
         public async Task HandleRequest(HttpContext context)
         {
-            if (string.Compare(context.Request.Method, "POST", true) != 0)
+            if (string.Compare(context.Request.Method, "POST", StringComparison.OrdinalIgnoreCase) != 0)
             {
                 context.Response.StatusCode = 400;
                 return;
