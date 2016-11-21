@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader;
@@ -5,6 +6,7 @@ using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Tests.Server.Data.Repositories;
 using GraphQL.Conventions.Tests.Server.Schema.Types;
 using GraphQL.Conventions.Types;
+using GraphQL.Conventions.Types.Relay;
 
 namespace GraphQL.Conventions.Tests.Server
 {
@@ -30,6 +32,18 @@ namespace GraphQL.Conventions.Tests.Server
                 return Task.FromResult(result);
             }
             return new Task<T>(() => null);
+        }
+
+        public IEnumerable<INode> Search(string searchString)
+        {
+            foreach (var dto in _bookRepository.SearchForBooksByTitle(searchString))
+            {
+                yield return new Book(dto);
+            }
+            foreach (var dto in _authorRepository.SearchForAuthorsByLastName(searchString))
+            {
+                yield return new Author(dto);
+            }
         }
 
         public Task FetchData(CancellationToken token)

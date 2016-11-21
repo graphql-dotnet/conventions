@@ -46,7 +46,7 @@ namespace GraphQL.Conventions.Handlers
             if (argument.IsInjected)
             {
                 object obj;
-                var argumentType = argument.Type.AttributeProvider as TypeInfo;
+                var argumentType = (TypeInfo)argument.Type.AttributeProvider;
                 if (argumentType.AsType() == typeof(IResolutionContext))
                 {
                     obj = resolutionContext;

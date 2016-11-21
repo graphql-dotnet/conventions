@@ -1,13 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Attributes.MetaData;
 using GraphQL.Conventions.Attributes.MetaData.Relay;
-using GraphQL.Conventions.Tests.Server.Data.Repositories;
 using GraphQL.Conventions.Tests.Server.Schema.Types;
 using GraphQL.Conventions.Types;
 using GraphQL.Conventions.Types.Relay;
+using GraphQL.Conventions.Types.Relay.Extensions;
 
 namespace GraphQL.Conventions.Tests.Server.Schema
 {
@@ -34,38 +33,15 @@ namespace GraphQL.Conventions.Tests.Server.Schema
 
         [Description("Search for books and authors.")]
         public Connection<SearchResult> Search(
-            UserContext userContext,
-            [Inject] IBookRepository bookRepository,
-            [Inject] IAuthorRepository authorRepository,
-            [Description("Title or last name.")] NonNull<string> forString)
+            UserContext context,
+            [Description("Title or last name.")] NonNull<string> forString,
+            [Description("Only return search results after given cursor.")] Cursor? after,
+            [Description("Return the first N results.")] int? first)
         {
-            var results = new List<SearchResult>();
-
-            foreach (var book in bookRepository.SearchForBooksByTitle(forString.Value))
-            {
-                results.Add(new SearchResult { Instance = new Book(book) });
-            }
-            foreach (var author in authorRepository.SearchForAuthorsByLastName(forString.Value))
-            {
-                results.Add(new SearchResult { Instance = new Author(author) });
-            }
-
-            return new Connection<SearchResult>
-            {
-                TotalCount = results.Count,
-                PageInfo = new PageInfo
-                {
-                    HasNextPage = results.Count > 5,
-                    HasPreviousPage = false,
-                    StartCursor = Cursor.New<SearchResult>(1),
-                    EndCursor = Cursor.New<SearchResult>(Math.Min(5, Math.Max(1, results.Count)))
-                },
-                Edges = results.Take(5).Select((result, index) => new Edge<SearchResult>
-                {
-                    Cursor = Cursor.New<SearchResult>(index + 1),
-                    Node = result,
-                }),
-            };
+            return context
+                .Search(forString.Value)
+                .Select(node => new SearchResult {Instance = node})
+                .ToConnection(first ?? 5, after);
         }
     }
 }
