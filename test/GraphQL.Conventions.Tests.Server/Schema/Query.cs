@@ -13,6 +13,7 @@ namespace GraphQL.Conventions.Tests.Server.Schema
     [ImplementViewer(OperationType.Query)]
     public class Query
     {
+        [Description("Retrieve book/author by its globally unique ID.")]
         public Task<INode> Node(UserContext context, Id id) =>
             context.Get<INode>(id);
 
@@ -24,6 +25,7 @@ namespace GraphQL.Conventions.Tests.Server.Schema
         public IEnumerable<Task<Book>> Books(UserContext context, IEnumerable<Id> ids) =>
             ids.Select(context.Get<Book>);
 
+        [Description("Retrieve author by his/her globally unique ID.")]
         public Task<Author> Author(UserContext context, Id id) =>
             context.Get<Author>(id);
 
