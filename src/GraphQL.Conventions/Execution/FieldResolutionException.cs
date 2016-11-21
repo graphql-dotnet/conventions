@@ -6,8 +6,16 @@ namespace GraphQL.Conventions.Execution
     public class FieldResolutionException : Exception
     {
         public FieldResolutionException(Exception exception)
-            : base(exception.Message, ExtractException(exception))
+            : base(DeriveMessage(exception), ExtractException(exception.InnerException ?? exception))
         {
+        }
+
+        private static string DeriveMessage(Exception exception)
+        {
+            var innerException = ExtractException(exception.InnerException ?? exception);
+            return innerException != null && exception.Message != innerException.Message
+                ? $"{exception.Message.TrimEnd('.')}. {innerException.Message}"
+                : exception.Message;
         }
 
         private static Exception ExtractException(Exception exception)
