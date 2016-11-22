@@ -18,7 +18,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("{ test }")
-                .UseValidation(false)
+                .DisableValidation()
                 .Execute();
 
             result.Data.ShouldNotBeNull();
@@ -36,7 +36,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("{ test }")
-                .UseValidation(true)
+                .EnableValidation()
                 .Execute();
 
             result.Errors.ShouldNotBeNull();

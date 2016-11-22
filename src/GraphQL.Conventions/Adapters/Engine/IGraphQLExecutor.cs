@@ -24,7 +24,13 @@ namespace GraphQL.Conventions.Adapters.Engine
 
         IGraphQLExecutor<TResult> WithDependencyInjector(IDependencyInjector injector);
 
-        IGraphQLExecutor<TResult> UseValidation(bool useValidation = true);
+        IGraphQLExecutor<TResult> EnableValidation(bool enableValidation = true);
+
+        IGraphQLExecutor<TResult> DisableValidation();
+
+        IGraphQLExecutor<TResult> EnableProfiling(bool enableProfiling = true);
+
+        IGraphQLExecutor<TResult> DisableProfiling();
 
         Task<TResult> Execute();
     }

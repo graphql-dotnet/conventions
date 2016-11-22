@@ -10,6 +10,7 @@ using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Execution;
 using GraphQL.Http;
+using GraphQL.Instrumentation;
 using GraphQL.Types;
 using GraphQL.Utilities;
 using GraphQL.Validation;
@@ -44,13 +45,13 @@ namespace GraphQL.Conventions.Adapters.Engine
             }
         }
 
-        public GraphQLEngine(Func<Type, object> typeResolutionDelegate = null)
+        public GraphQLEngine(Func<System.Type, object> typeResolutionDelegate = null)
         {
             _constructor = new SchemaConstructor<ISchema, IGraphType>(_graphTypeAdapter, _typeResolver);
             _constructor.TypeResolutionDelegate = typeResolutionDelegate;
         }
 
-        public void BuildSchema(params Type[] schemaTypes)
+        public void BuildSchema(params System.Type[] schemaTypes)
         {
             _schema = _constructor.Build(schemaTypes);
             _schemaPrinter = new SchemaPrinter(_schema, new[] { TypeNames.Url, TypeNames.Uri, TypeNames.TimeSpan });
@@ -89,11 +90,12 @@ namespace GraphQL.Conventions.Adapters.Engine
             string operationName,
             Inputs inputs,
             IUserContext userContext,
-            bool useValidation = true,
+            bool enableValidation = true,
+            bool enableProfiling = false,
             IEnumerable<IValidationRule> rules = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (!useValidation)
+            if (!enableValidation)
             {
                 rules = new[] { new NoopValidationRule() };
             }
@@ -112,6 +114,11 @@ namespace GraphQL.Conventions.Adapters.Engine
             if (userContext is IDataLoaderContextProvider)
             {
                 configuration.Listeners.Add(new DataLoaderListener());
+            }
+
+            if (enableProfiling)
+            {
+                configuration.FieldMiddleware.Use<InstrumentFieldsMiddleware>();
             }
 
             var result = await _documentExecutor.ExecuteAsync(configuration).ConfigureAwait(false);

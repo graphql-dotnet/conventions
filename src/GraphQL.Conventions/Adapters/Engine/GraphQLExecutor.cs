@@ -26,7 +26,9 @@ namespace GraphQL.Conventions.Adapters.Engine
 
         private CancellationToken _cancellationToken = default(CancellationToken);
 
-        private bool _useValidation = true;
+        private bool _enableValidation = true;
+
+        private bool _enableProfiling = false;
 
         internal GraphQLExecutor(GraphQLEngine engine, IRequestDeserializer requestDeserializer)
         {
@@ -84,15 +86,36 @@ namespace GraphQL.Conventions.Adapters.Engine
             return this;
         }
 
-        public IGraphQLExecutor<ExecutionResult> UseValidation(bool useValidation = true)
+        public IGraphQLExecutor<ExecutionResult> EnableValidation(bool enableValidation = true)
         {
-            _useValidation = useValidation;
+            _enableValidation = enableValidation;
             return this;
+        }
+
+        public IGraphQLExecutor<ExecutionResult> DisableValidation()
+        {
+            return this.EnableValidation(false);
+        }
+
+        public IGraphQLExecutor<ExecutionResult> EnableProfiling(bool enableProfiling = true)
+        {
+            _enableProfiling = enableProfiling;
+            return this;
+        }
+
+        public IGraphQLExecutor<ExecutionResult> DisableProfiling()
+        {
+            return this.EnableProfiling(false);
         }
 
         public async Task<ExecutionResult> Execute() =>
             await _engine
-                .Execute(_rootObject, _queryString, _operationName, _inputs, _userContext, _useValidation, null, _cancellationToken)
+                .Execute(
+                    _rootObject, _queryString, _operationName, _inputs, _userContext,
+                    enableValidation: _enableValidation,
+                    enableProfiling: _enableProfiling,
+                    rules: null,
+                    cancellationToken: _cancellationToken)
                 .ConfigureAwait(false);
 
         public IValidationResult Validate() => _engine.Validate(_queryString);
