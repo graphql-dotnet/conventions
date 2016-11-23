@@ -12,7 +12,6 @@
     "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
     "Microsoft.Extensions.Configuration.Json": "1.0.0",
     "Microsoft.Extensions.Configuration.CommandLine": "1.0.0",
-    "GraphQL": { "target": "project" },
     "GraphQL.Conventions": { "target": "project" }
   },
 
