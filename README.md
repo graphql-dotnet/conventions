@@ -1,7 +1,7 @@
 GraphQL Conventions Library for .NET
 ====================================
 
-[![Build status](https://ci.appveyor.com/api/projects/status/a8oyaoubntd6ft9n/branch/master?svg=true)](https://ci.appveyor.com/project/tlil87/conventions/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/a8oyaoubntd6ft9n/branch/master?svg=true)](https://ci.appveyor.com/project/tlil87/conventions/branch/master) [![NuGet version](https://img.shields.io/nuget/v/GraphQL.Conventions.svg)](https://img.shields.io/nuget/v/GraphQL.Conventions.svg)
 
 ## Introduction
 [GraphQL .NET](https://www.github.com/graphql-dotnet/graphql-dotnet) has been around for a while. This library is a complementary layer on top that allows you to automatically wrap your .NET classes into GraphQL schema definitions using existing property getters and methods as field resolvers.
@@ -29,7 +29,7 @@ public class Query
     {
         return context
             .Search(forString.Value)
-            .Select(node => new SearchResult {Instance = node})
+            .Select(node => new SearchResult { Instance = node })
             .ToConnection(first ?? 5, after);
     }
 }

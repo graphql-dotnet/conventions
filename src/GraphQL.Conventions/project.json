@@ -1,12 +1,12 @@
 {
-  "version": "1.0.0-*",
+  "version": "1.0.1-*",
   "description": "GraphQL Conventions for .NET",
   "authors": [
     "Tommy Lillehagen"
   ],
   "packOptions": {
     "authors": [ "Tommy Lillehagen" ],
-    "summary": "GraphQL for .NET",
+    "summary": "GraphQL Conventions for .NET",
     "copyright": "Tommy Lillehagen, 2016-2017",
     "tags": [
       "GraphQL",
@@ -14,12 +14,12 @@
       "api"
     ],
     "projectUrl": "https://github.com/graphql-dotnet/conventions",
-    "licenseUrl": "https://github.com/graphql-dotnet/conventions/blob/master/LICENSE.md",
+    "licenseUrl": "https://raw.githubusercontent.com/graphql-dotnet/conventions/master/src/GraphQL.Conventions/LICENSE.md",
     "repository": {
       "type": "git",
       "url": "https://github.com/graphql-dotnet/conventions"
     }
-  },
+},
   "buildOptions": {
     "compile": [
         "**/*.cs"
@@ -27,7 +27,10 @@
     "debugType": "portable"
   },
   "dependencies": {
-    "GraphQL": { "target": "project" }
+    "GraphQL": {
+      "target": "project",
+      "type": "build"
+    }
   },
   "frameworks": {
     "netcoreapp1.0": {
