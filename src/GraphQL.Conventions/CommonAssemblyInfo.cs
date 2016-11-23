@@ -11,4 +11,5 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyFileVersion("1.0.1.0")]
 [assembly: AssemblyInformationalVersion("1.0.1.0")]
 [assembly: CLSCompliant(false)]
+
 [assembly: InternalsVisibleTo("GraphQL.Conventions.Tests")]

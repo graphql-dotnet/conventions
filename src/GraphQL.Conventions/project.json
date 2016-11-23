@@ -19,18 +19,23 @@
       "type": "git",
       "url": "https://github.com/graphql-dotnet/conventions"
     }
-},
+  },
   "buildOptions": {
-    "compile": [
-        "**/*.cs"
-    ],
+    "compile": {
+      "include": [
+        "**/*.cs",
+        "../../deps/graphql-dotnet/src/GraphQL/**/*.cs"
+      ],
+      "exclude": [
+        "../../deps/graphql-dotnet/src/GraphQL/bin/**",
+        "../../deps/graphql-dotnet/src/GraphQL/obj/**"
+      ]
+    },
     "debugType": "portable"
   },
   "dependencies": {
-    "GraphQL": {
-      "target": "project",
-      "type": "build"
-    }
+    "GraphQL-Parser": "2.0.0",
+    "Newtonsoft.Json": "9.0.1"
   },
   "frameworks": {
     "netcoreapp1.0": {
@@ -42,9 +47,11 @@
       },
       "imports": "dnxcore50"
     },
-    "netstandard1.6": {
+    "netstandard1.5": {
       "dependencies": {
-          "NETStandard.Library": "1.6.0"
+        "NETStandard.Library": "1.6.0",
+        "System.Reflection.Extensions": "4.3.0",
+        "System.Reflection.TypeExtensions": "4.1.0"
       },
       "imports": [
         "dnxcore50",
