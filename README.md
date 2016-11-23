@@ -29,7 +29,7 @@ public class Query
     {
         return context
             .Search(forString.Value)
-            .Select(node => new SearchResult {Instance = node})
+            .Select(node => new SearchResult { Instance = node })
             .ToConnection(first ?? 5, after);
     }
 }
