@@ -277,7 +277,9 @@ namespace GraphQL.Conventions.Types.Resolution
 
         private static bool IsValidMember(MemberInfo memberInfo)
         {
-            return memberInfo.DeclaringType.Namespace != nameof(System) &&
+            return memberInfo != null &&
+                   memberInfo.DeclaringType != null &&
+                   memberInfo.DeclaringType.Namespace != nameof(System) &&
                    !memberInfo.DeclaringType.Namespace.StartsWith($"{nameof(System)}.") &&
                    !memberInfo.DeclaringType.GetTypeInfo().IsValueType &&
                    memberInfo.Name != nameof(object.ToString) &&
