@@ -280,8 +280,8 @@ namespace GraphQL.Conventions.Types.Resolution
             return memberInfo != null &&
                    memberInfo.DeclaringType != null &&
                    memberInfo.DeclaringType.Namespace != nameof(System) &&
-                   !memberInfo.DeclaringType.Namespace.StartsWith($"{nameof(System)}.") &&
-                   !memberInfo.DeclaringType.GetTypeInfo().IsValueType &&
+                   !(memberInfo.DeclaringType.Namespace?.StartsWith($"{nameof(System)}.") ?? false) &&
+                   !(memberInfo.DeclaringType.GetTypeInfo()?.IsValueType ?? false) &&
                    memberInfo.Name != nameof(object.ToString) &&
                    HasValidReturnType(memberInfo);
         }
