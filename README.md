@@ -23,7 +23,6 @@ The following targets are available:
 
  * .NET Framework 4.5
  * .NET Platform Standard 1.5
- * .NET Core 1.0
 
 ## Getting Started
 
