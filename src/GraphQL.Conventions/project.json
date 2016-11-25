@@ -1,5 +1,5 @@
 {
-  "version": "1.0.2-*",
+  "version": "1.0.3-*",
   "description": "GraphQL Conventions for .NET",
   "authors": [
     "Tommy Lillehagen"
@@ -38,15 +38,6 @@
     "Newtonsoft.Json": "9.0.1"
   },
   "frameworks": {
-    "netcoreapp1.0": {
-      "dependencies": {
-        "Microsoft.NETCore.App": {
-          "type": "platform",
-          "version": "1.0.0"
-        }
-      },
-      "imports": "dnxcore50"
-    },
     "netstandard1.5": {
       "dependencies": {
         "NETStandard.Library": "1.6.0",
