@@ -31,7 +31,7 @@ namespace GraphQL.Conventions.Tests.Server
             var userContext = new UserContext();
             using (var streamReader = new StreamReader(context.Request.Body))
             {
-                var requestBody = streamReader.ReadToEnd();
+                var requestBody = await streamReader.ReadToEndAsync();
                 var result = await _engine
                     .NewExecutor()
                     .WithUserContext(userContext)
