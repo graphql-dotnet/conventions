@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using GraphQL.Conventions.Adapters.Engine;
+using GraphQL.Conventions.Attributes.MetaData;
 using GraphQL.Conventions.Tests.Adapters.Engine.Types;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
@@ -84,6 +85,32 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 score: Float!
             }
             union SearchResultItem = Movie | Actor
+            ");
+        }
+
+        [Fact]
+        public void Can_Construct_And_Describe_Schema_With_Enums()
+        {
+            var engine = new GraphQLEngine();
+            engine.BuildSchema(typeof(SchemaDefinition<QueryWithEnums>));
+            var schema = engine.Describe();
+            schema.ShouldEqualWhenReformatted(@"
+            schema {
+                query: QueryWithEnums
+            }
+            enum Enum1 {
+                OPTION1
+                OPTION2
+                OPTION3
+            }
+            type QueryWithEnums {
+                field1: Enum1!
+                field2: RenamedEnum
+            }
+            enum RenamedEnum {
+                SOME_VALUE1
+                SOME_VALUE2
+            }
             ");
         }
 
@@ -226,6 +253,27 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         {
             public Custom CustomScalarType(Custom arg) =>
                 new Custom { Value = $"WRAPPED:{arg.Value}" };
+        }
+
+        class QueryWithEnums
+        {
+            public Enum1 Field1 => Enum1.Option1;
+
+            public Enum2? Field2 => Enum2.SomeValue1;
+        }
+
+        enum Enum1
+        {
+            Option1,
+            Option2,
+            Option3,
+        }
+
+        [Name("RenamedEnum")]
+        enum Enum2
+        {
+            SomeValue1,
+            SomeValue2,
         }
     }
 }

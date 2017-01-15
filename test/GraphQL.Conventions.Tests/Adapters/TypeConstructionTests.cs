@@ -96,6 +96,27 @@ namespace GraphQL.Conventions.Tests.Adapters
             iface.PossibleTypes.ShouldContain(nameof(TypeImplementingInterfaces));
         }
 
+        [Fact]
+        public void Can_Derive_Type_Implementing_Multiple_Interfaces()
+        {
+            var typeResolver = new TypeResolver();
+            var type = Type<ObjectGraphType>(typeResolver.DeriveType<TypeImplementingTwoInterfaces>());
+
+            type.ShouldHaveFields(2);
+            type.ShouldHaveFieldWithName("field1");
+            type.ShouldHaveFieldWithName("field2");
+
+            type.Interfaces.Count().ShouldEqual(2);
+            type.Interfaces.ShouldContain(typeof(Extended.InterfaceGraphType<IInterface1>));
+            type.Interfaces.ShouldContain(typeof(Extended.InterfaceGraphType<IInterface2>));
+
+            var iface1 = Type<IInterfaceGraphType>(typeResolver.DeriveType<IInterface1>());
+            iface1.PossibleTypes.ShouldContain(nameof(TypeImplementingTwoInterfaces));
+
+            var iface2 = Type<IInterfaceGraphType>(typeResolver.DeriveType<IInterface2>());
+            iface2.PossibleTypes.ShouldContain(nameof(TypeImplementingTwoInterfaces));
+        }
+
         class OutputType
         {
         }
@@ -138,6 +159,23 @@ namespace GraphQL.Conventions.Tests.Adapters
             public int InterfaceField => 1;
 
             public int TypeField => 2;
+        }
+
+        interface IInterface1
+        {
+            int Field1 { get; }
+        }
+
+        interface IInterface2
+        {
+            int Field2 { get; }
+        }
+
+        class TypeImplementingTwoInterfaces : IInterface1, IInterface2
+        {
+            public int Field1 => 1;
+
+            public int Field2 => 2;
         }
     }
 }
