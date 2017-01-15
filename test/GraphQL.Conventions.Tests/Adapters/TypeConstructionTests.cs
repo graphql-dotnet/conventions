@@ -112,9 +112,11 @@ namespace GraphQL.Conventions.Tests.Adapters
 
             var iface1 = Type<IInterfaceGraphType>(typeResolver.DeriveType<IInterface1>());
             iface1.PossibleTypes.ShouldContain(nameof(TypeImplementingTwoInterfaces));
+            iface1.Name.ShouldEqual("IInterface1");
 
             var iface2 = Type<IInterfaceGraphType>(typeResolver.DeriveType<IInterface2>());
             iface2.PossibleTypes.ShouldContain(nameof(TypeImplementingTwoInterfaces));
+            iface2.Name.ShouldEqual("IInterface2");
         }
 
         class OutputType

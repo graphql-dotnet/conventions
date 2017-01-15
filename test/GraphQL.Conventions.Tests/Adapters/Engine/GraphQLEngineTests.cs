@@ -115,6 +115,32 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         }
 
         [Fact]
+        public void Can_Construct_And_Describe_Schema_With_Interfaces()
+        {
+            var engine = new GraphQLEngine();
+            engine.BuildSchema(typeof(SchemaDefinition<QueryWithInterfaces>));
+            var schema = engine.Describe();
+            schema.ShouldEqualWhenReformatted(@"
+            schema {
+                query: QueryWithInterfaces
+            }
+            interface Interface1 {
+                field1: String
+            }
+            interface Interface2 {
+                field2: String
+            }
+            type QueryWithInterfaces {
+                field: TypeFromTwoInterfaces
+            }
+            type TypeFromTwoInterfaces implements Interface1, Interface2 {
+                field1: String
+                field2: String
+            }
+            ");
+        }
+
+        [Fact]
         public async void Can_Register_And_Use_Custom_Scalar_Types()
         {
             var engine = new GraphQLEngine();
@@ -274,6 +300,28 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         {
             SomeValue1,
             SomeValue2,
+        }
+
+        class QueryWithInterfaces
+        {
+            public TypeFromTwoInterfaces Field => null;
+        }
+
+        interface Interface1
+        {
+            string Field1 { get; }
+        }
+
+        interface Interface2
+        {
+            string Field2 { get; }
+        }
+
+        class TypeFromTwoInterfaces : Interface1, Interface2
+        {
+            public string Field1 => string.Empty;
+
+            public string Field2 => string.Empty;
         }
     }
 }
