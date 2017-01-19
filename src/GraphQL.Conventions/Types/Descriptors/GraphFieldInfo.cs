@@ -23,5 +23,7 @@ namespace GraphQL.Conventions.Types.Descriptors
             new List<IExecutionFilterAttribute>();
 
         public bool IsMethod => AttributeProvider is MethodInfo;
+
+        public override string ToString() => $"{nameof(GraphFieldInfo)}:{Name}";
     }
 }

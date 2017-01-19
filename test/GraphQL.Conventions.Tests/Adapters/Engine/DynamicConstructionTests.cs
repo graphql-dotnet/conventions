@@ -16,7 +16,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
     public class DynamicConstructionTests : TestBase
     {
         [Fact]
-        public async Task Can_Construct_And_Describe_Schema_With_Dynamic_Queries()
+        public async void Can_Construct_And_Describe_Schema_With_Dynamic_Queries()
         {
             var typeAdapter = new GraphTypeAdapter();
             var typeResolver = new TypeResolver();
@@ -75,8 +75,9 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
 
             var executer = new DocumentExecuter();
             var result = await executer.ExecuteAsync(schema, null, "{ users { getUserById(id: \"1\") { id name } } }", null);
-            result.Errors.ShouldEqual(null);
-            JsonConvert.SerializeObject(result.Data).ShouldEqual("{\"users\":{\"getUserById\":{\"id\":\"1\",\"name\":\"User #1\"}}}");
+            result.ShouldHaveNoErrors();
+            result.Data.ShouldHaveFieldWithValue("users", "getUserById", "id", "1");
+            result.Data.ShouldHaveFieldWithValue("users", "getUserById", "name", "User #1");
         }
 
         private IGraphType GetGraphType(GraphTypeAdapter typeAdapter, TypeResolver typeResolver, TypeInfo typeInfo)

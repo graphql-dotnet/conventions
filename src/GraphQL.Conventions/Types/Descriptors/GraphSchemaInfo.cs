@@ -38,5 +38,7 @@ namespace GraphQL.Conventions.Types.Descriptors
             }
             return defaultValue;
         }
+
+        public override string ToString() => nameof(GraphSchemaInfo);
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader;
@@ -45,10 +46,34 @@ namespace GraphQL.Conventions.Adapters.Engine
             }
         }
 
+        private class WrappedDependencyInjector : IDependencyInjector
+        {
+            private readonly Func<System.Type, object> _typeResolutionDelegate;
+
+            public WrappedDependencyInjector(Func<System.Type, object> typeResolutionDelegate)
+            {
+                _typeResolutionDelegate = typeResolutionDelegate;
+            }
+
+            public object Resolve(System.Reflection.TypeInfo typeInfo)
+            {
+                return _typeResolutionDelegate(typeInfo.AsType());
+            }
+        }
+
         public GraphQLEngine(Func<System.Type, object> typeResolutionDelegate = null)
         {
             _constructor = new SchemaConstructor<ISchema, IGraphType>(_graphTypeAdapter, _typeResolver);
-            _constructor.TypeResolutionDelegate = typeResolutionDelegate;
+            if (typeResolutionDelegate != null)
+            {
+                _typeResolver.DependencyInjector = new WrappedDependencyInjector(typeResolutionDelegate);
+                _constructor.TypeResolutionDelegate = typeResolutionDelegate;
+            }
+            else
+            {
+                _constructor.TypeResolutionDelegate = type =>
+                    _typeResolver?.DependencyInjector?.Resolve(type.GetTypeInfo()) ?? Activator.CreateInstance(type);
+            }
         }
 
         public void BuildSchema(params System.Type[] schemaTypes)
