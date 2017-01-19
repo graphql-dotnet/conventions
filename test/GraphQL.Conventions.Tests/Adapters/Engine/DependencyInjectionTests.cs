@@ -1,11 +1,10 @@
-using System;
-using System.Collections.Generic;
+using System.Reflection;
 using GraphQL.Conventions.Adapters.Engine;
 using GraphQL.Conventions.Attributes.MetaData;
-using GraphQL.Conventions.Tests.Adapters.Engine.Types;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Types;
+using GraphQL.Conventions.Types.Resolution;
 using Xunit;
 
 namespace GraphQL.Conventions.Tests.Adapters.Engine
@@ -33,17 +32,44 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("{ field }")
-                .EnableValidation()
+                .WithDependencyInjector(new DependencyInjector())
                 .Execute();
 
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("field", "Some Value");
         }
 
-        // TODO DI for constructors and params
-        // TODO Id<> and Cursor<> wrappers
-        // TODO Connection<> extensions
-        // TODO What about [NotNull]?
+        [Fact]
+        public void Can_Construct_And_Describe_Schema_With_Injections_In_Generic_Methods()
+        {
+            var engine = new GraphQLEngine();
+            engine.BuildSchema(typeof(SchemaDefinition<QueryWithDIFields>));
+            var schema = engine.Describe();
+            schema.ShouldEqualWhenReformatted(@"
+            schema {
+              query: QueryWithDIFields
+
+            }
+            type QueryWithDIFields {
+              withDependency: Int!
+            }
+            ");
+        }
+
+        [Fact]
+        public async void Can_Execute_Query_On_Schema_With_Injections_In_Generic_Methods()
+        {
+            var engine = new GraphQLEngine();
+            engine.BuildSchema(typeof(SchemaDefinition<QueryWithDIFields>));
+            var result = await engine
+                .NewExecutor()
+                .WithQueryString("{ withDependency }")
+                .WithDependencyInjector(new DependencyInjector())
+                .Execute();
+
+            result.ShouldHaveNoErrors();
+            result.Data.ShouldHaveFieldWithValue("withDependency", 3);
+        }
 
         class Query
         {
@@ -67,6 +93,37 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             public string GetValue()
             {
                 return "Some Value";
+            }
+        }
+
+        class QueryWithDIFields
+        {
+            public int WithDependency([Inject] IDependency d) => d.Get(3);
+        }
+
+        interface IDependency
+        {
+            T Get<T>(T value);
+        }
+
+        class Dependency : IDependency
+        {
+            public T Get<T>(T value) => value;
+        }
+
+        class DependencyInjector : IDependencyInjector
+        {
+            public object Resolve(TypeInfo typeInfo)
+            {
+                if (typeInfo.AsType() == typeof(Query))
+                {
+                    return new Query(new Repository());
+                }
+                if (typeInfo.AsType() == typeof(IDependency))
+                {
+                    return new Dependency();
+                }
+                return null;
             }
         }
     }

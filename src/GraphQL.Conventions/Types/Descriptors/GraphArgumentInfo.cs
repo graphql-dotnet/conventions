@@ -18,5 +18,7 @@ namespace GraphQL.Conventions.Types.Descriptors
             new List<IExecutionFilterAttribute>();
 
         public bool IsInjected { get; set; }
+
+        public override string ToString() => $"{nameof(GraphArgumentInfo)}:{Name}";
     }
 }

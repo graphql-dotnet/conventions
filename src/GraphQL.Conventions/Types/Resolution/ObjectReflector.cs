@@ -54,7 +54,7 @@ namespace GraphQL.Conventions.Types.Resolution
             schemaInfo.Subscription = subscriptionField != null
                 ? GetType(subscriptionField.PropertyType.GetTypeInfo())
                 : null;
-            schemaInfo.Types.AddRange(_typeCache.Entities);
+            schemaInfo.Types.AddRange(_typeCache.Entities.Where(t => IsValidType(t.GetTypeRepresentation())));
 
             return schemaInfo;
         }
@@ -73,12 +73,21 @@ namespace GraphQL.Conventions.Types.Resolution
                 return type;
             }
 
-            var isInjectedType = type.TypeRepresentation.AsType() == typeof(IResolutionContext);
+            if (typeInfo.IsGenericParameter || typeInfo.ContainsGenericParameters)
+            {
+                type.IsIgnored = true;
+                return type;
+            }
+
+            var isInjectedType =
+                type.TypeRepresentation.AsType() == typeof(IResolutionContext) ||
+                type.TypeRepresentation.AsType() == typeof(IUserContext);
 
             if (!type.IsEnumerationType &&
                 !type.IsScalarType &&
                 !type.IsInterfaceType &&
                 !type.IsUnionType &&
+                !type.IsIgnored &&
                 !isInjectedType)
             {
                 DeriveInterfaces(type);
@@ -93,14 +102,14 @@ namespace GraphQL.Conventions.Types.Resolution
 
             _metaDataHandler.DeriveMetaData(type, GetTypeInfo(typeInfo));
 
-            if (type.IsInterfaceType && !isInjectedType)
+            if (type.IsInterfaceType && !type.IsIgnored && !isInjectedType)
             {
                 var iface = type.GetTypeRepresentation();
                 var types = iface.Assembly.GetTypes().Where(t => iface.IsAssignableFrom(t));
                 foreach (var t in types)
                 {
                     var ti = t.GetTypeInfo();
-                    if (!ti.IsInterface)
+                    if (!ti.IsInterface && IsValidType(ti))
                     {
                         GetType(ti);
                     }
@@ -190,6 +199,10 @@ namespace GraphQL.Conventions.Types.Resolution
                 .Select(DeriveArgument)
                 ?? new GraphArgumentInfo[0])
             {
+                if (argument.IsInjected)
+                {
+                    argument.Type.IsIgnored = true;
+                }
                 yield return argument;
             }
         }
@@ -272,7 +285,9 @@ namespace GraphQL.Conventions.Types.Resolution
         private static bool IsValidType(TypeInfo typeInfo)
         {
             return typeInfo.Namespace != nameof(System) &&
-                   !typeInfo.Namespace.StartsWith($"{nameof(System)}.");
+                   !typeInfo.Namespace.StartsWith($"{nameof(System)}.") &&
+                   !typeInfo.ContainsGenericParameters &&
+                   !typeInfo.IsGenericType;
         }
 
         private static bool IsValidMember(MemberInfo memberInfo)

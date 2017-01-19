@@ -17,12 +17,20 @@ namespace GraphQL.Conventions.Adapters
 
         public ISchema DeriveSchema(GraphSchemaInfo schemaInfo)
         {
-            foreach (var type in schemaInfo.Types)
+            var types = schemaInfo
+                .Types
+                .Where(t => !t.IsIgnored && !t.Interfaces.Any(iface => iface.IsIgnored))
+                .ToList();
+            foreach (var type in types)
             {
                 DeriveType(type);
             }
-            var interfaces = schemaInfo.Types.Where(t => !t.IsIgnored && t.IsInterfaceType && t.PossibleTypes.Any());
-            var possibleTypes = interfaces.SelectMany(t => t.PossibleTypes).Distinct();
+            var interfaces = types
+                .Where(t => t.IsInterfaceType && t.PossibleTypes.Any());
+            var possibleTypes = interfaces
+                .Where(t => !t.IsIgnored)
+                .SelectMany(t => t.PossibleTypes)
+                .Distinct();
             var schema = new Schema(DeriveTypeFromTypeInfo)
             {
                 Query = DeriveOperationType(schemaInfo.Query),
@@ -178,6 +186,10 @@ namespace GraphQL.Conventions.Adapters
         {
             var typeParameter = typeInfo.GetTypeRepresentation();
             var type = CreateTypeInstance<TReturnType>(template.MakeGenericType(typeParameter.AsType()));
+            if (type == null)
+            {
+                return default(TReturnType);
+            }
             type.Name = typeInfo.Name;
             type.Description = typeInfo.Description;
             type.DeprecationReason = typeInfo.DeprecationReason;
@@ -197,6 +209,10 @@ namespace GraphQL.Conventions.Adapters
         private IGraphType ConstructInterfaceType(GraphTypeInfo typeInfo)
         {
             var graphType = ConstructType<IInterfaceGraphType>(typeof(Types.InterfaceGraphType<>), typeInfo);
+            if (typeInfo.IsIgnored)
+            {
+                return WrapNonNullableType(typeInfo, graphType);
+            }
             foreach (var possibleType in typeInfo.PossibleTypes.Select(t => DeriveType(t) as IObjectGraphType))
             {
                 graphType.AddPossibleType(possibleType);

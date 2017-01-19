@@ -86,6 +86,8 @@ namespace GraphQL.Conventions.Types.Descriptors
             AddPossibleType(typeInfo);
         }
 
+        public override string ToString() => $"{nameof(GraphTypeInfo)}:{Name}";
+
         private void DeriveMetaData()
         {
             var type = TypeRepresentation;
