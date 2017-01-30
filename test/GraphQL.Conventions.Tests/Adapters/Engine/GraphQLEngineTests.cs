@@ -20,30 +20,30 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
             schema {
-              query: BasicQuery
+                query: BasicQuery
             }
             type BasicQuery {
-              booleanField1: Boolean
-              booleanField2: Boolean!
-              dateField1: Date
-              dateField2: Date!
-              doubleField1: Float
-              doubleField2: Float!
-              floatField1: Float
-              floatField2: Float!
-              fooField1: Foo
-              fooField2: Foo!
-              intField1: Int
-              intField2: Int!
-              stringField1: String
-              stringField2: String!
-              timeSpanField1: TimeSpan
-              timeSpanField2: TimeSpan!
-              urlField1: URL
-              urlField2: URL!
+                booleanField1: Boolean
+                booleanField2: Boolean!
+                dateField1: Date
+                dateField2: Date!
+                doubleField1: Float
+                doubleField2: Float!
+                floatField1: Float
+                floatField2: Float!
+                fooField1: Foo
+                fooField2: Foo!
+                intField1: Int
+                intField2: Int!
+                stringField1: String
+                stringField2: String!
+                timeSpanField1: TimeSpan
+                timeSpanField2: TimeSpan!
+                urlField1: URL
+                urlField2: URL!
             }
             type Foo {
-              id: ID!
+                id: ID!
             }
             ");
         }
@@ -56,29 +56,29 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
             type Actor {
-              dateOfBirth: Date
-              firstName: String
-              lastName: String!
+                dateOfBirth: Date
+                firstName: String
+                lastName: String!
             }
             type ExtendedVersion implements ISemanticVersion {
-              branchName: String!
-              majorVersion: Int!
-              minorVersion: Int!
-              revision: Int!
+                branchName: String!
+                majorVersion: Int!
+                minorVersion: Int!
+                revision: Int!
             }
             interface ISemanticVersion {
-              majorVersion: Int!
-              minorVersion: Int!
-              revision: Int!
+                majorVersion: Int!
+                minorVersion: Int!
+                revision: Int!
             }
             type Movie {
-              actors: [Actor]
-              releaseDate: Date
-              title: String!
+                actors: [Actor]
+                releaseDate: Date
+                title: String!
             }
             type Query {
-              search(searchFor: String!): [SearchResult]
-              version(branchName: String): ISemanticVersion
+                search(searchFor: String!): [SearchResult]
+                version(branchName: String): ISemanticVersion
             }
             type SearchResult {
                 node: SearchResultItem

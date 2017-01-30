@@ -176,13 +176,23 @@ namespace GraphQL.Conventions.Types.Resolution
 
         private IEnumerable<GraphFieldInfo> GetFields(TypeInfo typeInfo)
         {
+            var implementedProperties = typeInfo
+                .ImplementedInterfaces
+                .SelectMany(iface => iface.GetProperties(DefaultBindingFlags));
+
             var properties = typeInfo
                 .GetProperties(DefaultBindingFlags)
+                .Union(implementedProperties)
                 .Where(IsValidMember)
                 .Where(propertyInfo => !propertyInfo.IsSpecialName);
 
+            var implementedMethods = typeInfo
+                .ImplementedInterfaces
+                .SelectMany(iface => iface.GetMethods(DefaultBindingFlags));
+
             return typeInfo
                 .GetMethods(DefaultBindingFlags)
+                .Union(implementedMethods)
                 .Where(IsValidMember)
                 .Where(methodInfo => !methodInfo.IsSpecialName)
                 .Cast<MemberInfo>()
