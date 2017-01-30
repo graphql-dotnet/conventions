@@ -19,7 +19,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
             type Query {
-              field: String
+                field: String
             }
             ");
         }
@@ -47,11 +47,10 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
             schema {
-              query: QueryWithDIFields
-
+                query: QueryWithDIFields
             }
             type QueryWithDIFields {
-              withDependency: Int!
+                withDependency: Int!
             }
             ");
         }

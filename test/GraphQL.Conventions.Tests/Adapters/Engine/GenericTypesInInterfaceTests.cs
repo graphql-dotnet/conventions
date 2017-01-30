@@ -1,4 +1,3 @@
-using System;
 using GraphQL.Conventions.Adapters.Engine;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
@@ -7,46 +6,57 @@ using Xunit;
 
 namespace GraphQL.Conventions.Tests.Adapters.Engine
 {
-    public class AbstractTypeConstructionTests : TestBase
+    public class GenericTypesInInterfaceTests : TestBase
     {
         [Fact]
-        public void Can_Construct_And_Describe_Schema_From_Abstract_Types()
+        public void Can_Construct_And_Describe_Schema_Using_Interfaces_With_Generic_Types()
         {
             var engine = new GraphQLEngine();
             engine.BuildSchema(typeof(SchemaDefinition<Query>));
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
+            type Account implements IAccount {
+                id: Int!
+            }
+            interface IAccount {
+                id: Int!
+            }
             type Query {
-                commonField: Date!
-                someOtherField: String
+                account: IAccount
             }
             ");
         }
 
         [Fact]
-        public async void Can_Execute_Query_On_Schema_From_Abstract_Types()
+        public async void Can_Execute_Query_On_Schema_Using_Interfaces_With_Generic_Types()
         {
             var engine = new GraphQLEngine();
             engine.BuildSchema(typeof(SchemaDefinition<Query>));
             var result = await engine
                 .NewExecutor()
-                .WithQueryString("{ commonField someOtherField }")
+                .WithQueryString("{ account { id } }")
                 .EnableValidation()
                 .Execute();
 
             result.ShouldHaveNoErrors();
-            result.Data.ShouldHaveFieldWithValue("commonField", default(DateTime));
-            result.Data.ShouldHaveFieldWithValue("someOtherField", string.Empty);
+            result.Data.ShouldHaveFieldWithValue("account", "id", 123);
         }
 
-        abstract class EntityQuery<T>
+        interface IEntity<T>
         {
-            public T CommonField => default(T);
+            T Id { get; }
         }
 
-        class Query : EntityQuery<DateTime>
+        interface IAccount : IEntity<int> { }
+
+        class Account : IAccount
         {
-            public string SomeOtherField => string.Empty;
+            public int Id { get; } = 123;
+        }
+
+        class Query
+        {
+            public IAccount Account { get; } = new Account();
         }
     }
 }
