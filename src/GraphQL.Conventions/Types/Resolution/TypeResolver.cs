@@ -76,11 +76,13 @@ namespace GraphQL.Conventions.Types.Resolution
             RegisterScalarType<double>(TypeNames.Float);
             RegisterScalarType<decimal>(TypeNames.Float);
             RegisterScalarType<DateTime>(TypeNames.Date);
+            RegisterScalarType<DateTimeOffset>(TypeNames.Date);
             RegisterScalarType<TimeSpan>(TypeNames.TimeSpan);
             RegisterScalarType<Id>(TypeNames.Id);
             RegisterScalarType<Cursor>(TypeNames.Cursor);
             RegisterScalarType<Url>(TypeNames.Url);
             RegisterScalarType<Uri>(TypeNames.Uri);
+            RegisterScalarType<Guid>(TypeNames.String);
         }
     }
 }
