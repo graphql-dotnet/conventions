@@ -28,6 +28,11 @@ namespace GraphQL.Conventions.Tests.Templates.Extensions
             Assert.Equal(expected, actual);
         }
 
+        public static void ShouldNotEqual<T>(this T actual, T expected)
+        {
+            Assert.NotEqual(expected, actual);
+        }
+
         public static void ShouldBeGreaterThan(this int actual, int lowerBound)
         {
             Assert.True(actual > lowerBound);
@@ -51,6 +56,11 @@ namespace GraphQL.Conventions.Tests.Templates.Extensions
         public static void ShouldBeEmpty(this string actual)
         {
             Assert.Equal(0, actual?.Length ?? 0);
+        }
+
+        public static void ShouldBeFalse(this bool actual, string message)
+        {
+            Assert.False(actual, message);
         }
 
         public static void ShouldContain<T>(this IEnumerable<T> collection, T element)

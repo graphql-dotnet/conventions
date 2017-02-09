@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Adapters.Engine.Utilities;
 using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Validation;
 
-namespace GraphQL.Conventions.Adapters.Engine
+namespace GraphQL.Conventions
 {
     public class GraphQLExecutor : IGraphQLExecutor<ExecutionResult>
     {

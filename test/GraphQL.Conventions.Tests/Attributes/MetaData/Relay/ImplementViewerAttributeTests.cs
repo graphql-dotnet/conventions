@@ -1,9 +1,7 @@
 using System.Threading.Tasks;
-using GraphQL.Conventions.Adapters.Engine;
-using GraphQL.Conventions.Attributes.MetaData.Relay;
+using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
-using GraphQL.Conventions.Types;
 using Xunit;
 
 namespace GraphQL.Conventions.Tests.Attributes.MetaData.Relay
@@ -106,22 +104,20 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData.Relay
         {
             if (includeMutations)
             {
-                var engine = new GraphQLEngine();
-                engine.BuildSchema(
-                    typeof(SchemaDefinition<Query1, Mutation1>),
-                    typeof(SchemaDefinition<Query2, Mutation2>));
+                var engine = GraphQLEngine
+                    .New()
+                    .WithQueryAndMutation<Query1, Mutation1>()
+                    .WithQueryAndMutation<Query2, Mutation2>();
                 return engine.Describe();
             }
             else
             {
-                var engine = new GraphQLEngine();
+                var engine = GraphQLEngine
+                    .New()
+                    .WithQuery<Query1>();
                 if (useMultiple)
                 {
-                    engine.BuildSchema(typeof(SchemaDefinition<Query1>), typeof(SchemaDefinition<Query2>));
-                }
-                else
-                {
-                    engine.BuildSchema(typeof(SchemaDefinition<Query1>));
+                    engine.WithQuery<Query2>();
                 }
                 return engine.Describe();
             }

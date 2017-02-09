@@ -1,6 +1,6 @@
 using GraphQL.Conventions.Adapters.Types.Extensions;
 using GraphQL.Conventions.Types.Descriptors;
-using GraphQL.Conventions.Types.Relay;
+using GraphQL.Conventions.Relay;
 using GraphQL.Language.AST;
 using GraphQL.Types;
 

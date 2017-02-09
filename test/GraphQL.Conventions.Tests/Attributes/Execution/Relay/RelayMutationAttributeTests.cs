@@ -1,11 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Adapters.Engine;
-using GraphQL.Conventions.Attributes.Execution.Relay;
+using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
-using GraphQL.Conventions.Types;
-using GraphQL.Conventions.Types.Relay;
 using Xunit;
 
 namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
@@ -15,7 +12,7 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
         [Fact]
         public async void Can_Pass_On_ClientMutationId_For_Relay_Nullable_Mutations()
         {
-            var result = await ExecuteQuery(@"
+            var result = await ExecuteMutation(@"
                 mutation _ {
                     doSomething(input: { clientMutationId: ""some-mutation-id-1"", action: ADD }) {
                         clientMutationId
@@ -30,7 +27,7 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
         [Fact]
         public async void Can_Pass_On_ClientMutationId_For_Relay_NonNullable_Mutations()
         {
-            var result = await ExecuteQuery(@"
+            var result = await ExecuteMutation(@"
                 mutation _ {
                     nonNullableDoSomething(input: { clientMutationId: ""some-mutation-id-2"", action: REMOVE }) {
                         clientMutationId
@@ -45,7 +42,7 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
         [Fact]
         public async void Can_Pass_On_ClientMutationId_For_Relay_Task_Mutations()
         {
-            var result = await ExecuteQuery(@"
+            var result = await ExecuteMutation(@"
                 mutation _ {
                     taskDoSomething(input: { clientMutationId: ""some-mutation-id-3"", action: UPDATE }) {
                         clientMutationId
@@ -57,10 +54,11 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
             result.Data.ShouldHaveFieldWithValue("taskDoSomething", "wasSuccessful", true);
         }
 
-        private async Task<ExecutionResult> ExecuteQuery(string query, Dictionary<string, object> inputs = null)
+        private async Task<ExecutionResult> ExecuteMutation(string query, Dictionary<string, object> inputs = null)
         {
-            var engine = new GraphQLEngine();
-            engine.BuildSchema(typeof(SchemaDefinitionWithMutation<Mutation>));
+            var engine = GraphQLEngine
+                .New()
+                .WithMutation<Mutation>();
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(query)

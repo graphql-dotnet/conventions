@@ -1,6 +1,4 @@
-using GraphQL.Conventions.Attributes.MetaData;
-
-namespace GraphQL.Conventions.Types.Relay
+namespace GraphQL.Conventions.Relay
 {
     [Description("An edge in a connection between two objects.")]
     public class Edge<T>

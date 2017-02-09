@@ -1,11 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Adapters.Engine;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
-using GraphQL.Conventions.Types;
-using GraphQL.Conventions.Types.Relay;
+using GraphQL.Conventions.Relay;
 using Xunit;
 
 namespace GraphQL.Conventions.Tests.Adapters
@@ -387,8 +385,7 @@ namespace GraphQL.Conventions.Tests.Adapters
 
         private async Task<ExecutionResult> ExecuteQuery(string query)
         {
-            var engine = new GraphQLEngine();
-            engine.BuildSchema(typeof(SchemaDefinition<Query>));
+            var engine = GraphQLEngine.New<Query>();
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(query)

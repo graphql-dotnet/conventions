@@ -1,7 +1,7 @@
 using System.Threading;
 using GraphQL.Conventions.Types.Descriptors;
 
-namespace GraphQL.Conventions.Execution
+namespace GraphQL.Conventions
 {
     public interface IResolutionContext
     {

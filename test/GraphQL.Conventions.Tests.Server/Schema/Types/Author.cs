@@ -1,7 +1,5 @@
-using GraphQL.Conventions.Attributes.MetaData;
+using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Tests.Server.Data;
-using GraphQL.Conventions.Types;
-using GraphQL.Conventions.Types.Relay;
 
 namespace GraphQL.Conventions.Tests.Server.Schema.Types
 {

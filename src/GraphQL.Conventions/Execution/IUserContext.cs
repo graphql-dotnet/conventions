@@ -1,4 +1,4 @@
-namespace GraphQL.Conventions.Execution
+namespace GraphQL.Conventions
 {
     public interface IUserContext
     {

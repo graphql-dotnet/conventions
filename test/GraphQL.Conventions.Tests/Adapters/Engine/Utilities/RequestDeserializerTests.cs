@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using GraphQL.Conventions.Adapters.Engine.Utilities;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using Newtonsoft.Json;

@@ -1,4 +1,4 @@
-namespace GraphQL.Conventions.Attributes.MetaData.Relay
+namespace GraphQL.Conventions.Relay
 {
     public enum OperationType
     {

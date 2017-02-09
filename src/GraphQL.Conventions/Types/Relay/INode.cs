@@ -1,4 +1,4 @@
-namespace GraphQL.Conventions.Types.Relay
+namespace GraphQL.Conventions.Relay
 {
     public interface INode
     {

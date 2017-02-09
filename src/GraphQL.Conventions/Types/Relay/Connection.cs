@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using GraphQL.Conventions.Attributes.MetaData;
 
-namespace GraphQL.Conventions.Types.Relay
+namespace GraphQL.Conventions.Relay
 {
     [Description("Connection to related objects with relevant pagination information.")]
     public class Connection<T>
@@ -12,7 +11,7 @@ namespace GraphQL.Conventions.Types.Relay
             "client to fetch the first five objects by passing \"5\" as the argument to first, then fetch " +
             "the total count so it could display \"5 of 83\", for example. In cases where we employ infinite " +
             "scrolling or don't have an exact count of entries, this field will return `null`.")]
-        public int? TotalCount { get; set; }
+        public virtual int? TotalCount { get; set; }
 
         [Description("Information to aid in pagination.")]
         public NonNull<PageInfo> PageInfo { get; set; }
@@ -26,6 +25,7 @@ namespace GraphQL.Conventions.Types.Relay
             "is needed, this field can be used instead. Note that when clients like Relay need to fetch the " +
             "`cursor` field on the edge to enable efficient pagination, this shortcut cannot be used, and " +
             "the full `{ edges { node } }` version should be used instead.")]
-        public IEnumerable<T> Items => Edges?.Select(edge => edge != null ? edge.Node : default(T));
+        public IEnumerable<T> Items => Edges?
+            .Select(edge => edge != null ? edge.Node : default(T));
     }
 }

@@ -1,12 +1,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader;
-using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Tests.Server.Data.Repositories;
 using GraphQL.Conventions.Tests.Server.Schema.Types;
-using GraphQL.Conventions.Types;
-using GraphQL.Conventions.Types.Relay;
+using GraphQL.Conventions.Relay;
 
 namespace GraphQL.Conventions.Tests.Server
 {

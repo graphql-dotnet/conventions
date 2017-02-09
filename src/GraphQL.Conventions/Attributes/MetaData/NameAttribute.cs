@@ -2,13 +2,14 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using GraphQL.Conventions.Attributes;
 using GraphQL.Conventions.Attributes.Collectors;
 using GraphQL.Conventions.Attributes.MetaData.Utilities;
 using GraphQL.Conventions.Types;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
 
-namespace GraphQL.Conventions.Attributes.MetaData
+namespace GraphQL.Conventions
 {
     [AttributeUsage(Everywhere, AllowMultiple = true, Inherited = true)]
     public class NameAttribute : MetaDataAttributeBase, IDefaultAttribute

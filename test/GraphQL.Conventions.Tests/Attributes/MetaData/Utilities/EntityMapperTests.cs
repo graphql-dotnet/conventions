@@ -8,7 +8,7 @@ using Xunit;
 
 namespace GraphQL.Conventions.Tests.Attributes.MetaData.Utilities
 {
-    public class EntotyMapperTests : TestBase
+    public class EntityMapperTests : TestBase
     {
         [Fact]
         public void Can_Map_Arguments()

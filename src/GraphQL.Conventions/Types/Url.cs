@@ -1,6 +1,6 @@
 using System;
 
-namespace GraphQL.Conventions.Types
+namespace GraphQL.Conventions
 {
     public class Url : Uri
     {
