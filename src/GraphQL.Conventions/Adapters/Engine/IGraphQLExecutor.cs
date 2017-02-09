@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Types.Resolution;
 
-namespace GraphQL.Conventions.Adapters.Engine
+namespace GraphQL.Conventions
 {
     public interface IGraphQLExecutor<TResult>
     {

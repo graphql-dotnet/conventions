@@ -1,9 +1,7 @@
-using System.IO;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using GraphQL.Conventions.Adapters.Engine;
-using GraphQL.Conventions.Types.Resolution;
 
 namespace GraphQL.Conventions.Tests.Server
 {

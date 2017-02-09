@@ -1,9 +1,10 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using GraphQL.Conventions.Attributes;
 using GraphQL.Conventions.Types.Descriptors;
 
-namespace GraphQL.Conventions.Attributes.MetaData.Relay
+namespace GraphQL.Conventions.Relay
 {
     [AttributeUsage(Types, AllowMultiple = true, Inherited = true)]
     public class ImplementViewerAttribute : MetaDataAttributeBase

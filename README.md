@@ -58,9 +58,9 @@ public class Query
 Construct your schema and run your query:
 
 ```cs
-var engine = new GraphQLEngine()
-    .BuildSchema(typeof(SchemaDefinition<Query>));
+using GraphQL.Conventions;
 
+var engine = GraphQLEngine.New<Query>();
 var result = await engine
     .NewExecutor()
     .WithUserContext(userContext)

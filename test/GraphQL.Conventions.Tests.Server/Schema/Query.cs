@@ -1,12 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Attributes.MetaData;
-using GraphQL.Conventions.Attributes.MetaData.Relay;
+using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Tests.Server.Schema.Types;
-using GraphQL.Conventions.Types;
-using GraphQL.Conventions.Types.Relay;
-using GraphQL.Conventions.Types.Relay.Extensions;
 
 namespace GraphQL.Conventions.Tests.Server.Schema
 {

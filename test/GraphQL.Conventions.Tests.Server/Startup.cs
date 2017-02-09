@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using GraphQL.Conventions.Types;
 using GraphQL.Conventions.Tests.Server.Data.Repositories;
 
 namespace GraphQL.Conventions.Tests.Server

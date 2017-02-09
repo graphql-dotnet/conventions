@@ -1,6 +1,4 @@
-using GraphQL.Conventions.Attributes.MetaData;
-using GraphQL.Conventions.Types;
-using GraphQL.Conventions.Types.Relay;
+using GraphQL.Conventions.Relay;
 
 namespace GraphQL.Conventions.Tests.Server.Schema.Input
 {

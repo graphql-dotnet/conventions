@@ -1,7 +1,7 @@
 using System;
 using GraphQL.Conventions.Attributes.MetaData.Utilities;
 
-namespace GraphQL.Conventions.Types
+namespace GraphQL.Conventions
 {
     public struct Id
         : IComparable, IComparable<Id>, IEquatable<Id>
@@ -24,13 +24,13 @@ namespace GraphQL.Conventions.Types
             _unencodedIdentifier = serializeUsingColon ?? SerializeUsingColon
                 ? $"{typeName}:{identifier}"
                 : $"{typeName}{identifier}";
-            _encodedIdentifier = Utilities.Identifier.Encode(_unencodedIdentifier);
+            _encodedIdentifier = Types.Utilities.Identifier.Encode(_unencodedIdentifier);
         }
 
         public Id(string encodedIdentifier)
         {
             _encodedIdentifier = encodedIdentifier;
-            _unencodedIdentifier = Utilities.Identifier.Decode(encodedIdentifier);
+            _unencodedIdentifier = Types.Utilities.Identifier.Decode(encodedIdentifier);
             if (string.IsNullOrWhiteSpace(_unencodedIdentifier))
             {
                 throw new ArgumentException($"Unable to decode identifier '{encodedIdentifier}'.");
@@ -47,7 +47,7 @@ namespace GraphQL.Conventions.Types
             other is Id ? CompareTo((Id)other) : -1;
 
         public int CompareTo(Id other) =>
-            Utilities.Identifier.Compare(_unencodedIdentifier, other._unencodedIdentifier);
+            Types.Utilities.Identifier.Compare(_unencodedIdentifier, other._unencodedIdentifier);
 
         public override int GetHashCode() =>
             _encodedIdentifier.GetHashCode();

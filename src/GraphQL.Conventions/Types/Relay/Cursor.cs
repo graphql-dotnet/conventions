@@ -1,8 +1,7 @@
 using System;
 using System.Linq;
-using GraphQL.Conventions.Attributes.MetaData;
 
-namespace GraphQL.Conventions.Types.Relay
+namespace GraphQL.Conventions.Relay
 {
     [Description("Cursor used in pagination.")]
     public struct Cursor
@@ -57,6 +56,18 @@ namespace GraphQL.Conventions.Types.Relay
 
         public string CursorForType<TType>() =>
             CursorForType(typeof(TType));
+
+        public int? IntegerForCursor<TType>()
+        {
+            int intVal;
+            return int.TryParse(CursorForType(typeof(TType)), out intVal) ? intVal : (int?)null;
+        }
+
+        public long? LongForCursor<TType>()
+        {
+            long intVal;
+            return long.TryParse(CursorForType(typeof(TType)), out intVal) ? intVal : (long?)null;
+        }
 
         public static Cursor New(Type type, string index, bool? serializeUsingColon = null) =>
             new Cursor(type, index, serializeUsingColon);

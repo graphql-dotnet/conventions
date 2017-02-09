@@ -1,10 +1,6 @@
 using System.Reflection;
-using GraphQL.Conventions.Adapters.Engine;
-using GraphQL.Conventions.Attributes.MetaData;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
-using GraphQL.Conventions.Types;
-using GraphQL.Conventions.Types.Resolution;
 using Xunit;
 
 namespace GraphQL.Conventions.Tests.Adapters.Engine
@@ -14,8 +10,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         [Fact]
         public void Can_Construct_And_Describe_Schema_With_Injections()
         {
-            var engine = new GraphQLEngine();
-            engine.BuildSchema(typeof(SchemaDefinition<Query>));
+            var engine = GraphQLEngine.New<Query>();
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
             type Query {
@@ -27,8 +22,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         [Fact]
         public async void Can_Execute_Query_On_Schema_With_Injections()
         {
-            var engine = new GraphQLEngine();
-            engine.BuildSchema(typeof(SchemaDefinition<Query>));
+            var engine = GraphQLEngine.New<Query>();
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("{ field }")
@@ -42,8 +36,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         [Fact]
         public void Can_Construct_And_Describe_Schema_With_Injections_In_Generic_Methods()
         {
-            var engine = new GraphQLEngine();
-            engine.BuildSchema(typeof(SchemaDefinition<QueryWithDIFields>));
+            var engine = GraphQLEngine.New<QueryWithDIFields>();
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
             schema {
@@ -58,8 +51,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         [Fact]
         public async void Can_Execute_Query_On_Schema_With_Injections_In_Generic_Methods()
         {
-            var engine = new GraphQLEngine();
-            engine.BuildSchema(typeof(SchemaDefinition<QueryWithDIFields>));
+            var engine = GraphQLEngine.New<QueryWithDIFields>();
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("{ withDependency }")

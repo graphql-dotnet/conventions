@@ -1,6 +1,5 @@
 using System;
 using GraphQL.Conventions.Adapters.Types;
-using GraphQL.Conventions.Types;
 using GraphQL.Conventions.Types.Utilities;
 using GraphQL.Language.AST;
 using Xunit;

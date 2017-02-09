@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using GraphQL.Conventions.Attributes.MetaData;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using Xunit;

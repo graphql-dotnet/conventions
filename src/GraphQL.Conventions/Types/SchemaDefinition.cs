@@ -1,4 +1,4 @@
-namespace GraphQL.Conventions.Types
+namespace GraphQL.Conventions
 {
     public class SchemaDefinition<TQuery>
     {

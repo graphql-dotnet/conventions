@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using GraphQL.Conventions.Adapters;
 using GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader;
-using GraphQL.Conventions.Adapters.Engine.Utilities;
 using GraphQL.Conventions.Builders;
 using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Types.Descriptors;
@@ -16,7 +16,7 @@ using GraphQL.Types;
 using GraphQL.Utilities;
 using GraphQL.Validation;
 
-namespace GraphQL.Conventions.Adapters.Engine
+namespace GraphQL.Conventions
 {
     public class GraphQLEngine
     {
@@ -37,6 +37,8 @@ namespace GraphQL.Conventions.Adapters.Engine
         private SchemaPrinter _schemaPrinter;
 
         private ISchema _schema;
+
+        private List<System.Type> _schemaTypes = new List<System.Type>();
 
         private class NoopValidationRule : IValidationRule
         {
@@ -76,26 +78,80 @@ namespace GraphQL.Conventions.Adapters.Engine
             }
         }
 
-        public void BuildSchema(params System.Type[] schemaTypes)
+        public static GraphQLEngine New(Func<System.Type, object> typeResolutionDelegate = null)
         {
-            _schema = _constructor.Build(schemaTypes);
-            _schemaPrinter = new SchemaPrinter(_schema, new[] { TypeNames.Url, TypeNames.Uri, TypeNames.TimeSpan });
+            return new GraphQLEngine(typeResolutionDelegate);
+        }
+
+        public static GraphQLEngine New<TQuery>(Func<System.Type, object> typeResolutionDelegate = null)
+        {
+            return New(typeResolutionDelegate)
+                .WithQuery<TQuery>()
+                .BuildSchema();
+        }
+
+        public static GraphQLEngine New<TQuery, TMutation>(Func<System.Type, object> typeResolutionDelegate = null)
+        {
+            return New(typeResolutionDelegate)
+                .WithQueryAndMutation<TQuery, TMutation>()
+                .BuildSchema();
+        }
+
+        public GraphQLEngine WithQuery<TQuery>()
+        {
+            _schemaTypes.Add(typeof(SchemaDefinition<TQuery>));
+            return this;
+        }
+
+        public GraphQLEngine WithMutation<TMutation>()
+        {
+            _schemaTypes.Add(typeof(SchemaDefinitionWithMutation<TMutation>));
+            return this;
+        }
+
+        public GraphQLEngine WithQueryAndMutation<TQuery, TMutation>()
+        {
+            _schemaTypes.Add(typeof(SchemaDefinition<TQuery, TMutation>));
+            return this;
+        }
+
+        public GraphQLEngine WithSubscription<TSubscription>()
+        {
+            _schemaTypes.Add(typeof(SchemaDefinitionWithSubscription<TSubscription>));
+            return this;
+        }
+
+        public GraphQLEngine BuildSchema(params System.Type[] types)
+        {
+            if (_schema == null)
+            {
+                if (types.Length > 0)
+                {
+                    _schemaTypes.AddRange(types);
+                }
+                _schema = _constructor.Build(_schemaTypes.ToArray());
+                _schemaPrinter = new SchemaPrinter(_schema, new[] { TypeNames.Url, TypeNames.Uri, TypeNames.TimeSpan });
+            }
+            return this;
         }
 
         public string Describe()
         {
+            BuildSchema(); // Ensure that the schema has been constructed
             return _schemaPrinter.Print();
         }
 
         public GraphQLExecutor NewExecutor(IRequestDeserializer requestDeserializer = null)
         {
+            BuildSchema(); // Ensure that the schema has been constructed
             return new GraphQLExecutor(this, requestDeserializer ?? new RequestDeserializer());
         }
 
-        public void RegisterScalarType<TType, TGraphType>(string name = null)
+        public GraphQLEngine RegisterScalarType<TType, TGraphType>(string name = null)
         {
             _typeResolver.RegisterScalarType<TType>(name ?? typeof(TType).Name);
             _graphTypeAdapter.RegisterScalarType<TGraphType>(name ?? typeof(TType).Name);
+            return this;
         }
 
         public string SerializeResult(ExecutionResult result)

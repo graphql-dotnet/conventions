@@ -4,7 +4,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace GraphQL.Conventions.Adapters.Engine.Utilities
+namespace GraphQL.Conventions
 {
     public class RequestDeserializer : IRequestDeserializer
     {

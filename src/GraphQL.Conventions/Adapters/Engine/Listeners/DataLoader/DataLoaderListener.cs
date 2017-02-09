@@ -4,7 +4,7 @@ using GraphQL.Execution;
 
 namespace GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader
 {
-    public class DataLoaderListener : DocumentExecutionListenerBase<IDataLoaderContextProvider>
+    class DataLoaderListener : DocumentExecutionListenerBase<IDataLoaderContextProvider>
     {
         public override async Task BeforeExecutionAwaitedAsync(
             IDataLoaderContextProvider userContext,

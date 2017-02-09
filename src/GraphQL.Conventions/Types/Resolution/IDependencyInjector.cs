@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace GraphQL.Conventions.Types.Resolution
+namespace GraphQL.Conventions
 {
     public interface IDependencyInjector
     {

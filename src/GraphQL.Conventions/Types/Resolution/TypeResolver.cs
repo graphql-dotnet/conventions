@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using GraphQL.Conventions.Types.Descriptors;
-using GraphQL.Conventions.Types.Relay;
+using GraphQL.Conventions.Relay;
 
 namespace GraphQL.Conventions.Types.Resolution
 {

@@ -1,6 +1,4 @@
-using GraphQL.Conventions.Attributes.MetaData;
-
-namespace GraphQL.Conventions.Types.Relay
+namespace GraphQL.Conventions.Relay
 {
     [InputType]
     public interface IRelayMutationInputObject

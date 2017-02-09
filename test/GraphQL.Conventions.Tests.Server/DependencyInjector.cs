@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Reflection;
-using GraphQL.Conventions.Types.Resolution;
 
 namespace GraphQL.Conventions.Tests.Server
 {

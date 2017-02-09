@@ -1,6 +1,4 @@
-using GraphQL.Conventions.Attributes.MetaData;
-
-namespace GraphQL.Conventions.Types.Relay
+namespace GraphQL.Conventions.Relay
 {
     [Description("Information about pagination in a connection.")]
     public class PageInfo

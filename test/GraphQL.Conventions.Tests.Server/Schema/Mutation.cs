@@ -1,7 +1,5 @@
 using System.Linq;
-using GraphQL.Conventions.Attributes.Execution.Relay;
-using GraphQL.Conventions.Attributes.MetaData;
-using GraphQL.Conventions.Attributes.MetaData.Relay;
+using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Tests.Server.Data;
 using GraphQL.Conventions.Tests.Server.Data.Repositories;
 using GraphQL.Conventions.Tests.Server.Schema.Input;

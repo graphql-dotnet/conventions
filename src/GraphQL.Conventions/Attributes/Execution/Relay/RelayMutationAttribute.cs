@@ -1,8 +1,9 @@
 using System.Threading.Tasks;
+using GraphQL.Conventions.Attributes;
 using GraphQL.Conventions.Execution;
-using GraphQL.Conventions.Types.Relay;
+using GraphQL.Conventions.Relay;
 
-namespace GraphQL.Conventions.Attributes.Execution.Relay
+namespace GraphQL.Conventions.Relay
 {
     public class RelayMutationAttribute : ExecutionFilterAttributeBase
     {

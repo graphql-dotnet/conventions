@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using GraphQL.Conventions.Adapters.Engine;
-using GraphQL.Conventions.Attributes.MetaData;
 using GraphQL.Conventions.Tests.Adapters.Engine.Types;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
-using GraphQL.Conventions.Types;
 using Xunit;
 
 namespace GraphQL.Conventions.Tests.Adapters.Engine
@@ -15,8 +12,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         [Fact]
         public void Can_Construct_And_Describe_Basic_Schema()
         {
-            var engine = new GraphQLEngine();
-            engine.BuildSchema(typeof(SchemaDefinition<BasicQuery>));
+            var engine = GraphQLEngine.New<BasicQuery>();
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
             schema {
@@ -51,8 +47,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         [Fact]
         public void Can_Construct_And_Describe_Polymorphic_Schema()
         {
-            var engine = new GraphQLEngine();
-            engine.BuildSchema(typeof(SchemaDefinition<Query>));
+            var engine = GraphQLEngine.New<Query>();
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
             type Actor {
@@ -91,8 +86,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         [Fact]
         public void Can_Construct_And_Describe_Schema_With_Enums()
         {
-            var engine = new GraphQLEngine();
-            engine.BuildSchema(typeof(SchemaDefinition<QueryWithEnums>));
+            var engine = GraphQLEngine.New<QueryWithEnums>();
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
             schema {
@@ -117,8 +111,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         [Fact]
         public void Can_Construct_And_Describe_Schema_With_Interfaces()
         {
-            var engine = new GraphQLEngine();
-            engine.BuildSchema(typeof(SchemaDefinition<QueryWithInterfaces>));
+            var engine = GraphQLEngine.New<QueryWithInterfaces>();
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
             schema {
@@ -143,9 +136,10 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         [Fact]
         public async void Can_Register_And_Use_Custom_Scalar_Types()
         {
-            var engine = new GraphQLEngine();
-            engine.RegisterScalarType<Custom, CustomGraphType>();
-            engine.BuildSchema(typeof(SchemaDefinition<CustomTypesQuery>));
+            var engine = GraphQLEngine
+                .New()
+                .RegisterScalarType<Custom, CustomGraphType>()
+                .WithQuery<CustomTypesQuery>();
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(@"{ customScalarType(arg:""CUSTOM:Test"") }")

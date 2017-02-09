@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader
+namespace GraphQL.Conventions
 {
     public interface IDataLoaderContextProvider
     {

@@ -2,13 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Adapters.Engine;
-using GraphQL.Conventions.Attributes.MetaData;
-using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
-using GraphQL.Conventions.Types;
-using GraphQL.Conventions.Types.Resolution;
 using Xunit;
 
 namespace GraphQL.Conventions.Tests.Adapters
@@ -653,8 +648,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         private async Task<ExecutionResult> ExecuteQuery(
             string query, Dictionary<string, object> inputs = null, IUserContext userContext = null)
         {
-            var engine = new GraphQLEngine();
-            engine.BuildSchema(typeof(SchemaDefinition<Query>));
+            var engine = GraphQLEngine.New<Query>();
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(query)

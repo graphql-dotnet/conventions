@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace GraphQL.Conventions.Adapters.Engine.Utilities
+namespace GraphQL.Conventions
 {
     public class QueryInput
     {
