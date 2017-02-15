@@ -36,15 +36,20 @@ namespace GraphQL.Conventions.Builders
             Build(typeof(TSchema).GetTypeInfo());
 
         public TSchemaType Build(params Type[] schemaTypes) =>
-            Build(schemaTypes.Select(type => type.GetTypeInfo()).ToArray());
+            Build(schemaTypes?.Select(type => type.GetTypeInfo()).ToArray());
 
         public TSchemaType Build(params TypeInfo[] schemaTypes)
         {
-            var schemaInfos = schemaTypes
+            var schemaInfos = schemaTypes?
                 .Select(_typeResolver.DeriveSchema)
-                .ToList();
+                .ToList() ?? new List<GraphSchemaInfo>();
 
             var schemaInfo = schemaInfos.FirstOrDefault();
+            if (schemaInfo == null)
+            {
+                return null;
+            }
+
             schemaInfo.TypeResolutionDelegate = TypeResolutionDelegate;
 
             foreach (var additionalSchemaInfo in schemaInfos.Skip(1))

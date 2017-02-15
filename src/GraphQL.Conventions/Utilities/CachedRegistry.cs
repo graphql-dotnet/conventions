@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GraphQL.Conventions.Utilities
+namespace GraphQL.Conventions
 {
-    public class CachedRegistry<TKey, TValue>
+    class CachedRegistry<TKey, TValue>
     {
         private object _lock = new object();
 
