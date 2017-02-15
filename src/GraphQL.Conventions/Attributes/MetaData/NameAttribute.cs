@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using GraphQL.Conventions.Attributes;
 using GraphQL.Conventions.Attributes.Collectors;
 using GraphQL.Conventions.Attributes.MetaData.Utilities;
-using GraphQL.Conventions.Types;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
 

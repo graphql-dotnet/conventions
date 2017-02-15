@@ -2,11 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Handlers;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
-using GraphQL.Conventions.Utilities;
 
 namespace GraphQL.Conventions.Types.Resolution
 {

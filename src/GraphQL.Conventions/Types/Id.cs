@@ -25,6 +25,14 @@ namespace GraphQL.Conventions
                 ? $"{typeName}:{identifier}"
                 : $"{typeName}{identifier}";
             _encodedIdentifier = Types.Utilities.Identifier.Encode(_unencodedIdentifier);
+            if (string.IsNullOrWhiteSpace(identifier))
+            {
+                throw new ArgumentException($"Invalid blank identifier '{_unencodedIdentifier}'.");
+            }
+            if (string.IsNullOrWhiteSpace(_unencodedIdentifier))
+            {
+                throw new ArgumentException($"Unable to encode identifier '{_unencodedIdentifier}'.");
+            }
         }
 
         public Id(string encodedIdentifier)
@@ -56,7 +64,9 @@ namespace GraphQL.Conventions
             _encodedIdentifier;
 
         public bool IsIdentifierForType(Type type) =>
-            _unencodedIdentifier.StartsWith(GetTypeName(type));
+            _unencodedIdentifier.Contains(":")
+            ? _unencodedIdentifier.StartsWith(GetTypeName(type) + ":")
+            : _unencodedIdentifier.StartsWith(GetTypeName(type));
 
         public bool IsIdentifierForType<TType>() =>
             IsIdentifierForType(typeof(TType));
@@ -69,7 +79,12 @@ namespace GraphQL.Conventions
                 throw new ArgumentException(
                     $"Expected identifier of type '{typeName}' (unencoded identifier '{_unencodedIdentifier}').");
             }
-            return _unencodedIdentifier.Remove(0, typeName.Length).TrimStart(':');
+            var underlyingIdentifier = _unencodedIdentifier.Remove(0, typeName.Length).TrimStart(':');
+            if (string.IsNullOrWhiteSpace(underlyingIdentifier))
+            {
+                throw new ArgumentException($"Invalid blank identifier '{_unencodedIdentifier}'.");
+            }
+            return underlyingIdentifier;
         }
 
         public string IdentifierForType<TType>() =>
