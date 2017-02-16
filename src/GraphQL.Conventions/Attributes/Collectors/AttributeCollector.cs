@@ -5,6 +5,11 @@ using System.Reflection;
 
 namespace GraphQL.Conventions.Attributes.Collectors
 {
+    public class AttributeCollector
+    {
+        public static Type ApplicationType { get; set; }
+    }
+
     public class AttributeCollector<TAttribute>
         where TAttribute : IAttribute
     {
@@ -48,6 +53,10 @@ namespace GraphQL.Conventions.Attributes.Collectors
         public AttributeCollector()
         {
             DiscoverDefaultAttributes();
+            if (AttributeCollector.ApplicationType != null)
+            {
+                DiscoverDefaultAttributes(AttributeCollector.ApplicationType);
+            }
         }
 
         public List<TAttribute> CollectAttributes(ICustomAttributeProvider obj)
@@ -60,6 +69,10 @@ namespace GraphQL.Conventions.Attributes.Collectors
 
         protected void AddDefaultAttributes(params TAttribute[] defaultAttributes)
         {
+            if (_defaultAttributes == null)
+            {
+                _defaultAttributes = new List<TAttribute>();
+            }
             _defaultAttributes.AddRange(defaultAttributes);
         }
 
@@ -81,11 +94,12 @@ namespace GraphQL.Conventions.Attributes.Collectors
             }
 
             var assembly = assemblyType.GetTypeInfo().Assembly;
-            _defaultAttributes = assembly
+            var defaultAttributes = assembly
                 .GetTypes()
                 .Where(type => IsDefaultAttribute(type) && IsTAttribute(type))
                 .Select(type => (TAttribute)Activator.CreateInstance(type))
-                .ToList();
+                .ToArray();
+            AddDefaultAttributes(defaultAttributes);
         }
 
         private void DiscoverDefaultAttributes()

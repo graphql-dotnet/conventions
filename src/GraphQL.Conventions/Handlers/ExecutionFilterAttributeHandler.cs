@@ -47,11 +47,13 @@ namespace GraphQL.Conventions.Handlers
             {
                 object obj;
                 var argumentType = (TypeInfo)argument.Type.AttributeProvider;
-                if (argumentType.AsType() == typeof(IResolutionContext))
+                if (argumentType.AsType() == typeof(IResolutionContext) ||
+                    argumentType.ImplementedInterfaces.Any(iface => iface == typeof(IResolutionContext)))
                 {
                     obj = resolutionContext;
                 }
-                else if (argumentType.AsType() == typeof(IUserContext))
+                else if (argumentType.AsType() == typeof(IUserContext) ||
+                    argumentType.ImplementedInterfaces.Any(iface => iface == typeof(IUserContext)))
                 {
                     obj = resolutionContext.UserContext;
                 }

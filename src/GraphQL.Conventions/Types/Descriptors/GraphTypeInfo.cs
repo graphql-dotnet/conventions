@@ -50,7 +50,7 @@ namespace GraphQL.Conventions.Types.Descriptors
 
         public List<GraphTypeInfo> PossibleTypes => _possibleTypes;
 
-        public List<GraphTypeInfo> UnionTypes => PossibleTypes;
+        public List<GraphTypeInfo> UnionTypes => IsUnionType ? PossibleTypes : new List<GraphTypeInfo>();
 
         public List<GraphFieldInfo> Fields { get; internal set; } = new List<GraphFieldInfo>();
 
