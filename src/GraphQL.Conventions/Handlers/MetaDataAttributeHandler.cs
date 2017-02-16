@@ -15,6 +15,12 @@ namespace GraphQL.Conventions.Handlers
         private readonly AttributeCollector<IExecutionFilterAttribute> _executionFilterCollector =
             new AttributeCollector<IExecutionFilterAttribute>();
 
+        public bool HasAttribute<T>(ICustomAttributeProvider obj)
+        {
+            var attributes = _collector.CollectAttributes(obj);
+            return attributes.Any(attr => attr.GetType() == typeof(T));
+        }
+
         public void DeriveMetaData(GraphEntityInfo entity, ICustomAttributeProvider obj)
         {
             var attributes = _collector.CollectAttributes(obj);

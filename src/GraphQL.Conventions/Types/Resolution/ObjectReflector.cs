@@ -57,7 +57,7 @@ namespace GraphQL.Conventions.Types.Resolution
             return schemaInfo;
         }
 
-        public GraphTypeInfo GetType(TypeInfo typeInfo)
+        public GraphTypeInfo GetType(TypeInfo typeInfo, bool isInjected = false)
         {
             var type = _typeCache.GetEntity(typeInfo);
             if (type != null)
@@ -68,6 +68,12 @@ namespace GraphQL.Conventions.Types.Resolution
             type = _typeCache.AddEntity(typeInfo, new GraphTypeInfo(_typeResolver, typeInfo));
             if (type.IsPrimitive && !type.IsEnumerationType)
             {
+                return type;
+            }
+
+            if (isInjected)
+            {
+                type.IsIgnored = true;
                 return type;
             }
 
@@ -256,22 +262,30 @@ namespace GraphQL.Conventions.Types.Resolution
             var parameterType = parameterInfo.ParameterType;
             var parameterTypeInfo = parameterType.GetTypeInfo();
             var argument = new GraphArgumentInfo(_typeResolver, parameterInfo);
-            if (parameterType == typeof(object))
+
+            if (_metaDataHandler.HasAttribute<InjectAttribute>(parameterInfo))
             {
-                throw new ArgumentException($"Cannot construct argument '{parameterInfo.Name}' of type 'object'; invalid type.");
+                argument.Type = GetType(parameterTypeInfo, true);
+                argument.IsInjected = true;
+            }
+            else if (parameterType == typeof(object))
+            {
+                argument.Type = GetType(parameterTypeInfo, true);
+                argument.IsInjected = true;
             }
             else if (parameterTypeInfo.GetInterfaces().Any(iface => iface == typeof(IUserContext)))
             {
-                argument.Type = GetType(typeof(IUserContext).GetTypeInfo());
+                argument.Type = GetType(parameterTypeInfo, true);
+                argument.IsInjected = true;
+            }
+            else if (parameterType == typeof(IResolutionContext))
+            {
+                argument.Type = GetType(parameterTypeInfo, true);
                 argument.IsInjected = true;
             }
             else
             {
-                argument.Type = GetType(parameterInfo.ParameterType.GetTypeInfo());
-            }
-            if (argument.Type.TypeRepresentation.AsType() == typeof(IResolutionContext))
-            {
-                argument.IsInjected = true;
+                argument.Type = GetType(parameterTypeInfo);
             }
             argument.DefaultValue = parameterInfo.HasDefaultValue ? parameterInfo.DefaultValue : null;
             _metaDataHandler.DeriveMetaData(argument, parameterInfo);

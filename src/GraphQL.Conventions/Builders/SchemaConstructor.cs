@@ -36,7 +36,7 @@ namespace GraphQL.Conventions.Builders
             Build(typeof(TSchema).GetTypeInfo());
 
         public TSchemaType Build(params Type[] schemaTypes) =>
-            Build(schemaTypes?.Select(type => type.GetTypeInfo()).ToArray());
+            Build(schemaTypes?.Select(type => type?.GetTypeInfo()).ToArray());
 
         public TSchemaType Build(params TypeInfo[] schemaTypes)
         {
@@ -56,7 +56,7 @@ namespace GraphQL.Conventions.Builders
             {
                 if (schemaInfo.Query != null)
                 {
-                    schemaInfo.Query.Fields.AddRange(RemoveDuplicateViewers(additionalSchemaInfo.Query.Fields));
+                    schemaInfo.Query.Fields.AddRange(RemoveDuplicateViewers(additionalSchemaInfo.Query?.Fields));
                     schemaInfo.Query.Fields = schemaInfo.Query.Fields.OrderBy(f => f.Name).ToList();
                 }
                 else
@@ -66,7 +66,7 @@ namespace GraphQL.Conventions.Builders
 
                 if (schemaInfo.Mutation != null)
                 {
-                    schemaInfo.Mutation.Fields.AddRange(RemoveDuplicateViewers(additionalSchemaInfo.Mutation.Fields));
+                    schemaInfo.Mutation.Fields.AddRange(RemoveDuplicateViewers(additionalSchemaInfo.Mutation?.Fields));
                     schemaInfo.Mutation.Fields = schemaInfo.Mutation.Fields.OrderBy(f => f.Name).ToList();
                 }
                 else
@@ -76,7 +76,7 @@ namespace GraphQL.Conventions.Builders
 
                 if (schemaInfo.Subscription != null)
                 {
-                    schemaInfo.Subscription.Fields.AddRange(RemoveDuplicateViewers(additionalSchemaInfo.Subscription.Fields));
+                    schemaInfo.Subscription.Fields.AddRange(RemoveDuplicateViewers(additionalSchemaInfo.Subscription?.Fields));
                     schemaInfo.Subscription.Fields = schemaInfo.Subscription.Fields.OrderBy(f => f.Name).ToList();
                 }
                 else
@@ -117,7 +117,7 @@ namespace GraphQL.Conventions.Builders
                 typeof(ImplementViewerAttribute.SubscriptionViewerReferrer),
             };
 
-            foreach (var field in fields)
+            foreach (var field in fields ?? new List<GraphFieldInfo>())
             {
                 if (field.Name == "viewer" &&
                     registeredViewerClasses.Contains(field.DeclaringType.TypeRepresentation.AsType()))

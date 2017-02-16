@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -50,16 +51,19 @@ namespace GraphQL.Conventions
 
         private class WrappedDependencyInjector : IDependencyInjector
         {
+            private readonly GraphQLEngine _engine;
+
             private readonly Func<System.Type, object> _typeResolutionDelegate;
 
-            public WrappedDependencyInjector(Func<System.Type, object> typeResolutionDelegate)
+            public WrappedDependencyInjector(GraphQLEngine engine, Func<System.Type, object> typeResolutionDelegate)
             {
+                _engine = engine;
                 _typeResolutionDelegate = typeResolutionDelegate;
             }
 
             public object Resolve(System.Reflection.TypeInfo typeInfo)
             {
-                return _typeResolutionDelegate(typeInfo.AsType());
+                return _typeResolutionDelegate(typeInfo.AsType()) ?? _engine.CreateInstance(typeInfo.AsType());
             }
         }
 
@@ -68,13 +72,13 @@ namespace GraphQL.Conventions
             _constructor = new SchemaConstructor<ISchema, IGraphType>(_graphTypeAdapter, _typeResolver);
             if (typeResolutionDelegate != null)
             {
-                _typeResolver.DependencyInjector = new WrappedDependencyInjector(typeResolutionDelegate);
-                _constructor.TypeResolutionDelegate = typeResolutionDelegate;
+                _typeResolver.DependencyInjector = new WrappedDependencyInjector(this, typeResolutionDelegate);
+                _constructor.TypeResolutionDelegate = type => typeResolutionDelegate(type) ?? CreateInstance(type);
             }
             else
             {
                 _constructor.TypeResolutionDelegate = type =>
-                    _typeResolver?.DependencyInjector?.Resolve(type.GetTypeInfo()) ?? Activator.CreateInstance(type);
+                    _typeResolver?.DependencyInjector?.Resolve(type.GetTypeInfo()) ?? CreateInstance(type);
             }
         }
 
@@ -227,6 +231,30 @@ namespace GraphQL.Conventions
         {
             var document = _documentBuilder.Build(queryString);
             return _documentValidator.Validate(queryString, _schema, document);
+        }
+
+        private object CreateInstance(System.Type type)
+        {
+            var typeInfo = type.GetTypeInfo();
+            if (!typeInfo.IsAbstract && !typeInfo.ContainsGenericParameters)
+            {
+                var ctors = typeInfo.GetConstructors().ToList();
+                if (ctors.All(ctor => ctor.GetParameters().Any()))
+                {
+                    var ctor = ctors.FirstOrDefault();
+                    if (ctor == null)
+                    {
+                        return null;
+                    }
+                    var parameters = ctor.GetParameters();
+                    var parameterValues = parameters
+                        .Select(parameter => _constructor.TypeResolutionDelegate(parameter.ParameterType))
+                        .ToArray();
+                    return ctor.Invoke(parameterValues);
+                }
+            }
+
+            return Activator.CreateInstance(type);
         }
     }
 }

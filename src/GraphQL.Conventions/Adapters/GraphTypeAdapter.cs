@@ -9,15 +9,12 @@ namespace GraphQL.Conventions.Adapters
 {
     public class GraphTypeAdapter : IGraphTypeAdapter<ISchema, IGraphType>
     {
-        public static ILogger Logger { get; set; }
-
         private readonly CachedRegistry<Type, IGraphType> _typeDescriptors = new CachedRegistry<Type, IGraphType>();
 
         private readonly Dictionary<string, Type> _registeredScalarTypes = new Dictionary<string, Type>();
 
         public ISchema DeriveSchema(GraphSchemaInfo schemaInfo)
         {
-            Logger?.Trace($"Deriving Schema(Query={schemaInfo?.Query?.Name}, Mutation={schemaInfo?.Mutation?.Name})");
             var types = schemaInfo
                 .Types
                 .Where(t => !t.IsIgnored && !t.Interfaces.Any(iface => iface.IsIgnored))
@@ -27,11 +24,14 @@ namespace GraphQL.Conventions.Adapters
                 DeriveType(type);
             }
             var interfaces = types
-                .Where(t => t.IsInterfaceType && t.PossibleTypes.Any());
+                .Where(t => t.IsInterfaceType && !t.IsInputType && t.PossibleTypes.Any())
+                .GroupBy(t => t.Name)
+                .Select(g => g.First());
             var possibleTypes = interfaces
                 .Where(t => !t.IsIgnored)
                 .SelectMany(t => t.PossibleTypes)
-                .Distinct();
+                .GroupBy(t => t.Name)
+                .Select(g => g.First());
             var schema = new Schema(DeriveTypeFromTypeInfo)
             {
                 Query = DeriveOperationType(schemaInfo.Query),
@@ -47,7 +47,6 @@ namespace GraphQL.Conventions.Adapters
 
         public IGraphType DeriveType(GraphTypeInfo typeInfo)
         {
-            Logger?.Trace($"Deriving Type={typeInfo?.Name}");
             var primitiveType = GetPrimitiveType(typeInfo);
             var graphType = primitiveType != null
                 ? WrapNonNullableType(typeInfo, Activator.CreateInstance(primitiveType) as GraphType)
@@ -57,7 +56,6 @@ namespace GraphQL.Conventions.Adapters
 
         public void RegisterScalarType<TType>(string name)
         {
-            Logger?.Trace($"Registering Scalar(Name={name}, Type={typeof(TType).Name}");
             _registeredScalarTypes.Add(name, typeof(TType));
         }
 
@@ -66,10 +64,8 @@ namespace GraphQL.Conventions.Adapters
             var graphType = _typeDescriptors.GetEntity(type);
             if (graphType != null)
             {
-                Logger?.Trace($"Deriving representation for Type={type?.Name}");
                 return graphType;
             }
-            Logger?.Trace($"Instantiating representation for Type={type?.Name}");
             return (IGraphType)Activator.CreateInstance(type);
         }
 
@@ -80,7 +76,6 @@ namespace GraphQL.Conventions.Adapters
 
         private FieldType DeriveField(GraphFieldInfo fieldInfo)
         {
-            Logger?.Trace($"Deriving Field={fieldInfo?.Name}");
             return new FieldType
             {
                 Name = fieldInfo.Name,
@@ -95,7 +90,6 @@ namespace GraphQL.Conventions.Adapters
 
         private QueryArgument DeriveArgument(GraphArgumentInfo argumentInfo)
         {
-            Logger?.Trace($"Deriving Field={argumentInfo?.Name}");
             return new QueryArgument(GetType(argumentInfo.Type))
             {
                 Name = argumentInfo.Name,
@@ -132,13 +126,11 @@ namespace GraphQL.Conventions.Adapters
                     return typeof(Types.UriGraphType);
                 default:
                     Type type;
-                    Logger?.Trace($"Deriving PrimitiveType={typeInfo?.Name}");
                     if (!string.IsNullOrWhiteSpace(typeInfo.Name) &&
                         _registeredScalarTypes.TryGetValue(typeInfo.Name, out type))
                     {
                         return type;
                     }
-                    Logger?.Warning($"Failed deriving PrimitiveType={typeInfo?.Name}");
                     return null;
             }
         }
@@ -147,32 +139,26 @@ namespace GraphQL.Conventions.Adapters
         {
             if (typeInfo.IsInterfaceType)
             {
-                Logger?.Trace($"Constructing InterfaceType={typeInfo?.Name}");
                 return ConstructInterfaceType(typeInfo);
             }
             else if (typeInfo.IsEnumerationType)
             {
-                Logger?.Trace($"Constructing EnumerationType={typeInfo?.Name}");
                 return ConstructEnumerationType(typeInfo);
             }
             else if (typeInfo.IsUnionType)
             {
-                Logger?.Trace($"Constructing UnionType={typeInfo?.Name}");
                 return ConstructUnionType(typeInfo);
             }
             else if (typeInfo.IsListType)
             {
-                Logger?.Trace($"Constructing ListType={typeInfo?.Name}");
                 return ConstructListType(typeInfo);
             }
             else if (typeInfo.IsInputType)
             {
-                Logger?.Trace($"Constructing InputType={typeInfo?.Name}");
                 return ConstructInputType(typeInfo);
             }
             else if (typeInfo.IsOutputType)
             {
-                Logger?.Trace($"Constructing OutputType={typeInfo?.Name}");
                 return ConstructOutputType(typeInfo);
             }
             else
@@ -191,7 +177,6 @@ namespace GraphQL.Conventions.Adapters
 
         private TType CreateTypeInstance<TType>(Type type)
         {
-            Logger?.Trace($"Creating TypeInstance={type?.Name}");
             var obj = Activator.CreateInstance(type);
             return obj is TType ? (TType)obj : default(TType);
         }
@@ -233,8 +218,14 @@ namespace GraphQL.Conventions.Adapters
             {
                 return WrapNonNullableType(typeInfo, graphType);
             }
-            foreach (var possibleType in typeInfo.PossibleTypes.Select(t => DeriveType(t) as IObjectGraphType))
+            foreach (var possibleType in typeInfo
+                .PossibleTypes
+                .Select(t => DeriveType(t) as IObjectGraphType))
             {
+                if (possibleType == null)
+                {
+                    continue;
+                }
                 graphType.AddPossibleType(possibleType);
             }
             DeriveFields(typeInfo, graphType);
