@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+
+  <PropertyGroup>
+    <Description>GraphQL Conventions for .NET</Description>
+    <VersionPrefix>1.1.4</VersionPrefix>
+    <Authors>Tommy Lillehagen</Authors>
+    <TargetFrameworks>netstandard1.5;net45</TargetFrameworks>
+    <DebugType>portable</DebugType>
+    <AssemblyName>GraphQL.Conventions</AssemblyName>
+    <PackageId>GraphQL.Conventions</PackageId>
+    <PackageTags>GraphQL;json;api</PackageTags>
+    <PackageProjectUrl>https://github.com/graphql-dotnet/conventions</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/graphql-dotnet/conventions/master/src/GraphQL.Conventions/LICENSE.md</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/graphql-dotnet/conventions</RepositoryUrl>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.5' ">$(PackageTargetFallback);dnxcore50;portable-net45+win8</PackageTargetFallback>
+    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.5' ">1.6.0</NetStandardImplicitPackageVersion>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="../../deps/graphql-dotnet/src/GraphQL/bin/**;../../deps/graphql-dotnet/src/GraphQL/obj/**" />
+    <Compile Include="../../deps/graphql-dotnet/src/GraphQL/**/*.cs" Exclude="..\..\deps\graphql-dotnet\src\GraphQL\bin\**;..\..\deps\graphql-dotnet\src\GraphQL\obj\**;bin\**;obj\**;**\*.xproj;packages\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphQL-Parser" Version="2.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
+  </PropertyGroup>
+
+</Project>
