@@ -1,0 +1,58 @@
+{
+  "version": "1.1.6-*",
+  "description": "GraphQL Conventions for .NET",
+  "authors": [
+    "Tommy Lillehagen"
+  ],
+  "packOptions": {
+    "authors": [ "Tommy Lillehagen" ],
+    "summary": "GraphQL Conventions for .NET",
+    "copyright": "Tommy Lillehagen, 2016-2017",
+    "tags": [
+      "GraphQL",
+      "json",
+      "api"
+    ],
+    "projectUrl": "https://github.com/graphql-dotnet/conventions",
+    "licenseUrl": "https://raw.githubusercontent.com/graphql-dotnet/conventions/master/src/GraphQL.Conventions/LICENSE.md",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/graphql-dotnet/conventions"
+    }
+  },
+  "buildOptions": {
+    "compile": {
+      "include": [
+        "**/*.cs",
+        "../../deps/graphql-dotnet/src/GraphQL/**/*.cs"
+      ],
+      "exclude": [
+        "../../deps/graphql-dotnet/src/GraphQL/bin/**",
+        "../../deps/graphql-dotnet/src/GraphQL/obj/**"
+      ]
+    },
+    "debugType": "portable"
+  },
+  "dependencies": {
+    "GraphQL-Parser": "2.0.0",
+    "Newtonsoft.Json": "9.0.1"
+  },
+  "frameworks": {
+    "netstandard1.5": {
+      "dependencies": {
+        "NETStandard.Library": "1.6.0",
+        "System.Reflection.Extensions": "4.3.0",
+        "System.Reflection.TypeExtensions": "4.1.0"
+      },
+      "imports": [
+        "dnxcore50",
+        "portable-net45+win8"
+      ]
+    },
+    "net45": {
+      "System.Threading.Tasks": ""
+    }
+  },
+  "runtimes": {
+  }
+}
