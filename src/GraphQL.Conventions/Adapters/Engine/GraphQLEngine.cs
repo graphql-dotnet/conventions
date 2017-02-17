@@ -125,6 +125,26 @@ namespace GraphQL.Conventions
             return this;
         }
 
+        public GraphQLEngine WithAttributesFromAssembly(System.Type assemblyType)
+        {
+            _typeResolver.RegisterAttributesInAssembly(assemblyType);
+            return this;
+        }
+
+        public GraphQLEngine WithAttributesFromAssembly<TAssemblyType>()
+        {
+            return WithAttributesFromAssembly(typeof(TAssemblyType));
+        }
+
+        public GraphQLEngine WithAttributesFromAssemblies(IEnumerable<System.Type> assemblyTypes)
+        {
+            foreach (var assemblyType in assemblyTypes)
+            {
+                WithAttributesFromAssembly(assemblyType);
+            }
+            return this;
+        }
+
         public GraphQLEngine BuildSchema(params System.Type[] types)
         {
             if (_schema == null)

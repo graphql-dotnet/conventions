@@ -5,11 +5,6 @@ using System.Reflection;
 
 namespace GraphQL.Conventions.Attributes.Collectors
 {
-    public class AttributeCollector
-    {
-        public static Type ApplicationType { get; set; }
-    }
-
     public class AttributeCollector<TAttribute>
         where TAttribute : IAttribute
     {
@@ -53,10 +48,6 @@ namespace GraphQL.Conventions.Attributes.Collectors
         public AttributeCollector()
         {
             DiscoverDefaultAttributes();
-            if (AttributeCollector.ApplicationType != null)
-            {
-                DiscoverDefaultAttributes(AttributeCollector.ApplicationType);
-            }
         }
 
         public List<TAttribute> CollectAttributes(ICustomAttributeProvider obj)
@@ -73,7 +64,7 @@ namespace GraphQL.Conventions.Attributes.Collectors
             {
                 _defaultAttributes = new List<TAttribute>();
             }
-            _defaultAttributes.AddRange(defaultAttributes);
+            _defaultAttributes.AddRange(defaultAttributes.Except(_defaultAttributes));
         }
 
         protected virtual IEnumerable<TAttribute> CollectCoreAttributes(ICustomAttributeProvider obj)
@@ -86,7 +77,7 @@ namespace GraphQL.Conventions.Attributes.Collectors
                 .Union(FlattenAttributeCollection(_defaultAttributes))
                 .Union(GetAttributes(obj));
 
-        private void DiscoverDefaultAttributes(Type assemblyType = null)
+        internal void DiscoverDefaultAttributes(Type assemblyType = null)
         {
             if (assemblyType == null)
             {
@@ -100,14 +91,6 @@ namespace GraphQL.Conventions.Attributes.Collectors
                 .Select(type => (TAttribute)Activator.CreateInstance(type))
                 .ToArray();
             AddDefaultAttributes(defaultAttributes);
-        }
-
-        private void DiscoverDefaultAttributes()
-        {
-            if (_defaultAttributes == null)
-            {
-                DiscoverDefaultAttributes(null);
-            }
         }
 
         private bool IsDefaultAttribute(Type type)
