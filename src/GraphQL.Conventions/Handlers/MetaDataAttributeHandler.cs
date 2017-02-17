@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Reflection;
 using GraphQL.Conventions.Attributes;
@@ -38,6 +39,11 @@ namespace GraphQL.Conventions.Handlers
             {
                 fieldInfo.ExecutionFilters.AddRange(_executionFilterCollector.CollectAttributes(obj));
             }
+        }
+
+        internal void DiscoverAndRegisterDefaultAttributesInAssembly(Type assemblyType)
+        {
+            _collector.DiscoverDefaultAttributes(assemblyType);
         }
     }
 }

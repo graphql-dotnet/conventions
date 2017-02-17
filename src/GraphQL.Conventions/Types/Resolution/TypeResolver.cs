@@ -56,6 +56,11 @@ namespace GraphQL.Conventions.Types.Resolution
             return null;
         }
 
+        public void RegisterAttributesInAssembly(Type assemblyType)
+        {
+            _reflector.DiscoverAndRegisterDefaultAttributesInAssembly(assemblyType);
+        }
+
         public IDependencyInjector DependencyInjector { get; set; }
 
         public GraphSchemaInfo ActiveSchema { get; set; }

@@ -132,6 +132,11 @@ namespace GraphQL.Conventions.Types.Resolution
             return entityInfo;
         }
 
+        internal void DiscoverAndRegisterDefaultAttributesInAssembly(Type assemblyType)
+        {
+            _metaDataHandler.DiscoverAndRegisterDefaultAttributesInAssembly(assemblyType);
+        }
+
         private void DeriveInterfaces(GraphTypeInfo type)
         {
             var typeInfo = GetTypeInfo(type);
