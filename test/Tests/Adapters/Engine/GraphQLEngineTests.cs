@@ -99,6 +99,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             type QueryWithEnums {
                 field1: Enum1!
                 field2: RenamedEnum
+                field3(arg: RenamedEnum! = SOME_VALUE2): RenamedEnum!
             }
             enum RenamedEnum {
                 SOME_VALUE1
@@ -279,6 +280,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             public Enum1 Field1 => Enum1.Option1;
 
             public Enum2? Field2 => Enum2.SomeValue1;
+
+            public Enum2 Field3(Enum2 arg = Enum2.SomeValue2) => arg;
         }
 
         enum Enum1
