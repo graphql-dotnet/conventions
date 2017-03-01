@@ -151,7 +151,23 @@ namespace GraphQL.Conventions.Web
                     .EnableValidation(_useValidation)
                     .Execute()
                     .ConfigureAwait(false);
-                return new Response(request, result, _engine.SerializeResult(result));
+
+                var response = new Response(request, result);
+                var errors = result?.Errors?.Where(e => !string.IsNullOrWhiteSpace(e?.Message));
+                foreach (var error in errors ?? new List<ExecutionError>())
+                {
+                    if (_exceptionsTreatedAsWarnings.Contains(error.InnerException.GetType()))
+                    {
+                        response.Warnings.Add(error);
+                    }
+                    else
+                    {
+                        response.Errors.Add(error);
+                    }
+                }
+                result.Errors = new ExecutionErrors(response.Errors);
+                response.Body = _engine.SerializeResult(result);
+                return response;
             }
 
             public Response Validate(Request request)

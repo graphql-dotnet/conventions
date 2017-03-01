@@ -22,11 +22,10 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var error = result.Errors.First();
             error.Message.ShouldEqual("Test error.");
             error.Code.ShouldEqual("ARGUMENT");
-            error.Path.Count.ShouldEqual(4);
-            error.Path[0].ShouldEqual("Blah");
-            error.Path[1].ShouldEqual("getObject");
-            error.Path[2].ShouldEqual("field");
-            error.Path[3].ShouldEqual("test");
+            error.Path.Count.ShouldEqual(3);
+            error.Path[0].ShouldEqual("getObject");
+            error.Path[1].ShouldEqual("field");
+            error.Path[2].ShouldEqual("test");
         }
 
         [Test]
@@ -43,11 +42,10 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var error = result.Errors.First();
             error.Message.ShouldEqual("Test error.");
             error.Code.ShouldEqual("ARGUMENT");
-            error.Path.Count.ShouldEqual(4);
-            error.Path[0].ShouldEqual(null);
-            error.Path[1].ShouldEqual("getObject");
-            error.Path[2].ShouldEqual("field");
-            error.Path[3].ShouldEqual("test");
+            error.Path.Count.ShouldEqual(3);
+            error.Path[0].ShouldEqual("getObject");
+            error.Path[1].ShouldEqual("field");
+            error.Path[2].ShouldEqual("test");
         }
 
         [Test]
@@ -64,11 +62,10 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var error = result.Errors.First();
             error.Message.ShouldEqual("Test error.");
             error.Code.ShouldEqual("ARGUMENT");
-            error.Path.Count.ShouldEqual(4);
-            error.Path[0].ShouldEqual(null);
-            error.Path[1].ShouldEqual("yo");
-            error.Path[2].ShouldEqual("foo");
-            error.Path[3].ShouldEqual("bar");
+            error.Path.Count.ShouldEqual(3);
+            error.Path[0].ShouldEqual("yo");
+            error.Path[1].ShouldEqual("foo");
+            error.Path[2].ShouldEqual("bar");
         }
 
         [Test]
@@ -91,22 +88,20 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var error = result.Errors.ElementAt(0);
             error.Message.ShouldEqual("Test error.");
             error.Code.ShouldEqual("ARGUMENT");
-            error.Path.Count.ShouldEqual(5);
-            error.Path[0].ShouldEqual("Blah");
-            error.Path[1].ShouldEqual("getObject");
-            error.Path[2].ShouldEqual("arrayField");
-            error.Path[3].ShouldEqual("1");
-            error.Path[4].ShouldEqual("test");
+            error.Path.Count.ShouldEqual(4);
+            error.Path[0].ShouldEqual("getObject");
+            error.Path[1].ShouldEqual("arrayField");
+            error.Path[2].ShouldEqual("1");
+            error.Path[3].ShouldEqual("test");
 
             error = result.Errors.ElementAt(1);
             error.Message.ShouldEqual("Test error.");
             error.Code.ShouldEqual("ARGUMENT");
-            error.Path.Count.ShouldEqual(5);
-            error.Path[0].ShouldEqual("Blah");
-            error.Path[1].ShouldEqual("getObject");
-            error.Path[2].ShouldEqual("arrayField");
-            error.Path[3].ShouldEqual("3");
-            error.Path[4].ShouldEqual("test");
+            error.Path.Count.ShouldEqual(4);
+            error.Path[0].ShouldEqual("getObject");
+            error.Path[1].ShouldEqual("arrayField");
+            error.Path[2].ShouldEqual("3");
+            error.Path[3].ShouldEqual("test");
         }
 
         class Query
