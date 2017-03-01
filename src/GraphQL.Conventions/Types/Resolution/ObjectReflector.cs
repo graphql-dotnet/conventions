@@ -292,7 +292,20 @@ namespace GraphQL.Conventions.Types.Resolution
             {
                 argument.Type = GetType(parameterTypeInfo);
             }
-            argument.DefaultValue = parameterInfo.HasDefaultValue ? parameterInfo.DefaultValue : null;
+
+            if (parameterInfo.HasDefaultValue)
+            {
+                var baseType = argument.Type.TypeRepresentation.BaseType();
+                if (baseType.IsEnum)
+                {
+                    argument.DefaultValue = Enum.ToObject(baseType.AsType(), parameterInfo.DefaultValue);
+                }
+                else
+                {
+                    argument.DefaultValue = parameterInfo.DefaultValue;
+                }
+            }
+
             _metaDataHandler.DeriveMetaData(argument, parameterInfo);
             return argument;
         }
