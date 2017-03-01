@@ -151,7 +151,23 @@ namespace GraphQL.Conventions.Web
                     .EnableValidation(_useValidation)
                     .Execute()
                     .ConfigureAwait(false);
-                return new Response(request, result, _engine.SerializeResult(result));
+
+                var response = new Response(request, result);
+                var errors = result?.Errors?.Where(e => !string.IsNullOrWhiteSpace(e?.Message));
+                foreach (var error in errors ?? new List<ExecutionError>())
+                {
+                    if (_exceptionsTreatedAsWarnings.Contains(error.InnerException.GetType()))
+                    {
+                        response.Warnings.Add(error);
+                    }
+                    else
+                    {
+                        response.Errors.Add(error);
+                    }
+                }
+                result.Errors = new ExecutionErrors(response.Errors);
+                response.Body = _engine.SerializeResult(result);
+                return response;
             }
 
             public Response Validate(Request request)
@@ -179,22 +195,18 @@ namespace GraphQL.Conventions.Web
             const string IntrospectionQuery = @"
             query IntrospectionQuery {
                 __schema {
-                queryType { name }
-                mutationType { name }
-                subscriptionType { name }
-                types {
-                    ...FullType
-                }
-                directives {
-                    name
-                    description
-                    args {
-                    ...InputValue
+                    queryType { name }
+                    mutationType { name }
+                    subscriptionType { name }
+                    types { ...FullType }
+                    directives {
+                        name
+                        description
+                        args { ...InputValue }
+                        onOperation
+                        onFragment
+                        onField
                     }
-                    onOperation
-                    onFragment
-                    onField
-                }
                 }
             }
             fragment FullType on __Type {
@@ -202,32 +214,22 @@ namespace GraphQL.Conventions.Web
                 name
                 description
                 fields(includeDeprecated: true) {
-                name
-                description
-                args {
-                    ...InputValue
+                    name
+                    description
+                    args { ...InputValue }
+                    type { ...TypeRef }
+                    isDeprecated
+                    deprecationReason
                 }
-                type {
-                    ...TypeRef
-                }
-                isDeprecated
-                deprecationReason
-                }
-                inputFields {
-                ...InputValue
-                }
-                interfaces {
-                ...TypeRef
-                }
+                inputFields { ...InputValue }
+                interfaces { ...TypeRef }
                 enumValues(includeDeprecated: true) {
-                name
-                description
-                isDeprecated
-                deprecationReason
+                    name
+                    description
+                    isDeprecated
+                    deprecationReason
                 }
-                possibleTypes {
-                ...TypeRef
-                }
+                possibleTypes { ...TypeRef }
             }
             fragment InputValue on __InputValue {
                 name
@@ -239,16 +241,16 @@ namespace GraphQL.Conventions.Web
                 kind
                 name
                 ofType {
-                kind
-                name
-                ofType {
                     kind
                     name
                     ofType {
-                    kind
-                    name
+                        kind
+                        name
+                        ofType {
+                            kind
+                            name
+                        }
                     }
-                }
                 }
             }
             ";

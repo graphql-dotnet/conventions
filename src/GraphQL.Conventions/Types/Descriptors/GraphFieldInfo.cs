@@ -7,6 +7,8 @@ namespace GraphQL.Conventions.Types.Descriptors
 {
     public class GraphFieldInfo : GraphEntityInfo
     {
+        private object _defaultValue = null;
+
         public GraphFieldInfo(ITypeResolver typeResolver, MemberInfo field = null)
             : base(typeResolver, field)
         {
@@ -14,7 +16,11 @@ namespace GraphQL.Conventions.Types.Descriptors
 
         public GraphTypeInfo DeclaringType { get; set; }
 
-        public object DefaultValue => Value ?? Type.DefaultValue;
+        public object DefaultValue
+        {
+            get { return _defaultValue ?? Value; }
+            set { _defaultValue = value; }
+        }
 
         public List<GraphArgumentInfo> Arguments { get; } =
             new List<GraphArgumentInfo>();

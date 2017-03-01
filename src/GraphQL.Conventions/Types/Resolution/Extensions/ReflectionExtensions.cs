@@ -22,6 +22,18 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
             return type.IsGenericType && type.GetGenericTypeDefinition() == genericType;
         }
 
+        public static bool IsNullableType(this TypeInfo type)
+        {
+            return type.IsGenericType(typeof(Nullable<>));
+        }
+
+        public static TypeInfo BaseType(this TypeInfo type)
+        {
+            return type.IsNullableType()
+                ? type.TypeParameter()
+                : type;
+        }
+
         public static TypeInfo TypeParameter(this TypeInfo type)
         {
             if (type.IsArray)
