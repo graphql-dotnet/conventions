@@ -13,6 +13,10 @@ namespace GraphQL.Conventions.Execution
         private static string DeriveMessage(Exception exception)
         {
             var innerException = ExtractException(exception.InnerException ?? exception);
+            if (exception.Message.StartsWith("Error trying to resolve "))
+            {
+                return innerException?.Message ?? exception.Message;
+            }
             return innerException != null && exception.Message != innerException.Message
                 ? $"{exception.Message.TrimEnd('.')}. {innerException.Message}"
                 : exception.Message;

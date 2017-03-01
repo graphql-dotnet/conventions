@@ -27,6 +27,8 @@ namespace GraphQL.Conventions.Web
 
             ResolveTypeDelegate _resolveTypeDelegate;
 
+            bool _useValidation = true;
+
             internal RequestHandlerBuilder()
             {
                 _dependencyInjector = this;
@@ -91,13 +93,20 @@ namespace GraphQL.Conventions.Web
                 return this;
             }
 
+            public RequestHandlerBuilder WithoutValidation()
+            {
+                _useValidation = false;
+                return this;
+            }
+
             public IRequestHandler Generate()
             {
                 return new RequestHandlerImpl(
                     _dependencyInjector,
                     _schemaTypes,
                     _assemblyTypes,
-                    _exceptionsTreatedAsWarnings);
+                    _exceptionsTreatedAsWarnings,
+                    _useValidation);
             }
 
             public object Resolve(TypeInfo typeInfo)
@@ -114,15 +123,19 @@ namespace GraphQL.Conventions.Web
 
             readonly List<Type> _exceptionsTreatedAsWarnings = new List<Type>();
 
+            readonly bool _useValidation;
+
             internal RequestHandlerImpl(
                 IDependencyInjector dependencyInjector,
                 IEnumerable<Type> schemaTypes,
                 IEnumerable<Type> assemblyTypes,
-                IEnumerable<Type> exceptionsTreatedAsWarning)
+                IEnumerable<Type> exceptionsTreatedAsWarning,
+                bool useValidation)
             {
                 _dependencyInjector = dependencyInjector;
-                _exceptionsTreatedAsWarnings.AddRange(exceptionsTreatedAsWarning);
                 _engine.WithAttributesFromAssemblies(assemblyTypes);
+                _exceptionsTreatedAsWarnings.AddRange(exceptionsTreatedAsWarning);
+                _useValidation = useValidation;
                 _engine.BuildSchema(schemaTypes.ToArray());
             }
 
@@ -135,25 +148,16 @@ namespace GraphQL.Conventions.Web
                     .WithOperationName(request.OperationName)
                     .WithDependencyInjector(_dependencyInjector)
                     .WithUserContext(userContext)
+                    .EnableValidation(_useValidation)
                     .Execute()
                     .ConfigureAwait(false);
+                return new Response(request, result, _engine.SerializeResult(result));
+            }
 
-                var response = result.ToResponse(request, _engine);
-                var errors = result.Errors?.Where(e => !string.IsNullOrWhiteSpace(e?.Message));
-
-                foreach (var error in errors ?? new List<ExecutionError>())
-                {
-                    if (_exceptionsTreatedAsWarnings.Contains(error.InnerException.GetType()))
-                    {
-                        response.Warnings.Add(error);
-                    }
-                    else
-                    {
-                        response.Errors.Add(error);
-                    }
-                }
-
-                return response;
+            public Response Validate(Request request)
+            {
+                var result = _engine.Validate(request.QueryString);
+                return new Response(request, result);
             }
 
             public string DescribeSchema(bool returnJson = false)
