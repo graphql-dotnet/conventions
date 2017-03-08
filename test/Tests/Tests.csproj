@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="xunit" Version="2.2.0-beta2-build3300" />
+    <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="dotnet-test-xunit" Version="2.2-preview2-*" />
   </ItemGroup>
 
