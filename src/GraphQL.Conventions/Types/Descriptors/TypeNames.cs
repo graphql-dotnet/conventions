@@ -21,5 +21,7 @@ namespace GraphQL.Conventions.Types.Descriptors
         public const string Url = "URL";
 
         public const string Uri = "URI";
+
+        public const string Guid = "GUID";
     }
 }

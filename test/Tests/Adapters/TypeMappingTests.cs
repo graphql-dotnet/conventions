@@ -34,6 +34,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<Url>().ShouldBeOfType<UrlGraphType>();
             Type<Uri>().ShouldBeOfType<UriGraphType>();
             Type<Cursor?>().ShouldBeOfType<Extended.Relay.CursorGraphType>();
+            Type<Guid?>().ShouldBeOfType<GuidGraphType>();
         }
 
         [Test]
@@ -58,6 +59,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<NonNull<Url>>().ShouldBeOfNonNullableType<UrlGraphType>();
             Type<NonNull<Uri>>().ShouldBeOfNonNullableType<UriGraphType>();
             Type<Cursor>().ShouldBeOfNonNullableType<Extended.Relay.CursorGraphType>();
+            Type<Guid>().ShouldBeOfNonNullableType<GuidGraphType>();
         }
 
         [Test]
@@ -132,6 +134,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<List<Url>>().ShouldBeOfListType<UrlGraphType>();
             Type<List<Uri>>().ShouldBeOfListType<UriGraphType>();
             Type<List<Cursor?>>().ShouldBeOfListType<Extended.Relay.CursorGraphType>();
+            Type<List<Guid?>>().ShouldBeOfListType<GuidGraphType>();
         }
 
         [Test]
@@ -156,6 +159,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<List<NonNull<Url>>>().ShouldBeOfListType<NonNullGraphType<UrlGraphType>>();
             Type<List<NonNull<Uri>>>().ShouldBeOfListType<NonNullGraphType<UriGraphType>>();
             Type<List<Cursor>>().ShouldBeOfListType<NonNullGraphType<Extended.Relay.CursorGraphType>>();
+            Type<List<Guid>>().ShouldBeOfListType<NonNullGraphType<GuidGraphType>>();
         }
 
         [Test]
@@ -230,6 +234,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<NonNull<List<Url>>>().ShouldBeOfNonNullableListType<UrlGraphType>();
             Type<NonNull<List<Uri>>>().ShouldBeOfNonNullableListType<UriGraphType>();
             Type<NonNull<List<Cursor?>>>().ShouldBeOfNonNullableListType<Extended.Relay.CursorGraphType>();
+            Type<NonNull<List<Guid?>>>().ShouldBeOfNonNullableListType<GuidGraphType>();
         }
 
         [Test]
@@ -254,6 +259,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<NonNull<List<NonNull<Url>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<UrlGraphType>>();
             Type<NonNull<List<NonNull<Uri>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<UriGraphType>>();
             Type<NonNull<List<Cursor>>>().ShouldBeOfNonNullableListType<NonNullGraphType<Extended.Relay.CursorGraphType>>();
+            Type<NonNull<List<Guid>>>().ShouldBeOfNonNullableListType<NonNullGraphType<GuidGraphType>>();
         }
 
         [Test]
@@ -328,6 +334,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<Task<Url>>().ShouldBeOfType<UrlGraphType>();
             Type<Task<Uri>>().ShouldBeOfType<UriGraphType>();
             Type<Task<Cursor?>>().ShouldBeOfType<Extended.Relay.CursorGraphType>();
+            Type<Task<Guid?>>().ShouldBeOfType<GuidGraphType>();
         }
 
         [Test]
@@ -352,6 +359,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<Task<NonNull<Url>>>().ShouldBeOfNonNullableType<UrlGraphType>();
             Type<Task<NonNull<Uri>>>().ShouldBeOfNonNullableType<UriGraphType>();
             Type<Task<Cursor>>().ShouldBeOfNonNullableType<Extended.Relay.CursorGraphType>();
+            Type<Task<Guid>>().ShouldBeOfNonNullableType<GuidGraphType>();
         }
 
         [Test]
@@ -426,6 +434,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<Task<List<Url>>>().ShouldBeOfListType<UrlGraphType>();
             Type<Task<List<Uri>>>().ShouldBeOfListType<UriGraphType>();
             Type<Task<List<Cursor?>>>().ShouldBeOfListType<Extended.Relay.CursorGraphType>();
+            Type<Task<List<Guid?>>>().ShouldBeOfListType<GuidGraphType>();
         }
 
         [Test]
@@ -450,6 +459,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<Task<List<NonNull<Url>>>>().ShouldBeOfListType<NonNullGraphType<UrlGraphType>>();
             Type<Task<List<NonNull<Uri>>>>().ShouldBeOfListType<NonNullGraphType<UriGraphType>>();
             Type<Task<List<Cursor>>>().ShouldBeOfListType<NonNullGraphType<Extended.Relay.CursorGraphType>>();
+            Type<Task<List<Guid>>>().ShouldBeOfListType<NonNullGraphType<GuidGraphType>>();
         }
 
         [Test]
@@ -524,6 +534,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<Task<NonNull<List<Url>>>>().ShouldBeOfNonNullableListType<UrlGraphType>();
             Type<Task<NonNull<List<Uri>>>>().ShouldBeOfNonNullableListType<UriGraphType>();
             Type<Task<NonNull<List<Cursor?>>>>().ShouldBeOfNonNullableListType<Extended.Relay.CursorGraphType>();
+            Type<Task<NonNull<List<Guid?>>>>().ShouldBeOfNonNullableListType<GuidGraphType>();
         }
 
         [Test]
@@ -548,6 +559,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<Task<NonNull<List<NonNull<Url>>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<UrlGraphType>>();
             Type<Task<NonNull<List<NonNull<Uri>>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<UriGraphType>>();
             Type<Task<NonNull<List<Cursor>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<Extended.Relay.CursorGraphType>>();
+            Type<Task<NonNull<List<Guid>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<GuidGraphType>>();
         }
 
         [Test]

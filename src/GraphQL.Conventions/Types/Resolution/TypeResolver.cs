@@ -86,6 +86,7 @@ namespace GraphQL.Conventions.Types.Resolution
             RegisterScalarType<Cursor>(TypeNames.Cursor);
             RegisterScalarType<Url>(TypeNames.Url);
             RegisterScalarType<Uri>(TypeNames.Uri);
+            RegisterScalarType<Guid>(TypeNames.Guid);
         }
     }
 }

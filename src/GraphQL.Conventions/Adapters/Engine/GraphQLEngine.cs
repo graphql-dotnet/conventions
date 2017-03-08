@@ -154,7 +154,7 @@ namespace GraphQL.Conventions
                     _schemaTypes.AddRange(types);
                 }
                 _schema = _constructor.Build(_schemaTypes.ToArray());
-                _schemaPrinter = new SchemaPrinter(_schema, new[] { TypeNames.Url, TypeNames.Uri, TypeNames.TimeSpan });
+                _schemaPrinter = new SchemaPrinter(_schema, new[] { TypeNames.Url, TypeNames.Uri, TypeNames.TimeSpan, TypeNames.Guid });
             }
             return this;
         }
