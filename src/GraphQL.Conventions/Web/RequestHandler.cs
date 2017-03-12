@@ -152,7 +152,7 @@ namespace GraphQL.Conventions.Web
                 var validationWarnings = new List<ExecutionError>();
                 if (!_useValidation && _outputViolationsAsWarnings)
                 {
-                    var validationResult = Validate(request);
+                    var validationResult = Validate(request)?.ValidationResult;
                     if (validationResult?.Errors?.Any() ?? false)
                     {
                         validationWarnings.AddRange(validationResult.Errors);
