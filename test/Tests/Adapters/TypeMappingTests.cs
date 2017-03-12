@@ -29,6 +29,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<double?>().ShouldBeOfType<FloatGraphType>();
             Type<decimal?>().ShouldBeOfType<FloatGraphType>();
             Type<DateTime?>().ShouldBeOfType<DateGraphType>();
+            Type<DateTimeOffset?>().ShouldBeOfType<DateGraphType>();
             Type<TimeSpan?>().ShouldBeOfType<TimeSpanGraphType>();
             Type<Id?>().ShouldBeOfType<Extended.IdGraphType>();
             Type<Url>().ShouldBeOfType<UrlGraphType>();
@@ -54,6 +55,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<double>().ShouldBeOfNonNullableType<FloatGraphType>();
             Type<decimal>().ShouldBeOfNonNullableType<FloatGraphType>();
             Type<DateTime>().ShouldBeOfNonNullableType<DateGraphType>();
+            Type<DateTimeOffset>().ShouldBeOfNonNullableType<DateGraphType>();
             Type<TimeSpan>().ShouldBeOfNonNullableType<TimeSpanGraphType>();
             Type<Id>().ShouldBeOfNonNullableType<Extended.IdGraphType>();
             Type<NonNull<Url>>().ShouldBeOfNonNullableType<UrlGraphType>();
@@ -129,6 +131,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<List<double?>>().ShouldBeOfListType<FloatGraphType>();
             Type<List<decimal?>>().ShouldBeOfListType<FloatGraphType>();
             Type<List<DateTime?>>().ShouldBeOfListType<DateGraphType>();
+            Type<List<DateTimeOffset?>>().ShouldBeOfListType<DateGraphType>();
             Type<List<TimeSpan?>>().ShouldBeOfListType<TimeSpanGraphType>();
             Type<List<Id?>>().ShouldBeOfListType<Extended.IdGraphType>();
             Type<List<Url>>().ShouldBeOfListType<UrlGraphType>();
@@ -154,6 +157,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<List<double>>().ShouldBeOfListType<NonNullGraphType<FloatGraphType>>();
             Type<List<decimal>>().ShouldBeOfListType<NonNullGraphType<FloatGraphType>>();
             Type<List<DateTime>>().ShouldBeOfListType<NonNullGraphType<DateGraphType>>();
+            Type<List<DateTimeOffset>>().ShouldBeOfListType<NonNullGraphType<DateGraphType>>();
             Type<List<TimeSpan>>().ShouldBeOfListType<NonNullGraphType<TimeSpanGraphType>>();
             Type<List<Id>>().ShouldBeOfListType<NonNullGraphType<Extended.IdGraphType>>();
             Type<List<NonNull<Url>>>().ShouldBeOfListType<NonNullGraphType<UrlGraphType>>();
@@ -229,6 +233,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<NonNull<List<double?>>>().ShouldBeOfNonNullableListType<FloatGraphType>();
             Type<NonNull<List<decimal?>>>().ShouldBeOfNonNullableListType<FloatGraphType>();
             Type<NonNull<List<DateTime?>>>().ShouldBeOfNonNullableListType<DateGraphType>();
+            Type<NonNull<List<DateTimeOffset?>>>().ShouldBeOfNonNullableListType<DateGraphType>();
             Type<NonNull<List<TimeSpan?>>>().ShouldBeOfNonNullableListType<TimeSpanGraphType>();
             Type<NonNull<List<Id?>>>().ShouldBeOfNonNullableListType<Extended.IdGraphType>();
             Type<NonNull<List<Url>>>().ShouldBeOfNonNullableListType<UrlGraphType>();
@@ -254,6 +259,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<NonNull<List<double>>>().ShouldBeOfNonNullableListType<NonNullGraphType<FloatGraphType>>();
             Type<NonNull<List<decimal>>>().ShouldBeOfNonNullableListType<NonNullGraphType<FloatGraphType>>();
             Type<NonNull<List<DateTime>>>().ShouldBeOfNonNullableListType<NonNullGraphType<DateGraphType>>();
+            Type<NonNull<List<DateTimeOffset>>>().ShouldBeOfNonNullableListType<NonNullGraphType<DateGraphType>>();
             Type<NonNull<List<TimeSpan>>>().ShouldBeOfNonNullableListType<NonNullGraphType<TimeSpanGraphType>>();
             Type<NonNull<List<Id>>>().ShouldBeOfNonNullableListType<NonNullGraphType<Extended.IdGraphType>>();
             Type<NonNull<List<NonNull<Url>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<UrlGraphType>>();
@@ -329,6 +335,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<Task<double?>>().ShouldBeOfType<FloatGraphType>();
             Type<Task<decimal?>>().ShouldBeOfType<FloatGraphType>();
             Type<Task<DateTime?>>().ShouldBeOfType<DateGraphType>();
+            Type<Task<DateTimeOffset?>>().ShouldBeOfType<DateGraphType>();
             Type<Task<TimeSpan?>>().ShouldBeOfType<TimeSpanGraphType>();
             Type<Task<Id?>>().ShouldBeOfType<Extended.IdGraphType>();
             Type<Task<Url>>().ShouldBeOfType<UrlGraphType>();
@@ -354,6 +361,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<Task<double>>().ShouldBeOfNonNullableType<FloatGraphType>();
             Type<Task<decimal>>().ShouldBeOfNonNullableType<FloatGraphType>();
             Type<Task<DateTime>>().ShouldBeOfNonNullableType<DateGraphType>();
+            Type<Task<DateTimeOffset>>().ShouldBeOfNonNullableType<DateGraphType>();
             Type<Task<TimeSpan>>().ShouldBeOfNonNullableType<TimeSpanGraphType>();
             Type<Task<Id>>().ShouldBeOfNonNullableType<Extended.IdGraphType>();
             Type<Task<NonNull<Url>>>().ShouldBeOfNonNullableType<UrlGraphType>();
@@ -429,6 +437,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<Task<List<double?>>>().ShouldBeOfListType<FloatGraphType>();
             Type<Task<List<decimal?>>>().ShouldBeOfListType<FloatGraphType>();
             Type<Task<List<DateTime?>>>().ShouldBeOfListType<DateGraphType>();
+            Type<Task<List<DateTimeOffset?>>>().ShouldBeOfListType<DateGraphType>();
             Type<Task<List<TimeSpan?>>>().ShouldBeOfListType<TimeSpanGraphType>();
             Type<Task<List<Id?>>>().ShouldBeOfListType<Extended.IdGraphType>();
             Type<Task<List<Url>>>().ShouldBeOfListType<UrlGraphType>();
@@ -454,6 +463,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<Task<List<double>>>().ShouldBeOfListType<NonNullGraphType<FloatGraphType>>();
             Type<Task<List<decimal>>>().ShouldBeOfListType<NonNullGraphType<FloatGraphType>>();
             Type<Task<List<DateTime>>>().ShouldBeOfListType<NonNullGraphType<DateGraphType>>();
+            Type<Task<List<DateTimeOffset>>>().ShouldBeOfListType<NonNullGraphType<DateGraphType>>();
             Type<Task<List<TimeSpan>>>().ShouldBeOfListType<NonNullGraphType<TimeSpanGraphType>>();
             Type<Task<List<Id>>>().ShouldBeOfListType<NonNullGraphType<Extended.IdGraphType>>();
             Type<Task<List<NonNull<Url>>>>().ShouldBeOfListType<NonNullGraphType<UrlGraphType>>();
@@ -529,6 +539,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<Task<NonNull<List<double?>>>>().ShouldBeOfNonNullableListType<FloatGraphType>();
             Type<Task<NonNull<List<decimal?>>>>().ShouldBeOfNonNullableListType<FloatGraphType>();
             Type<Task<NonNull<List<DateTime?>>>>().ShouldBeOfNonNullableListType<DateGraphType>();
+            Type<Task<NonNull<List<DateTimeOffset?>>>>().ShouldBeOfNonNullableListType<DateGraphType>();
             Type<Task<NonNull<List<TimeSpan?>>>>().ShouldBeOfNonNullableListType<TimeSpanGraphType>();
             Type<Task<NonNull<List<Id?>>>>().ShouldBeOfNonNullableListType<Extended.IdGraphType>();
             Type<Task<NonNull<List<Url>>>>().ShouldBeOfNonNullableListType<UrlGraphType>();
@@ -554,6 +565,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             Type<Task<NonNull<List<double>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<FloatGraphType>>();
             Type<Task<NonNull<List<decimal>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<FloatGraphType>>();
             Type<Task<NonNull<List<DateTime>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<DateGraphType>>();
+            Type<Task<NonNull<List<DateTimeOffset>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<DateGraphType>>();
             Type<Task<NonNull<List<TimeSpan>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<TimeSpanGraphType>>();
             Type<Task<NonNull<List<Id>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<Extended.IdGraphType>>();
             Type<Task<NonNull<List<NonNull<Url>>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<UrlGraphType>>();
