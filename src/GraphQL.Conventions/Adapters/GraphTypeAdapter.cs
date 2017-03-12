@@ -124,6 +124,8 @@ namespace GraphQL.Conventions.Adapters
                     return typeof(Types.UrlGraphType);
                 case TypeNames.Uri:
                     return typeof(Types.UriGraphType);
+                case TypeNames.Guid:
+                    return typeof(Types.GuidGraphType);
                 default:
                     Type type;
                     if (!string.IsNullOrWhiteSpace(typeInfo.Name) &&
