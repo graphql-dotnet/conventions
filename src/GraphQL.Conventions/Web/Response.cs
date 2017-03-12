@@ -37,8 +37,8 @@ namespace GraphQL.Conventions.Web
 
         public bool IsValid => ValidationResult != null ? ValidationResult.IsValid : !HasErrors;
 
-        public IList<ExecutionError> Errors { get; } = new List<ExecutionError>();
+        public List<ExecutionError> Errors { get; } = new List<ExecutionError>();
 
-        public IList<ExecutionError> Warnings { get; } = new List<ExecutionError>();
+        public List<ExecutionError> Warnings { get; } = new List<ExecutionError>();
     }
 }
