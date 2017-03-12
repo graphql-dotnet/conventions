@@ -29,6 +29,8 @@ namespace GraphQL.Conventions.Web
 
             bool _useValidation = true;
 
+            bool _outputViolationsAsWarnings;
+
             internal RequestHandlerBuilder()
             {
                 _dependencyInjector = this;
@@ -93,9 +95,10 @@ namespace GraphQL.Conventions.Web
                 return this;
             }
 
-            public RequestHandlerBuilder WithoutValidation()
+            public RequestHandlerBuilder WithoutValidation(bool outputViolationsAsWarnings = false)
             {
                 _useValidation = false;
+                _outputViolationsAsWarnings = outputViolationsAsWarnings;
                 return this;
             }
 
@@ -106,7 +109,8 @@ namespace GraphQL.Conventions.Web
                     _schemaTypes,
                     _assemblyTypes,
                     _exceptionsTreatedAsWarnings,
-                    _useValidation);
+                    _useValidation,
+                    _outputViolationsAsWarnings);
             }
 
             public object Resolve(TypeInfo typeInfo)
@@ -125,22 +129,36 @@ namespace GraphQL.Conventions.Web
 
             readonly bool _useValidation;
 
+            readonly bool _outputViolationsAsWarnings;
+
             internal RequestHandlerImpl(
                 IDependencyInjector dependencyInjector,
                 IEnumerable<Type> schemaTypes,
                 IEnumerable<Type> assemblyTypes,
                 IEnumerable<Type> exceptionsTreatedAsWarning,
-                bool useValidation)
+                bool useValidation,
+                bool outputViolationsAsWarnings)
             {
                 _dependencyInjector = dependencyInjector;
                 _engine.WithAttributesFromAssemblies(assemblyTypes);
                 _exceptionsTreatedAsWarnings.AddRange(exceptionsTreatedAsWarning);
                 _useValidation = useValidation;
+                _outputViolationsAsWarnings = outputViolationsAsWarnings;
                 _engine.BuildSchema(schemaTypes.ToArray());
             }
 
             public async Task<Response> ProcessRequest(Request request, IUserContext userContext)
             {
+                var validationWarnings = new List<ExecutionError>();
+                if (!_useValidation && _outputViolationsAsWarnings)
+                {
+                    var validationResult = Validate(request);
+                    if (validationResult?.Errors?.Any() ?? false)
+                    {
+                        validationWarnings.AddRange(validationResult.Errors);
+                    }
+                }
+
                 var result = await _engine
                     .NewExecutor()
                     .WithQueryString(request.QueryString)
@@ -154,6 +172,7 @@ namespace GraphQL.Conventions.Web
 
                 var response = new Response(request, result);
                 var errors = result?.Errors?.Where(e => !string.IsNullOrWhiteSpace(e?.Message));
+                response.Warnings.AddRange(validationWarnings);
                 foreach (var error in errors ?? new List<ExecutionError>())
                 {
                     if (_exceptionsTreatedAsWarnings.Contains(error.InnerException.GetType()))
