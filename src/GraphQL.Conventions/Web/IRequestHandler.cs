@@ -6,6 +6,8 @@ namespace GraphQL.Conventions.Web
     {
         Task<Response> ProcessRequest(Request request, IUserContext userContext);
 
+        Response Validate(Request request);
+
         string DescribeSchema(bool returnJson = false);
     }
 }
