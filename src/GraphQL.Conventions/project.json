@@ -5,6 +5,7 @@
     "Tommy Lillehagen"
   ],
   "packOptions": {
+    "id": "GraphQL.Conventions",
     "authors": [ "Tommy Lillehagen" ],
     "summary": "GraphQL Conventions for .NET",
     "copyright": "Tommy Lillehagen, 2016-2017",
