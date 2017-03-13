@@ -1,10 +1,11 @@
 {
-  "version": "1.1.10-*",
+  "version": "1.2.0-*",
   "description": "GraphQL Conventions for .NET",
   "authors": [
     "Tommy Lillehagen"
   ],
   "packOptions": {
+    "id": "GraphQL.Conventions",
     "authors": [ "Tommy Lillehagen" ],
     "summary": "GraphQL Conventions for .NET",
     "copyright": "Tommy Lillehagen, 2016-2017",

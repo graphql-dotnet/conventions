@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>GraphQL Conventions for .NET</Description>
-    <VersionPrefix>1.1.5</VersionPrefix>
+    <VersionPrefix>1.2.0</VersionPrefix>
     <Authors>Tommy Lillehagen</Authors>
     <TargetFrameworks>netstandard1.5;net45</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -22,6 +22,7 @@
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
