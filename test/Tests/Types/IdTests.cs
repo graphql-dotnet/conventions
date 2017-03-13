@@ -8,21 +8,21 @@ namespace GraphQL.Conventions.Tests.Types
 {
     public class IdTests : TestBase
     {
-        [Xunit.Fact]
+        [Test]
         public void Can_Instantiate_Identifier_From_Encoded_String()
         {
             var id = Id("VGVzdDoxMjM0NQ==");
             id.IdentifierForType<Test>().ShouldEqual("12345");
         }
 
-        [Xunit.Fact]
+        [Test]
         public void Cannot_Instantiate_Identifier_From_Encoded_String_Of_Wrong_Type()
         {
             var id = Id("VGVzdDoxMjM0NQ==");
             Assert.ThrowsException<ArgumentException>(() => id.IdentifierForType<AnotherTest>());
         }
 
-        [Xunit.Fact]
+        [Test]
         public void Cannot_Instantiate_Identifier_From_Empty_String()
         {
             Assert.ThrowsException<ArgumentException>(() => Id(null));
@@ -31,13 +31,13 @@ namespace GraphQL.Conventions.Tests.Types
             nullableId.HasValue.ShouldEqual(false);
         }
 
-        [Xunit.Fact]
+        [Test]
         public void Cannot_Instantiate_Identifier_From_Invalid_Base64_String()
         {
             Assert.ThrowsException<ArgumentException>(() => Id("abcdef"));
         }
 
-        [Xunit.Fact]
+        [Test]
         public void Can_Sort_Identifiers_Serialized_Using_Colon_Separators()
         {
             var id0 = Id<IdTests>("12345", true);
@@ -62,7 +62,7 @@ namespace GraphQL.Conventions.Tests.Types
             Assert.IsTrue(id3 != id4);
         }
 
-        [Xunit.Fact]
+        [Test]
         public void Can_Sort_Identifiers_Serialized_Without_Using_Colon_Separators()
         {
             var id0 = Id<IdTests>("12345", false);
@@ -87,7 +87,7 @@ namespace GraphQL.Conventions.Tests.Types
             Assert.IsTrue(id3 != id4);
         }
 
-        [Xunit.Fact]
+        [Test]
         public void Can_Decode_Identifiers_Unambiguously_When_Serialized_With_Colon()
         {
             Id<TestItem>("12345").IsIdentifierForType<Test>()
@@ -96,7 +96,7 @@ namespace GraphQL.Conventions.Tests.Types
                 .ShouldBeFalse("Identifier for type 'Test' thought to be an identifier for type 'TestItem'.");
         }
 
-        [Xunit.Fact]
+        [Test]
         public void Can_Decode_Identifiers_Unambiguously_When_Serialized_Without_Colon()
         {
             Id<TestItem>("12345", false).IsIdentifierForType<Test>()
@@ -105,7 +105,7 @@ namespace GraphQL.Conventions.Tests.Types
                 .ShouldBeFalse("Identifier for type 'Test' thought to be an identifier for type 'TestItem'.");
         }
 
-        [Xunit.Fact]
+        [Test]
         public void Cannot_Decode_Empty_Identifiers()
         {
             Assert.ThrowsException<ArgumentException>(() => Id<Test>("", true).IdentifierForType<Test>());

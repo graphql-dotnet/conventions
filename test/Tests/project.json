@@ -16,8 +16,9 @@
   },
   "dependencies": {
     "GraphQL.Conventions": { "target": "project" },
+    "Microsoft.TestPlatform.TestHost": "15.0.0",
     "xunit": "2.2.0",
-    "dotnet-test-xunit": "2.2-preview2-*"
+    "xunit.runner.visualstudio": "2.2.0"
   },
   "frameworks": {
     "net451": {
