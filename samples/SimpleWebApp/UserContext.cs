@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace GraphQL.Conventions.Tests.Server
                 var result = new Author(dto) as T;
                 return Task.FromResult(result);
             }
-            return new Task<T>(() => null);
+            throw new ArgumentException($"Unable to derive type from identifier '{id}'");
         }
 
         public IEnumerable<INode> Search(string searchString)
