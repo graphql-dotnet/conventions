@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GraphQL.Conventions.Tests.Adapters.Engine.Types;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
@@ -99,20 +100,41 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             input InputObject {
                 anotherField: RenamedEnum
                 someField: RenamedEnum = SOME_VALUE1
-                yetAnotherDummyField: RenamedEnum! = SOME_VALUE2
+                yetAnotherDummyField: RenamedEnum = SOME_VALUE2
                 yetAnotherField: RenamedEnum!
             }
             type QueryWithEnums {
                 field1: Enum1!
                 field2: RenamedEnum
-                field3(arg1: RenamedEnum, arg2: Enum1!, arg3: RenamedEnum! = SOME_VALUE2, arg4: Enum1 = OPTION3): RenamedEnum!
+                field3(arg1: RenamedEnum, arg2: Enum1!, arg3: RenamedEnum = SOME_VALUE2, arg4: Enum1 = OPTION3): RenamedEnum!
                 field4(input: InputObject): RenamedEnum
+                field5(arg: Enum1): Enum1
             }
             enum RenamedEnum {
                 SOME_VALUE1
                 SOME_VALUE2
             }
             ");
+        }
+
+        [Test]
+        public async Task Can_Evaluate_Enums_Arguments_With_Default_Values()
+        {
+            var executor = GraphQLEngine
+                .New<QueryWithEnums>()
+                .NewExecutor();
+            var result = await executor
+                .WithQueryString(@"
+                {
+                    field3(arg2: OPTION3)
+                    field4(input: { yetAnotherField: SOME_VALUE1 })
+                    field5
+                }")
+                .Execute();
+            
+            result.Data.ShouldHaveFieldWithValue("field3", "SOME_VALUE2");
+            result.Data.ShouldHaveFieldWithValue("field4", "SOME_VALUE2");
+            result.Data.ShouldHaveFieldWithValue("field5", null);
         }
 
         [Test]
@@ -288,10 +310,11 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
 
             public Enum2? Field2 => Enum2.SomeValue1;
 
-            public Enum2 Field3(Enum2? arg1, Enum1 arg2, Enum2 arg3 = Enum2.SomeValue2, Enum1? arg4 = Enum1.Option3) => arg3;
+            public Enum2 Field3(Enum2? arg1, Enum1 arg2, Enum2? arg3 = Enum2.SomeValue2, Enum1? arg4 = Enum1.Option3) => arg3 ?? Enum2.SomeValue1;
 
-            [DefaultValue(Enum2.SomeValue1)]
-            public Enum2? Field4(InputObject input) => Enum2.SomeValue1;
+            public Enum2? Field4(InputObject input) => input.YetAnotherDummyField;
+
+            public Enum1? Field5(Enum1? arg = null) => arg;
         }
 
         enum Enum1
@@ -319,7 +342,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
               public Enum2 YetAnotherField { get; set; }
 
               [DefaultValue(Enum2.SomeValue2)]
-              public Enum2 YetAnotherDummyField { get; set; }
+              public Enum2? YetAnotherDummyField { get; set; }
         }
 
         class QueryWithInterfaces

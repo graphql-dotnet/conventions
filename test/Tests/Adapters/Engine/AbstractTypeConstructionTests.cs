@@ -13,7 +13,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
             type Query {
-                commonField: Date!
+                commonField(value: Date!): Date!
                 someOtherField: String
             }
             ");
@@ -25,18 +25,18 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var engine = GraphQLEngine.New<Query>();
             var result = await engine
                 .NewExecutor()
-                .WithQueryString("{ commonField someOtherField }")
+                .WithQueryString("{ commonField(value: \"1970-01-01T00:00:00Z\") someOtherField }")
                 .EnableValidation()
                 .Execute();
 
             result.ShouldHaveNoErrors();
-            result.Data.ShouldHaveFieldWithValue("commonField", default(DateTime));
+            result.Data.ShouldHaveFieldWithValue("commonField", new DateTime(1970, 1, 1));
             result.Data.ShouldHaveFieldWithValue("someOtherField", string.Empty);
         }
 
         abstract class EntityQuery<T>
         {
-            public T CommonField => default(T);
+            public T CommonField(T value) => value;
         }
 
         class Query : EntityQuery<DateTime>

@@ -296,7 +296,7 @@ namespace GraphQL.Conventions.Types.Resolution
             if (parameterInfo.HasDefaultValue)
             {
                 var baseType = argument.Type.TypeRepresentation.BaseType();
-                if (baseType.IsEnum)
+                if (baseType.IsEnum && parameterInfo.DefaultValue != null)
                 {
                     argument.DefaultValue = Enum.ToObject(baseType.AsType(), parameterInfo.DefaultValue);
                 }
