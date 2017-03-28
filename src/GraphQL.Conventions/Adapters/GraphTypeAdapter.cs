@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
+using GraphQL.Resolvers;
 using GraphQL.Types;
 
 namespace GraphQL.Conventions.Adapters
@@ -12,6 +13,8 @@ namespace GraphQL.Conventions.Adapters
         private readonly CachedRegistry<Type, IGraphType> _typeDescriptors = new CachedRegistry<Type, IGraphType>();
 
         private readonly Dictionary<string, Type> _registeredScalarTypes = new Dictionary<string, Type>();
+
+        public Func<GraphFieldInfo, IFieldResolver> FieldResolverFactory { get; set; } = (fieldInfo) => new WrappedAsyncFieldResolver(fieldInfo);
 
         public ISchema DeriveSchema(GraphSchemaInfo schemaInfo)
         {
@@ -84,7 +87,7 @@ namespace GraphQL.Conventions.Adapters
                 DefaultValue = fieldInfo.DefaultValue,
                 Type = GetType(fieldInfo.Type),
                 Arguments = new QueryArguments(fieldInfo.Arguments.Where(arg => !arg.IsInjected).Select(DeriveArgument)),
-                Resolver = new FieldResolver { FieldInfo = fieldInfo },
+                Resolver = FieldResolverFactory(fieldInfo),
             };
         }
 

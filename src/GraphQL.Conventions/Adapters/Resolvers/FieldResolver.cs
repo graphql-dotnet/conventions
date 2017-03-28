@@ -20,20 +20,25 @@ namespace GraphQL.Conventions.Adapters
 
         private static readonly IUnwrapper Unwrapper = new ValueUnwrapper();
 
-        public GraphFieldInfo FieldInfo { private get; set; }
+        private readonly GraphFieldInfo _fieldInfo;
+
+        public FieldResolver(GraphFieldInfo fieldInfo)
+        {
+            _fieldInfo = fieldInfo;
+        }
 
         public object Resolve(ResolveFieldContext context)
         {
             Func<IResolutionContext, object> resolver;
-            if (FieldInfo.IsMethod)
+            if (_fieldInfo.IsMethod)
             {
-                resolver = ctx => CallMethod(FieldInfo, ctx);
+                resolver = ctx => CallMethod(_fieldInfo, ctx);
             }
             else
             {
-                resolver = ctx => GetValue(FieldInfo, ctx);
+                resolver = ctx => GetValue(_fieldInfo, ctx);
             }
-            var resolutionContext = new ResolutionContext(FieldInfo, context);
+            var resolutionContext = new ResolutionContext(_fieldInfo, context);
             return ExecutionFilterHandler.Execute(resolutionContext, resolver);
         }
 
