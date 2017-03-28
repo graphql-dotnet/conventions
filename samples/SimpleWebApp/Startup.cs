@@ -38,6 +38,12 @@ namespace GraphQL.Conventions.Tests.Server
 
         private async Task HandleRequest(HttpContext context)
         {
+            if (string.Compare(context.Request.Method, "OPTIONS", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                context.Response.StatusCode = 200;
+                return;
+            }
+
             if (string.Compare(context.Request.Method, "POST", StringComparison.OrdinalIgnoreCase) != 0)
             {
                 context.Response.StatusCode = 400;
