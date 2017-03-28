@@ -101,6 +101,24 @@ namespace GraphQL.Conventions
                 .BuildSchema();
         }
 
+        public GraphQLEngine WithFieldResolutionStrategy(FieldResolutionStrategy strategy)
+        {
+            switch (strategy)
+            {
+                default:
+                case FieldResolutionStrategy.Normal:
+                    _graphTypeAdapter.FieldResolverFactory = (FieldInfo) => new FieldResolver(FieldInfo);
+                    break;
+                case FieldResolutionStrategy.WrappedAsynchronous:
+                    _graphTypeAdapter.FieldResolverFactory = (FieldInfo) => new WrappedAsyncFieldResolver(FieldInfo);
+                    break;
+                case FieldResolutionStrategy.WrappedSynchronous:
+                    _graphTypeAdapter.FieldResolverFactory = (FieldInfo) => new WrappedSyncFieldResolver(FieldInfo);
+                    break;
+            }
+            return this;
+        }
+
         public GraphQLEngine WithQuery<TQuery>()
         {
             _schemaTypes.Add(typeof(SchemaDefinition<TQuery>));

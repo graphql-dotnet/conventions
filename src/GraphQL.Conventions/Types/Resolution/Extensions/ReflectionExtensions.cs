@@ -45,6 +45,11 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
                 : null;
         }
 
+        public static TypeInfo TypeParameter(this GraphTypeInfo type)
+        {
+            return type.TypeRepresentation.TypeParameter();
+        }
+
         public static bool IsPrimitiveGraphType(this TypeInfo type)
         {
             return type.IsPrimitive ||

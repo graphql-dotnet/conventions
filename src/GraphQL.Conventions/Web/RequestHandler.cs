@@ -31,6 +31,8 @@ namespace GraphQL.Conventions.Web
 
             bool _outputViolationsAsWarnings;
 
+            FieldResolutionStrategy _fieldResolutionStrategy = FieldResolutionStrategy.Normal;
+
             internal RequestHandlerBuilder()
             {
                 _dependencyInjector = this;
@@ -102,6 +104,12 @@ namespace GraphQL.Conventions.Web
                 return this;
             }
 
+            public RequestHandlerBuilder WithFieldResolutionStrategy(FieldResolutionStrategy strategy)
+            {
+                _fieldResolutionStrategy = strategy;
+                return this;
+            }
+
             public IRequestHandler Generate()
             {
                 return new RequestHandlerImpl(
@@ -110,7 +118,8 @@ namespace GraphQL.Conventions.Web
                     _assemblyTypes,
                     _exceptionsTreatedAsWarnings,
                     _useValidation,
-                    _outputViolationsAsWarnings);
+                    _outputViolationsAsWarnings,
+                    _fieldResolutionStrategy);
             }
 
             public object Resolve(TypeInfo typeInfo)
@@ -137,13 +146,15 @@ namespace GraphQL.Conventions.Web
                 IEnumerable<Type> assemblyTypes,
                 IEnumerable<Type> exceptionsTreatedAsWarning,
                 bool useValidation,
-                bool outputViolationsAsWarnings)
+                bool outputViolationsAsWarnings,
+                FieldResolutionStrategy fieldResolutionStrategy)
             {
                 _dependencyInjector = dependencyInjector;
                 _engine.WithAttributesFromAssemblies(assemblyTypes);
                 _exceptionsTreatedAsWarnings.AddRange(exceptionsTreatedAsWarning);
                 _useValidation = useValidation;
                 _outputViolationsAsWarnings = outputViolationsAsWarnings;
+                _engine.WithFieldResolutionStrategy(fieldResolutionStrategy);
                 _engine.BuildSchema(schemaTypes.ToArray());
             }
 
