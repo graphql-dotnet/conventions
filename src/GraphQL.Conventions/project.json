@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "GraphQL-Parser": "2.0.0",
-    "Newtonsoft.Json": "9.0.1"
+    "Newtonsoft.Json": "5.0.6"
   },
   "frameworks": {
     "netstandard1.5": {
