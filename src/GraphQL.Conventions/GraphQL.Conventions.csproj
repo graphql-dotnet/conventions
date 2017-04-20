@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>GraphQL Conventions for .NET</Description>
-    <VersionPrefix>1.2.2</VersionPrefix>
+    <VersionPrefix>1.2.3</VersionPrefix>
     <Authors>Tommy Lillehagen</Authors>
     <TargetFrameworks>netstandard1.5;net45</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -32,7 +32,7 @@
 
   <ItemGroup>
     <PackageReference Include="GraphQL-Parser" Version="2.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="5.0.6" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
