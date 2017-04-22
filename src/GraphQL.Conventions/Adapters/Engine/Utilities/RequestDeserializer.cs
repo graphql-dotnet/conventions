@@ -21,7 +21,14 @@ namespace GraphQL.Conventions
                 throw new ArgumentException($"Unable to deserialize JSON '{requestBody}'.");
             }
 
+            object data;
             object queryString;
+
+            if (!request.TryGetValue("query", out queryString) && request.TryGetValue("data", out data))
+            {
+                request = data as Dictionary<string, object>;
+            }
+
             if (request.TryGetValue("query", out queryString))
             {
                 query.QueryString = queryString as string ?? string.Empty;
