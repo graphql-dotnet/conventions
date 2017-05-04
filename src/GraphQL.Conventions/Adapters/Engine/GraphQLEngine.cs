@@ -230,7 +230,7 @@ namespace GraphQL.Conventions
                 OperationName = operationName,
                 Inputs = inputs,
                 UserContext = userContext,
-                ValidationRules = rules,
+                ValidationRules = rules != null && rules.Any() ? rules : null,
                 CancellationToken = cancellationToken,
             };
 
