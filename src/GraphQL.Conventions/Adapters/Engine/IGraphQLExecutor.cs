@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using GraphQL.Validation;
 
 namespace GraphQL.Conventions
 {
@@ -21,6 +22,8 @@ namespace GraphQL.Conventions
         IGraphQLExecutor<TResult> WithCancellationToken(CancellationToken token);
 
         IGraphQLExecutor<TResult> WithDependencyInjector(IDependencyInjector injector);
+
+        IGraphQLExecutor<TResult> WithValidationRules(IEnumerable<IValidationRule> rules);
 
         IGraphQLExecutor<TResult> EnableValidation(bool enableValidation = true);
 

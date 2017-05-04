@@ -27,6 +27,8 @@ namespace GraphQL.Conventions
 
         private bool _enableProfiling = false;
 
+        private IEnumerable<IValidationRule> _validationRules = null;
+
         internal GraphQLExecutor(GraphQLEngine engine, IRequestDeserializer requestDeserializer)
         {
             _engine = engine;
@@ -83,6 +85,12 @@ namespace GraphQL.Conventions
             return this;
         }
 
+        public IGraphQLExecutor<ExecutionResult> WithValidationRules(IEnumerable<IValidationRule> rules)
+        {
+            _validationRules = rules;
+            return this;
+        }
+
         public IGraphQLExecutor<ExecutionResult> EnableValidation(bool enableValidation = true)
         {
             _enableValidation = enableValidation;
@@ -111,7 +119,7 @@ namespace GraphQL.Conventions
                     _rootObject, _queryString, _operationName, _inputs, _userContext,
                     enableValidation: _enableValidation,
                     enableProfiling: _enableProfiling,
-                    rules: null,
+                    rules: _validationRules,
                     cancellationToken: _cancellationToken)
                 .ConfigureAwait(false);
 
