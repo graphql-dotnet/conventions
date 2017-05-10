@@ -65,8 +65,8 @@ namespace GraphQL.Conventions.Handlers
             }
             else
             {
-                var argumentValue = resolutionContext.GetArgument(argument.Name, argument.DefaultValue);
-                resolutionContext.SetArgument(argument.Name, Wrapper.Wrap(argument.Type, argumentValue));
+                var argumentValue = resolutionContext.GetArgument(argument);
+                resolutionContext.SetArgument(argument.Name, Wrapper.Wrap(argument, argument.Type, argumentValue));
             }
         }
     }

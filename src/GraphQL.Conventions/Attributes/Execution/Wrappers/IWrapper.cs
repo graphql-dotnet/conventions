@@ -4,6 +4,6 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
 {
     public interface IWrapper
     {
-        object Wrap(GraphTypeInfo type, object value);
+        object Wrap(GraphEntityInfo entity, GraphTypeInfo type, object value);
     }
 }

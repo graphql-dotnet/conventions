@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using GraphQL.Conventions.Types.Descriptors;
@@ -29,6 +30,16 @@ namespace GraphQL.Conventions.Adapters
                 }
                 return defaultValue;
             }
+        }
+
+        public object GetArgument(GraphArgumentInfo argument)
+        {
+            var value = GetArgument(argument.Name, argument.DefaultValue);
+            if (!argument.Type.IsNullable && value == null)
+            {
+                throw new ArgumentException($"Null value provided for non-nullable argument '{argument.Name}'.");
+            }
+            return value;
         }
 
         public void SetArgument(string name, object value)

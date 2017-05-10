@@ -9,6 +9,8 @@ namespace GraphQL.Conventions
 
         object GetArgument(string name, object defaultValue = null);
 
+        object GetArgument(GraphArgumentInfo argument);
+
         void SetArgument(string name, object value);
 
         object RootValue { get; }
