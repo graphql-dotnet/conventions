@@ -12,6 +12,6 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
                 .Next(new PrimitiveWrapper());
         }
 
-        public override object WrapValue(GraphTypeInfo type, object value) => value;
+        public override object WrapValue(GraphEntityInfo entity, GraphTypeInfo type, object value) => value;
     }
 }

@@ -14,7 +14,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
         {
         }
 
-        public override object WrapValue(GraphTypeInfo typeInfo, object value)
+        public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value)
         {
             var input = value as Dictionary<string, object>;
             if (typeInfo.IsInputType && input != null)
@@ -36,7 +36,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
                     {
                         throw new Exception($"Invalid field '{field.Name}' on input object; must be a property.");
                     }
-                    propertyInfo.SetValue(obj, _parent.Wrap(field.Type, fieldValue));
+                    propertyInfo.SetValue(obj, _parent.Wrap(field, field.Type, fieldValue));
                 }
                 return obj;
             }
