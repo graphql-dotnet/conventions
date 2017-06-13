@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Validation;
+using GraphQL.Validation.Complexity;
 
 namespace GraphQL.Conventions
 {
@@ -28,6 +29,8 @@ namespace GraphQL.Conventions
         private bool _enableProfiling = false;
 
         private IEnumerable<IValidationRule> _validationRules = null;
+
+        private ComplexityConfiguration _complexityConfiguration = null;
 
         internal GraphQLExecutor(GraphQLEngine engine, IRequestDeserializer requestDeserializer)
         {
@@ -97,6 +100,12 @@ namespace GraphQL.Conventions
             return this;
         }
 
+        public IGraphQLExecutor<ExecutionResult> WithComplexityConfiguration(ComplexityConfiguration complexityConfiguration)
+        {
+            _complexityConfiguration = complexityConfiguration;
+            return this;
+        }
+
         public IGraphQLExecutor<ExecutionResult> DisableValidation()
         {
             return this.EnableValidation(false);
@@ -120,6 +129,7 @@ namespace GraphQL.Conventions
                     enableValidation: _enableValidation,
                     enableProfiling: _enableProfiling,
                     rules: _validationRules,
+                    complexityConfiguration: _complexityConfiguration,
                     cancellationToken: _cancellationToken)
                 .ConfigureAwait(false);
 

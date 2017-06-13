@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Validation;
+using GraphQL.Validation.Complexity;
 
 namespace GraphQL.Conventions
 {
@@ -24,6 +25,8 @@ namespace GraphQL.Conventions
         IGraphQLExecutor<TResult> WithDependencyInjector(IDependencyInjector injector);
 
         IGraphQLExecutor<TResult> WithValidationRules(IEnumerable<IValidationRule> rules);
+
+        IGraphQLExecutor<TResult> WithComplexityConfiguration(ComplexityConfiguration complexityConfiguration);
 
         IGraphQLExecutor<TResult> EnableValidation(bool enableValidation = true);
 
