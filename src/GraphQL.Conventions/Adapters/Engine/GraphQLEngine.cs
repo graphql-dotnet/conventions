@@ -226,11 +226,6 @@ namespace GraphQL.Conventions
                 rules = new[] { new NoopValidationRule() };
             }
 
-            complexityConfiguration = (query.ToLower().Contains("introspectionquery") &&
-                                       query.ToLower().Contains("__schema"))
-                ? null
-                : complexityConfiguration;
-
             var configuration = new ExecutionOptions
             {
                 Schema = _schema,
