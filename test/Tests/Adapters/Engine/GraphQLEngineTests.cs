@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Tests.Adapters.Engine.Types;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Validation.Complexity;
 
 namespace GraphQL.Conventions.Tests.Adapters.Engine
 {
@@ -131,7 +133,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                     field5
                 }")
                 .Execute();
-            
+
             result.Data.ShouldHaveFieldWithValue("field3", "SOME_VALUE2");
             result.Data.ShouldHaveFieldWithValue("field4", "SOME_VALUE2");
             result.Data.ShouldHaveFieldWithValue("field5", null);
@@ -175,6 +177,53 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .Execute();
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("customScalarType", "CUSTOM:WRAPPED:Test");
+        }
+
+        [Test]
+        public async void Can_Use_Complexity_MaxDepth_On_Query()
+        {
+            var executor = GraphQLEngine
+                .New<Movie>()
+                .NewExecutor();
+
+            var result = await executor
+                .WithComplexityConfiguration(new ComplexityConfiguration {MaxDepth = 0})
+                .WithQueryString(@"
+                {                    
+                    title
+                    releaseDate
+                }")
+                .Execute();
+
+            result.Data.ShouldHaveFieldWithValue("title", "Movie 1");
+        }
+
+        [Test]
+        public async void Cannot_Run_Query_With_Depth_Exceed_Complexity_MaxDepth()
+        {
+            var executor = GraphQLEngine
+                .New<Movie>()
+                .NewExecutor();
+
+            var result = await executor
+                .WithComplexityConfiguration(new ComplexityConfiguration() {MaxDepth = 0})
+                .WithQueryString(@"
+                {
+                    title
+                    releaseDate
+                    actors{
+                        firstName
+                        lastName
+                    }
+                }
+                ")
+                .Execute();
+
+            result.ShouldHaveErrors(1);
+            var error = result.Errors.First();
+            error.InnerException.ToString()
+                .ShouldContainWhenReformatted(
+                    "Query is too nested to execute. Depth is 1 levels, maximum allowed on this endpoint is 0.");
         }
 
         class BasicQuery
@@ -259,7 +308,11 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
 
         class Movie
         {
-            public NonNull<string> Title { get; set; }
+            public NonNull<string> Title
+            {
+                get { return "Movie 1"; }
+                set { }
+            }
 
             public List<Actor> Actors { get; set; }
 
@@ -284,13 +337,13 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             public SearchResult(double score, Movie movie)
             {
                 Score = score;
-                Node = new SearchResultItem { Instance = movie };
+                Node = new SearchResultItem {Instance = movie};
             }
 
             public SearchResult(double score, Actor actor)
             {
                 Score = score;
-                Node = new SearchResultItem { Instance = actor };
+                Node = new SearchResultItem {Instance = actor};
             }
 
             public double Score { get; set; }
@@ -301,7 +354,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         class CustomTypesQuery
         {
             public Custom CustomScalarType(Custom arg) =>
-                new Custom { Value = $"WRAPPED:{arg.Value}" };
+                new Custom {Value = $"WRAPPED:{arg.Value}"};
         }
 
         class QueryWithEnums
@@ -310,7 +363,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
 
             public Enum2? Field2 => Enum2.SomeValue1;
 
-            public Enum2 Field3(Enum2? arg1, Enum1 arg2, Enum2? arg3 = Enum2.SomeValue2, Enum1? arg4 = Enum1.Option3) => arg3 ?? Enum2.SomeValue1;
+            public Enum2 Field3(Enum2? arg1, Enum1 arg2, Enum2? arg3 = Enum2.SomeValue2,
+                Enum1? arg4 = Enum1.Option3) => arg3 ?? Enum2.SomeValue1;
 
             public Enum2? Field4(InputObject input) => input.YetAnotherDummyField;
 
@@ -334,15 +388,15 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         [InputType]
         class InputObject
         {
-              [DefaultValue(Enum2.SomeValue1)]
-              public Enum2? SomeField { get; set; }
+            [DefaultValue(Enum2.SomeValue1)]
+            public Enum2? SomeField { get; set; }
 
-              public Enum2? AnotherField { get; set; }
+            public Enum2? AnotherField { get; set; }
 
-              public Enum2 YetAnotherField { get; set; }
+            public Enum2 YetAnotherField { get; set; }
 
-              [DefaultValue(Enum2.SomeValue2)]
-              public Enum2? YetAnotherDummyField { get; set; }
+            [DefaultValue(Enum2.SomeValue2)]
+            public Enum2? YetAnotherDummyField { get; set; }
         }
 
         class QueryWithInterfaces
