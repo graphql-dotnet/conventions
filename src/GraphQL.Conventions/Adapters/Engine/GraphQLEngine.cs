@@ -219,7 +219,6 @@ namespace GraphQL.Conventions
             bool enableProfiling = false,
             IEnumerable<IValidationRule> rules = null,
             CancellationToken cancellationToken = default(CancellationToken))
-            
         {
             if (!enableValidation)
             {

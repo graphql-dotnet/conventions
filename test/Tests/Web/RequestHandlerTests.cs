@@ -42,13 +42,13 @@ namespace GraphQL.Conventions.Tests.Web
         }
 
         [Test]
-        public async Task Can_Run_Query_With_ComplexityConfiguration()
+        public async Task Can_Run_Simple_Query_Using_ComplexityConfiguration()
         {
             var request = Request.New("{ \"query\": \"{ hello }\" }");
             var response = await RequestHandler
                 .New()
                 .WithQuery<TestQuery>()
-                .WithComplexityConfiguration(new ComplexityConfiguration() {MaxDepth = 2})
+                .WithComplexityConfiguration(new ComplexityConfiguration { MaxDepth = 2 })
                 .Generate()
                 .ProcessRequest(request, null);
 
@@ -57,7 +57,22 @@ namespace GraphQL.Conventions.Tests.Web
             response.Errors.Count.ShouldEqual(0);
             response.Warnings.Count.ShouldEqual(0);
         }
-        
+
+        [Test]
+        public async void Cannot_Run_Too_Complex_Query_Using_ComplexityConfiguration()
+        {
+            var request = Request.New("{ \"query\": \"{ hello { is_it_me { youre_looking_for } } }\" }");
+            var response = await RequestHandler
+                .New()
+                .WithQuery<TestQuery>()
+                .WithComplexityConfiguration(new ComplexityConfiguration { MaxDepth = 1 })
+                .Generate()
+                .ProcessRequest(request, null);
+
+            response.Errors.Count.ShouldEqual(1);
+            response.Errors[0].Message.ShouldEqual("Query is too nested to execute. Depth is 2 levels, maximum allowed on this endpoint is 1.");
+        }
+
         class TestQuery
         {
             public string Hello => "World";

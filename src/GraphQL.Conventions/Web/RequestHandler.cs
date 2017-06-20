@@ -34,7 +34,7 @@ namespace GraphQL.Conventions.Web
 
             FieldResolutionStrategy _fieldResolutionStrategy = FieldResolutionStrategy.Normal;
 
-            ComplexityConfiguration _complexityConfiguration = null;
+            ComplexityConfiguration _complexityConfiguration;
 
             internal RequestHandlerBuilder()
             {
@@ -150,7 +150,7 @@ namespace GraphQL.Conventions.Web
 
             readonly bool _outputViolationsAsWarnings;
 
-            readonly ComplexityConfiguration _complexityConfiguration = null;
+            readonly ComplexityConfiguration _complexityConfiguration;
 
             internal RequestHandlerImpl(
                 IDependencyInjector dependencyInjector,
