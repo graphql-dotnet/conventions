@@ -224,7 +224,6 @@ namespace GraphQL.Conventions
             {
                 rules = new[] { new NoopValidationRule() };
             }
-
             var configuration = new ExecutionOptions
             {
                 Schema = _schema,
