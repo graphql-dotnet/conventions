@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Tests.Adapters.Engine.Types;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Validation.Complexity;
 
 namespace GraphQL.Conventions.Tests.Adapters.Engine
 {
@@ -177,6 +179,50 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             result.Data.ShouldHaveFieldWithValue("customScalarType", "CUSTOM:WRAPPED:Test");
         }
 
+        [Test]
+        public async Task Can_Run_Simple_Query_Using_ComplexityConfiguration()
+        {
+            var executor = GraphQLEngine
+                .New<Movie>()
+                .NewExecutor();
+
+            var result = await executor
+                .WithComplexityConfiguration(new ComplexityConfiguration { MaxDepth = 0 })
+                .WithQueryString(@"
+                    {
+                        title
+                        releaseDate
+                    }")
+                .Execute();
+
+            result.Data.ShouldHaveFieldWithValue("title", "Movie 1");
+        }
+
+        [Test]
+        public async Task Cannot_Run_Too_Complex_Query_Using_ComplexityConfiguration()
+        {
+            var executor = GraphQLEngine
+                .New<Movie>()
+                .NewExecutor();
+
+            var result = await executor
+                .WithComplexityConfiguration(new ComplexityConfiguration { MaxDepth = 0 })
+                .WithQueryString(@"
+                    {
+                        title
+                        releaseDate
+                        actors{
+                            firstName
+                            lastName
+                        }
+                    }")
+                .Execute();
+
+            result.ShouldHaveErrors(1);
+            var error = result.Errors.First().InnerException.ToString();
+            error.ShouldContainWhenReformatted("Query is too nested to execute. Depth is 1 levels, maximum allowed on this endpoint is 0.");
+        }
+
         class BasicQuery
         {
             public bool? BooleanField1 { get; }
@@ -259,7 +305,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
 
         class Movie
         {
-            public NonNull<string> Title { get; set; }
+            public NonNull<string> Title { get; set; } = "Movie 1";
 
             public List<Actor> Actors { get; set; }
 

@@ -16,6 +16,7 @@ using GraphQL.Instrumentation;
 using GraphQL.Types;
 using GraphQL.Utilities;
 using GraphQL.Validation;
+using GraphQL.Validation.Complexity;
 
 namespace GraphQL.Conventions
 {
@@ -213,6 +214,7 @@ namespace GraphQL.Conventions
             string operationName,
             Inputs inputs,
             IUserContext userContext,
+            ComplexityConfiguration complexityConfiguration,
             bool enableValidation = true,
             bool enableProfiling = false,
             IEnumerable<IValidationRule> rules = null,
@@ -231,6 +233,7 @@ namespace GraphQL.Conventions
                 Inputs = inputs,
                 UserContext = userContext,
                 ValidationRules = rules != null && rules.Any() ? rules : null,
+                ComplexityConfiguration = complexityConfiguration,
                 CancellationToken = cancellationToken,
             };
 

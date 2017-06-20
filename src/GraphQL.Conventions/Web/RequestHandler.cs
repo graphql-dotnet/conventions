@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using GraphQL.Validation.Complexity;
 
 namespace GraphQL.Conventions.Web
 {
@@ -32,6 +33,8 @@ namespace GraphQL.Conventions.Web
             bool _outputViolationsAsWarnings;
 
             FieldResolutionStrategy _fieldResolutionStrategy = FieldResolutionStrategy.Normal;
+
+            ComplexityConfiguration _complexityConfiguration;
 
             internal RequestHandlerBuilder()
             {
@@ -110,6 +113,12 @@ namespace GraphQL.Conventions.Web
                 return this;
             }
 
+            public RequestHandlerBuilder WithComplexityConfiguration(ComplexityConfiguration complexityConfiguration)
+            {
+                _complexityConfiguration = complexityConfiguration;
+                return this;
+            }
+
             public IRequestHandler Generate()
             {
                 return new RequestHandlerImpl(
@@ -119,7 +128,8 @@ namespace GraphQL.Conventions.Web
                     _exceptionsTreatedAsWarnings,
                     _useValidation,
                     _outputViolationsAsWarnings,
-                    _fieldResolutionStrategy);
+                    _fieldResolutionStrategy,
+                    _complexityConfiguration);
             }
 
             public object Resolve(TypeInfo typeInfo)
@@ -140,6 +150,8 @@ namespace GraphQL.Conventions.Web
 
             readonly bool _outputViolationsAsWarnings;
 
+            readonly ComplexityConfiguration _complexityConfiguration;
+
             internal RequestHandlerImpl(
                 IDependencyInjector dependencyInjector,
                 IEnumerable<Type> schemaTypes,
@@ -147,7 +159,8 @@ namespace GraphQL.Conventions.Web
                 IEnumerable<Type> exceptionsTreatedAsWarning,
                 bool useValidation,
                 bool outputViolationsAsWarnings,
-                FieldResolutionStrategy fieldResolutionStrategy)
+                FieldResolutionStrategy fieldResolutionStrategy,
+                ComplexityConfiguration complexityConfiguration)
             {
                 _dependencyInjector = dependencyInjector;
                 _engine.WithAttributesFromAssemblies(assemblyTypes);
@@ -156,6 +169,7 @@ namespace GraphQL.Conventions.Web
                 _outputViolationsAsWarnings = outputViolationsAsWarnings;
                 _engine.WithFieldResolutionStrategy(fieldResolutionStrategy);
                 _engine.BuildSchema(schemaTypes.ToArray());
+                _complexityConfiguration = complexityConfiguration;
             }
 
             public async Task<Response> ProcessRequest(Request request, IUserContext userContext)
@@ -177,6 +191,7 @@ namespace GraphQL.Conventions.Web
                     .WithOperationName(request.OperationName)
                     .WithDependencyInjector(_dependencyInjector)
                     .WithUserContext(userContext)
+                    .WithComplexityConfiguration(_complexityConfiguration)
                     .EnableValidation(_useValidation)
                     .Execute()
                     .ConfigureAwait(false);
