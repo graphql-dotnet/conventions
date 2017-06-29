@@ -19,8 +19,6 @@ namespace GraphQL.Conventions.Types.Resolution
 
         TypeRegistration LookupType(TypeInfo typeInfo);
 
-        IDependencyInjector DependencyInjector { get; set; }
-
         GraphSchemaInfo ActiveSchema { get; set; }
     }
 }

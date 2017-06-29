@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Types;
 
@@ -56,7 +57,9 @@ namespace GraphQL.Conventions.Adapters
 
         public object RootValue => FieldContext.RootValue;
 
-        public IUserContext UserContext => FieldContext.UserContext as IUserContext;
+        public IUserContext UserContext => (FieldContext.UserContext as UserContextWrapper)?.UserContext;
+
+        public IDependencyInjector DependencyInjector => (FieldContext.UserContext as UserContextWrapper)?.DependencyInjector;
 
         public GraphFieldInfo FieldInfo { get; private set; }
 

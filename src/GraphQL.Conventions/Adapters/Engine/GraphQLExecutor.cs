@@ -24,6 +24,8 @@ namespace GraphQL.Conventions
 
         private CancellationToken _cancellationToken = default(CancellationToken);
 
+        private IDependencyInjector _dependencyInjector;
+
         private bool _enableValidation = true;
 
         private bool _enableProfiling = false;
@@ -84,7 +86,7 @@ namespace GraphQL.Conventions
 
         public IGraphQLExecutor<ExecutionResult> WithDependencyInjector(IDependencyInjector injector)
         {
-            _engine.DependencyInjector = injector;
+            _dependencyInjector = injector;
             return this;
         }
 
@@ -125,7 +127,7 @@ namespace GraphQL.Conventions
         public async Task<ExecutionResult> Execute() =>
             await _engine
                 .Execute(
-                    _rootObject, _queryString, _operationName, _inputs, _userContext,
+                    _rootObject, _queryString, _operationName, _inputs, _userContext, _dependencyInjector,
                     enableValidation: _enableValidation,
                     enableProfiling: _enableProfiling,
                     rules: _validationRules,

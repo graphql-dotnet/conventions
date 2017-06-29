@@ -52,35 +52,25 @@ namespace GraphQL.Conventions
 
         private class WrappedDependencyInjector : IDependencyInjector
         {
-            private readonly GraphQLEngine _engine;
-
             private readonly Func<System.Type, object> _typeResolutionDelegate;
 
-            public WrappedDependencyInjector(GraphQLEngine engine, Func<System.Type, object> typeResolutionDelegate)
+            public WrappedDependencyInjector(Func<System.Type, object> typeResolutionDelegate)
             {
-                _engine = engine;
                 _typeResolutionDelegate = typeResolutionDelegate;
             }
 
             public object Resolve(System.Reflection.TypeInfo typeInfo)
             {
-                return _typeResolutionDelegate(typeInfo.AsType()) ?? _engine.CreateInstance(typeInfo.AsType());
+                return _typeResolutionDelegate(typeInfo.AsType());
             }
         }
 
         public GraphQLEngine(Func<System.Type, object> typeResolutionDelegate = null)
         {
             _constructor = new SchemaConstructor<ISchema, IGraphType>(_graphTypeAdapter, _typeResolver);
-            if (typeResolutionDelegate != null)
-            {
-                _typeResolver.DependencyInjector = new WrappedDependencyInjector(this, typeResolutionDelegate);
-                _constructor.TypeResolutionDelegate = type => typeResolutionDelegate(type) ?? CreateInstance(type);
-            }
-            else
-            {
-                _constructor.TypeResolutionDelegate = type =>
-                    _typeResolver?.DependencyInjector?.Resolve(type.GetTypeInfo()) ?? CreateInstance(type);
-            }
+            _constructor.TypeResolutionDelegate = typeResolutionDelegate != null
+                ? (Func<System.Type, object>)(type => typeResolutionDelegate(type) ?? CreateInstance(type))
+                : (Func<System.Type, object>)CreateInstance;
         }
 
         public static GraphQLEngine New(Func<System.Type, object> typeResolutionDelegate = null)
@@ -202,18 +192,13 @@ namespace GraphQL.Conventions
             return _documentWriter.Write(result);
         }
 
-        internal IDependencyInjector DependencyInjector
-        {
-            get { return _typeResolver.DependencyInjector; }
-            set { _typeResolver.DependencyInjector = value; }
-        }
-
         internal async Task<ExecutionResult> Execute(
             object rootObject,
             string query,
             string operationName,
             Inputs inputs,
             IUserContext userContext,
+            IDependencyInjector dependencyInjector,
             ComplexityConfiguration complexityConfiguration,
             bool enableValidation = true,
             bool enableProfiling = false,
@@ -231,7 +216,7 @@ namespace GraphQL.Conventions
                 Query = query,
                 OperationName = operationName,
                 Inputs = inputs,
-                UserContext = userContext,
+                UserContext = new UserContextWrapper(userContext, dependencyInjector ?? new WrappedDependencyInjector(_constructor.TypeResolutionDelegate)),
                 ValidationRules = rules != null && rules.Any() ? rules : null,
                 ComplexityConfiguration = complexityConfiguration,
                 CancellationToken = cancellationToken,

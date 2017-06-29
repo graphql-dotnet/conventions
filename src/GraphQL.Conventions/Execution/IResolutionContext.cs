@@ -17,6 +17,8 @@ namespace GraphQL.Conventions
 
         IUserContext UserContext { get; }
 
+        IDependencyInjector DependencyInjector { get; }
+
         GraphFieldInfo FieldInfo { get; }
 
         CancellationToken CancellationToken { get; }
