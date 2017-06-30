@@ -12,4 +12,4 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyInformationalVersion("1.2.9")]
 [assembly: CLSCompliant(false)]
 
-[assembly: InternalsVisibleTo("GraphQL.Conventions.Tests")]
+[assembly: InternalsVisibleTo("Tests")]
