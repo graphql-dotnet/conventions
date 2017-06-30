@@ -1,15 +1,35 @@
-﻿namespace GraphQL.Conventions.Execution
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace GraphQL.Conventions.Execution
 {
     internal class UserContextWrapper
     {
-        public UserContextWrapper(IUserContext userContext, IDependencyInjector dependencyInjector)
+        public static UserContextWrapper Create(IUserContext userContext, IDependencyInjector dependencyInjector)
         {
-            UserContext = userContext;
-            DependencyInjector = dependencyInjector;
+            if (userContext is IDataLoaderContextProvider)
+            {
+                return new UserContextWithDataLoaderContextProvider
+                {
+                    UserContext = userContext,
+                    DependencyInjector = dependencyInjector
+                };
+            }
+
+            return new UserContextWrapper
+            {
+                UserContext = userContext,
+                DependencyInjector = dependencyInjector
+            };
         }
 
-        public IUserContext UserContext { get; }
+        public IUserContext UserContext { get; private set; }
 
-        public IDependencyInjector DependencyInjector { get; }
+        public IDependencyInjector DependencyInjector { get; private set; }
+
+        private class UserContextWithDataLoaderContextProvider : UserContextWrapper, IDataLoaderContextProvider
+        {
+            public Task FetchData(CancellationToken token) => (UserContext as IDataLoaderContextProvider)?.FetchData(token) ?? Task.FromResult(0);
+        }
     }
 }
