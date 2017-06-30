@@ -33,6 +33,31 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         }
 
         [Test]
+        public async void Each_Executor_Should_Use_Its_Own_Injector()
+        {
+            var engine = GraphQLEngine.New<Query>();
+
+            var executor1 = engine
+                .NewExecutor()
+                .WithQueryString("{ field }")
+                .WithDependencyInjector(new DependencyInjector("Injector1"));
+
+            var executor2 = engine
+                .NewExecutor()
+                .WithQueryString("{ field }")
+                .WithDependencyInjector(new DependencyInjector("Injector2"));
+
+            var result1 = await executor1.Execute();
+            var result2 = await executor2.Execute();
+
+            result1.ShouldHaveNoErrors();
+            result1.Data.ShouldHaveFieldWithValue("field", "Injector1");
+
+            result2.ShouldHaveNoErrors();
+            result2.Data.ShouldHaveFieldWithValue("field", "Injector2");
+        }
+
+        [Test]
         public void Can_Construct_And_Describe_Schema_With_Injections_In_Generic_Methods()
         {
             var engine = GraphQLEngine.New<QueryWithDIFields>();
@@ -80,10 +105,14 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
 
         class Repository : IRepository
         {
-            public string GetValue()
+            private readonly string _value;
+
+            public Repository(string value)
             {
-                return "Some Value";
+                _value = value;
             }
+
+            public string GetValue() => _value;
         }
 
         class QueryWithDIFields
@@ -103,11 +132,18 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
 
         class DependencyInjector : IDependencyInjector
         {
+            private readonly string _value;
+
+            public DependencyInjector(string value = "Some Value")
+            {
+                _value = value;
+            }
+
             public object Resolve(TypeInfo typeInfo)
             {
                 if (typeInfo.AsType() == typeof(Query))
                 {
-                    return new Query(new Repository());
+                    return new Query(new Repository(_value));
                 }
                 if (typeInfo.AsType() == typeof(IDependency))
                 {

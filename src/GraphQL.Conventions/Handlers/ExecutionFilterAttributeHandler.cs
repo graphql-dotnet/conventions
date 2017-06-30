@@ -59,7 +59,7 @@ namespace GraphQL.Conventions.Handlers
                 }
                 else
                 {
-                    obj = argument.TypeResolver.DependencyInjector?.Resolve(argumentType);
+                    obj = resolutionContext.DependencyInjector?.Resolve(argumentType);
                 }
                 resolutionContext.SetArgument(argument.Name, obj);
             }

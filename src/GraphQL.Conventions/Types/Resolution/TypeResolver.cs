@@ -61,8 +61,6 @@ namespace GraphQL.Conventions.Types.Resolution
             _reflector.DiscoverAndRegisterDefaultAttributesInAssembly(assemblyType);
         }
 
-        public IDependencyInjector DependencyInjector { get; set; }
-
         public GraphSchemaInfo ActiveSchema { get; set; }
 
         private void RegisterKnownTypes()
