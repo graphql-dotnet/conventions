@@ -1,12 +1,14 @@
-﻿using System.Reflection;
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Running;
 
-namespace GraphQLParser.Benchmarks {
-    internal static class Program {
-        private static void Main() {
-            var benchmarksAssembly = typeof(Program).GetTypeInfo().Assembly;
-            var benchmarkSwitcher = new BenchmarkSwitcher(benchmarksAssembly);
-            benchmarkSwitcher.Run();
+namespace GraphQLParser.Benchmarks
+{
+    internal static class Program
+    {
+        private static void Main()
+        {
+//            var bench = new LexerBenchmark();
+//            bench.LexKitchenSink();
+            BenchmarkRunner.Run<LexerBenchmark>();
         }
     }
 }
