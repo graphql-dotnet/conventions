@@ -28,8 +28,6 @@
             if (this.currentIndex >= this.source.Body.Length)
                 return this.CreateEOFToken();
 
-            var unicode = this.IfUnicodeGetString();
-
             var code = this.source.Body[this.currentIndex];
 
             this.ValidateCharacterCode(code);
@@ -48,7 +46,7 @@
                 return this.ReadString();
 
             throw new GraphQLSyntaxErrorException(
-                $"Unexpected character {this.ResolveCharName(code, unicode)}", this.source, this.currentIndex);
+                $"Unexpected character {this.ResolveCharName(code, IfUnicodeGetString())}", this.source, this.currentIndex);
         }
 
         public bool OnlyHexInString(string test)
