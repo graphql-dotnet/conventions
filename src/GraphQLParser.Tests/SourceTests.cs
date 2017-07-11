@@ -1,33 +1,33 @@
-﻿namespace GraphQLParser.Tests
+﻿using Xunit;
+
+namespace GraphQLParser.Tests
 {
     using GraphQLParser;
-    using NUnit.Framework;
 
-    [TestFixture]
     public class SourceTests
     {
-        [Test]
+        [Fact]
         public void CreateSourceFromString_BodyEqualsToProvidedSource()
         {
             var source = new Source("somesrc");
 
-            Assert.AreEqual("somesrc", source.Body);
+            Assert.Equal("somesrc", source.Body);
         }
 
-        [Test]
+        [Fact]
         public void CreateSourceFromString_SourceNameEqualsToGraphQL()
         {
             var source = new Source("somesrc");
 
-            Assert.AreEqual("GraphQL", source.Name);
+            Assert.Equal("GraphQL", source.Name);
         }
 
-        [Test]
+        [Fact]
         public void CreateSourceFromStringWithName_SourceNameEqualsToProvidedName()
         {
             var source = new Source("somesrc", "somename");
 
-            Assert.AreEqual("somename", source.Name);
+            Assert.Equal("somename", source.Name);
         }
     }
 }

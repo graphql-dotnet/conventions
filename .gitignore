@@ -17,3 +17,6 @@ _ReSharper.*
 *.nuget.props
 *.nuget.targets
 *.orig
+*.DS_Store
+node_modules
+BenchmarkDotNet.Artifacts

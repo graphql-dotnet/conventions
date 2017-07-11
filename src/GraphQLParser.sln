@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "GraphQLParser", "GraphQLParser\GraphQLParser.xproj", "{7970B102-F058-42A9-8767-71B9655249F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphQLParser", "GraphQLParser\GraphQLParser.csproj", "{7970B102-F058-42A9-8767-71B9655249F4}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "GraphQLParser.Tests", "GraphQLParser.Tests\GraphQLParser.Tests.xproj", "{2F9ECCC6-4A4D-4376-BAD3-F594BDBAEFDB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphQLParser.Tests", "GraphQLParser.Tests\GraphQLParser.Tests.csproj", "{2F9ECCC6-4A4D-4376-BAD3-F594BDBAEFDB}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "GraphQLParser.Benchmarks", "GraphQLParser.Benchmarks\GraphQLParser.Benchmarks.xproj", "{78D53BE8-375C-4E27-8EDA-F79B65B52C93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphQLParser.Benchmarks", "GraphQLParser.Benchmarks\GraphQLParser.Benchmarks.csproj", "{78D53BE8-375C-4E27-8EDA-F79B65B52C93}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
