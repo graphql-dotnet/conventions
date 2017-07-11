@@ -3,12 +3,12 @@
     using GraphQLParser;
     using GraphQLParser.AST;
     using NSubstitute;
-    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Xunit;
 
-    [TestFixture]
+    
     public class GraphQLAstVisitorTests
     {
         private Parser parser;
@@ -31,8 +31,7 @@
         private GraphQLAstVisitor visitor;
         public List<GraphQLScalarValue> visitedBooleanValues { get; private set; }
 
-        [SetUp]
-        public void SetUp()
+        public GraphQLAstVisitorTests()
         {
             this.parser = new Parser(new Lexer());
             this.visitor = Substitute.ForPartsOf<GraphQLAstVisitor>();
@@ -56,229 +55,229 @@
             this.visitedEnumValues = MockVisitMethod<GraphQLScalarValue>((visitor) => visitor.BeginVisitEnumValue(null));
         }
 
-        [Test]
+        [Fact]
         public void Visit_BooleanValueArgument_VisitsOneBooleanValue()
         {
             this.visitor.Visit(this.Parse("{ stuff(id : true) }"));
 
-            Assert.AreEqual(1, this.visitedBooleanValues.Count);
+            Assert.Equal(1, this.visitedBooleanValues.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_DefinitionWithSingleFragmentSpread_VisitsFragmentSpreadOneTime()
         {
             this.visitor.Visit(this.Parse("{ foo { ...fragment } }"));
 
-            Assert.AreEqual(1, this.visitedFragmentSpreads.Count);
+            Assert.Equal(1, this.visitedFragmentSpreads.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_DefinitionWithSingleFragmentSpread_VisitsNameOfPropertyAndFragmentSpread()
         {
             this.visitor.Visit(this.Parse("{ foo { ...fragment } }"));
 
-            Assert.AreEqual(2, this.visitedNames.Count);
+            Assert.Equal(2, this.visitedNames.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_DirectiveWithVariable_VisitsVariableOnce()
         {
             this.visitor.Visit(this.Parse("{ ... @include(if : $stuff) { field } }"));
 
-            Assert.AreEqual(1, this.visitedVariables.Count);
+            Assert.Equal(1, this.visitedVariables.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_EnumValueArgument_VisitsOneEnumValue()
         {
             this.visitor.Visit(this.Parse("{ stuff(id : TEST_ENUM) }"));
 
-            Assert.AreEqual(1, this.visitedEnumValues.Count);
+            Assert.Equal(1, this.visitedEnumValues.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_FloatValueArgument_VisitsOneFloatValue()
         {
             this.visitor.Visit(this.Parse("{ stuff(id : 1.2) }"));
 
-            Assert.AreEqual(1, this.visitedFloatValues.Count);
+            Assert.Equal(1, this.visitedFloatValues.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_FragmentWithTypeCondition_VisitsFragmentDefinitionOnce()
         {
             this.visitor.Visit(this.Parse("fragment testFragment on Stuff { field }"));
 
-            Assert.AreEqual(1, this.visitedFragmentDefinitions.Count);
+            Assert.Equal(1, this.visitedFragmentDefinitions.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_FragmentWithTypeCondition_VisitsTypeConditionOnce()
         {
             this.visitor.Visit(this.Parse("fragment testFragment on Stuff { field }"));
 
-            Assert.AreEqual(1, this.visitedFragmentTypeConditions.Count);
+            Assert.Equal(1, this.visitedFragmentTypeConditions.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_InlineFragmentWithDirectiveAndArgument_VisitsArgumentsOnce()
         {
             this.visitor.Visit(this.Parse("{ ... @include(if : $stuff) { field } }"));
 
-            Assert.AreEqual(1, this.visitedArguments.Count);
+            Assert.Equal(1, this.visitedArguments.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_InlineFragmentWithDirectiveAndArgument_VisitsDirectiveOnce()
         {
             this.visitor.Visit(this.Parse("{ ... @include(if : $stuff) { field } }"));
 
-            Assert.AreEqual(1, this.visitedDirectives.Count);
+            Assert.Equal(1, this.visitedDirectives.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_InlineFragmentWithDirectiveAndArgument_VisitsNameThreeTimes()
         {
             this.visitor.Visit(this.Parse("{ ... @include(if : $stuff) { field } }"));
 
-            Assert.AreEqual(4, this.visitedNames.Count);
+            Assert.Equal(4, this.visitedNames.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_InlineFragmentWithOneField_VisitsOneField()
         {
             this.visitor.Visit(this.Parse("{ ... @include(if : $stuff) { field } }"));
 
-            Assert.AreEqual(1, this.visitedFieldSelections.Count);
+            Assert.Equal(1, this.visitedFieldSelections.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_InlineFragmentWithTypeCondition_VisitsInlineFragmentOnce()
         {
             this.visitor.Visit(this.Parse("{ ... on Stuff { field } }"));
 
-            Assert.AreEqual(1, this.visitedInlineFragments.Count);
+            Assert.Equal(1, this.visitedInlineFragments.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_InlineFragmentWithTypeCondition_VisitsTypeConditionOnce()
         {
             this.visitor.Visit(this.Parse("{ ... on Stuff { field } }"));
 
-            Assert.AreEqual(1, this.visitedFragmentTypeConditions.Count);
+            Assert.Equal(1, this.visitedFragmentTypeConditions.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_IntValueArgument_VisitsOneIntValue()
         {
             this.visitor.Visit(this.Parse("{ stuff(id : 1) }"));
 
-            Assert.AreEqual(1, this.visitedIntValues.Count);
+            Assert.Equal(1, this.visitedIntValues.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_OneDefinition_CallsVisitDefinitionOnce()
         {
             this.visitor.Visit(this.Parse("{ a }"));
 
-            Assert.AreEqual(1, visitedDefinitions.Count);
+            Assert.Equal(1, visitedDefinitions.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_OneDefinition_ProvidesCorrectDefinitionAsParameter()
         {
             var ast = this.Parse("{ a }");
             this.visitor.Visit(ast);
 
-            Assert.AreEqual(ast.Definitions.Single(), visitedDefinitions.Single());
+            Assert.Equal(ast.Definitions.Single(), visitedDefinitions.Single());
         }
 
-        [Test]
+        [Fact]
         public void Visit_OneDefinition_VisitsOneSelectionSet()
         {
             this.visitor.Visit(this.Parse("{ a, b }"));
 
-            Assert.AreEqual(1, this.visitedSelectionSets.Count);
+            Assert.Equal(1, this.visitedSelectionSets.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_OneDefinitionWithOneAliasedField_VisitsOneAlias()
         {
             this.visitor.Visit(this.Parse("{ foo, foo : bar }"));
 
-            Assert.AreEqual(1, this.visitedAliases.Count);
+            Assert.Equal(1, this.visitedAliases.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_OneDefinitionWithOneArgument_VisitsOneArgument()
         {
             this.visitor.Visit(this.Parse("{ foo(id : 1) { name } }"));
 
-            Assert.AreEqual(1, this.visitedArguments.Count);
+            Assert.Equal(1, this.visitedArguments.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_OneDefinitionWithOneNestedArgument_VisitsOneArgument()
         {
             this.visitor.Visit(this.Parse("{ foo{ names(size: 10) } }"));
 
-            Assert.AreEqual(1, this.visitedArguments.Count);
+            Assert.Equal(1, this.visitedArguments.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_StringValueArgument_VisitsOneStringValue()
         {
             this.visitor.Visit(this.Parse("{ stuff(id : \"abc\") }"));
 
-            Assert.AreEqual(1, this.visitedStringValues.Count);
+            Assert.Equal(1, this.visitedStringValues.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_TwoDefinitions_CallsVisitDefinitionTwice()
         {
             this.visitor.Visit(this.Parse("{ a }\n{ b }"));
 
-            Assert.AreEqual(2, visitedDefinitions.Count);
+            Assert.Equal(2, visitedDefinitions.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_TwoFieldSelections_VisitsFieldSelectionTwice()
         {
             this.visitor.Visit(this.Parse("{ a, b }"));
 
-            Assert.AreEqual(2, this.visitedFieldSelections.Count);
+            Assert.Equal(2, this.visitedFieldSelections.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_TwoFieldSelections_VisitsTwoFieldNames()
         {
             this.visitor.Visit(this.Parse("{ a, b }"));
 
-            Assert.AreEqual(2, this.visitedNames.Count);
+            Assert.Equal(2, this.visitedNames.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_TwoFieldSelections_VisitsTwoFieldNamesAndDefinitionName()
         {
             this.visitor.Visit(this.Parse("query foo { a, b }"));
 
-            Assert.AreEqual(3, this.visitedNames.Count);
+            Assert.Equal(3, this.visitedNames.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_TwoFieldSelectionsWithOneNested_VisitsFiveFieldSelections()
         {
             this.visitor.Visit(this.Parse("{a, nested { x,  y }, b}"));
 
-            Assert.AreEqual(5, this.visitedFieldSelections.Count);
+            Assert.Equal(5, this.visitedFieldSelections.Count);
         }
 
-        [Test]
+        [Fact]
         public void Visit_TwoFieldSelectionsWithOneNested_VisitsFiveNames()
         {
             this.visitor.Visit(this.Parse("{a, nested { x,  y }, b}"));
 
-            Assert.AreEqual(5, this.visitedNames.Count);
+            Assert.Equal(5, this.visitedNames.Count);
         }
 
         private List<TEntity> MockVisitMethod<TEntity>(Action<GraphQLAstVisitor> visitorMethod)
