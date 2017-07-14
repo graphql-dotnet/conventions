@@ -8,7 +8,7 @@
     <TargetFrameworks>net45;netstandard1.1</TargetFrameworks>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <AssemblyName>GraphQL-Parser</AssemblyName>
-    <PackageId>GraphQLParser</PackageId>
+    <PackageId>GraphQL-Parser</PackageId>
     <PackageTags>GraphQL;json;api</PackageTags>
     <PackageProjectUrl>https://github.com/graphql-dotnet/parser</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/graphql-dotnet/parser/blob/master/LICENSE.md</PackageLicenseUrl>
