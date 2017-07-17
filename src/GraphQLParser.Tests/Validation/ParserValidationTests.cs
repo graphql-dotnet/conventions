@@ -46,18 +46,6 @@ namespace GraphQLParser.Tests.Validation
         }
 
         [Fact]
-        public void Parse_InvalidNullAsValue_ThrowsExceptionWithCorrectMessage()
-        {
-            var exception = Assert.Throws<GraphQLSyntaxErrorException>(
-                () => new Parser(new Lexer()).Parse(new Source("{ fieldWithNullableStringInput(input: null) }")));
-
-            Assert.Equal(@"Syntax Error GraphQL (1:39) Unexpected Name " + "\"null\"" + @"
-1: { fieldWithNullableStringInput(input: null) }
-                                         ^
-".Replace(Environment.NewLine, "\n"), exception.Message);
-        }
-
-        [Fact]
         public void Parse_LonelySpread_ThrowsExceptionWithCorrectMessage()
         {
             var exception = Assert.Throws<GraphQLSyntaxErrorException>(

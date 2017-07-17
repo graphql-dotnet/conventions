@@ -615,12 +615,18 @@
 
             if (token.Value.Equals("true") || token.Value.Equals("false"))
                 return this.ParseBooleanValue(token);
-            else if (token.Value != null && !token.Value.Equals("null"))
-                return this.ParseEnumValue(token);
+            else if (token.Value != null)
+            {
+                if (token.Value.Equals("null"))
+                    return this.ParseNullValue(token);
+                else
+                    return this.ParseEnumValue(token);
+            }
 
             throw new GraphQLSyntaxErrorException(
                     $"Unexpected {this.currentToken}", this.source, this.currentToken.Start);
         }
+
 
         private GraphQLValue ParseObject(bool isConstant)
         {
@@ -630,6 +636,16 @@
             {
                 Fields = this.ParseObjectFields(isConstant),
                 Location = this.GetLocation(start)
+            };
+        }
+
+        private GraphQLValue ParseNullValue(Token token)
+        {
+            this.Advance();
+            return new GraphQLScalarValue(ASTNodeKind.NullValue)
+            {
+                Value = null,
+                Location = this.GetLocation(token.Start)
             };
         }
 

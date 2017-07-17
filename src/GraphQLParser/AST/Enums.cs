@@ -25,6 +25,7 @@
         NamedType,
         ListType,
         NonNullType,
+        NullValue,
         SchemaDefinition,
         OperationTypeDefinition,
         ScalarTypeDefinition,
