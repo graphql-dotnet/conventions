@@ -14,7 +14,7 @@ namespace GraphQL.Conventions.Adapters
 
         private readonly Dictionary<string, Type> _registeredScalarTypes = new Dictionary<string, Type>();
 
-        public Func<GraphFieldInfo, IFieldResolver> FieldResolverFactory { get; set; } = (fieldInfo) => new WrappedAsyncFieldResolver(fieldInfo);
+        public Func<GraphFieldInfo, IFieldResolver> FieldResolverFactory { get; set; } = (fieldInfo) => new FieldResolver(fieldInfo);
 
         public ISchema DeriveSchema(GraphSchemaInfo schemaInfo)
         {
