@@ -8,8 +8,8 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCopyright("Copyright 2016-2017 Tommy Lillehagen. All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.2.12")]
-[assembly: AssemblyInformationalVersion("1.2.12")]
+[assembly: AssemblyFileVersion("1.2.13")]
+[assembly: AssemblyInformationalVersion("1.2.13")]
 [assembly: CLSCompliant(false)]
 
 [assembly: InternalsVisibleTo("Tests")]
