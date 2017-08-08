@@ -182,6 +182,14 @@ query queryName($foo: ComplexType, $site: Site = MOBILE) {
   }
 }
 
+mutation updateStory {
+  like(story: {id: 123, EndDate: null}) {
+    story {
+      id
+    }
+  }
+}
+
 mutation likeStory {
   like(story: 123) @defer {
     story {
