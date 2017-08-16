@@ -30,6 +30,8 @@ namespace GraphQL.Conventions.Web
 
             bool _useValidation = true;
 
+            bool _useProfiling = false;
+
             bool _outputViolationsAsWarnings;
 
             FieldResolutionStrategy _fieldResolutionStrategy = FieldResolutionStrategy.Normal;
@@ -107,6 +109,12 @@ namespace GraphQL.Conventions.Web
                 return this;
             }
 
+            public RequestHandlerBuilder WithProfiling(bool profiling = true)
+            {
+                _useProfiling = profiling;
+                return this;
+            }
+
             public RequestHandlerBuilder WithFieldResolutionStrategy(FieldResolutionStrategy strategy)
             {
                 _fieldResolutionStrategy = strategy;
@@ -127,6 +135,7 @@ namespace GraphQL.Conventions.Web
                     _assemblyTypes,
                     _exceptionsTreatedAsWarnings,
                     _useValidation,
+                    _useProfiling,
                     _outputViolationsAsWarnings,
                     _fieldResolutionStrategy,
                     _complexityConfiguration);
@@ -148,6 +157,8 @@ namespace GraphQL.Conventions.Web
 
             readonly bool _useValidation;
 
+            readonly bool _useProfiling;
+
             readonly bool _outputViolationsAsWarnings;
 
             readonly ComplexityConfiguration _complexityConfiguration;
@@ -158,6 +169,7 @@ namespace GraphQL.Conventions.Web
                 IEnumerable<Type> assemblyTypes,
                 IEnumerable<Type> exceptionsTreatedAsWarning,
                 bool useValidation,
+                bool useProfiling,
                 bool outputViolationsAsWarnings,
                 FieldResolutionStrategy fieldResolutionStrategy,
                 ComplexityConfiguration complexityConfiguration)
@@ -166,6 +178,7 @@ namespace GraphQL.Conventions.Web
                 _engine.WithAttributesFromAssemblies(assemblyTypes);
                 _exceptionsTreatedAsWarnings.AddRange(exceptionsTreatedAsWarning);
                 _useValidation = useValidation;
+                _useProfiling = useProfiling;
                 _outputViolationsAsWarnings = outputViolationsAsWarnings;
                 _engine.WithFieldResolutionStrategy(fieldResolutionStrategy);
                 _engine.BuildSchema(schemaTypes.ToArray());
@@ -193,6 +206,7 @@ namespace GraphQL.Conventions.Web
                     .WithUserContext(userContext)
                     .WithComplexityConfiguration(_complexityConfiguration)
                     .EnableValidation(_useValidation)
+                    .EnableProfiling(_useProfiling)
                     .Execute()
                     .ConfigureAwait(false);
 
