@@ -24,6 +24,8 @@ namespace GraphQL.Conventions.Web
 
             readonly List<Type> _exceptionsTreatedAsWarnings = new List<Type>();
 
+            readonly List<Type> _middleware = new List<Type>();
+
             IDependencyInjector _dependencyInjector;
 
             ResolveTypeDelegate _resolveTypeDelegate;
@@ -127,6 +129,12 @@ namespace GraphQL.Conventions.Web
                 return this;
             }
 
+            public RequestHandlerBuilder WithMiddleware<T>()
+            {
+                _middleware.Add(typeof(T));
+                return this;
+            }
+
             public IRequestHandler Generate()
             {
                 return new RequestHandlerImpl(
@@ -138,7 +146,8 @@ namespace GraphQL.Conventions.Web
                     _useProfiling,
                     _outputViolationsAsWarnings,
                     _fieldResolutionStrategy,
-                    _complexityConfiguration);
+                    _complexityConfiguration,
+                    _middleware);
             }
 
             public object Resolve(TypeInfo typeInfo)
@@ -172,7 +181,8 @@ namespace GraphQL.Conventions.Web
                 bool useProfiling,
                 bool outputViolationsAsWarnings,
                 FieldResolutionStrategy fieldResolutionStrategy,
-                ComplexityConfiguration complexityConfiguration)
+                ComplexityConfiguration complexityConfiguration,
+                IEnumerable<Type> middleware)
             {
                 _dependencyInjector = dependencyInjector;
                 _engine.WithAttributesFromAssemblies(assemblyTypes);
@@ -183,6 +193,11 @@ namespace GraphQL.Conventions.Web
                 _engine.WithFieldResolutionStrategy(fieldResolutionStrategy);
                 _engine.BuildSchema(schemaTypes.ToArray());
                 _complexityConfiguration = complexityConfiguration;
+
+                foreach (var type in middleware)
+                {
+                    _engine.WithMiddleware(type);
+                }
             }
 
             public async Task<Response> ProcessRequest(Request request, IUserContext userContext)

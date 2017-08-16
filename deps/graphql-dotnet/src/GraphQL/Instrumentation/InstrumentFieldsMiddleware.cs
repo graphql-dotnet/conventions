@@ -6,17 +6,21 @@ namespace GraphQL.Instrumentation
 {
     public class InstrumentFieldsMiddleware
     {
-        public Task<object> Resolve(ResolveFieldContext context, FieldMiddlewareDelegate next)
+        public async Task<object> Resolve(ResolveFieldContext context, FieldMiddlewareDelegate next)
         {
             var metadata = new Dictionary<string, object>
             {
                 {"typeName", context.ParentType.Name},
-                {"fieldName", context.FieldName}
-            };
+                {"fieldName", context.FieldName},
+                {"path", context.Path},
+                {"arguments", context.Arguments},
 
-            using (context.Metrics.Subject("field", context.FieldName, metadata))
+            };
+            var path = $"{context.ParentType.Name}.{context.FieldName}";
+
+            using (context.Metrics.Subject("field", path, metadata))
             {
-                return next(context);
+                return await next(context).ConfigureAwait(false);
             }
         }
     }

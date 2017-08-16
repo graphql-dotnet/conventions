@@ -65,6 +65,8 @@ namespace GraphQL.Conventions.Adapters
 
         public CancellationToken CancellationToken => FieldContext.CancellationToken;
 
+        public IEnumerable<string> Path => FieldContext.Path;
+
         public ResolveFieldContext FieldContext { get; private set; }
     }
 }

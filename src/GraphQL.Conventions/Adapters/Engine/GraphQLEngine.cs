@@ -42,6 +42,8 @@ namespace GraphQL.Conventions
 
         private List<System.Type> _schemaTypes = new List<System.Type>();
 
+        private List<System.Type> _middleware = new List<System.Type>();
+
         private class NoopValidationRule : IValidationRule
         {
             public INodeVisitor Validate(ValidationContext context)
@@ -154,6 +156,17 @@ namespace GraphQL.Conventions
             return this;
         }
 
+        public GraphQLEngine WithMiddleware(System.Type type)
+        {
+            _middleware.Add(type);
+            return this;
+        }
+
+        public GraphQLEngine WithMiddleware<T>()
+        {
+            return WithMiddleware(typeof(T));
+        }
+
         public GraphQLEngine BuildSchema(params System.Type[] types)
         {
             if (_schema == null)
@@ -230,6 +243,11 @@ namespace GraphQL.Conventions
             if (enableProfiling)
             {
                 configuration.FieldMiddleware.Use<InstrumentFieldsMiddleware>();
+            }
+
+            foreach (var middleware in _middleware)
+            {
+                configuration.FieldMiddleware.Use(middleware);
             }
 
             var result = await _documentExecutor.ExecuteAsync(configuration).ConfigureAwait(false);
