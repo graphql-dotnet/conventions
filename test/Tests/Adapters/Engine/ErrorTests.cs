@@ -104,9 +104,34 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             error.Path[3].ShouldEqual("test");
         }
 
+        [Test]
+        public async void Will_Provide_Exception_Data()
+        {
+            var engine = GraphQLEngine.New<Query>();
+            var result = await engine
+                .NewExecutor()
+                .WithQueryString("query Blah { errorWithData }")
+                .Execute();
+
+            result.Data.ShouldHaveFieldWithValue("errorWithData", null);
+
+            result.Errors.ShouldNotBeNull();
+            result.Errors.Count.ShouldEqual(1);
+
+            result.Errors.First().Message.ShouldEqual("Test error.");
+            result.Errors.First().Data["someKey"].ShouldEqual("someValue");
+        }
+
         class Query
         {
             public Object1 GetObject() => new Object1();
+
+            public string ErrorWithData()
+            {
+                var exception = new Exception("Test error.");
+                exception.Data["someKey"] = "someValue";
+                throw exception;
+            }
         }
 
         class Object1
