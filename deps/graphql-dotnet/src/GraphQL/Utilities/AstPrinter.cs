@@ -259,6 +259,11 @@ namespace GraphQL.Utilities
                 c.Print(p => $"${p.Arg(x => x.Name)}");
             });
 
+            Config<NullValue>(c =>
+            {
+                c.Print(f => "null");
+            });
+
             Config<IntValue>(c =>
             {
                 c.Field(x => x.Value);
