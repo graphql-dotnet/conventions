@@ -1,3 +1,0 @@
-[submodule "deps/graphql-dotnet"]
-	path = deps/graphql-dotnet
-	url = https://github.com/graphql-dotnet/graphql-dotnet.git
