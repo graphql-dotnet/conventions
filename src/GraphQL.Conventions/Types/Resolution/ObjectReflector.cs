@@ -109,7 +109,7 @@ namespace GraphQL.Conventions.Types.Resolution
             if (type.IsInterfaceType && !type.IsIgnored && !isInjectedType)
             {
                 var iface = type.GetTypeRepresentation();
-                var types = iface.Assembly.GetTypes().Where(t => iface.IsAssignableFrom(t));
+                var types = TypeRegistry.Get(iface).Where(t => iface.IsAssignableFrom(t));
                 foreach (var t in types)
                 {
                     var ti = t.GetTypeInfo();
