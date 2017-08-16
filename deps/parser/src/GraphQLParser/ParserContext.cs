@@ -357,7 +357,7 @@
             {
                 Name = this.ParseName(),
                 Directives = this.ParseDirectives(),
-                Values = this.Many(TokenKind.BRACE_L, () => this.ParseEnumValueDefinition(), TokenKind.BRACE_R),
+                Values = this.Many(TokenKind.BRACE_L, this.ParseEnumValueDefinition, TokenKind.BRACE_R),
                 Location = this.GetLocation(start)
             };
         }
@@ -367,7 +367,7 @@
             this.Advance();
             return new GraphQLScalarValue(ASTNodeKind.EnumValue)
             {
-                Value = token.Value.ToString(),
+                Value = token.Value,
                 Location = this.GetLocation(token.Start)
             };
         }
