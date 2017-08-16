@@ -31,7 +31,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphQL-Parser" Version="2.0.0" />
+    <Compile Remove="../../deps/parser/src/GraphQLParser/bin/**;../../deps/parser/src/GraphQLParser/obj/**" />
+    <Compile Include="../../deps/parser/src/GraphQLParser/**/*.cs" Exclude="..\..\deps\parser\src\GraphQLParser\bin\**;..\..\deps\parser\src\GraphQLParser\obj\**;bin\**;obj\**;**\*.xproj;packages\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
 
