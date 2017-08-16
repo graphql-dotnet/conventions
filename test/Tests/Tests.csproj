@@ -11,9 +11,28 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="../../deps/graphql-dotnet/src/GraphQL.StarWars/bin/**;../../deps/graphql-dotnet/src/GraphQL.StarWars/obj/**" />
+    <Compile Include="../../deps/graphql-dotnet/src/GraphQL.StarWars/**/*.cs" Exclude="../../deps/graphql-dotnet/src/GraphQL.StarWars/Properties/**;../../deps/graphql-dotnet/src/GraphQL.StarWars/bin/**;../../deps/graphql-dotnet/src/GraphQL.StarWars/obj/**;bin/**;obj/**;**/*.xproj;packages/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="../../deps/graphql-dotnet/src/GraphQL.Tests/bin/**;../../deps/graphql-dotnet/src/GraphQL.Tests/obj/**" />
+    <Compile Include="../../deps/graphql-dotnet/src/GraphQL.Tests/**/*.cs" Exclude="../../deps/graphql-dotnet/src/GraphQL.Tests/Properties/**;../../deps/graphql-dotnet/src/GraphQL.Tests/bin/**;../../deps/graphql-dotnet/src/GraphQL.Tests/obj/**;bin/**;obj/**;**/*.xproj;packages/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="../../deps/parser/src/GraphQLParser.Tests/bin/**;../../deps/parser/src/GraphQLParser.Tests/obj/**" />
+    <Compile Include="../../deps/parser/src/GraphQLParser.Tests/**/*.cs" Exclude="../../deps/parser/src/GraphQLParser.Tests/Properties/**;../../deps/parser/src/GraphQLParser.Tests/bin/**;../../deps/parser/src/GraphQLParser.Tests/obj/**;bin/**;obj/**;**/*.xproj;packages/**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="15.0.0" />
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
+    <PackageReference Include="xunit.runner.reporters" Version="2.3.0-beta1-build3642" />
+    <PackageReference Include="Shouldly" Version="2.8.2" />
+    <PackageReference Include="NSubstitute" Version="2.0.0-*" />
+    <PackageReference Include="ReportGenerator" Version="2.5.9" />
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
