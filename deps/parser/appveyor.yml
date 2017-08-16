@@ -1,0 +1,38 @@
+# version format
+version: 3.0.0.{build}
+environment:
+  COVERALLS_REPO_TOKEN:
+    secure: KIo3DW9EO/LoE4EgLzM8vj0Eh4h1o+joUJXml4/F7g1Lhwndfkg6u+PrN++LPdvz
+pull_requests:
+  do_not_increment_build_number: true
+nuget:
+  disable_publish_on_pr: true
+branches:
+  only:
+    - master
+    - develop
+before_build:
+  - nuget install OpenCover -Version 4.6.519 -OutputDirectory .\OpenCover
+  - nuget install coveralls.net -Version 0.6.0 -OutputDirectory .\coveralls.net
+install:
+  - npm install -g npm
+  - npm --version
+  - ps: Install-Product node LTS
+  - node --version
+  - dotnet --version
+build_script:
+  - cmd: yarn build-ci
+test_script:
+  - .\OpenCover\OpenCover.4.6.519\tools\OpenCover.Console.exe -oldstyle -target:"C:\\Program Files\\dotnet\\dotnet.exe" -targetargs:"test .\Working\Src\GraphQLParser.Tests" -output:coverage.xml -register:user
+  - .\coveralls.net\coveralls.net.0.6.0\tools\csmacnz.coveralls.exe --opencover -i .\coverage.xml
+artifacts:
+- path: 'artifacts\*.nupkg'
+  name: NuGet
+deploy:
+- provider: NuGet
+  server: https://www.myget.org/F/graphql-dotnet/api/v2/package
+  api_key:
+    secure: +l1vfBMajn1WfmXkQ2LdILKxK4fQ5AHSnnU1kf11Bn1xRGUOTCdPhLwHx232piEn
+  skip_symbols: true
+  on:
+    branch: master
