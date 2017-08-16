@@ -1,5 +1,6 @@
 using System.Threading;
 using GraphQL.Conventions.Types.Descriptors;
+using GraphQL.Types;
 
 namespace GraphQL.Conventions
 {
@@ -22,5 +23,7 @@ namespace GraphQL.Conventions
         GraphFieldInfo FieldInfo { get; }
 
         CancellationToken CancellationToken { get; }
+
+        ResolveFieldContext FieldContext { get; }
     }
 }
