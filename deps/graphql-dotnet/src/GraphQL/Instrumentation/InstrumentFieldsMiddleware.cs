@@ -12,6 +12,7 @@ namespace GraphQL.Instrumentation
             {
                 {"typeName", context.ParentType.Name},
                 {"fieldName", context.FieldName},
+                {"path", context.Path},
                 {"arguments", context.Arguments},
 
             };

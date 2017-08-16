@@ -42,6 +42,8 @@ namespace GraphQL.Types
 
         public ExecutionErrors Errors { get; set; }
 
+        public List<string> Path { get; private set; } = new List<string>();
+
         public ResolveFieldContext() { }
 
         public ResolveFieldContext(ResolveFieldContext context)

@@ -269,6 +269,7 @@ namespace GraphQL
         public async Task<ResolveFieldResult<object>> ResolveFieldAsync(ExecutionContext context, IObjectGraphType parentType, object source, Fields fields, IEnumerable<string> path)
         {
             context.CancellationToken.ThrowIfCancellationRequested();
+            var fieldPath = path?.ToList() ?? new List<string>();
 
             var resolveResult = new ResolveFieldResult<object>
             {
@@ -306,6 +307,7 @@ namespace GraphQL
                 resolveContext.CancellationToken = context.CancellationToken;
                 resolveContext.Metrics = context.Metrics;
                 resolveContext.Errors = context.Errors;
+                resolveContext.Path.AddRange(fieldPath);
 
                 var resolver = fieldDefinition.Resolver ?? new NameFieldResolver();
                 var result = resolver.Resolve(resolveContext);
@@ -319,7 +321,7 @@ namespace GraphQL
                         var exception = aggregateException.InnerExceptions.Count == 1
                             ? aggregateException.InnerException
                             : aggregateException;
-                        return GenerateError(resolveResult, field, context, exception, path);
+                        return GenerateError(resolveResult, field, context, exception, fieldPath);
                     }
                     await task.ConfigureAwait(false);
 

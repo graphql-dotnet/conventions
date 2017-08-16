@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Types;
@@ -23,6 +24,8 @@ namespace GraphQL.Conventions
         GraphFieldInfo FieldInfo { get; }
 
         CancellationToken CancellationToken { get; }
+
+        IEnumerable<string> Path { get; }
 
         ResolveFieldContext FieldContext { get; }
     }
