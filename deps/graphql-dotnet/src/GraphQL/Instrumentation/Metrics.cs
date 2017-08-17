@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,11 +11,15 @@ namespace GraphQL.Instrumentation
         private readonly Stopwatch _stopwatch = new Stopwatch();
         private readonly IList<PerfRecord> _records = new List<PerfRecord>();
         private PerfRecord _main;
+        private object _lock = new object();
 
         public void Start(string operationName)
         {
             _main = new PerfRecord("operation", operationName, 0);
-            _records.Add(_main);
+            lock (_lock)
+            {
+                _records.Add(_main);
+            }
             _stopwatch.Start();
         }
 
@@ -26,11 +31,24 @@ namespace GraphQL.Instrumentation
         public IDisposable Subject(string category, string subject, Dictionary<string, object> metadata = null)
         {
             var record = new PerfRecord(category, subject, _stopwatch.ElapsedMilliseconds, metadata);
-            _records.Add(record);
+            lock (_lock)
+            {
+                _records.Add(record);
+            }
             return new Marker(record, _stopwatch);
         }
 
-        public IEnumerable<PerfRecord> AllRecords => _records.OrderBy(x => x.Start).ToArray();
+        public IEnumerable<PerfRecord> AllRecords
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    var allRecords = _records.OrderBy(x => x.Start).ToArray();
+                    return allRecords;
+                }
+            }
+        }
 
         public IEnumerable<PerfRecord> Finish()
         {

@@ -7,7 +7,7 @@ using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Tests;
 using GraphQL.Conventions.Tests.Templates;
 
-namespace Tests.Execution
+namespace GraphQL.Conventions.Tests.Execution
 {
     public class UserContextWrapperTests : TestBase
     {
