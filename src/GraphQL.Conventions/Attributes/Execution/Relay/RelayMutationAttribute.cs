@@ -1,9 +1,11 @@
+using System;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Attributes;
 using GraphQL.Conventions.Execution;
 
 namespace GraphQL.Conventions.Relay
 {
+    [AttributeUsage(Fields, AllowMultiple = true, Inherited = true)]
     public class RelayMutationAttribute : ExecutionFilterAttributeBase
     {
         public override async Task<object> Execute(IResolutionContext context, FieldResolutionDelegate next)
