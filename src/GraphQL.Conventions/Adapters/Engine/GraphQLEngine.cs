@@ -44,6 +44,10 @@ namespace GraphQL.Conventions
 
         private List<System.Type> _middleware = new List<System.Type>();
 
+        private bool _includeFieldDescriptions = false;
+
+        private bool _includeFieldDeprecationReasons = false;
+
         private class NoopValidationRule : IValidationRule
         {
             public INodeVisitor Validate(ValidationContext context)
@@ -167,6 +171,18 @@ namespace GraphQL.Conventions
             return WithMiddleware(typeof(T));
         }
 
+        public GraphQLEngine PrintFieldDescriptions(bool include = true)
+        {
+            _includeFieldDescriptions = include;
+            return this;
+        }
+
+        public GraphQLEngine PrintFieldDeprecationReasons(bool include = true)
+        {
+            _includeFieldDeprecationReasons = include;
+            return this;
+        }
+
         public GraphQLEngine BuildSchema(params System.Type[] types)
         {
             if (_schema == null)
@@ -176,7 +192,11 @@ namespace GraphQL.Conventions
                     _schemaTypes.AddRange(types);
                 }
                 _schema = _constructor.Build(_schemaTypes.ToArray());
-                _schemaPrinter = new SchemaPrinter(_schema, new[] { TypeNames.Url, TypeNames.Uri, TypeNames.TimeSpan, TypeNames.Guid });
+                _schemaPrinter = new SchemaPrinter(
+                    _schema,
+                    new[] { TypeNames.Url, TypeNames.Uri, TypeNames.TimeSpan, TypeNames.Guid },
+                    _includeFieldDescriptions,
+                    _includeFieldDeprecationReasons);
             }
             return this;
         }

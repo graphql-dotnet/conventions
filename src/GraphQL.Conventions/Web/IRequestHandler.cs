@@ -8,6 +8,9 @@ namespace GraphQL.Conventions.Web
 
         Response Validate(Request request);
 
-        string DescribeSchema(bool returnJson = false);
+        string DescribeSchema(
+            bool returnJson = false,
+            bool includeFieldDescriptions = false,
+            bool includeFieldDeprecationReasons = true);
     }
 }

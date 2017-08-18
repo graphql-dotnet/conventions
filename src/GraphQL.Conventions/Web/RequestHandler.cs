@@ -250,7 +250,10 @@ namespace GraphQL.Conventions.Web
                 return new Response(request, result);
             }
 
-            public string DescribeSchema(bool returnJson = false)
+            public string DescribeSchema(
+                bool returnJson = false,
+                bool includeFieldDescriptions = false,
+                bool includeFieldDeprecationReasons = true)
             {
                 if (returnJson)
                 {
@@ -261,6 +264,8 @@ namespace GraphQL.Conventions.Web
                         .Result;
                     return _engine.SerializeResult(result);
                 }
+                _engine.PrintFieldDescriptions(includeFieldDescriptions);
+                _engine.PrintFieldDeprecationReasons(includeFieldDeprecationReasons);
                 return _engine.Describe();
             }
 

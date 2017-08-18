@@ -8,8 +8,6 @@ namespace GraphQL.Conventions.Relay
     [AttributeUsage(Types, AllowMultiple = true, Inherited = true)]
     public class RelayMutationTypeAttribute : MetaDataAttributeBase
     {
-        private readonly OperationType _operationType;
-
         public RelayMutationTypeAttribute()
             : base(AttributeApplicationPhase.Override)
         {
