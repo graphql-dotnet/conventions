@@ -63,9 +63,21 @@ namespace GraphQL.Conventions.Web
                 return this;
             }
 
+            public RequestHandlerBuilder WithQuery(Type type)
+            {
+                _schemaTypes.Add(typeof(SchemaDefinition<>).MakeGenericType(type));
+                return this;
+            }
+
             public RequestHandlerBuilder WithMutation<TMutation>()
             {
                 _schemaTypes.Add(typeof(SchemaDefinitionWithMutation<TMutation>));
+                return this;
+            }
+
+            public RequestHandlerBuilder WithMutation(Type type)
+            {
+                _schemaTypes.Add(typeof(SchemaDefinitionWithMutation<>).MakeGenericType(type));
                 return this;
             }
 
@@ -78,6 +90,12 @@ namespace GraphQL.Conventions.Web
             public RequestHandlerBuilder WithSubscription<TSubscription>()
             {
                 _schemaTypes.Add(typeof(SchemaDefinitionWithSubscription<TSubscription>));
+                return this;
+            }
+
+            public RequestHandlerBuilder WithSubscription(Type type)
+            {
+                _schemaTypes.Add(typeof(SchemaDefinitionWithSubscription<>).MakeGenericType(type));
                 return this;
             }
 
