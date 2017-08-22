@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -39,6 +39,7 @@ namespace GraphQL.Types
         private readonly List<Type> _additionalTypes;
         private readonly List<IGraphType> _additionalInstances;
         private readonly List<DirectiveGraphType> _directives;
+        private bool _isInitialized = false;
 
         public Schema()
             : this(type => (GraphType) Activator.CreateInstance(type))
@@ -62,11 +63,16 @@ namespace GraphQL.Types
 
         public IFieldNameConverter FieldNameConverter { get; set;} = new CamelCaseFieldNameConverter();
 
-        public bool Initialized => _lookup.IsValueCreated;
+        public bool Initialized
+        {
+            get { return _lookup.IsValueCreated && _isInitialized; }
+            set { _isInitialized = value; }
+        }
 
         public void Initialize()
         {
             FindType("__abcd__");
+            _isInitialized = true;
         }
 
         public IObjectGraphType Query { get; set; }
