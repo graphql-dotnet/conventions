@@ -48,6 +48,18 @@ namespace GraphQL.Conventions
 
         private bool _includeFieldDeprecationReasons = false;
 
+        public bool IsSchemaInitialized
+        {
+            set
+            {
+                var schema = _schema as Schema;
+                if (schema != null)
+                {
+                    schema.Initialized = false;
+                }
+            }
+        }
+
         private class NoopValidationRule : IValidationRule
         {
             public INodeVisitor Validate(ValidationContext context)

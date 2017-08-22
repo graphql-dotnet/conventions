@@ -228,6 +228,7 @@ namespace GraphQL.Conventions.Web
                     {
                         validationWarnings.AddRange(validationResult.Errors);
                     }
+                    _engine.IsSchemaInitialized = false;
                 }
 
                 var result = await _engine
