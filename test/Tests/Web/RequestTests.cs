@@ -45,7 +45,7 @@ namespace GraphQL.Conventions.Tests.Web
         public void Cannot_Derive_Query_From_Invalid_String()
         {
             var request = Request.New("{\"invalid_query\":\"{}\"}");
-            request.IsValid.ShouldEqual(true);
+            request.IsValid.ShouldEqual(false);
             request.QueryString.ShouldEqual(string.Empty);
         }
     }

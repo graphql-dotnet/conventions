@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using GraphQL.Conventions.Extensions;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Web;
@@ -73,9 +74,32 @@ namespace GraphQL.Conventions.Tests.Web
             response.Errors[0].Message.ShouldEqual("Query is too nested to execute. Depth is 2 levels, maximum allowed on this endpoint is 1.");
         }
 
+        [Test]
+        public async void Can_Enrich_With_Profiling_Information()
+        {
+            var request = Request.New("{ \"query\": \"{ a: foo(ms: 10) b: foo(ms: 20) }\" }");
+            var response = await RequestHandler
+                .New()
+                .WithQuery<ProfiledQuery>()
+                .WithProfiling()
+                .Generate()
+                .ProcessRequest(request, null);
+            response.EnrichWithProfilingInformation();
+            response.Body.ShouldContain("\"extra\":{\"profile\":");
+        }
+
         class TestQuery
         {
             public string Hello => "World";
+        }
+
+        class ProfiledQuery
+        {
+            public async Task<int> Foo(int ms)
+            {
+                await Task.Delay(ms);
+                return ms;
+            }
         }
     }
 }
