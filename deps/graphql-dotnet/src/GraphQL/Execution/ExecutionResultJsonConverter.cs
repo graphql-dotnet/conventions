@@ -18,6 +18,7 @@ namespace GraphQL
 
                 writeData(result, writer, serializer);
                 writeErrors(result.Errors, writer, serializer, result.ExposeExceptions);
+                writeExtra(result, writer, serializer);
 
                 writer.WriteEndObject();
             }
@@ -111,6 +112,23 @@ namespace GraphQL
             });
 
             writer.WriteEndArray();
+        }
+
+        private void writeExtra(ExecutionResult result, JsonWriter writer, JsonSerializer serializer)
+        {
+            if (result.Extra == null || result.Extra.Count == 0)
+            {
+                return;
+            }
+
+            writer.WritePropertyName("extra");
+            writer.WriteStartObject();
+            result.Extra.Apply(kvp =>
+            {
+                writer.WritePropertyName(kvp.Key);
+                serializer.Serialize(writer, kvp.Value);
+            });
+            writer.WriteEndObject();
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)

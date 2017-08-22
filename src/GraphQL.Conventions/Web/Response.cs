@@ -1,10 +1,16 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using GraphQL.Http;
 
 namespace GraphQL.Conventions.Web
 {
     public class Response
     {
+        private static DocumentWriter _writer = new DocumentWriter();
+
+        private string _body;
+
         public Response(
             Request request,
             ExecutionResult result)
@@ -29,7 +35,27 @@ namespace GraphQL.Conventions.Web
 
         public Validation.IValidationResult ValidationResult { get; private set; }
 
-        public string Body { get; internal set; }
+        public string Body
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_body) && ExecutionResult != null)
+                {
+                    _body = _writer.Write(ExecutionResult);
+                }
+                return _body;
+            }
+            internal set
+            {
+                _body = value;
+            }
+        }
+
+        public void AddExtra(string key, object value)
+        {
+            ExecutionResult.Extra[key] = value;
+            _body = null;
+        }
 
         public bool HasData => ExecutionResult?.Data != null;
 

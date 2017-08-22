@@ -1,4 +1,5 @@
-﻿using GraphQL.Instrumentation;
+﻿using System.Collections.Generic;
+using GraphQL.Instrumentation;
 using GraphQL.Language.AST;
 using Newtonsoft.Json;
 
@@ -10,6 +11,9 @@ namespace GraphQL
         public object Data { get; set; }
 
         public ExecutionErrors Errors { get; set; }
+
+        public Dictionary<string, object> Extra { get; private set; } =
+            new Dictionary<string, object>();
 
         public string Query { get; set; }
 

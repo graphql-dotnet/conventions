@@ -58,6 +58,11 @@ namespace GraphQL.Conventions.Web
             : this()
         {
             _queryInput = queryInput;
+
+            if (string.IsNullOrWhiteSpace(_queryInput.QueryString))
+            {
+                _exception = new ArgumentException($"Empty query string");
+            }
         }
 
         Request(Exception exception)
