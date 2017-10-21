@@ -6,7 +6,7 @@ using GraphQL.Conventions.Relay;
 
 namespace GraphQL.Conventions.Types.Resolution
 {
-    public class TypeResolver : ITypeResolver
+    public class TypeResolver : ITypeResolver, ICanChangeReflectorSettings
     {
         private readonly ObjectReflector _reflector;
 

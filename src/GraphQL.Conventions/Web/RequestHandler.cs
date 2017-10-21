@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using GraphQL.Validation.Complexity;
+using GraphQL.Conventions.Types.Resolution;
 
 namespace GraphQL.Conventions.Web
 {
@@ -16,7 +17,7 @@ namespace GraphQL.Conventions.Web
             return new RequestHandlerBuilder();
         }
 
-        public class RequestHandlerBuilder : IDependencyInjector
+        public class RequestHandlerBuilder : IDependencyInjector, ICanChangeReflectorSettings
         {
             readonly List<Type> _schemaTypes = new List<Type>();
 
@@ -165,7 +166,8 @@ namespace GraphQL.Conventions.Web
                     _outputViolationsAsWarnings,
                     _fieldResolutionStrategy,
                     _complexityConfiguration,
-                    _middleware);
+                    _middleware
+                );
             }
 
             public object Resolve(TypeInfo typeInfo)

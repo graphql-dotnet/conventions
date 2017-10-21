@@ -9,7 +9,7 @@ using GraphQL.Conventions.Types.Resolution;
 
 namespace GraphQL.Conventions.Builders
 {
-    public class SchemaConstructor<TSchemaType, TGraphType>
+    public class SchemaConstructor<TSchemaType, TGraphType> : ICanChangeReflectorSettings
         where TSchemaType : class
     {
         private readonly IGraphTypeAdapter<TSchemaType, TGraphType> _graphTypeAdapter;

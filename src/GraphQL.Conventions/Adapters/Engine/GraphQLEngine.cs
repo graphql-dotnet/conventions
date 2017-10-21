@@ -20,7 +20,7 @@ using GraphQL.Validation.Complexity;
 
 namespace GraphQL.Conventions
 {
-    public class GraphQLEngine
+    public class GraphQLEngine : ICanChangeReflectorSettings
     {
         private readonly TypeResolver _typeResolver = new TypeResolver();
 
