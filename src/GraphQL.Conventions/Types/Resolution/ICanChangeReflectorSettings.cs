@@ -30,7 +30,8 @@ namespace GraphQL.Conventions.Types.Resolution
 
         public static T IgnoreFieldsWithVoidReturnType<T>(this T source, bool ignoreFields = true) where T : ICanChangeReflectorSettings
         {
-            ObjectReflectorSettings.IgnoreFieldsWithVoidReturnType = ignoreFields;
+            lock (_lockKey)
+                ObjectReflectorSettings.IgnoreFieldsWithVoidReturnType = ignoreFields;
             return source;
         }
 
@@ -53,9 +54,7 @@ namespace GraphQL.Conventions.Types.Resolution
         public static void ResetIgnoreFieldWithVoidReturnType()
         {
             lock (_lockKey)
-            {
                 ObjectReflectorSettings.IgnoreFieldsWithVoidReturnType = false;
-            }
         }
 
         public static void Reset()

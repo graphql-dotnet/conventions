@@ -1,10 +1,11 @@
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Types.Resolution;
+using System;
 
 namespace GraphQL.Conventions.Tests.Attributes.MetaData
 {
-    public class IgnoreAttributeTests : TestBase
+    public class IgnoreAttributeTests : TestBase, IDisposable
     {
         [Test]
         public void Fields_Can_Be_Ignored()
@@ -26,8 +27,6 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
             type.ShouldHaveFieldWithName("normalField");
             type.ShouldNotHaveFieldWithName("fieldWithVoidReturnType");
             type.ShouldNotHaveFieldWithName("ignoredField");
-
-            resolver.ResetIgnoredNamespaces;
         }
 
         [Test]
@@ -36,6 +35,11 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
             var type = TypeInfo<EnumData.Enum>();
             type.ShouldHaveFieldWithName("NORMAL_MEMBER").AndWithoutDeprecationReason();
             type.ShouldHaveFieldWithName("DEPRECATED_MEMBER").AndWithDeprecationReason("Some enum member reason");
+        }
+
+        public void Dispose()
+        {
+            ReflectorSettingsExtensions.ResetIgnoreFieldWithVoidReturnType();
         }
 
         class FieldData
