@@ -4,7 +4,6 @@ using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Web;
 using GraphQL.Validation.Complexity;
-using GraphQL.Conventions.Types.Resolution;
 using System;
 
 namespace GraphQL.Conventions.Tests.Web

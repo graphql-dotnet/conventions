@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using GraphQL.Conventions.Types.Resolution;
 using System.Linq;
-using System.Text;
 
-namespace GraphQL.Conventions.Types.Resolution
+namespace GraphQL.Conventions
 {
     public interface ICanChangeReflectorSettings
     { }

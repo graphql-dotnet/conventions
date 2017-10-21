@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using GraphQL.Validation.Complexity;
-using GraphQL.Conventions.Types.Resolution;
 
 namespace GraphQL.Conventions.Web
 {
