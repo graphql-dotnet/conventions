@@ -356,7 +356,7 @@ namespace GraphQL.Conventions.Types.Resolution
             {
                 return true;
             }
-            return returnType != typeof(object);
+            return returnType != typeof(object) && returnType != typeof(void);
         }
     }
 }
