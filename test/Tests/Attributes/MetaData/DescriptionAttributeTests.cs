@@ -76,7 +76,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
 
         class ArgumentData
         {
-            public void Field(bool arg1, [Description("Some argument description")] bool arg2) { }
+            public int Field(bool arg1, [Description("Some argument description")] bool arg2) { return 0; }
         }
 
         class EnumData

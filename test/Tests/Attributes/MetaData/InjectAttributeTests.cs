@@ -18,7 +18,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
 
         class ArgumentData
         {
-            public void Field(string arg1, [Inject] bool arg2, int arg3) { }
+            public int Field(string arg1, [Inject] bool arg2, int arg3) { return 0; }
         }
     }
 }

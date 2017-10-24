@@ -13,6 +13,7 @@ namespace GraphQL.Conventions.Tests.Builders
             schema.ShouldHaveMutations(0);
             schema.Query.ShouldHaveFieldWithName("foo");
             schema.Query.ShouldHaveFieldWithName("bar");
+            schema.Query.ShouldNotHaveFieldWithName("ignored");
         }
 
         [Test]
@@ -39,6 +40,8 @@ namespace GraphQL.Conventions.Tests.Builders
             public string Foo => "Test";
 
             public int Bar => 12345;
+
+            public void Ignored() { }
         }
 
         class MutationType1
