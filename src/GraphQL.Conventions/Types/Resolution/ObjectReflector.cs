@@ -325,7 +325,7 @@ namespace GraphQL.Conventions.Types.Resolution
         private static bool IsValidType(TypeInfo typeInfo)
         {
             return typeInfo.Namespace != nameof(System) &&
-                   !(typeInfo.Namespace?.StartsWith($"{nameof(System)}.") ?? false) &&
+                   !ObjectReflectorSettings.IgnoredNamespaces.Any(n => typeInfo.Namespace?.StartsWith(n) ?? false) &&
                    !typeInfo.ContainsGenericParameters &&
                    !typeInfo.IsGenericType;
         }
@@ -335,7 +335,7 @@ namespace GraphQL.Conventions.Types.Resolution
             return memberInfo != null &&
                    memberInfo.DeclaringType != null &&
                    memberInfo.DeclaringType.Namespace != nameof(System) &&
-                   !(memberInfo.DeclaringType.Namespace?.StartsWith($"{nameof(System)}.") ?? false) &&
+                   !ObjectReflectorSettings.IgnoredNamespaces.Any(n => memberInfo.DeclaringType.Namespace?.StartsWith(n) ?? false) &&
                    !(memberInfo.DeclaringType.GetTypeInfo()?.IsValueType ?? false) &&
                    memberInfo.Name != nameof(object.ToString) &&
                    HasValidReturnType(memberInfo);
@@ -356,7 +356,17 @@ namespace GraphQL.Conventions.Types.Resolution
             {
                 return true;
             }
-            return returnType != typeof(object) && returnType != typeof(void);
+          
+            return 
+                returnType != typeof(object) && 
+                ObjectReflectorSettings.IgnoreFieldsWithVoidReturnType ? returnType != typeof(void) : true;
         }
+    }
+
+    internal static class ObjectReflectorSettings
+    {
+        public static List<string> IgnoredNamespaces { get; } = new List<string>() { nameof(System) + "." };
+
+        public static bool IgnoreFieldsWithVoidReturnType { get; set; } = false;
     }
 }

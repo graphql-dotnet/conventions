@@ -3,7 +3,6 @@ using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Web;
 using GraphQL.Validation;
-using Newtonsoft.Json;
 
 namespace GraphQL.Conventions.Tests.Web
 {

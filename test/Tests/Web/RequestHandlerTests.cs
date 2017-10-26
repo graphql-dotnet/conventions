@@ -4,10 +4,11 @@ using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Web;
 using GraphQL.Validation.Complexity;
+using System;
 
 namespace GraphQL.Conventions.Tests.Web
 {
-    public class RequestHandlerTests : TestBase
+    public class RequestHandlerTests : TestBase, IDisposable
     {
         [Test]
         public async Task Can_Run_Query()
@@ -88,9 +89,47 @@ namespace GraphQL.Conventions.Tests.Web
             response.Body.ShouldContain("\"extra\":{\"profile\":");
         }
 
+        [Test]
+        public void Throws_Exception_When_Query_Has_Void_Field()
+        {
+            Assert.ThrowsException<ArgumentException>(() =>
+            {
+                var request = Request.New("{ \"query\": \"{ hello }\" }");
+                var response = RequestHandler
+                    .New()
+                    .WithQuery<TestQueryWithVoidField>()
+                    .Generate()
+                    .ProcessRequest(request, null).Result;
+            });
+        }
+
+        [Test]
+        public async void Can_Ignore_Fields_With_Void_ReturnType()
+        {
+            var request = Request.New("{ \"query\": \"{ hello }\" }");
+            var response = await RequestHandler
+                .New()
+                .IgnoreFieldsWithVoidReturnType()
+                .WithQuery<TestQueryWithVoidField>()
+                .Generate()
+                .ProcessRequest(request, null);
+            response.Body.ShouldContain("{\"data\":{\"hello\":\"World\"}}");
+        }
+
+        public void Dispose()
+        {
+            ReflectorSettingsExtensions.ResetIgnoreFieldWithVoidReturnType();
+        }
+
+
         class TestQuery
         {
             public string Hello => "World";
+        }
+
+        class TestQueryWithVoidField : TestQuery
+        {
+            public void Goodbye() { }
         }
 
         class ProfiledQuery
