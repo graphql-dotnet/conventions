@@ -88,6 +88,31 @@ namespace GraphQL.Conventions.Tests.Web
             response.Body.ShouldContain("\"extra\":{\"profile\":");
         }
 
+        [Test]
+        public async void Can_Ignore_Types_From_Unwanted_Namespaces()
+        {
+            // Include all types from CompositeQuery
+            var request = Request.New("{ \"query\": \"{ earth { hello } mars { hello } } \" }");
+            var response = await RequestHandler
+                .New()
+                .WithQuery<CompositeQuery>()
+                .Generate()
+                .ProcessRequest(request, null);
+            response.Body.ShouldEqual("{\"data\":{\"earth\":{\"hello\":\"World\"},\"mars\":{\"hello\":\"World From Mars\"}}}");
+
+            // Exclude types from 'Unwanted' namespace, i.e. TypeQuery2 from CompositeQuery schema
+            request = Request.New("{ \"query\": \"{ earth { hello } mars { hello } } \" }");
+            response = await RequestHandler
+                .New()
+                .IgnoreTypesFromNamespacesStartingWith("GraphQL.Conventions.Tests.Web.Unwanted")
+                .WithQuery<CompositeQuery>()
+                .Generate()
+                .ProcessRequest(request, null);
+            response.Errors.Count.ShouldEqual(1);
+            response.Errors[0].Message.ShouldContain("Cannot query field \"hello\" on type \"TestQuery2\".");
+            response.Body.ShouldContain("VALIDATION_ERROR");
+        }
+
         class TestQuery
         {
             public string Hello => "World";
@@ -100,6 +125,20 @@ namespace GraphQL.Conventions.Tests.Web
                 await Task.Delay(ms);
                 return ms;
             }
+        }
+
+        class CompositeQuery
+        {
+            public TestQuery Earth => new TestQuery();
+            public Unwanted.TestQuery2 Mars => new Unwanted.TestQuery2();
+        }
+    }
+
+    namespace Unwanted
+    {
+        class TestQuery2
+        {
+            public string Hello => "World From Mars";
         }
     }
 }

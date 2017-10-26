@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Relay;
+using System.Linq;
 
 namespace GraphQL.Conventions.Types.Resolution
 {
@@ -86,6 +87,17 @@ namespace GraphQL.Conventions.Types.Resolution
             RegisterScalarType<Url>(TypeNames.Url);
             RegisterScalarType<Uri>(TypeNames.Uri);
             RegisterScalarType<Guid>(TypeNames.Guid);
+        }
+
+        public void IgnoreTypesFromNamespacesStartingWith(params string[] namespacesToIgnore)
+        {
+            if (namespacesToIgnore == null || !namespacesToIgnore.Any())
+                return;
+
+            namespacesToIgnore = namespacesToIgnore.Distinct().ToArray();
+            foreach (var @namespace in namespacesToIgnore)
+                if (!_reflector.IgnoredNamespaces.Contains(@namespace))
+                    _reflector.IgnoredNamespaces.Add(@namespace);
         }
     }
 }

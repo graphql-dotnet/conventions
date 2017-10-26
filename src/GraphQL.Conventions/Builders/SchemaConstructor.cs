@@ -141,6 +141,12 @@ namespace GraphQL.Conventions.Builders
             }
         }
 
+        public SchemaConstructor<TSchemaType, TGraphType> IgnoreTypesFromNamespacesStartingWith(params string[] namespacesToIgnore)
+        {
+            _typeResolver.IgnoreTypesFromNamespacesStartingWith(namespacesToIgnore);
+            return this;
+        }
+
         private class Query { }
 
         private class Mutation { }

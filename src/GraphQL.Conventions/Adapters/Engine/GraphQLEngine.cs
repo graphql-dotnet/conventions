@@ -83,8 +83,9 @@ namespace GraphQL.Conventions
             }
         }
 
-        public GraphQLEngine(Func<System.Type, object> typeResolutionDelegate = null)
+        public GraphQLEngine(Func<System.Type, object> typeResolutionDelegate = null, TypeResolver typeResolver = null)
         {
+            _typeResolver = typeResolver ?? _typeResolver;
             _constructor = new SchemaConstructor<ISchema, IGraphType>(_graphTypeAdapter, _typeResolver);
             _constructor.TypeResolutionDelegate = typeResolutionDelegate != null
                 ? (Func<System.Type, object>)(type => typeResolutionDelegate(type) ?? CreateInstance(type))
