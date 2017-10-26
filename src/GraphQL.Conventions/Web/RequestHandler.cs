@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using GraphQL.Validation.Complexity;
+using GraphQL.Conventions.Types.Resolution;
 
 namespace GraphQL.Conventions.Web
 {
@@ -25,6 +26,8 @@ namespace GraphQL.Conventions.Web
             readonly List<Type> _exceptionsTreatedAsWarnings = new List<Type>();
 
             readonly List<Type> _middleware = new List<Type>();
+
+            readonly TypeResolver _typeResolver = new TypeResolver();
 
             IDependencyInjector _dependencyInjector;
 
@@ -153,6 +156,12 @@ namespace GraphQL.Conventions.Web
                 return this;
             }
 
+            public RequestHandlerBuilder IgnoreTypesFromNamespacesStartingWith(params string[] namespacesToIgnore)
+            {
+                _typeResolver.IgnoreTypesFromNamespacesStartingWith(namespacesToIgnore);
+                return this;
+            }
+
             public IRequestHandler Generate()
             {
                 return new RequestHandlerImpl(
@@ -165,7 +174,8 @@ namespace GraphQL.Conventions.Web
                     _outputViolationsAsWarnings,
                     _fieldResolutionStrategy,
                     _complexityConfiguration,
-                    _middleware);
+                    _middleware,
+                    _typeResolver);
             }
 
             public object Resolve(TypeInfo typeInfo)
@@ -176,7 +186,7 @@ namespace GraphQL.Conventions.Web
 
         class RequestHandlerImpl : IRequestHandler
         {
-            readonly GraphQLEngine _engine = new GraphQLEngine();
+            readonly GraphQLEngine _engine;
 
             readonly IDependencyInjector _dependencyInjector;
 
@@ -200,8 +210,10 @@ namespace GraphQL.Conventions.Web
                 bool outputViolationsAsWarnings,
                 FieldResolutionStrategy fieldResolutionStrategy,
                 ComplexityConfiguration complexityConfiguration,
-                IEnumerable<Type> middleware)
+                IEnumerable<Type> middleware,
+                TypeResolver typeResolver)
             {
+                _engine = new GraphQLEngine(typeResolver: typeResolver);
                 _dependencyInjector = dependencyInjector;
                 _engine.WithAttributesFromAssemblies(assemblyTypes);
                 _exceptionsTreatedAsWarnings.AddRange(exceptionsTreatedAsWarning);

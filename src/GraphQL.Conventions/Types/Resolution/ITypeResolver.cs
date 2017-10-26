@@ -19,6 +19,8 @@ namespace GraphQL.Conventions.Types.Resolution
 
         TypeRegistration LookupType(TypeInfo typeInfo);
 
+        void IgnoreTypesFromNamespacesStartingWith(params string[] namespacesToIgnore);
+
         GraphSchemaInfo ActiveSchema { get; set; }
     }
 }

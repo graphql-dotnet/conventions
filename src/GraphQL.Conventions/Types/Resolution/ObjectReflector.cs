@@ -27,6 +27,8 @@ namespace GraphQL.Conventions.Types.Resolution
 
         private readonly MetaDataAttributeHandler _metaDataHandler = new MetaDataAttributeHandler();
 
+        public HashSet<string> IgnoredNamespaces { get; } = new HashSet<string>() { nameof(System) + "." };
+
         public ObjectReflector(ITypeResolver typeResolver)
         {
             _typeResolver = typeResolver;
@@ -322,20 +324,20 @@ namespace GraphQL.Conventions.Types.Resolution
             return enumValue;
         }
 
-        private static bool IsValidType(TypeInfo typeInfo)
+        private bool IsValidType(TypeInfo typeInfo)
         {
             return typeInfo.Namespace != nameof(System) &&
-                   !(typeInfo.Namespace?.StartsWith($"{nameof(System)}.") ?? false) &&
+                   !IgnoredNamespaces.Any(n => typeInfo.Namespace?.StartsWith(n) ?? false) &&
                    !typeInfo.ContainsGenericParameters &&
                    !typeInfo.IsGenericType;
         }
 
-        private static bool IsValidMember(MemberInfo memberInfo)
+        private bool IsValidMember(MemberInfo memberInfo)
         {
             return memberInfo != null &&
                    memberInfo.DeclaringType != null &&
                    memberInfo.DeclaringType.Namespace != nameof(System) &&
-                   !(memberInfo.DeclaringType.Namespace?.StartsWith($"{nameof(System)}.") ?? false) &&
+                   !IgnoredNamespaces.Any(n => memberInfo.DeclaringType.Namespace?.StartsWith(n) ?? false) &&
                    !(memberInfo.DeclaringType.GetTypeInfo()?.IsValueType ?? false) &&
                    memberInfo.Name != nameof(object.ToString) &&
                    HasValidReturnType(memberInfo);
