@@ -721,7 +721,7 @@ namespace GraphQL
                 return CoerceValue(schema, nonNull.ResolvedType, input, variables);
             }
 
-            if (input == null)
+            if (input == null || input is NullValue)
             {
                 return null;
             }

@@ -88,7 +88,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
 
         class ArgumentData
         {
-            public void Field(bool normalArg, [Name("someArg")] bool overriddenArg) { }
+            public int Field(bool normalArg, [Name("someArg")] bool overriddenArg) { return 0; }
         }
 
         class EnumData
