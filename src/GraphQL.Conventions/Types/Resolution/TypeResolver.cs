@@ -1,9 +1,9 @@
+using GraphQL.Conventions.Relay;
+using GraphQL.Conventions.Types.Descriptors;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using GraphQL.Conventions.Types.Descriptors;
-using GraphQL.Conventions.Relay;
 using System.Linq;
+using System.Reflection;
 
 namespace GraphQL.Conventions.Types.Resolution
 {
@@ -94,10 +94,8 @@ namespace GraphQL.Conventions.Types.Resolution
             if (namespacesToIgnore == null || !namespacesToIgnore.Any())
                 return;
 
-            namespacesToIgnore = namespacesToIgnore.Distinct().ToArray();
-            foreach (var @namespace in namespacesToIgnore)
-                if (!_reflector.IgnoredNamespaces.Contains(@namespace))
-                    _reflector.IgnoredNamespaces.Add(@namespace);
+            foreach (var @namespace in namespacesToIgnore.Distinct())
+                _reflector.IgnoredNamespaces.Add(@namespace);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace GraphQL.Conventions.Types.Resolution
 
         private readonly MetaDataAttributeHandler _metaDataHandler = new MetaDataAttributeHandler();
 
-        internal List<string> IgnoredNamespaces { get; } = new List<string>() { nameof(System) + "." };
+        public HashSet<string> IgnoredNamespaces { get; } = new HashSet<string>() { nameof(System) + "." };
 
         public ObjectReflector(ITypeResolver typeResolver)
         {
