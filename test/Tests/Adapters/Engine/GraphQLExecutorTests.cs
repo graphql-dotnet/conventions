@@ -9,7 +9,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
     public class GraphQLExecutorTests : TestBase
     {
         [Test]
-        public async void Can_Disable_Validation()
+        public async Task Can_Disable_Validation()
         {
             var engine = GraphQLEngine.New<Query>();
             var result = await engine
@@ -26,7 +26,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         }
 
         [Test]
-        public async void Can_Enable_Validation()
+        public async Task Can_Enable_Validation()
         {
             var engine = GraphQLEngine.New<Query>();
             var result = await engine

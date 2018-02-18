@@ -13,10 +13,10 @@ namespace GraphQL.Conventions
         {
         }
 
-        public override void MapArgument(GraphArgumentInfo argument, ParameterInfo parameterInfo)
+        public override void MapArgument(GraphArgumentInfo argumentInfo, ParameterInfo parameterInfo)
         {
-            argument.IsInjected = true;
-            argument.Type.IsIgnored = true;
+            argumentInfo.IsInjected = true;
+            argumentInfo.Type.IsIgnored = true;
         }
     }
 }

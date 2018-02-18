@@ -19,12 +19,12 @@ namespace GraphQL.Conventions.Extensions
 
                 records.Add(new PerformanceRecord
                 {
-                    Path = string.Join(".", record.Metadata["path"] as List<string>),
+                    Path = record.Metadata.ContainsKey("path") ? string.Join(".", record.Metadata["path"] as List<string>) : null,
                     StartTimeInMs = (long)record.Start,
                     EndTimeInMs = (long)record.End,
-                    ParentType = record.Metadata["typeName"] as string,
-                    Field = record.Metadata["fieldName"] as string,
-                    Arguments = record.Metadata["arguments"] as Dictionary<string, object>,
+                    ParentType = GetOrDefault<string>(record.Metadata, "typeName", null),
+                    Field = GetOrDefault<string>(record.Metadata, "fieldName", null),
+                    Arguments = GetOrDefault<Dictionary<string, object>>(record.Metadata, "arguments", null),
                 });
             }
 
@@ -32,6 +32,16 @@ namespace GraphQL.Conventions.Extensions
             {
                 response.AddExtra("profile", records.OrderBy(record => record.Path));
             }
+        }
+
+        private static T GetOrDefault<T>(Dictionary<string, object> dictionary, string key, T defaultValue)
+            where T : class
+        {
+            if (dictionary.ContainsKey(key))
+            {
+                return dictionary[key] as T;
+            }
+            return defaultValue;
         }
     }
 }

@@ -13,9 +13,9 @@ namespace GraphQL.Conventions.Relay
         {
         }
 
-        public override void MapType(GraphTypeInfo entity, TypeInfo typeInfo)
+        public override void MapType(GraphTypeInfo type, TypeInfo typeInfo)
         {
-            foreach (var field in entity.Fields)
+            foreach (var field in type.Fields)
             {
                 field.ExecutionFilters.Add(new RelayMutationAttribute());
             }

@@ -34,22 +34,26 @@ namespace GraphQL.Conventions.Tests.Web
         public void Can_Instantiate_Response_Object_With_Extra_Data()
         {
             var request = Request.New("{\"query\":\"{}\"}");
-            var result = new ExecutionResult();
-            result.Data = new Dictionary<string, object>();
-            // TODO Uncomment when re-implemented
-            //result.Extra["trace"] = new
-            //{
-            //    foo = 1,
-            //    bar = new
-            //    {
-            //        baz = "hello",
-            //    },
-            //};
+            var result = new ExecutionResult
+            {
+                Data = new Dictionary<string, object>(),
+                Extensions = new Dictionary<string, object>
+                {
+                    { "trace", new
+                        {
+                            foo = 1,
+                            bar = new
+                            {
+                                baz = "hello",
+                            },
+                        }
+                    }
+                }
+            };
             var response = new Response(request, result);
             response.HasData.ShouldEqual(true);
             response.HasErrors.ShouldEqual(false);
-            //response.Body.ShouldEqual("{\"data\":{},\"extra\":{\"trace\":{\"foo\":1,\"bar\":{\"baz\":\"hello\"}}}}");
-            response.Body.ShouldEqual("{\"data\":{}}");
+            response.Body.ShouldEqual("{\"data\":{},\"extensions\":{\"trace\":{\"foo\":1,\"bar\":{\"baz\":\"hello\"}}}}");
         }
     }
 }

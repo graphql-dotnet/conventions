@@ -10,10 +10,10 @@ namespace Hudl.GraphQL.Builders.Helpers
     public static class AsyncHelpers
     {
         /// <summary>
-        /// Executes an asynchronous Task<T> method which has a T return type synchronously
+        /// Executes an asynchronous Task method which has a T return type synchronously
         /// </summary>
         /// <typeparam name="T">Return Type</typeparam>
-        /// <param name="task">Task<T> method to execute</param>
+        /// <param name="task">Task method to execute</param>
         /// <returns></returns>
         public static T RunSync<T>(Func<Task<T>> task)
         {

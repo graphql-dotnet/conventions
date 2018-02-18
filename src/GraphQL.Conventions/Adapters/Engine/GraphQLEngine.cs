@@ -22,46 +22,33 @@ namespace GraphQL.Conventions
 {
     public class GraphQLEngine
     {
-        private readonly TypeResolver _typeResolver = new TypeResolver();
+        readonly TypeResolver _typeResolver = new TypeResolver();
 
-        private readonly GraphTypeAdapter _graphTypeAdapter = new GraphTypeAdapter();
+        readonly GraphTypeAdapter _graphTypeAdapter = new GraphTypeAdapter();
 
-        private readonly SchemaConstructor<ISchema, IGraphType> _constructor;
+        readonly SchemaConstructor<ISchema, IGraphType> _constructor;
 
-        private readonly DocumentExecuter _documentExecutor = new DocumentExecuter();
+        readonly DocumentExecuter _documentExecutor = new DocumentExecuter();
 
-        private readonly IDocumentBuilder _documentBuilder = new GraphQLDocumentBuilder();
+        readonly IDocumentBuilder _documentBuilder = new GraphQLDocumentBuilder();
 
-        private readonly DocumentValidator _documentValidator = new DocumentValidator();
+        readonly DocumentValidator _documentValidator = new DocumentValidator();
 
-        private readonly DocumentWriter _documentWriter = new DocumentWriter();
+        readonly DocumentWriter _documentWriter = new DocumentWriter();
 
-        private SchemaPrinter _schemaPrinter;
+        SchemaPrinter _schemaPrinter;
 
-        private ISchema _schema;
+        ISchema _schema;
 
-        private List<System.Type> _schemaTypes = new List<System.Type>();
+        List<System.Type> _schemaTypes = new List<System.Type>();
 
-        private List<System.Type> _middleware = new List<System.Type>();
+        List<System.Type> _middleware = new List<System.Type>();
 
-        private bool _includeFieldDescriptions = false;
+        bool _includeFieldDescriptions;
 
-        private bool _includeFieldDeprecationReasons = false;
+        bool _includeFieldDeprecationReasons;
 
-        public bool IsSchemaInitialized
-        {
-            set
-            {
-                var schema = _schema as Schema;
-                // TODO Re-add to allow separate validation step to be run up front
-                // if (schema != null)
-                // {
-                //     schema.Initialized = false;
-                // }
-            }
-        }
-
-        private class NoopValidationRule : IValidationRule
+        class NoopValidationRule : IValidationRule
         {
             public INodeVisitor Validate(ValidationContext context)
             {
@@ -69,9 +56,9 @@ namespace GraphQL.Conventions
             }
         }
 
-        private class WrappedDependencyInjector : IDependencyInjector
+        class WrappedDependencyInjector : IDependencyInjector
         {
-            private readonly Func<System.Type, object> _typeResolutionDelegate;
+            readonly Func<System.Type, object> _typeResolutionDelegate;
 
             public WrappedDependencyInjector(Func<System.Type, object> typeResolutionDelegate)
             {
@@ -117,7 +104,6 @@ namespace GraphQL.Conventions
             switch (strategy)
             {
                 default:
-                case FieldResolutionStrategy.Normal:
                     _graphTypeAdapter.FieldResolverFactory = (FieldInfo) => new FieldResolver(FieldInfo);
                     break;
                 case FieldResolutionStrategy.WrappedAsynchronous:
@@ -208,10 +194,13 @@ namespace GraphQL.Conventions
                 _schema = _constructor.Build(_schemaTypes.ToArray());
                 _schemaPrinter = new SchemaPrinter(
                     _schema,
-                    new[] { TypeNames.Url, TypeNames.Uri, TypeNames.TimeSpan, TypeNames.Guid });
-                    // TODO Customise to allow for optional inclusion of field descriptions and deprecation reasons
-                    //_includeFieldDescriptions,
-                    //_includeFieldDeprecationReasons);
+                    new SchemaPrinterOptions
+                    {
+                        CustomScalars = new List<string> { TypeNames.Url, TypeNames.Uri, TypeNames.TimeSpan, TypeNames.Guid },
+                        IncludeDescriptions = _includeFieldDescriptions,
+                        IncludeDeprecationReasons = _includeFieldDeprecationReasons,
+                    }
+                );
             }
             return this;
         }
@@ -313,7 +302,7 @@ namespace GraphQL.Conventions
             return _documentValidator.Validate(queryString, _schema, document);
         }
 
-        private object CreateInstance(System.Type type)
+        object CreateInstance(System.Type type)
         {
             var typeInfo = type.GetTypeInfo();
             if (!typeInfo.IsAbstract && !typeInfo.ContainsGenericParameters)

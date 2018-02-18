@@ -13,12 +13,12 @@ namespace GraphQL.Conventions
         {
         }
 
-        public override void MapType(GraphTypeInfo entity, TypeInfo typeInfo)
+        public override void MapType(GraphTypeInfo type, TypeInfo typeInfo)
         {
-            entity.IsInputType = true;
-            entity.IsOutputType = false;
+            type.IsInputType = true;
+            type.IsOutputType = false;
 
-            foreach (var field in entity.Fields)
+            foreach (var field in type.Fields)
             {
                 if (field.AttributeProvider is MethodInfo)
                 {

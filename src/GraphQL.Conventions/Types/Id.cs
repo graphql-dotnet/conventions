@@ -45,8 +45,8 @@ namespace GraphQL.Conventions
             }
         }
 
-        public override bool Equals(object other) =>
-            other is Id ? Equals((Id)other) : false;
+        public override bool Equals(object obj) =>
+            obj is Id ? Equals((Id)obj) : false;
 
         public bool Equals(Id other) =>
             _encodedIdentifier.Equals(other._encodedIdentifier);
@@ -65,8 +65,8 @@ namespace GraphQL.Conventions
 
         public bool IsIdentifierForType(Type type) =>
             _unencodedIdentifier.Contains(":")
-            ? _unencodedIdentifier.StartsWith(GetTypeName(type) + ":")
-            : _unencodedIdentifier.StartsWith(GetTypeName(type));
+                ? _unencodedIdentifier.StartsWith(GetTypeName(type) + ":", StringComparison.Ordinal)
+                : _unencodedIdentifier.StartsWith(GetTypeName(type), StringComparison.Ordinal);
 
         public bool IsIdentifierForType<TType>() =>
             IsIdentifierForType(typeof(TType));

@@ -53,8 +53,11 @@ namespace GraphQL.Conventions.Web
 
         public void AddExtra(string key, object value)
         {
-            // TODO Change response object to derived version of ExecutionResult to allow for customised data
-            //ExecutionResult.Extra[key] = value;
+            if (ExecutionResult.Extensions == null)
+            {
+                ExecutionResult.Extensions = new Dictionary<string, object>();
+            }
+            ExecutionResult.Extensions[key] = value;
             _body = null;
         }
 

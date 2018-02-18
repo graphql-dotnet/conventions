@@ -39,14 +39,14 @@ namespace GraphQL.Conventions
             }
         }
 
-        public override void MapArgument(GraphArgumentInfo entity, ParameterInfo parameterInfo)
+        public override void MapArgument(GraphArgumentInfo argumentInfo, ParameterInfo parameterInfo)
         {
-            entity.Name = _nameNormalizer.AsArgumentName(parameterInfo.Name);
+            argumentInfo.Name = _nameNormalizer.AsArgumentName(parameterInfo.Name);
         }
 
-        public override void MapField(GraphFieldInfo entity, MemberInfo memberInfo)
+        public override void MapField(GraphFieldInfo fieldInfo, MemberInfo memberInfo)
         {
-            entity.Name = _nameNormalizer.AsFieldName(memberInfo.Name);
+            fieldInfo.Name = _nameNormalizer.AsFieldName(memberInfo.Name);
         }
 
         public override void MapEnumMember(GraphFieldInfo entity, FieldInfo fieldInfo)
@@ -54,9 +54,9 @@ namespace GraphQL.Conventions
             entity.Name = _nameNormalizer.AsEnumMemberName(fieldInfo.Name);
         }
 
-        public override void MapType(GraphTypeInfo entity, TypeInfo typeInfo)
+        public override void MapType(GraphTypeInfo type, TypeInfo typeInfo)
         {
-            if (entity.IsRegisteredType)
+            if (type.IsRegisteredType)
             {
                 return;
             }
@@ -71,21 +71,21 @@ namespace GraphQL.Conventions
             {
                 var genericTypeNames = typeInfo
                     .GenericTypeArguments
-                    .Select(type => DeriveTypeName(entity, type.GetTypeInfo()));
+                    .Select(typeArg => DeriveTypeName(type, typeArg.GetTypeInfo()));
 
                 if (typeInfo.IsGenericType(typeof(Nullable<>)) ||
                     typeInfo.IsGenericType(typeof(NonNull<>)))
                 {
-                    entity.Name = genericTypeNames.First();
+                    type.Name = genericTypeNames.First();
                 }
                 else
                 {
-                    entity.Name = string.Join(string.Empty, genericTypeNames) + typeName;
+                    type.Name = string.Join(string.Empty, genericTypeNames) + typeName;
                 }
             }
             else
             {
-                entity.Name = typeName;
+                type.Name = typeName;
             }
         }
 

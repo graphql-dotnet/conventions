@@ -17,7 +17,7 @@ namespace GraphQL.Conventions.Relay
             _operationType = operationType;
         }
 
-        public override void MapType(GraphTypeInfo entity, TypeInfo typeInfo)
+        public override void MapType(GraphTypeInfo type, TypeInfo typeInfo)
         {
             TypeInfo viewer;
             TypeInfo viewerReferrer;
@@ -40,14 +40,14 @@ namespace GraphQL.Conventions.Relay
                     return;
             }
 
-            var viewerType = entity.TypeResolver.DeriveType(viewer);
-            viewerType.Fields.AddRange(entity.Fields);
+            var viewerType = type.TypeResolver.DeriveType(viewer);
+            viewerType.Fields.AddRange(type.Fields);
             viewerType.Fields = viewerType.Fields.OrderBy(f => f.Name).ToList();
 
-            var viewerReferrerType = entity.TypeResolver.DeriveType(viewerReferrer);
+            var viewerReferrerType = type.TypeResolver.DeriveType(viewerReferrer);
             var viewerField = viewerReferrerType.Fields.First(field => field.Name == "viewer");
-            entity.Fields.Add(viewerField);
-            entity.Fields = entity.Fields.OrderBy(f => f.Name).ToList();
+            type.Fields.Add(viewerField);
+            type.Fields = type.Fields.OrderBy(f => f.Name).ToList();
         }
 
         public class QueryViewer
