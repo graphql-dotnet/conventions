@@ -36,18 +36,20 @@ namespace GraphQL.Conventions.Tests.Web
             var request = Request.New("{\"query\":\"{}\"}");
             var result = new ExecutionResult();
             result.Data = new Dictionary<string, object>();
-            result.Extra["trace"] = new
-            {
-                foo = 1,
-                bar = new
-                {
-                    baz = "hello",
-                },
-            };
+            // TODO Uncomment when re-implemented
+            //result.Extra["trace"] = new
+            //{
+            //    foo = 1,
+            //    bar = new
+            //    {
+            //        baz = "hello",
+            //    },
+            //};
             var response = new Response(request, result);
             response.HasData.ShouldEqual(true);
             response.HasErrors.ShouldEqual(false);
-            response.Body.ShouldEqual("{\"data\":{},\"extra\":{\"trace\":{\"foo\":1,\"bar\":{\"baz\":\"hello\"}}}}");
+            //response.Body.ShouldEqual("{\"data\":{},\"extra\":{\"trace\":{\"foo\":1,\"bar\":{\"baz\":\"hello\"}}}}");
+            response.Body.ShouldEqual("{\"data\":{}}");
         }
     }
 }

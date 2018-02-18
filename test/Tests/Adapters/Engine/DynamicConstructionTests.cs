@@ -70,7 +70,12 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             ");
 
             var executer = new DocumentExecuter();
-            var result = await executer.ExecuteAsync(schema, null, "{ users { getUserById(id: \"1\") { id name } } }", null);
+            var result = await executer.ExecuteAsync(new ExecutionOptions
+            {
+                Schema = schema,
+                Query = "{ users { getUserById(id: \"1\") { id name } } }",
+            });
+
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("users", "getUserById", "id", "1");
             result.Data.ShouldHaveFieldWithValue("users", "getUserById", "name", "User #1");

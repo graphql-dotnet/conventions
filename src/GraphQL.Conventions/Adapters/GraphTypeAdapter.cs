@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GraphQL;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
 using GraphQL.Resolvers;
@@ -35,7 +36,7 @@ namespace GraphQL.Conventions.Adapters
                 .SelectMany(t => t.PossibleTypes)
                 .GroupBy(t => t.Name)
                 .Select(g => g.First());
-            var schema = new Schema(DeriveTypeFromTypeInfo)
+            var schema = new Schema(new FuncDependencyResolver(DeriveTypeFromTypeInfo))
             {
                 Query = DeriveOperationType(schemaInfo.Query),
                 Mutation = DeriveOperationType(schemaInfo.Mutation),

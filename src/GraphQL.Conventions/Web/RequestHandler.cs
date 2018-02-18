@@ -240,7 +240,8 @@ namespace GraphQL.Conventions.Web
                     {
                         validationWarnings.AddRange(validationResult.Errors);
                     }
-                    _engine.IsSchemaInitialized = false;
+                    // TODO Comment out once IsSchemaInitialized is re-implemented
+                    //_engine.IsSchemaInitialized = false;
                 }
 
                 var result = await _engine
@@ -270,7 +271,8 @@ namespace GraphQL.Conventions.Web
                         response.Errors.Add(error);
                     }
                 }
-                result.Errors = new ExecutionErrors(response.Errors);
+                result.Errors = new ExecutionErrors();
+                result.Errors.AddRange(response.Errors);
                 response.Body = _engine.SerializeResult(result);
                 return response;
             }
