@@ -53,10 +53,11 @@ namespace GraphQL.Conventions
             set
             {
                 var schema = _schema as Schema;
-                if (schema != null)
-                {
-                    schema.Initialized = false;
-                }
+                // TODO Re-add to allow separate validation step to be run up front
+                // if (schema != null)
+                // {
+                //     schema.Initialized = false;
+                // }
             }
         }
 
@@ -207,9 +208,10 @@ namespace GraphQL.Conventions
                 _schema = _constructor.Build(_schemaTypes.ToArray());
                 _schemaPrinter = new SchemaPrinter(
                     _schema,
-                    new[] { TypeNames.Url, TypeNames.Uri, TypeNames.TimeSpan, TypeNames.Guid },
-                    _includeFieldDescriptions,
-                    _includeFieldDeprecationReasons);
+                    new[] { TypeNames.Url, TypeNames.Uri, TypeNames.TimeSpan, TypeNames.Guid });
+                    // TODO Customise to allow for optional inclusion of field descriptions and deprecation reasons
+                    //_includeFieldDescriptions,
+                    //_includeFieldDeprecationReasons);
             }
             return this;
         }
@@ -296,7 +298,7 @@ namespace GraphQL.Conventions
                     {
                         error.AddLocation(location.Line, location.Column);
                     }
-                    error.Path.AddRange(executionError.Path);
+                    error.Path = executionError.Path;
                     errors.Add(error);
                 }
                 result.Errors = errors;

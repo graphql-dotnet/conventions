@@ -20,8 +20,8 @@ namespace GraphQL.Conventions.Extensions
                 records.Add(new PerformanceRecord
                 {
                     Path = string.Join(".", record.Metadata["path"] as List<string>),
-                    StartTimeInMs = record.Start,
-                    EndTimeInMs = record.End,
+                    StartTimeInMs = (long)record.Start,
+                    EndTimeInMs = (long)record.End,
                     ParentType = record.Metadata["typeName"] as string,
                     Field = record.Metadata["fieldName"] as string,
                     Arguments = record.Metadata["arguments"] as Dictionary<string, object>,

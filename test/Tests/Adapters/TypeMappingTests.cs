@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Adapters.Types;
+using ConventionsTypes = GraphQL.Conventions.Adapters.Types;
 using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
@@ -80,14 +81,14 @@ namespace GraphQL.Conventions.Tests.Adapters
         public void Can_Derive_Nullable_Complex_Types()
         {
             Type<TestOutputObject>().ShouldBeOfType<OutputObjectGraphType<TestOutputObject>>();
-            Type<TestInputObject>().ShouldBeOfType<InputObjectGraphType<TestInputObject>>();
+            Type<TestInputObject>().ShouldBeOfType<ConventionsTypes.InputObjectGraphType<TestInputObject>>();
         }
 
         [Test]
         public void Can_Derive_Non_Nullable_Complex_Types()
         {
             Type<NonNull<TestOutputObject>>().ShouldBeOfNonNullableType<OutputObjectGraphType<TestOutputObject>>();
-            Type<NonNull<TestInputObject>>().ShouldBeOfNonNullableType<InputObjectGraphType<TestInputObject>>();
+            Type<NonNull<TestInputObject>>().ShouldBeOfNonNullableType<ConventionsTypes.InputObjectGraphType<TestInputObject>>();
         }
 
         [Test]
@@ -182,14 +183,14 @@ namespace GraphQL.Conventions.Tests.Adapters
         public void Can_Derive_Nullable_Lists_Of_Nullable_Complex_Types()
         {
             Type<List<TestOutputObject>>().ShouldBeOfListType<OutputObjectGraphType<TestOutputObject>>();
-            Type<List<TestInputObject>>().ShouldBeOfListType<InputObjectGraphType<TestInputObject>>();
+            Type<List<TestInputObject>>().ShouldBeOfListType<ConventionsTypes.InputObjectGraphType<TestInputObject>>();
         }
 
         [Test]
         public void Can_Derive_Nullable_Lists_Of_Non_Nullable_Complex_Types()
         {
             Type<List<NonNull<TestOutputObject>>>().ShouldBeOfListType<NonNullGraphType<OutputObjectGraphType<TestOutputObject>>>();
-            Type<List<NonNull<TestInputObject>>>().ShouldBeOfListType<NonNullGraphType<InputObjectGraphType<TestInputObject>>>();
+            Type<List<NonNull<TestInputObject>>>().ShouldBeOfListType<NonNullGraphType<ConventionsTypes.InputObjectGraphType<TestInputObject>>>();
         }
 
         [Test]
@@ -284,14 +285,14 @@ namespace GraphQL.Conventions.Tests.Adapters
         public void Can_Derive_Non_Nullable_Lists_Of_Nullable_Complex_Types()
         {
             Type<NonNull<List<TestOutputObject>>>().ShouldBeOfNonNullableListType<OutputObjectGraphType<TestOutputObject>>();
-            Type<NonNull<List<TestInputObject>>>().ShouldBeOfNonNullableListType<InputObjectGraphType<TestInputObject>>();
+            Type<NonNull<List<TestInputObject>>>().ShouldBeOfNonNullableListType<ConventionsTypes.InputObjectGraphType<TestInputObject>>();
         }
 
         [Test]
         public void Can_Derive_Non_Nullable_Lists_Of_Non_Nullable_Complex_Types()
         {
             Type<NonNull<List<NonNull<TestOutputObject>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<OutputObjectGraphType<TestOutputObject>>>();
-            Type<NonNull<List<NonNull<TestInputObject>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<InputObjectGraphType<TestInputObject>>>();
+            Type<NonNull<List<NonNull<TestInputObject>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<ConventionsTypes.InputObjectGraphType<TestInputObject>>>();
         }
 
         [Test]
@@ -386,14 +387,14 @@ namespace GraphQL.Conventions.Tests.Adapters
         public void Can_Derive_Future_Nullable_Complex_Types()
         {
             Type<Task<TestOutputObject>>().ShouldBeOfType<OutputObjectGraphType<TestOutputObject>>();
-            Type<Task<TestInputObject>>().ShouldBeOfType<InputObjectGraphType<TestInputObject>>();
+            Type<Task<TestInputObject>>().ShouldBeOfType<ConventionsTypes.InputObjectGraphType<TestInputObject>>();
         }
 
         [Test]
         public void Can_Derive_Future_Non_Nullable_Complex_Types()
         {
             Type<Task<NonNull<TestOutputObject>>>().ShouldBeOfNonNullableType<OutputObjectGraphType<TestOutputObject>>();
-            Type<Task<NonNull<TestInputObject>>>().ShouldBeOfNonNullableType<InputObjectGraphType<TestInputObject>>();
+            Type<Task<NonNull<TestInputObject>>>().ShouldBeOfNonNullableType<ConventionsTypes.InputObjectGraphType<TestInputObject>>();
         }
 
         [Test]
@@ -488,14 +489,14 @@ namespace GraphQL.Conventions.Tests.Adapters
         public void Can_Derive_Future_Nullable_Lists_Of_Nullable_Complex_Types()
         {
             Type<Task<List<TestOutputObject>>>().ShouldBeOfListType<OutputObjectGraphType<TestOutputObject>>();
-            Type<Task<List<TestInputObject>>>().ShouldBeOfListType<InputObjectGraphType<TestInputObject>>();
+            Type<Task<List<TestInputObject>>>().ShouldBeOfListType<ConventionsTypes.InputObjectGraphType<TestInputObject>>();
         }
 
         [Test]
         public void Can_Derive_Future_Nullable_Lists_Of_Non_Nullable_Complex_Types()
         {
             Type<Task<List<NonNull<TestOutputObject>>>>().ShouldBeOfListType<NonNullGraphType<OutputObjectGraphType<TestOutputObject>>>();
-            Type<Task<List<NonNull<TestInputObject>>>>().ShouldBeOfListType<NonNullGraphType<InputObjectGraphType<TestInputObject>>>();
+            Type<Task<List<NonNull<TestInputObject>>>>().ShouldBeOfListType<NonNullGraphType<ConventionsTypes.InputObjectGraphType<TestInputObject>>>();
         }
 
         [Test]
@@ -590,14 +591,14 @@ namespace GraphQL.Conventions.Tests.Adapters
         public void Can_Derive_Future_Non_Nullable_Lists_Of_Nullable_Complex_Types()
         {
             Type<Task<NonNull<List<TestOutputObject>>>>().ShouldBeOfNonNullableListType<OutputObjectGraphType<TestOutputObject>>();
-            Type<Task<NonNull<List<TestInputObject>>>>().ShouldBeOfNonNullableListType<InputObjectGraphType<TestInputObject>>();
+            Type<Task<NonNull<List<TestInputObject>>>>().ShouldBeOfNonNullableListType<ConventionsTypes.InputObjectGraphType<TestInputObject>>();
         }
 
         [Test]
         public void Can_Derive_Future_Non_Nullable_Lists_Of_Non_Nullable_Complex_Types()
         {
             Type<Task<NonNull<List<NonNull<TestOutputObject>>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<OutputObjectGraphType<TestOutputObject>>>();
-            Type<Task<NonNull<List<NonNull<TestInputObject>>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<InputObjectGraphType<TestInputObject>>>();
+            Type<Task<NonNull<List<NonNull<TestInputObject>>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<ConventionsTypes.InputObjectGraphType<TestInputObject>>>();
         }
 
         [Test]
