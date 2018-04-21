@@ -14,12 +14,12 @@ namespace GraphQL.Conventions.Attributes.MetaData
         {
         }
 
-        public override void MapType(GraphTypeInfo entity, TypeInfo typeInfo)
+        public override void MapType(GraphTypeInfo type, TypeInfo typeInfo)
         {
             var typeRepresentation = typeInfo.GetTypeRepresentation();
             if (typeRepresentation.IsSubclassOf(typeof(Union)))
             {
-                DeclareUnionType(entity, typeRepresentation);
+                DeclareUnionType(type, typeRepresentation);
             }
         }
 
@@ -27,7 +27,7 @@ namespace GraphQL.Conventions.Attributes.MetaData
         {
             var unionType = typeInfo.BaseType.GetTypeInfo();
             if (unionType != null &&
-                unionType.Name.StartsWith(nameof(Union)) &&
+                unionType.Name.StartsWith(nameof(Union), StringComparison.Ordinal) &&
                 unionType.IsSubclassOf(typeof(Union)) &&
                 unionType.IsGenericType)
             {

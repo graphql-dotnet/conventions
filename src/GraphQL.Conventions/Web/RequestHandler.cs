@@ -232,17 +232,6 @@ namespace GraphQL.Conventions.Web
 
             public async Task<Response> ProcessRequest(Request request, IUserContext userContext)
             {
-                var validationWarnings = new List<ExecutionError>();
-                if (!_useValidation && _outputViolationsAsWarnings)
-                {
-                    var validationResult = Validate(request)?.ValidationResult;
-                    if (validationResult?.Errors?.Any() ?? false)
-                    {
-                        validationWarnings.AddRange(validationResult.Errors);
-                    }
-                    _engine.IsSchemaInitialized = false;
-                }
-
                 var result = await _engine
                     .NewExecutor()
                     .WithQueryString(request.QueryString)
@@ -258,7 +247,6 @@ namespace GraphQL.Conventions.Web
 
                 var response = new Response(request, result);
                 var errors = result?.Errors?.Where(e => !string.IsNullOrWhiteSpace(e?.Message));
-                response.Warnings.AddRange(validationWarnings);
                 foreach (var error in errors ?? new List<ExecutionError>())
                 {
                     if (_exceptionsTreatedAsWarnings.Contains(error.InnerException.GetType()))
@@ -270,7 +258,8 @@ namespace GraphQL.Conventions.Web
                         response.Errors.Add(error);
                     }
                 }
-                result.Errors = new ExecutionErrors(response.Errors);
+                result.Errors = new ExecutionErrors();
+                result.Errors.AddRange(response.Errors);
                 response.Body = _engine.SerializeResult(result);
                 return response;
             }

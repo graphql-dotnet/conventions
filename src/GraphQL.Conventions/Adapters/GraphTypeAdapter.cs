@@ -10,9 +10,9 @@ namespace GraphQL.Conventions.Adapters
 {
     public class GraphTypeAdapter : IGraphTypeAdapter<ISchema, IGraphType>
     {
-        private readonly CachedRegistry<Type, IGraphType> _typeDescriptors = new CachedRegistry<Type, IGraphType>();
+        readonly CachedRegistry<Type, IGraphType> _typeDescriptors = new CachedRegistry<Type, IGraphType>();
 
-        private readonly Dictionary<string, Type> _registeredScalarTypes = new Dictionary<string, Type>();
+        readonly Dictionary<string, Type> _registeredScalarTypes = new Dictionary<string, Type>();
 
         public Func<GraphFieldInfo, IFieldResolver> FieldResolverFactory { get; set; } = (fieldInfo) => new FieldResolver(fieldInfo);
 
@@ -35,7 +35,7 @@ namespace GraphQL.Conventions.Adapters
                 .SelectMany(t => t.PossibleTypes)
                 .GroupBy(t => t.Name)
                 .Select(g => g.First());
-            var schema = new Schema(DeriveTypeFromTypeInfo)
+            var schema = new Schema(new FuncDependencyResolver(DeriveTypeFromTypeInfo))
             {
                 Query = DeriveOperationType(schemaInfo.Query),
                 Mutation = DeriveOperationType(schemaInfo.Mutation),

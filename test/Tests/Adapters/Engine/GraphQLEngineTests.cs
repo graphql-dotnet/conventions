@@ -133,7 +133,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                     field5
                 }")
                 .Execute();
-            
+
             result.Data.ShouldHaveFieldWithValue("field3", "SOME_VALUE2");
             result.Data.ShouldHaveFieldWithValue("field4", "SOME_VALUE2");
             result.Data.ShouldHaveFieldWithValue("field5", null);

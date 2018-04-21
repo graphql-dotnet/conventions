@@ -59,7 +59,7 @@ namespace GraphQL.Conventions.Adapters
 
             var arguments = fieldInfo
                 .Arguments
-                .Select(arg => context.GetArgument(arg));
+                .Select(context.GetArgument);
 
             if (fieldInfo.Type.IsTask)
             {

@@ -40,11 +40,11 @@ namespace GraphQL.Conventions
         public static bool operator !=(NonNull<T> v1, NonNull<T> v2) =>
             !v1.Equals(v2);
 
-        public override bool Equals(object other)
+        public override bool Equals(object obj)
         {
-            if (other is NonNull<T>)
+            if (obj is NonNull<T>)
             {
-                var otherValue = (NonNull<T>)other;
+                var otherValue = (NonNull<T>)obj;
                 return _value == otherValue._value;
             }
             return false;

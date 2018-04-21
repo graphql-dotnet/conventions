@@ -16,9 +16,9 @@ namespace GraphQL.Conventions
             _defaultValue = defaultValue;
         }
 
-        public override void MapField(GraphFieldInfo entity, MemberInfo memberInfo)
+        public override void MapField(GraphFieldInfo fieldInfo, MemberInfo memberInfo)
         {
-            entity.DefaultValue = _defaultValue;
+            fieldInfo.DefaultValue = _defaultValue;
         }
     }
 }

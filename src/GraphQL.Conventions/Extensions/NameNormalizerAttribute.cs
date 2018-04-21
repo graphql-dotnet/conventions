@@ -12,11 +12,11 @@ namespace GraphQL.Conventions.Extensions
         {
         }
 
-        public override void MapType(GraphTypeInfo entity, TypeInfo typeInfo)
+        public override void MapType(GraphTypeInfo type, TypeInfo typeInfo)
         {
-            if (entity.Name?.EndsWith("Dto") ?? false)
+            if (type.Name?.EndsWith("Dto") ?? false)
             {
-                entity.Name = entity.Name.Remove(entity.Name.Length - 3);
+                type.Name = type.Name.Remove(type.Name.Length - 3);
             }
         }
     }

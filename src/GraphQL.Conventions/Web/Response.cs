@@ -53,7 +53,11 @@ namespace GraphQL.Conventions.Web
 
         public void AddExtra(string key, object value)
         {
-            ExecutionResult.Extra[key] = value;
+            if (ExecutionResult.Extensions == null)
+            {
+                ExecutionResult.Extensions = new Dictionary<string, object>();
+            }
+            ExecutionResult.Extensions[key] = value;
             _body = null;
         }
 

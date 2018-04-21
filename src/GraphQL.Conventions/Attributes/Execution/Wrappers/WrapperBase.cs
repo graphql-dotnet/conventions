@@ -30,7 +30,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
                 : value;
         }
 
-        public abstract object WrapValue(GraphEntityInfo entity, GraphTypeInfo type, object value);
+        public abstract object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value);
 
         protected string GetEntityDescription(GraphEntityInfo entity)
         {

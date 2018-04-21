@@ -19,8 +19,8 @@ namespace GraphQL.Conventions.Relay
             _id = new Id(encodedCursor);
         }
 
-        public override bool Equals(object other) =>
-            other is Cursor ? Equals((Cursor)other) : false;
+        public override bool Equals(object obj) =>
+            obj is Cursor ? Equals((Cursor)obj) : false;
 
         public bool Equals(Cursor other) =>
             _id.Equals(other._id);

@@ -26,23 +26,6 @@ namespace GraphQL.Conventions.Tests.Web
         }
 
         [Test]
-        public async Task Can_Run_Query_And_Report_Validation_Violations_As_Warnings()
-        {
-            var request = Request.New("{ \"query\": \"query test($foo: String) { a: hello b: hello }\" }");
-            var response = await RequestHandler
-                .New()
-                .WithQuery<TestQuery>()
-                .WithoutValidation(true)
-                .Generate()
-                .ProcessRequest(request, null);
-
-            response.Body.ShouldEqual("{\"data\":{\"a\":\"World\",\"b\":\"World\"}}");
-            response.Errors.Count.ShouldEqual(0);
-            response.Warnings.Count.ShouldEqual(1);
-            response.Warnings[0].ToString().ShouldEqual("GraphQL.Validation.ValidationError: Variable \"$foo\" is never used in operation \"$test\".");
-        }
-
-        [Test]
         public async Task Can_Run_Simple_Query_Using_ComplexityConfiguration()
         {
             var request = Request.New("{ \"query\": \"{ hello }\" }");
@@ -62,7 +45,7 @@ namespace GraphQL.Conventions.Tests.Web
         [Test]
         public async void Cannot_Run_Too_Complex_Query_Using_ComplexityConfiguration()
         {
-            var request = Request.New("{ \"query\": \"{ hello { is_it_me { youre_looking_for } } }\" }");
+            var request = Request.New("{ \"query\": \"{ sub { sub { end } } }\" }");
             var response = await RequestHandler
                 .New()
                 .WithQuery<TestQuery>()
@@ -85,7 +68,7 @@ namespace GraphQL.Conventions.Tests.Web
                 .Generate()
                 .ProcessRequest(request, null);
             response.EnrichWithProfilingInformation();
-            response.Body.ShouldContain("\"extra\":{\"profile\":");
+            response.Body.ShouldContain("\"extensions\":{\"profile\":");
         }
 
         [Test]
@@ -116,6 +99,15 @@ namespace GraphQL.Conventions.Tests.Web
         class TestQuery
         {
             public string Hello => "World";
+
+            public Nested Sub => new Nested();
+        }
+
+        class Nested
+        {
+            public Nested Sub => new Nested();
+
+            public string End => string.Empty;
         }
 
         class ProfiledQuery

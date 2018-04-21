@@ -243,6 +243,8 @@ namespace GraphQL.Conventions.Tests.Templates.Extensions
                 .Trim()
                 .Split('\n')
                 .Select(line => line.Trim(' ', '\t', '\r', '\n').Replace('\\', '/'))
+                .Where(line => !line.StartsWith("#"))
+                .Where(line => !line.StartsWith("scalar "))
                 .Where(line => line.Length > 0);
             return string.Join("\n", lines);
         }

@@ -37,11 +37,11 @@ namespace GraphQL.Conventions.Extensions
 
     public class ChaosMetaDataAttribute : MetaDataAttributeBase, IDefaultAttribute
     {
-        public override void MapField(GraphFieldInfo entity, MemberInfo memberInfo)
+        public override void MapField(GraphFieldInfo fieldInfo, MemberInfo memberInfo)
         {
             if (ChaosAttribute.IsEnabled)
             {
-                entity.ExecutionFilters.Add(new ChaosAttribute());
+                fieldInfo.ExecutionFilters.Add(new ChaosAttribute());
             }
         }
     }

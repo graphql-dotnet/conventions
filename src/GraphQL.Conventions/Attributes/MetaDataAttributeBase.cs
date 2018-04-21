@@ -8,7 +8,7 @@ namespace GraphQL.Conventions.Attributes
     {
         private readonly EntityMapper _entityMapper;
 
-        public MetaDataAttributeBase()
+        protected MetaDataAttributeBase()
             : base(AttributeApplicationPhase.MetaDataDerivation)
         {
             _entityMapper = new EntityMapper(this);
@@ -30,11 +30,11 @@ namespace GraphQL.Conventions.Attributes
             MapEntity(entity);
         }
 
-        public virtual void MapArgument(GraphArgumentInfo entity, ParameterInfo parameterInfo)
+        public virtual void MapArgument(GraphArgumentInfo argumentInfo, ParameterInfo parameterInfo)
         {
         }
 
-        public virtual void MapField(GraphFieldInfo entity, MemberInfo memberInfo)
+        public virtual void MapField(GraphFieldInfo fieldInfo, MemberInfo memberInfo)
         {
         }
 
@@ -42,7 +42,7 @@ namespace GraphQL.Conventions.Attributes
         {
         }
 
-        public virtual void MapType(GraphTypeInfo entity, TypeInfo typeInfo)
+        public virtual void MapType(GraphTypeInfo type, TypeInfo typeInfo)
         {
         }
 
