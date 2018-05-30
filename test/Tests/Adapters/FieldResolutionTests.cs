@@ -17,6 +17,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             result.Data.ShouldHaveFieldWithValue("nonNullBooleanField", true);
         }
 
+        [Test]
         public async void Can_Resolve_Nullable_Field()
         {
             var result = await ExecuteQuery("{ booleanField }");
@@ -48,6 +49,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             result.Data.ShouldHaveFieldWithValue("nonNullEnumField", "TWO");
         }
 
+        [Test]
         public async void Can_Resolve_Nullable_Enum_Field()
         {
             var result = await ExecuteQuery("{ enumField }");
@@ -79,6 +81,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             result.Data.ShouldHaveFieldWithValue("nonNullIdField", Id.New<SimpleObject>("54321").ToString());
         }
 
+        [Test]
         public async void Can_Resolve_Nullable_Id_Field()
         {
             var result = await ExecuteQuery("{ idField }");

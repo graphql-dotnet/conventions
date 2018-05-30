@@ -35,23 +35,6 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 Resolver = new CustomResolver(new UserRepository()),
             });
 
-            schema.ResolveType = (t) =>
-            {
-                if (t == typeof(IUserRepository))
-                {
-                    return userRepositoryInterface;
-                }
-                if (t == typeof(UserRepository))
-                {
-                    return userRepositoryType;
-                }
-                if (t == typeof(User))
-                {
-                    return userType;
-                }
-                return null;
-            };
-
             var schemaDescription = new SchemaPrinter(schema).Print();
             schemaDescription.ShouldEqualWhenReformatted(@"
             interface IUserRepository {
