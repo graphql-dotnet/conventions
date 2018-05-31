@@ -9,7 +9,7 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
     public class RelayMutationAttributeTests : TestBase
     {
         [Test]
-        public async void Can_Pass_On_ClientMutationId_For_Relay_Nullable_Mutations()
+        public async Task Can_Pass_On_ClientMutationId_For_Relay_Nullable_Mutations()
         {
             var result = await ExecuteMutation(@"
                 mutation _ {
@@ -24,7 +24,7 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
         }
 
         [Test]
-        public async void Can_Pass_On_ClientMutationId_For_Relay_NonNullable_Mutations()
+        public async Task Can_Pass_On_ClientMutationId_For_Relay_NonNullable_Mutations()
         {
             var result = await ExecuteMutation(@"
                 mutation _ {
@@ -39,7 +39,7 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
         }
 
         [Test]
-        public async void Can_Pass_On_ClientMutationId_For_Relay_Task_Mutations()
+        public async Task Can_Pass_On_ClientMutationId_For_Relay_Task_Mutations()
         {
             var result = await ExecuteMutation(@"
                 mutation _ {
@@ -54,7 +54,7 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
         }
 
         [Test]
-        public async void Can_Pass_On_ClientMutationId_For_Relay_Nullable_Mutations_With_Type_Decoration()
+        public async Task Can_Pass_On_ClientMutationId_For_Relay_Nullable_Mutations_With_Type_Decoration()
         {
             var result = await ExecuteMutation<MutationType>(@"
                 mutation _ {
@@ -69,7 +69,7 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
         }
 
         [Test]
-        public async void Can_Pass_On_ClientMutationId_For_Relay_NonNullable_Mutations_With_Type_Decoration()
+        public async Task Can_Pass_On_ClientMutationId_For_Relay_NonNullable_Mutations_With_Type_Decoration()
         {
             var result = await ExecuteMutation<MutationType>(@"
                 mutation _ {
@@ -84,7 +84,7 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
         }
 
         [Test]
-        public async void Can_Pass_On_ClientMutationId_For_Relay_Task_Mutations_With_Type_Decoration()
+        public async Task Can_Pass_On_ClientMutationId_For_Relay_Task_Mutations_With_Type_Decoration()
         {
             var result = await ExecuteMutation<MutationType>(@"
                 mutation _ {

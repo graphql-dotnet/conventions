@@ -10,7 +10,7 @@ namespace GraphQL.Conventions.Tests.Adapters
     public class ArgumentResolutionTests : TestBase
     {
         [Test]
-        public async void Can_Resolve_Argument_Using_Dependency_Injection()
+        public async Task Can_Resolve_Argument_Using_Dependency_Injection()
         {
             var result = await ExecuteQuery(@"{ dependencyInjectionField }");
             result.ShouldHaveNoErrors();
@@ -18,7 +18,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Value_Type_Argument()
+        public async Task Can_Resolve_Value_Type_Argument()
         {
             var result = await ExecuteQuery(
                 @"{ valueTypeField(valueTypeArg: 123) }");
@@ -33,7 +33,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Nullable_Value_Type_Argument()
+        public async Task Can_Resolve_Nullable_Value_Type_Argument()
         {
             var result = await ExecuteQuery(
                 @"{ nullableValueTypeField(nullableValueTypeArg: 123) }");
@@ -59,7 +59,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Nullable_Primitive_Argument()
+        public async Task Can_Resolve_Nullable_Primitive_Argument()
         {
             var result = await ExecuteQuery(
                 @"{ nullablePrimitiveField(nullablePrimitiveArg: ""Foo"") }");
@@ -74,7 +74,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_NonNullable_Primitive_Argument()
+        public async Task Can_Resolve_NonNullable_Primitive_Argument()
         {
             var result = await ExecuteQuery(
                 @"{ nonNullablePrimitiveField(nonNullablePrimitiveArg: ""Foo"") }");
@@ -89,7 +89,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Nullable_Identifier_Argument()
+        public async Task Can_Resolve_Nullable_Identifier_Argument()
         {
             var id = Id.New<Dependency>("12345");
             var result = await ExecuteQuery(
@@ -105,7 +105,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_NonNullable_Identifier_Argument()
+        public async Task Can_Resolve_NonNullable_Identifier_Argument()
         {
             var id = Id.New<Dependency>("12345");
             var result = await ExecuteQuery(
@@ -121,7 +121,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Nullable_Argument_With_Default_Value()
+        public async Task Can_Resolve_Nullable_Argument_With_Default_Value()
         {
             var result = await ExecuteQuery(
                 @"{ defaultNullableArgumentValueField(arg: 123) }");
@@ -147,7 +147,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_NonNullable_Argument_With_Default_Value()
+        public async Task Can_Resolve_NonNullable_Argument_With_Default_Value()
         {
             var result = await ExecuteQuery(
                 @"{ defaultNonNullableArgumentValueField(arg: 123) }");
@@ -162,7 +162,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Nullable_Enum_Argument()
+        public async Task Can_Resolve_Nullable_Enum_Argument()
         {
             var result = await ExecuteQuery(
                 @"{ enumField: nullableEnumField }");
@@ -199,7 +199,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_NonNullable_Enum_Argument()
+        public async Task Can_Resolve_NonNullable_Enum_Argument()
         {
             var result = await ExecuteQuery(
                 @"{ enumField: nonNullableEnumField(enumArg: FOO) }");
@@ -225,7 +225,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_List_Of_Nullable_Enums_Argument()
+        public async Task Can_Resolve_List_Of_Nullable_Enums_Argument()
         {
             var result = await ExecuteQuery(
                 @"{ listOfNullableEnumsField(arg: [BAZ, FOO]) }");
@@ -240,7 +240,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_List_Of_NonNullable_Enums_Argument()
+        public async Task Can_Resolve_List_Of_NonNullable_Enums_Argument()
         {
             var result = await ExecuteQuery(
                 @"{ listOfNonNullableEnumsField(arg: [BAZ, FOO]) }");
@@ -255,7 +255,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Nullable_InputObject_Argument()
+        public async Task Can_Resolve_Nullable_InputObject_Argument()
         {
             var result = await ExecuteQuery(
                 @"{ result: nullableInputObjectField }");
@@ -286,7 +286,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_NonNullable_InputObject_Argument()
+        public async Task Can_Resolve_NonNullable_InputObject_Argument()
         {
             var result = await ExecuteQuery(
                 @"{ result: nonNullableInputObjectField }");
@@ -316,7 +316,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Array_Of_Nullable_InputObject_Argument()
+        public async Task Can_Resolve_Array_Of_Nullable_InputObject_Argument()
         {
             var result = await ExecuteQuery(
                 @"{ result: arrayOfNullableInputObjectsField(arg: [
@@ -358,7 +358,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Array_Of_NonNullable_InputObject_Argument()
+        public async Task Can_Resolve_Array_Of_NonNullable_InputObject_Argument()
         {
             var result = await ExecuteQuery(
                 @"{ result: arrayOfNonNullableInputObjectsField }");
@@ -403,7 +403,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_List_Of_Nullable_InputObject_Argument()
+        public async Task Can_Resolve_List_Of_Nullable_InputObject_Argument()
         {
             var result = await ExecuteQuery(
                 @"{ result: listOfNullableInputObjectsField(arg: [
@@ -445,7 +445,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_List_Of_NonNullable_InputObject_Argument()
+        public async Task Can_Resolve_List_Of_NonNullable_InputObject_Argument()
         {
             var result = await ExecuteQuery(
                 @"{ result: listOfNonNullableInputObjectsField }");
@@ -490,7 +490,7 @@ namespace GraphQL.Conventions.Tests.Adapters
        }
 
         [Test]
-        public async void Can_Resolve_Enumerable_Of_Nullable_InputObject_Argument()
+        public async Task Can_Resolve_Enumerable_Of_Nullable_InputObject_Argument()
         {
             var result = await ExecuteQuery(
                 @"{ result: enumerableOfNullableInputObjectsField(arg: [
@@ -532,7 +532,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Enumerable_Of_NonNullable_InputObject_Argument()
+        public async Task Can_Resolve_Enumerable_Of_NonNullable_InputObject_Argument()
         {
             var result = await ExecuteQuery(
                 @"{ result: enumerableOfNonNullableInputObjectsField }");
@@ -577,7 +577,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Complex_Input_Object()
+        public async Task Can_Resolve_Complex_Input_Object()
         {
             var result = await ExecuteQuery(
                 @"{ result: complexInputObjectField }");
@@ -635,7 +635,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Resolution_Context_Argument()
+        public async Task Can_Resolve_Resolution_Context_Argument()
         {
             var result = await ExecuteQuery(
                 @"{ contextField }",

@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Threading.Tasks;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 
@@ -19,7 +20,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         }
 
         [Test]
-        public async void Can_Execute_Query_On_Schema_With_Injections()
+        public async Task Can_Execute_Query_On_Schema_With_Injections()
         {
             var engine = GraphQLEngine.New<Query>();
             var result = await engine
@@ -33,7 +34,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         }
 
         [Test]
-        public async void Each_Executor_Should_Use_Its_Own_Injector()
+        public async Task Each_Executor_Should_Use_Its_Own_Injector()
         {
             var engine = GraphQLEngine.New<Query>();
 
@@ -73,7 +74,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         }
 
         [Test]
-        public async void Can_Execute_Query_On_Schema_With_Injections_In_Generic_Methods()
+        public async Task Can_Execute_Query_On_Schema_With_Injections_In_Generic_Methods()
         {
             var engine = GraphQLEngine.New<QueryWithDIFields>();
             var result = await engine

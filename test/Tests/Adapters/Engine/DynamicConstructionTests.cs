@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Threading.Tasks;
 using GraphQL.Conventions.Adapters;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
@@ -12,7 +13,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
     public class DynamicConstructionTests : TestBase
     {
         [Test]
-        public async void Can_Construct_And_Describe_Schema_With_Dynamic_Queries()
+        public async Task Can_Construct_And_Describe_Schema_With_Dynamic_Queries()
         {
             var typeAdapter = new GraphTypeAdapter();
             var typeResolver = new TypeResolver();
