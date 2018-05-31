@@ -1,5 +1,6 @@
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
+using System.Threading.Tasks;
 
 namespace GraphQL.Conventions.Tests.Adapters.Engine
 {
@@ -24,7 +25,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         }
 
         [Test]
-        public async void Can_Execute_Query_On_Schema_Using_Interfaces_With_Generic_Types()
+        public async Task Can_Execute_Query_On_Schema_Using_Interfaces_With_Generic_Types()
         {
             var engine = GraphQLEngine.New<Query>();
             var result = await engine

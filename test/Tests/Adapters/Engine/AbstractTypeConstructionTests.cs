@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 
@@ -20,7 +21,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         }
 
         [Test]
-        public async void Can_Execute_Query_On_Schema_From_Abstract_Types()
+        public async Task Can_Execute_Query_On_Schema_From_Abstract_Types()
         {
             var engine = GraphQLEngine.New<Query>();
             var result = await engine

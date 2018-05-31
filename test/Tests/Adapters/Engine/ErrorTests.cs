@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 
@@ -9,7 +10,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
     public class ErrorTests : TestBase
     {
         [Test]
-        public async void Will_Provide_Path_And_Code_For_Errors_On_Fields_With_Operation_Name()
+        public async Task Will_Provide_Path_And_Code_For_Errors_On_Fields_With_Operation_Name()
         {
             var engine = GraphQLEngine.New<Query>();
             var result = await engine
@@ -18,7 +19,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .Execute();
 
             result.Errors.ShouldNotBeNull();
-            result.Errors.Count().ShouldEqual(1);
+            result.Errors.Count.ShouldEqual(1);
             var error = result.Errors.First();
             error.Message.ShouldEqual("Test error.");
             error.Code.ShouldEqual("ARGUMENT");
@@ -29,7 +30,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         }
 
         [Test]
-        public async void Will_Provide_Path_And_Code_For_Errors_On_Fields_Without_Operation_Name()
+        public async Task Will_Provide_Path_And_Code_For_Errors_On_Fields_Without_Operation_Name()
         {
             var engine = GraphQLEngine.New<Query>();
             var result = await engine
@@ -38,7 +39,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .Execute();
 
             result.Errors.ShouldNotBeNull();
-            result.Errors.Count().ShouldEqual(1);
+            result.Errors.Count.ShouldEqual(1);
             var error = result.Errors.First();
             error.Message.ShouldEqual("Test error.");
             error.Code.ShouldEqual("ARGUMENT");
@@ -49,7 +50,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         }
 
         [Test]
-        public async void Will_Provide_Path_And_Code_For_Errors_On_Fields_With_Aliases()
+        public async Task Will_Provide_Path_And_Code_For_Errors_On_Fields_With_Aliases()
         {
             var engine = GraphQLEngine.New<Query>();
             var result = await engine
@@ -58,7 +59,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .Execute();
 
             result.Errors.ShouldNotBeNull();
-            result.Errors.Count().ShouldEqual(1);
+            result.Errors.Count.ShouldEqual(1);
             var error = result.Errors.First();
             error.Message.ShouldEqual("Test error.");
             error.Code.ShouldEqual("ARGUMENT");
@@ -69,7 +70,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         }
 
         [Test]
-        public async void Will_Provide_Path_And_Code_For_Errors_In_Array_Fields()
+        public async Task Will_Provide_Path_And_Code_For_Errors_In_Array_Fields()
         {
             var engine = GraphQLEngine.New<Query>();
             var result = await engine
@@ -83,7 +84,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             result.Data.ShouldHaveFieldWithValue("getObject", "arrayField", 3, "test", null);
 
             result.Errors.ShouldNotBeNull();
-            result.Errors.Count().ShouldEqual(2);
+            result.Errors.Count.ShouldEqual(2);
 
             var error = result.Errors.ElementAt(0);
             error.Message.ShouldEqual("Test error.");
@@ -105,7 +106,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         }
 
         [Test]
-        public async void Will_Provide_Exception_Data()
+        public async Task Will_Provide_Exception_Data()
         {
             var engine = GraphQLEngine.New<Query>();
             var result = await engine
@@ -116,7 +117,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             result.Data.ShouldHaveFieldWithValue("errorWithData", null);
 
             result.Errors.ShouldNotBeNull();
-            result.Errors.Count().ShouldEqual(1);
+            result.Errors.Count.ShouldEqual(1);
 
             result.Errors.First().Message.ShouldEqual("Test error.");
             result.Errors.First().Data["someKey"].ShouldEqual("someValue");

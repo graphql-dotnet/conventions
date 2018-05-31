@@ -9,7 +9,7 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
     public class DynamicMutationRegistrationTests : TestBase
     {
         [Test]
-        public async void Can_Pass_On_ClientMutationId_For_Relay_Nullable_Mutations()
+        public async Task Can_Pass_On_ClientMutationId_For_Relay_Nullable_Mutations()
         {
             var query = @"
                 mutation _ {

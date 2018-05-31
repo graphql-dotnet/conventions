@@ -12,7 +12,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine.Bugs
     public class Bug73NullableInputListTests : TestBase
     {
         [Test]
-        public async void Can_Accept_Null_List_From_Literal()
+        public async Task Can_Accept_Null_List_From_Literal()
         {
             var engine = GraphQLEngine
                 .New<TestQuery>();
@@ -25,7 +25,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine.Bugs
         }
 
         [Test]
-        public async void Can_Accept_Null_List_From_Input()
+        public async Task Can_Accept_Null_List_From_Input()
         {
             var engine = GraphQLEngine
                 .New<TestQuery>();

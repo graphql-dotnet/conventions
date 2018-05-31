@@ -10,14 +10,15 @@ namespace GraphQL.Conventions.Tests.Adapters
     public class FieldResolutionTests : TestBase
     {
         [Test]
-        public async void Can_Resolve_NonNullable_Field()
+        public async Task Can_Resolve_NonNullable_Field()
         {
             var result = await ExecuteQuery("{ nonNullBooleanField }");
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("nonNullBooleanField", true);
         }
 
-        public async void Can_Resolve_Nullable_Field()
+        [Test]
+        public async Task Can_Resolve_Nullable_Field()
         {
             var result = await ExecuteQuery("{ booleanField }");
             result.ShouldHaveNoErrors();
@@ -25,7 +26,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_NonNullable_Task_Field()
+        public async Task Can_Resolve_NonNullable_Task_Field()
         {
             var result = await ExecuteQuery("{ nonNullBooleanTaskField }");
             result.ShouldHaveNoErrors();
@@ -33,7 +34,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Nullable_Task_Field()
+        public async Task Can_Resolve_Nullable_Task_Field()
         {
             var result = await ExecuteQuery("{ booleanTaskField }");
             result.ShouldHaveNoErrors();
@@ -41,14 +42,15 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_NonNullable_Enum_Field()
+        public async Task Can_Resolve_NonNullable_Enum_Field()
         {
             var result = await ExecuteQuery("{ nonNullEnumField }");
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("nonNullEnumField", "TWO");
         }
 
-        public async void Can_Resolve_Nullable_Enum_Field()
+        [Test]
+        public async Task Can_Resolve_Nullable_Enum_Field()
         {
             var result = await ExecuteQuery("{ enumField }");
             result.ShouldHaveNoErrors();
@@ -56,7 +58,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_NonNullable_Enum_Task_Field()
+        public async Task Can_Resolve_NonNullable_Enum_Task_Field()
         {
             var result = await ExecuteQuery("{ nonNullEnumTaskField }");
             result.ShouldHaveNoErrors();
@@ -64,7 +66,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Nullable_Enum_Task_Field()
+        public async Task Can_Resolve_Nullable_Enum_Task_Field()
         {
             var result = await ExecuteQuery("{ enumTaskField }");
             result.ShouldHaveNoErrors();
@@ -72,14 +74,15 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_NonNullable_Id_Field()
+        public async Task Can_Resolve_NonNullable_Id_Field()
         {
             var result = await ExecuteQuery("{ nonNullIdField }");
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("nonNullIdField", Id.New<SimpleObject>("54321").ToString());
         }
 
-        public async void Can_Resolve_Nullable_Id_Field()
+        [Test]
+        public async Task Can_Resolve_Nullable_Id_Field()
         {
             var result = await ExecuteQuery("{ idField }");
             result.ShouldHaveNoErrors();
@@ -87,7 +90,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_NonNullable_Id_Task_Field()
+        public async Task Can_Resolve_NonNullable_Id_Task_Field()
         {
             var result = await ExecuteQuery("{ nonNullIdTaskField }");
             result.ShouldHaveNoErrors();
@@ -95,7 +98,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Nullable_Id_Task_Field()
+        public async Task Can_Resolve_Nullable_Id_Task_Field()
         {
             var result = await ExecuteQuery("{ idTaskField }");
             result.ShouldHaveNoErrors();
@@ -103,7 +106,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Url_Field()
+        public async Task Can_Resolve_Url_Field()
         {
             var result = await ExecuteQuery("{ urlField }");
             result.ShouldHaveNoErrors();
@@ -111,7 +114,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_List_Of_Nullable_Primitives_Field()
+        public async Task Can_Resolve_List_Of_Nullable_Primitives_Field()
         {
             var result = await ExecuteQuery("{ list: nullablePrimitiveListField }");
             result.ShouldHaveNoErrors();
@@ -122,7 +125,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_List_Of_Primitives_Field()
+        public async Task Can_Resolve_List_Of_Primitives_Field()
         {
             var result = await ExecuteQuery("{ list: primitiveListField }");
             result.ShouldHaveNoErrors();
@@ -133,7 +136,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_List_Of_Nullables_Field()
+        public async Task Can_Resolve_List_Of_Nullables_Field()
         {
             var result = await ExecuteQuery("{ list: listField }");
             result.ShouldHaveNoErrors();
@@ -144,7 +147,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_List_Of_NonNullables_Field()
+        public async Task Can_Resolve_List_Of_NonNullables_Field()
         {
             var result = await ExecuteQuery("{ list: listOfNonNullField }");
             result.ShouldHaveNoErrors();
@@ -155,7 +158,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_NonNullable_List_Of_Nullables_Field()
+        public async Task Can_Resolve_NonNullable_List_Of_Nullables_Field()
         {
             var result = await ExecuteQuery("{ list: nonNullListField }");
             result.ShouldHaveNoErrors();
@@ -166,7 +169,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_NonNullable_List_Of_NonNullables_Field()
+        public async Task Can_Resolve_NonNullable_List_Of_NonNullables_Field()
         {
             var result = await ExecuteQuery("{ list: nonNullListOfNonNullField }");
             result.ShouldHaveNoErrors();
@@ -177,7 +180,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_NonNullable_List_Of_NonNullable_URLs_Field()
+        public async Task Can_Resolve_NonNullable_List_Of_NonNullable_URLs_Field()
         {
             var result = await ExecuteQuery("{ urls: nonNullListOfNonNullUrlsField }");
             result.ShouldHaveNoErrors();
@@ -187,7 +190,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_NonNullable_List_Of_NonNullable_URLs_Task_Field()
+        public async Task Can_Resolve_NonNullable_List_Of_NonNullable_URLs_Task_Field()
         {
             var result = await ExecuteQuery("{ urls: nonNullListOfNonNullUrlsTaskField }");
             result.ShouldHaveNoErrors();
@@ -197,7 +200,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Enumerable_Field()
+        public async Task Can_Resolve_Enumerable_Field()
         {
             var result = await ExecuteQuery("{ enumerableField iListField arrayField }");
             result.ShouldHaveNoErrors();
@@ -219,7 +222,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Enumerable_Of_NonNullable_URLs_Field()
+        public async Task Can_Resolve_Enumerable_Of_NonNullable_URLs_Field()
         {
             var result = await ExecuteQuery("{ urls: enumerableOfNonNullUrlsField }");
             result.ShouldHaveNoErrors();
@@ -229,7 +232,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Throws_Exception_With_Correct_StackTrace_On_Error()
+        public async Task Throws_Exception_With_Correct_StackTrace_On_Error()
         {
             var result = await ExecuteQuery("{ errorField }");
             result.ShouldHaveErrors(1);
@@ -239,7 +242,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Throws_Exception_With_Correct_StackTrace_On_Task_Error()
+        public async Task Throws_Exception_With_Correct_StackTrace_On_Task_Error()
         {
             var result = await ExecuteQuery("{ errorTaskField }");
             result.ShouldHaveErrors(1);
@@ -249,7 +252,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_NonNullable_Object_Field()
+        public async Task Can_Resolve_NonNullable_Object_Field()
         {
             var result = await ExecuteQuery(@"
             {
@@ -261,7 +264,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Nullable_Object_Field()
+        public async Task Can_Resolve_Nullable_Object_Field()
         {
             var result = await ExecuteQuery(@"
             {
@@ -273,7 +276,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_NonNullable_Object_Task_Field()
+        public async Task Can_Resolve_NonNullable_Object_Task_Field()
         {
             var result = await ExecuteQuery(@"
             {
@@ -285,7 +288,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Nullable_Object_Task_Field()
+        public async Task Can_Resolve_Nullable_Object_Task_Field()
         {
             var result = await ExecuteQuery(@"
             {
@@ -297,7 +300,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Interface_Field()
+        public async Task Can_Resolve_Interface_Field()
         {
             var result = await ExecuteQuery(@"
             {
@@ -333,7 +336,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Union_Field()
+        public async Task Can_Resolve_Union_Field()
         {
             var result = await ExecuteQuery(@"
             {
@@ -363,7 +366,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Test]
-        public async void Can_Resolve_Asynchronous_Field()
+        public async Task Can_Resolve_Asynchronous_Field()
         {
             var result = await ExecuteQuery(@"
             {

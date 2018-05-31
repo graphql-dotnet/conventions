@@ -165,7 +165,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         }
 
         [Test]
-        public async void Can_Register_And_Use_Custom_Scalar_Types()
+        public async Task Can_Register_And_Use_Custom_Scalar_Types()
         {
             var engine = GraphQLEngine
                 .New()

@@ -43,7 +43,7 @@ namespace GraphQL.Conventions.Tests.Web
         }
 
         [Test]
-        public async void Cannot_Run_Too_Complex_Query_Using_ComplexityConfiguration()
+        public async Task Cannot_Run_Too_Complex_Query_Using_ComplexityConfiguration()
         {
             var request = Request.New("{ \"query\": \"{ sub { sub { end } } }\" }");
             var response = await RequestHandler
@@ -58,7 +58,7 @@ namespace GraphQL.Conventions.Tests.Web
         }
 
         [Test]
-        public async void Can_Enrich_With_Profiling_Information()
+        public async Task Can_Enrich_With_Profiling_Information()
         {
             var request = Request.New("{ \"query\": \"{ a: foo(ms: 10) b: foo(ms: 20) }\" }");
             var response = await RequestHandler
@@ -72,7 +72,7 @@ namespace GraphQL.Conventions.Tests.Web
         }
 
         [Test]
-        public async void Can_Ignore_Types_From_Unwanted_Namespaces()
+        public async Task Can_Ignore_Types_From_Unwanted_Namespaces()
         {
             // Include all types from CompositeQuery
             var request = Request.New("{ \"query\": \"{ earth { hello } mars { hello } } \" }");

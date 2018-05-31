@@ -25,7 +25,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData.Relay
         }
 
         [Test]
-        public async void Can_Use_The_Viewer_Node_For_A_Schema()
+        public async Task Can_Use_The_Viewer_Node_For_A_Schema()
         {
             var result = await ExecuteQuery(false, @"
             {
@@ -56,7 +56,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData.Relay
         }
 
         [Test]
-        public async void Can_Use_The_Viewer_Node_For_Multiple_Schemas()
+        public async Task Can_Use_The_Viewer_Node_For_Multiple_Schemas()
         {
             var result = await ExecuteQuery(true, @"
             {
