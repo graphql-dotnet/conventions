@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using GraphQL.Execution;
 using GraphQL.Validation;
 using GraphQL.Validation.Complexity;
 
@@ -33,6 +34,8 @@ namespace GraphQL.Conventions
         private IEnumerable<IValidationRule> _validationRules = null;
 
         private ComplexityConfiguration _complexityConfiguration = null;
+
+        private IEnumerable<IDocumentExecutionListener> _documentExecutionListeners;
 
         internal GraphQLExecutor(GraphQLEngine engine, IRequestDeserializer requestDeserializer)
         {
@@ -93,6 +96,12 @@ namespace GraphQL.Conventions
         public IGraphQLExecutor<ExecutionResult> WithValidationRules(IEnumerable<IValidationRule> rules)
         {
             _validationRules = rules;
+            return this;
+        }
+
+        public IGraphQLExecutor<ExecutionResult> WithListeners(params IDocumentExecutionListener[] listeners)
+        {
+            _documentExecutionListeners = listeners;
             return this;
         }
 
