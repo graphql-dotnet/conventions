@@ -56,7 +56,7 @@ namespace GraphQL.Conventions.Tests.Server
             var result = await _requestHandler
                 .ProcessRequest(Request.New(body), userContext);
             context.Response.Headers.Add("Content-Type", "application/json; charset=utf-8");
-            context.Response.StatusCode = result.Errors?.Count > 0 ? 400 : 200;
+            context.Response.StatusCode = 200;
             await context.Response.WriteAsync(result.Body);
         }
     }
