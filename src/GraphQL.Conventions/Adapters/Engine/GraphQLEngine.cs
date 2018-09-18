@@ -260,7 +260,7 @@ namespace GraphQL.Conventions
                 CancellationToken = cancellationToken
             };
 
-            if (listeners != null)
+            if (listeners != null && listeners.Any())
             {
                 foreach (var listener in listeners)
                     configuration.Listeners.Add(listener);

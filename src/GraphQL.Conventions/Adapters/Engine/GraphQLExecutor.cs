@@ -141,7 +141,8 @@ namespace GraphQL.Conventions
                     enableProfiling: _enableProfiling,
                     rules: _validationRules,
                     complexityConfiguration: _complexityConfiguration,
-                    cancellationToken: _cancellationToken)
+                    cancellationToken: _cancellationToken,
+                    listeners: _documentExecutionListeners)
                 .ConfigureAwait(false);
 
         public IValidationResult Validate() => _engine.Validate(_queryString);
