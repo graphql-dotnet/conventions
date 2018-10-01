@@ -31,7 +31,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .Execute();
 
             result.ShouldHaveNoErrors();
-            result.Data.ShouldHaveFieldWithValue("commonField", new DateTime(1970, 1, 1));
+            result.Data.ShouldHaveFieldWithValue("commonField", "1970-01-01");
             result.Data.ShouldHaveFieldWithValue("someOtherField", string.Empty);
         }
 

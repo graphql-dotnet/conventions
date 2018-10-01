@@ -19,7 +19,7 @@ namespace GraphQL.Conventions.Extensions
 
                 records.Add(new PerformanceRecord
                 {
-                    Path = record.Metadata.ContainsKey("path") ? string.Join(".", record.Metadata["path"] as List<string>) : null,
+                    Path = record.Metadata.ContainsKey("path") ? string.Join(".", record.Metadata["path"] as string[]) : null,
                     StartTimeInMs = (long)record.Start,
                     EndTimeInMs = (long)record.End,
                     ParentType = GetOrDefault<string>(record.Metadata, "typeName", null),
