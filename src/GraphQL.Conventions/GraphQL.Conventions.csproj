@@ -38,7 +38,7 @@
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="GraphQL" Version="2.0.0-alpha-887" />
+    <PackageReference Include="GraphQL" Version="2.1.0" />
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
