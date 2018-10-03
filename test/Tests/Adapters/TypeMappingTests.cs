@@ -94,13 +94,13 @@ namespace GraphQL.Conventions.Tests.Adapters
         [Test]
         public void Can_Derive_Nullable_Interfaces()
         {
-            Type<TestInterface>().ShouldBeOfType<Extended.InterfaceGraphType<TestInterface>>();
+            Type<ITestInterface>().ShouldBeOfType<Extended.InterfaceGraphType<ITestInterface>>();
         }
 
         [Test]
         public void Can_Derive_Non_Nullable_Interfaces()
         {
-            Type<NonNull<TestInterface>>().ShouldBeOfNonNullableType<Extended.InterfaceGraphType<TestInterface>>();
+            Type<NonNull<ITestInterface>>().ShouldBeOfNonNullableType<Extended.InterfaceGraphType<ITestInterface>>();
         }
 
         [Test]
@@ -196,13 +196,13 @@ namespace GraphQL.Conventions.Tests.Adapters
         [Test]
         public void Can_Derive_Nullable_Lists_Of_Nullable_Interfaces()
         {
-            Type<List<TestInterface>>().ShouldBeOfListType<Extended.InterfaceGraphType<TestInterface>>();
+            Type<List<ITestInterface>>().ShouldBeOfListType<Extended.InterfaceGraphType<ITestInterface>>();
         }
 
         [Test]
         public void Can_Derive_Nullable_Lists_Of_Non_Nullable_Interfaces()
         {
-            Type<List<NonNull<TestInterface>>>().ShouldBeOfListType<NonNullGraphType<Extended.InterfaceGraphType<TestInterface>>>();
+            Type<List<NonNull<ITestInterface>>>().ShouldBeOfListType<NonNullGraphType<Extended.InterfaceGraphType<ITestInterface>>>();
         }
 
         [Test]
@@ -298,13 +298,13 @@ namespace GraphQL.Conventions.Tests.Adapters
         [Test]
         public void Can_Derive_Non_Nullable_Lists_Of_Nullable_Interfaces()
         {
-            Type<NonNull<List<TestInterface>>>().ShouldBeOfNonNullableListType<Extended.InterfaceGraphType<TestInterface>>();
+            Type<NonNull<List<ITestInterface>>>().ShouldBeOfNonNullableListType<Extended.InterfaceGraphType<ITestInterface>>();
         }
 
         [Test]
         public void Can_Derive_Non_Nullable_Lists_Of_Non_Nullable_Interfaces()
         {
-            Type<NonNull<List<NonNull<TestInterface>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<Extended.InterfaceGraphType<TestInterface>>>();
+            Type<NonNull<List<NonNull<ITestInterface>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<Extended.InterfaceGraphType<ITestInterface>>>();
         }
 
         [Test]
@@ -400,13 +400,13 @@ namespace GraphQL.Conventions.Tests.Adapters
         [Test]
         public void Can_Derive_Future_Nullable_Interfaces()
         {
-            Type<Task<TestInterface>>().ShouldBeOfType<Extended.InterfaceGraphType<TestInterface>>();
+            Type<Task<ITestInterface>>().ShouldBeOfType<Extended.InterfaceGraphType<ITestInterface>>();
         }
 
         [Test]
         public void Can_Derive_Future_Non_Nullable_Interfaces()
         {
-            Type<Task<NonNull<TestInterface>>>().ShouldBeOfNonNullableType<Extended.InterfaceGraphType<TestInterface>>();
+            Type<Task<NonNull<ITestInterface>>>().ShouldBeOfNonNullableType<Extended.InterfaceGraphType<ITestInterface>>();
         }
 
         [Test]
@@ -502,13 +502,13 @@ namespace GraphQL.Conventions.Tests.Adapters
         [Test]
         public void Can_Derive_Future_Nullable_Lists_Of_Nullable_Interfaces()
         {
-            Type<Task<List<TestInterface>>>().ShouldBeOfListType<Extended.InterfaceGraphType<TestInterface>>();
+            Type<Task<List<ITestInterface>>>().ShouldBeOfListType<Extended.InterfaceGraphType<ITestInterface>>();
         }
 
         [Test]
         public void Can_Derive_Future_Nullable_Lists_Of_Non_Nullable_Interfaces()
         {
-            Type<Task<List<NonNull<TestInterface>>>>().ShouldBeOfListType<NonNullGraphType<Extended.InterfaceGraphType<TestInterface>>>();
+            Type<Task<List<NonNull<ITestInterface>>>>().ShouldBeOfListType<NonNullGraphType<Extended.InterfaceGraphType<ITestInterface>>>();
         }
 
         [Test]
@@ -604,13 +604,13 @@ namespace GraphQL.Conventions.Tests.Adapters
         [Test]
         public void Can_Derive_Future_Non_Nullable_Lists_Of_Nullable_Interfaces()
         {
-            Type<Task<NonNull<List<TestInterface>>>>().ShouldBeOfNonNullableListType<Extended.InterfaceGraphType<TestInterface>>();
+            Type<Task<NonNull<List<ITestInterface>>>>().ShouldBeOfNonNullableListType<Extended.InterfaceGraphType<ITestInterface>>();
         }
 
         [Test]
         public void Can_Derive_Future_Non_Nullable_Lists_Of_Non_Nullable_Interfaces()
         {
-            Type<Task<NonNull<List<NonNull<TestInterface>>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<Extended.InterfaceGraphType<TestInterface>>>();
+            Type<Task<NonNull<List<NonNull<ITestInterface>>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<Extended.InterfaceGraphType<ITestInterface>>>();
         }
 
         [Test]
@@ -643,7 +643,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             public string SomeField { get; set; }
         }
 
-        interface TestInterface
+        interface ITestInterface
         {
             string SomeField { get; }
         }
