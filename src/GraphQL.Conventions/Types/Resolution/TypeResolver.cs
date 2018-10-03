@@ -79,8 +79,8 @@ namespace GraphQL.Conventions.Types.Resolution
             RegisterScalarType<float>(TypeNames.Float);
             RegisterScalarType<double>(TypeNames.Float);
             RegisterScalarType<decimal>(TypeNames.Float);
-            RegisterScalarType<DateTime>(TypeNames.Date);
-            RegisterScalarType<DateTimeOffset>(TypeNames.Date);
+            RegisterScalarType<DateTime>(TypeNames.DateTime);
+            RegisterScalarType<DateTimeOffset>(TypeNames.DateTimeOffset);
             RegisterScalarType<TimeSpan>(TypeNames.TimeSpan);
             RegisterScalarType<Id>(TypeNames.Id);
             RegisterScalarType<Cursor>(TypeNames.Cursor);

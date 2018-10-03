@@ -23,8 +23,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             type BasicQuery {
                 booleanField1: Boolean
                 booleanField2: Boolean!
-                dateField1: Date
-                dateField2: Date!
+                dateField1: DateTime
+                dateField2: DateTime!
                 doubleField1: Float
                 doubleField2: Float!
                 floatField1: Float
@@ -53,7 +53,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
             type Actor {
-                dateOfBirth: Date
+                dateOfBirth: DateTime
                 firstName: String
                 lastName: String!
             }
@@ -70,7 +70,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             }
             type Movie {
                 actors: [Actor]
-                releaseDate: Date
+                releaseDate: DateTime
                 title: String!
             }
             type Query {
