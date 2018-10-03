@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Tests.Templates;
@@ -58,6 +60,8 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData.Relay
         [Test]
         public async Task Can_Use_The_Viewer_Node_For_Multiple_Schemas()
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
             var result = await ExecuteQuery(true, @"
             {
               floatToString(value: 3.14)
