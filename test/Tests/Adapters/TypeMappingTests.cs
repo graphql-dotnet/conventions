@@ -8,6 +8,7 @@ using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Types;
 using Extended = GraphQL.Conventions.Adapters.Types;
+using UriGraphType = GraphQL.Conventions.Adapters.Types.UriGraphType;
 
 namespace GraphQL.Conventions.Tests.Adapters
 {
