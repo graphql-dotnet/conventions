@@ -14,7 +14,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
             type Query {
-                commonField(value: Date!): Date!
+                commonField(value: DateTime!): DateTime!
                 someOtherField: String
             }
             ");

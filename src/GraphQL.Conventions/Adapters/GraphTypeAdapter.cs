@@ -117,6 +117,10 @@ namespace GraphQL.Conventions.Adapters
                     return typeof(BooleanGraphType);
                 case TypeNames.Date:
                     return typeof(DateGraphType);
+                case TypeNames.DateTime:
+                    return typeof(DateTimeGraphType);
+                case TypeNames.DateTimeOffset:
+                    return typeof(DateTimeOffsetGraphType);
                 case TypeNames.Id:
                     return typeof(Types.IdGraphType);
                 case TypeNames.Cursor:

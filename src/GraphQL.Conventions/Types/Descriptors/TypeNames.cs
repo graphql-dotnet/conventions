@@ -16,6 +16,10 @@ namespace GraphQL.Conventions.Types.Descriptors
 
         public const string Date = "Date";
 
+        public const string DateTime = "DateTime";
+
+        public const string DateTimeOffset = "DateTimeOffset";
+
         public const string TimeSpan = "TimeSpan";
 
         public const string Url = "URL";
