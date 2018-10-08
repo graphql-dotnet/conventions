@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using GraphQL.Execution;
 using GraphQL.Validation;
 using GraphQL.Validation.Complexity;
 
@@ -28,6 +29,8 @@ namespace GraphQL.Conventions
 
         IGraphQLExecutor<TResult> WithComplexityConfiguration(ComplexityConfiguration complexityConfiguration);
 
+        IGraphQLExecutor<TResult> WithListeners(params IDocumentExecutionListener[] listeners);
+
         IGraphQLExecutor<TResult> EnableValidation(bool enableValidation = true);
 
         IGraphQLExecutor<TResult> DisableValidation();
@@ -35,7 +38,7 @@ namespace GraphQL.Conventions
         IGraphQLExecutor<TResult> EnableProfiling(bool enableProfiling = true);
 
         IGraphQLExecutor<TResult> DisableProfiling();
-
+        
         Task<TResult> Execute();
     }
 }

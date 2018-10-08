@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using GraphQL.Execution;
 using GraphQL.Validation;
 using GraphQL.Validation.Complexity;
 
@@ -33,6 +34,8 @@ namespace GraphQL.Conventions
         private IEnumerable<IValidationRule> _validationRules = null;
 
         private ComplexityConfiguration _complexityConfiguration = null;
+
+        private IEnumerable<IDocumentExecutionListener> _documentExecutionListeners;
 
         internal GraphQLExecutor(GraphQLEngine engine, IRequestDeserializer requestDeserializer)
         {
@@ -96,6 +99,12 @@ namespace GraphQL.Conventions
             return this;
         }
 
+        public IGraphQLExecutor<ExecutionResult> WithListeners(params IDocumentExecutionListener[] listeners)
+        {
+            _documentExecutionListeners = listeners;
+            return this;
+        }
+
         public IGraphQLExecutor<ExecutionResult> EnableValidation(bool enableValidation = true)
         {
             _enableValidation = enableValidation;
@@ -132,7 +141,8 @@ namespace GraphQL.Conventions
                     enableProfiling: _enableProfiling,
                     rules: _validationRules,
                     complexityConfiguration: _complexityConfiguration,
-                    cancellationToken: _cancellationToken)
+                    cancellationToken: _cancellationToken,
+                    listeners: _documentExecutionListeners)
                 .ConfigureAwait(false);
 
         public IValidationResult Validate() => _engine.Validate(_queryString);

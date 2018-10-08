@@ -240,7 +240,8 @@ namespace GraphQL.Conventions
             bool enableValidation = true,
             bool enableProfiling = false,
             IEnumerable<IValidationRule> rules = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default(CancellationToken),
+            IEnumerable<IDocumentExecutionListener> listeners = null)
         {
             if (!enableValidation)
             {
@@ -256,8 +257,14 @@ namespace GraphQL.Conventions
                 UserContext = UserContextWrapper.Create(userContext, dependencyInjector ?? new WrappedDependencyInjector(_constructor.TypeResolutionDelegate)),
                 ValidationRules = rules != null && rules.Any() ? rules : null,
                 ComplexityConfiguration = complexityConfiguration,
-                CancellationToken = cancellationToken,
+                CancellationToken = cancellationToken
             };
+
+            if (listeners != null && listeners.Any())
+            {
+                foreach (var listener in listeners)
+                    configuration.Listeners.Add(listener);
+            }
 
             if (userContext is IDataLoaderContextProvider)
             {
