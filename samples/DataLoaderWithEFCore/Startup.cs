@@ -1,11 +1,15 @@
 ﻿using DataLoaderWithEFCore.Data;
 using DataLoaderWithEFCore.Data.Repositories;
+using DataLoaderWithEFCore.GraphApi;
+using GraphQL.Conventions;
+using GraphQL.DataLoader;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Schema = DataLoaderWithEFCore.GraphApi.Schema;
 
 namespace DataLoaderWithEFCore
 {
@@ -29,6 +33,17 @@ namespace DataLoaderWithEFCore
             services.AddScoped<IActorRepository, ActorRepository>();
             services.AddScoped<ICountryRepository, CountryRepository>();
             services.AddScoped<IMovieRepository, MovieRepository>();
+
+            services.AddSingleton(provider => new GraphQLEngine()
+                .WithFieldResolutionStrategy(FieldResolutionStrategy.Normal)
+                .BuildSchema(typeof(SchemaDefinition<Schema.Query, Schema.Mutation>)));
+
+            services.AddScoped<IDependencyInjector, Injector>();
+            services.AddScoped<IUserContext, UserContext>();
+            services.AddScoped<Schema.Query>();
+            services.AddScoped<Schema.Mutation>();
+
+            services.AddScoped<DataLoaderContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

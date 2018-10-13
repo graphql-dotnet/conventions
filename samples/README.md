@@ -6,3 +6,12 @@ In the Package Manager Console, type:
 
     Update-Database
 
+## Test GraphQL endpoint
+
+To test the endpoint, use a GraphiQL client or similar.
+
+We have used the [GraphiQL Electron client](https://electronjs.org/apps/graphiql) in our tests.
+
+Start the project in Visual Studio and connect the GraphiQL client with the endpoint:
+
+    https://localhost:44329/api/graph
