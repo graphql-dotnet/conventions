@@ -1,4 +1,5 @@
-﻿using DataLoaderWithEFCore.Data;
+﻿using AutoMapper;
+using DataLoaderWithEFCore.Data;
 using DataLoaderWithEFCore.Data.Repositories;
 using DataLoaderWithEFCore.GraphApi;
 using GraphQL.Conventions;
@@ -44,6 +45,8 @@ namespace DataLoaderWithEFCore
             services.AddScoped<Schema.Mutation>();
 
             services.AddScoped<DataLoaderContext>();
+
+            Mapper.Initialize(config => config.AddProfile<Mappings>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
