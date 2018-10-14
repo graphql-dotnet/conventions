@@ -1,6 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.Conventions;
@@ -13,10 +17,10 @@ namespace DataLoaderWithEFCore.GraphApi
     public class GraphController : ControllerBase
     {
         private readonly GraphQLEngine _engine;
-        private readonly IUserContext _userContext;
+        private readonly UserContext _userContext;
         private readonly IDependencyInjector _injector;
 
-        public GraphController(GraphQLEngine engine, IUserContext userContext, IDependencyInjector injector)
+        public GraphController(GraphQLEngine engine, UserContext userContext, IDependencyInjector injector)
         {
             _engine = engine;
             _userContext = userContext;

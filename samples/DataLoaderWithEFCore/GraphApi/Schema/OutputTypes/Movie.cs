@@ -21,7 +21,7 @@ namespace DataLoaderWithEFCore.GraphApi.Schema
         public async Task<Actor[]> Actors([Inject] IActorRepository repository, [Inject] DataLoaderContext dataLoaderContext)
         {
             var loader = dataLoaderContext.GetOrAddCollectionBatchLoader<Guid, Models.Actor>("Movie_Actors", repository.GetActorsPerMovie);
-            return Mapper.Map<Actor[]>(await loader.LoadAsync(Id).ConfigureAwait(false));
+            return Mapper.Map<Actor[]>(await loader.LoadAsync(Id));
         }
     }
 }

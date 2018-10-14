@@ -7,16 +7,16 @@ namespace DataLoaderWithEFCore.GraphApi
 {
     public class UserContext : IUserContext, IDataLoaderContextProvider
     {
-        private readonly DataLoaderContext _dataLoaderContext;
+        public DataLoaderContext _context { get; private set; }
 
-        public UserContext(DataLoaderContext dataLoaderContext)
+        public UserContext(DataLoaderContext context)
         {
-            _dataLoaderContext = dataLoaderContext;
+            _context = context;
         }
 
         public Task FetchData(CancellationToken token)
         {
-            _dataLoaderContext.DispatchAll(token);
+            _context.DispatchAll(token);
             return Task.CompletedTask;
         }
     }

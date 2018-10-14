@@ -21,7 +21,7 @@ namespace DataLoaderWithEFCore.GraphApi.Schema
         public async Task<Country> Country([Inject] ICountryRepository repository, [Inject] DataLoaderContext dataLoaderContext)
         {
             var loader = dataLoaderContext.GetOrAddBatchLoader<string, Models.Country>("Actor_Country", repository.GetCountries);
-            return Mapper.Map<Country>(await loader.LoadAsync(CountryCode).ConfigureAwait(false));
+            return Mapper.Map<Country>(await loader.LoadAsync(CountryCode));
         }
     }
 }

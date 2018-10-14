@@ -22,12 +22,9 @@ namespace DataLoaderWithEFCore.Data.Repositories
         }
 
         public Task<ILookup<Guid, Actor>> GetActorsPerMovie(IEnumerable<Guid> movieIds)
-        {
-            var actors = _context.Actors
+            => Task.FromResult(_context.Actors
                 .AsNoTracking()
-                .Where(x => movieIds.Contains(x.MovieId));
-
-            return Task.FromResult(actors.ToLookup(x => x.MovieId));
-        }
+                .Where(x => movieIds.Contains(x.MovieId))
+                .ToLookup(x => x.MovieId));
     }
 }

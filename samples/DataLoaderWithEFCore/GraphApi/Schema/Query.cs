@@ -11,9 +11,7 @@ namespace DataLoaderWithEFCore.GraphApi.Schema
         public async Task<Movie> Movie([Inject] IMovieRepository repository, Guid id)
             => Mapper.Map<Movie>(await repository.FindMovie(id).ConfigureAwait(false));
 
-        public Task<Movie[]> Movies([Inject] IMovieRepository repository)
-        {
-            return Task.Run(async () => Mapper.Map<Movie[]>(await repository.GetMovies().ConfigureAwait(false)));
-        }
+        public async Task<Movie[]> Movies([Inject] IMovieRepository repository)
+            => Mapper.Map<Movie[]>(await repository.GetMovies());
     }
 }

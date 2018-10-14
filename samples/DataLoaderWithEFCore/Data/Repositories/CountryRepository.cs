@@ -20,13 +20,10 @@ namespace DataLoaderWithEFCore.Data.Repositories
             _context = context;
         }
 
-        public async Task<IDictionary<string, Country>> GetCountries(IEnumerable<string> countryCodes)
-        {
-            var countries = _context.Countries
+        public Task<IDictionary<string, Country>> GetCountries(IEnumerable<string> countryCodes)
+            => Task.FromResult((IDictionary<string, Country>)_context.Countries
                 .AsNoTracking()
-                .Where(x => countryCodes.Contains(x.Code));
-
-            return await countries.ToDictionaryAsync(x => x.Code).ConfigureAwait(false);
-        }
+                .Where(x => countryCodes.Contains(x.Code))
+                .ToDictionary(x => x.Code));
     }
 }

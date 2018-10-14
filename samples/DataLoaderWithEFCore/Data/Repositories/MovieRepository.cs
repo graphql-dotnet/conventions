@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using DataLoaderWithEFCore.Data.Models;
 using Microsoft.EntityFrameworkCore;
@@ -22,9 +23,9 @@ namespace DataLoaderWithEFCore.Data.Repositories
         }
 
         public Task<Movie> FindMovie(Guid id)
-            => _context.Movies.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            => Task.FromResult(_context.Movies.AsNoTracking().FirstOrDefault(x => x.Id == id));
 
         public Task<Movie[]> GetMovies()
-            => _context.Movies.AsNoTracking().ToArrayAsync();
+            => Task.FromResult(_context.Movies.AsNoTracking().ToArray());
     }
 }
