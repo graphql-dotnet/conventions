@@ -13,7 +13,7 @@ namespace DataLoaderWithEFCore.GraphApi
     public class GraphController : ControllerBase
     {
         private readonly GraphQLEngine _engine;
-        private readonly UserContext _userContext;
+        private readonly IUserContext _userContext;
         private readonly IDependencyInjector _injector;
 
         public GraphController(GraphQLEngine engine, IUserContext userContext, IDependencyInjector injector)
