@@ -10,6 +10,8 @@ namespace DataLoaderWithEFCore.Data.Repositories
         Task<Movie> FindMovie(Guid id);
 
         Task<Movie[]> GetMovies();
+
+        Task<Movie> UpdateMovieTitle(Guid id, string newTitle);
     }
 
     public class MovieRepository : IMovieRepository
@@ -26,5 +28,17 @@ namespace DataLoaderWithEFCore.Data.Repositories
 
         public async Task<Movie[]> GetMovies()
             => await _context.Movies.AsNoTracking().ToArrayAsync();
+
+        public async Task<Movie> UpdateMovieTitle(Guid id, string newTitle)
+        {
+            var movie = await FindMovie(id);
+            if (movie == null)
+                throw new InvalidOperationException($"Movie with id {id} not found");
+
+            movie.Title = newTitle;
+            _context.Movies.Update(movie);
+            await _context.SaveChangesAsync();
+            return movie;
+        }
     }
 }
