@@ -6,7 +6,7 @@ namespace GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader
 {
     class DataLoaderListener : DocumentExecutionListenerBase<IDataLoaderContextProvider>
     {
-        public override async Task BeforeExecutionAwaitedAsync(
+        public override async Task BeforeExecutionStepAwaitedAsync(
             IDataLoaderContextProvider userContext,
             CancellationToken token)
         {
