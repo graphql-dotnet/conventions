@@ -15,9 +15,3 @@ We have used the [GraphiQL Electron client](https://electronjs.org/apps/graphiql
 Start the project in Visual Studio and connect the GraphiQL client with the endpoint:
 
     https://localhost:44329/api/graph
-
-## Considerations
-
-Currently, the query and repository code is synchronous (not `async Task<>`) because EF Core seems to lack `ConfigureAwait(false)` in their internals which causes the DataLoader implementation to dead-lock.
-
-See https://github.com/aspnet/EntityFrameworkCore/issues/10915 and https://github.com/aspnet/EntityFrameworkCore/issues/10914.
