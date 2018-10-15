@@ -21,10 +21,11 @@ namespace DataLoaderWithEFCore.Data.Repositories
             _context = context;
         }
 
-        public Task<ILookup<Guid, Actor>> GetActorsPerMovie(IEnumerable<Guid> movieIds)
-            => Task.FromResult(_context.Actors
+        public async Task<ILookup<Guid, Actor>> GetActorsPerMovie(IEnumerable<Guid> movieIds)
+            => (await _context.Actors
                 .AsNoTracking()
                 .Where(x => movieIds.Contains(x.MovieId))
-                .ToLookup(x => x.MovieId));
+                .ToArrayAsync())
+                .ToLookup(x => x.MovieId);
     }
 }

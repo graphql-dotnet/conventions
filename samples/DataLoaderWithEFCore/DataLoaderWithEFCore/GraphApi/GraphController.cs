@@ -28,15 +28,14 @@ namespace DataLoaderWithEFCore.GraphApi
         {
             string requestBody;
             using (var reader = new StreamReader(Request.Body))
-                requestBody = await reader.ReadToEndAsync().ConfigureAwait(false);
+                requestBody = await reader.ReadToEndAsync();
 
             ExecutionResult result = await _engine
                 .NewExecutor()
                 .WithUserContext(_userContext)
                 .WithDependencyInjector(_injector)
                 .WithRequest(requestBody)
-                .Execute()
-                .ConfigureAwait(false);
+                .Execute();
 
             var responseBody = _engine.SerializeResult(result);
 

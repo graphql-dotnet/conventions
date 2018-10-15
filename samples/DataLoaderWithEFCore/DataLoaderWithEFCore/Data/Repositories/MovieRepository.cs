@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using DataLoaderWithEFCore.Data.Models;
 using Microsoft.EntityFrameworkCore;
@@ -22,10 +21,10 @@ namespace DataLoaderWithEFCore.Data.Repositories
             _context = context;
         }
 
-        public Task<Movie> FindMovie(Guid id)
-            => Task.FromResult(_context.Movies.AsNoTracking().FirstOrDefault(x => x.Id == id));
+        public async Task<Movie> FindMovie(Guid id)
+            => await _context.Movies.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
-        public Task<Movie[]> GetMovies()
-            => Task.FromResult(_context.Movies.AsNoTracking().ToArray());
+        public async Task<Movie[]> GetMovies()
+            => await _context.Movies.AsNoTracking().ToArrayAsync();
     }
 }
