@@ -44,8 +44,8 @@ query AllMovies {
 ```
 mutation UpdateTitle {
   updateMovieTitle(params: {
-    id: "<insert guid you got from AllMovies query>"
-    newTitle: "A Star Is Born 2"
+    id: "95e03cd2-1b4d-4300-8d7c-56bdf8aae646"
+    newTitle: "A Baby Is Born"
   }) {
     id
     title
