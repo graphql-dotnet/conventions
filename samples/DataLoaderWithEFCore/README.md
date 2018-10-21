@@ -20,7 +20,7 @@ Start the project in Visual Studio and connect the GraphiQL client with the endp
 
 ```
 query AllMovies {
-	movies {
+  movies {
     id
     title
     genre
