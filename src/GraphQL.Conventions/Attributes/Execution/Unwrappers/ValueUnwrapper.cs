@@ -5,6 +5,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Unwrappers
         public ValueUnwrapper()
         {
             this.Next(new NonNullUnwrapper())
+                .Next(new OptionalUnwrapper())
                 .Next(new UnionUnwrapper())
                 .Next(new CollectionUnwrapper(this));
         }

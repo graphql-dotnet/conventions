@@ -6,7 +6,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
 {
     public class PrimitiveWrapper : WrapperBase
     {
-        public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value)
+        public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value, bool isSpecified)
         {
             if (typeInfo.IsPrimitive &&
                 !typeInfo.IsEnumerationType &&

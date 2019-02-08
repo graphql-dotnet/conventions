@@ -230,6 +230,10 @@ namespace GraphQL.Conventions.Types.Resolution
 
         private IEnumerable<GraphEnumMemberInfo> GetEnumValues(TypeInfo typeInfo)
         {
+            if (typeInfo.IsGenericType(typeof(Optional<>)))
+            {
+                typeInfo = typeInfo.GetGenericArguments()[0].GetTypeInfo();
+            }
             return typeInfo
                 .GetEnumNames()
                 .Select(name => DeriveEnumValue(name, typeInfo))

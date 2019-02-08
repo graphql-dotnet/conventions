@@ -13,7 +13,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
         {
         }
 
-        public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value)
+        public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value, bool isSpecified)
         {
             if (typeInfo.IsListType)
             {
@@ -27,7 +27,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
                 var list = Activator.CreateInstance(listType) as IList;
                 foreach (var obj in input)
                 {
-                    list.Add(_parent.Wrap(entityInfo, typeInfo.TypeParameter, obj));
+                    list.Add(_parent.Wrap(entityInfo, typeInfo.TypeParameter, obj, true));
                 }
                 return typeInfo.IsArrayType
                     ? list.ConvertToArrayRuntime(elementType)
