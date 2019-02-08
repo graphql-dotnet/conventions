@@ -5,7 +5,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
 {
     public class NonNullWrapper : WrapperBase
     {
-        public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value)
+        public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value, bool isSpecified)
         {
             if (!typeInfo.IsNullable)
             {
