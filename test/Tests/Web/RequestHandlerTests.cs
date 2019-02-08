@@ -17,7 +17,7 @@ namespace GraphQL.Conventions.Tests.Web
                 .New()
                 .WithQuery<TestQuery>()
                 .Generate()
-                .ProcessRequest(request, null);
+                .ProcessRequest(request, null, null);
 
             response.ExecutionResult.Data.ShouldHaveFieldWithValue("hello", "World");
             response.Body.ShouldEqual("{\"data\":{\"hello\":\"World\"}}");
@@ -34,7 +34,7 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithQuery<TestQuery>()
                 .WithComplexityConfiguration(new ComplexityConfiguration { MaxDepth = 2 })
                 .Generate()
-                .ProcessRequest(request, null);
+                .ProcessRequest(request, null, null);
 
             response.ExecutionResult.Data.ShouldHaveFieldWithValue("hello", "World");
             response.Body.ShouldEqual("{\"data\":{\"hello\":\"World\"}}");
@@ -51,7 +51,7 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithQuery<TestQuery>()
                 .WithComplexityConfiguration(new ComplexityConfiguration { MaxDepth = 1 })
                 .Generate()
-                .ProcessRequest(request, null);
+                .ProcessRequest(request, null, null);
 
             response.Errors.Count.ShouldEqual(1);
             response.Errors[0].Message.ShouldEqual("Query is too nested to execute. Depth is 2 levels, maximum allowed on this endpoint is 1.");
@@ -66,7 +66,7 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithQuery<ProfiledQuery>()
                 .WithProfiling()
                 .Generate()
-                .ProcessRequest(request, null);
+                .ProcessRequest(request, null, null);
             response.EnrichWithProfilingInformation();
             response.Body.ShouldContain("\"extensions\":{\"profile\":");
         }
@@ -80,7 +80,7 @@ namespace GraphQL.Conventions.Tests.Web
                 .New()
                 .WithQuery<CompositeQuery>()
                 .Generate()
-                .ProcessRequest(request, null);
+                .ProcessRequest(request, null, null);
             response.Body.ShouldEqual("{\"data\":{\"earth\":{\"hello\":\"World\"},\"mars\":{\"hello\":\"World From Mars\"}}}");
 
             // Exclude types from 'Unwanted' namespace, i.e. TypeQuery2 from CompositeQuery schema
@@ -90,7 +90,7 @@ namespace GraphQL.Conventions.Tests.Web
                 .IgnoreTypesFromNamespacesStartingWith("GraphQL.Conventions.Tests.Web.Unwanted")
                 .WithQuery<CompositeQuery>()
                 .Generate()
-                .ProcessRequest(request, null);
+                .ProcessRequest(request, null, null);
             response.Errors.Count.ShouldEqual(1);
             response.Errors[0].Message.ShouldContain("Cannot query field \"hello\" on type \"TestQuery2\".");
             response.Body.ShouldContain("VALIDATION_ERROR");

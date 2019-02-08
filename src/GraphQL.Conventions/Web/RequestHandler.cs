@@ -230,14 +230,14 @@ namespace GraphQL.Conventions.Web
                 }
             }
 
-            public async Task<Response> ProcessRequest(Request request, IUserContext userContext)
+            public async Task<Response> ProcessRequest(Request request, IUserContext userContext, IDependencyInjector dependencyInjector = null)
             {
                 var result = await _engine
                     .NewExecutor()
                     .WithQueryString(request.QueryString)
                     .WithInputs(request.Variables)
                     .WithOperationName(request.OperationName)
-                    .WithDependencyInjector(_dependencyInjector)
+                    .WithDependencyInjector(dependencyInjector ?? _dependencyInjector)
                     .WithUserContext(userContext)
                     .WithComplexityConfiguration(_complexityConfiguration)
                     .EnableValidation(_useValidation)
