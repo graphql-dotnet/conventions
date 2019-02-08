@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Adapters;
+using GraphQL.Conventions.Adapters.Engine.ErrorTransformations;
 using GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader;
 using GraphQL.Conventions.Builders;
 using GraphQL.Conventions.Execution;
@@ -43,6 +44,8 @@ namespace GraphQL.Conventions
         List<System.Type> _schemaTypes = new List<System.Type>();
 
         List<System.Type> _middleware = new List<System.Type>();
+
+        IErrorTransformation _errorTransformation = new DefaultErrorTransformation();
 
         bool _includeFieldDescriptions;
 
@@ -171,6 +174,12 @@ namespace GraphQL.Conventions
             return WithMiddleware(typeof(T));
         }
 
+        public GraphQLEngine WithCustomErrorTransformation(IErrorTransformation errorTransformation)
+        {
+            _errorTransformation = errorTransformation;
+            return this;
+        }
+
         public GraphQLEngine PrintFieldDescriptions(bool include = true)
         {
             _includeFieldDescriptions = include;
@@ -283,21 +292,9 @@ namespace GraphQL.Conventions
 
             var result = await _documentExecutor.ExecuteAsync(configuration).ConfigureAwait(false);
 
-            if (result.Errors != null)
+            if (result.Errors != null && _errorTransformation != null)
             {
-                var errors = new ExecutionErrors();
-                foreach (var executionError in result.Errors)
-                {
-                    var exception = new FieldResolutionException(executionError);
-                    var error = new ExecutionError(exception.Message, exception);
-                    foreach (var location in executionError.Locations ?? new ErrorLocation[0])
-                    {
-                        error.AddLocation(location.Line, location.Column);
-                    }
-                    error.Path = executionError.Path;
-                    errors.Add(error);
-                }
-                result.Errors = errors;
+                result.Errors = await _errorTransformation.Transform(result.Errors).ConfigureAwait(false);
             }
 
             return result;

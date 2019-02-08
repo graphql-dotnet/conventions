@@ -79,6 +79,11 @@ namespace GraphQL.Conventions.Tests.Templates.Extensions
             str.ShouldContain(substring);
         }
 
+        public static void ShouldBeOfType<T>(this object actual)
+        {
+            Assert.IsInstanceOfType(actual, typeof(T));
+        }
+
         public static void ShouldBeNamed(this GraphEntityInfo entity, string name)
         {
             entity.Name.ShouldEqual(name);
