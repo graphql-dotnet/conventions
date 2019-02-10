@@ -10,7 +10,7 @@ namespace GraphQL.Conventions.Adapters.Engine.ErrorTransformations
             {
                 var exception = new FieldResolutionException(executionError);
                 var error = new ExecutionError(exception.Message, exception);
-                foreach (var location in executionError.Locations ?? new ErrorLocation[0])
+                foreach (var location in executionError.Locations ?? Enumerable.Empty<ErrorLocation>())
                 {
                     error.AddLocation(location.Line, location.Column);
                 }
