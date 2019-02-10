@@ -294,7 +294,7 @@ namespace GraphQL.Conventions
 
             if (result.Errors != null && _errorTransformation != null)
             {
-                result.Errors = await _errorTransformation.Transform(result.Errors).ConfigureAwait(false);
+                result.Errors = _errorTransformation.Transform(result.Errors);
             }
 
             return result;

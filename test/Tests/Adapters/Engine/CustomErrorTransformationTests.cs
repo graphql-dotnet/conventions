@@ -56,8 +56,8 @@ namespace Tests.Adapters.Engine
 
         class CustomErrorTransformation : IErrorTransformation
         {
-            public Task<ExecutionErrors> Transform(ExecutionErrors errors)
-                => Task.FromResult(errors);
+            public ExecutionErrors Transform(ExecutionErrors errors)
+                => errors;
         }
 
         class CustomException : Exception { }

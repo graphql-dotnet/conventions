@@ -1,14 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
 using GraphQL.Conventions.Execution;
 
 namespace GraphQL.Conventions.Adapters.Engine.ErrorTransformations
 {
     public class DefaultErrorTransformation : IErrorTransformation
     {
-        public Task<ExecutionErrors> Transform(ExecutionErrors errors)
-        {
-            var result = new ExecutionErrors();
-            foreach (var executionError in errors)
+        public ExecutionErrors Transform(ExecutionErrors errors)
+            => errors.Aggregate(new ExecutionErrors(), (result, executionError) =>
             {
                 var exception = new FieldResolutionException(executionError);
                 var error = new ExecutionError(exception.Message, exception);
@@ -18,9 +16,7 @@ namespace GraphQL.Conventions.Adapters.Engine.ErrorTransformations
                 }
                 error.Path = executionError.Path;
                 result.Add(error);
-            }
-
-            return Task.FromResult(result);
-        }
+                return result;
+            });
     }
 }
