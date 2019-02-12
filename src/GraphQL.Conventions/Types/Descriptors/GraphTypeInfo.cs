@@ -114,6 +114,10 @@ namespace GraphQL.Conventions.Types.Descriptors
             {
                 IsNullable = true;
                 type = type.TypeParameter();
+                if (type.IsGenericType(typeof(Nullable<>)))
+                {
+                    type = type.TypeParameter();
+                }
                 IsPrimitive = type.IsPrimitiveGraphType();
             }
             else

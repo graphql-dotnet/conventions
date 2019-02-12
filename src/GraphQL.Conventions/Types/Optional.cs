@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
 
@@ -26,6 +27,17 @@ namespace GraphQL.Conventions
 
         public override string ToString() =>
             _value?.ToString();
+
+        static Optional()
+        {
+            var typeInfo = typeof(T).GetTypeInfo();
+            if ((typeInfo.IsValueType && !typeInfo.IsGenericType(typeof(Nullable<>))) || typeInfo.IsGenericType(typeof(NonNull<>)))
+            {
+                throw new InvalidOperationException(
+                    string.Format("Cannot instantiate with non-nullable type: {0}",
+                        typeof(T)));
+            }
+        }
     }
 
     public static class Optional

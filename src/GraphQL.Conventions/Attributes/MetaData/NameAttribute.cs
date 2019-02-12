@@ -74,7 +74,8 @@ namespace GraphQL.Conventions
                     .Select(typeArg => DeriveTypeName(type, typeArg.GetTypeInfo()));
 
                 if (typeInfo.IsGenericType(typeof(Nullable<>)) ||
-                    typeInfo.IsGenericType(typeof(NonNull<>)))
+                    typeInfo.IsGenericType(typeof(NonNull<>)) ||
+                    typeInfo.IsGenericType(typeof(Optional<>)))
                 {
                     type.Name = genericTypeNames.First();
                 }
