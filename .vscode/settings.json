@@ -1,0 +1,4 @@
+{
+  "dotnet-test-explorer.enableTelemetry": true,
+  "dotnet-test-explorer.testProjectPath": "test/Tests"
+}
