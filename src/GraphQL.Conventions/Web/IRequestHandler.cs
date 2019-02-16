@@ -4,7 +4,7 @@ namespace GraphQL.Conventions.Web
 {
     public interface IRequestHandler
     {
-        Task<Response> ProcessRequest(Request request, IUserContext userContext);
+        Task<Response> ProcessRequest(Request request, IUserContext userContext, IDependencyInjector dependencyInjector = null);
 
         Response Validate(Request request);
 
