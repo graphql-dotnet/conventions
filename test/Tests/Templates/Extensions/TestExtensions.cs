@@ -191,9 +191,9 @@ namespace GraphQL.Conventions.Tests.Templates.Extensions
             {
                 if (k is int)
                 {
-                    var array = obj as object[];
+                    var array = obj as List<object>;
                     array.ShouldNotBeNull();
-                    array.Length.ShouldBeGreaterThan((int)k);
+                    array.Count.ShouldBeGreaterThan((int)k);
                     obj = array[(int)k];
                     obj.ShouldNotBeNull();
                 }
@@ -209,7 +209,7 @@ namespace GraphQL.Conventions.Tests.Templates.Extensions
             var key = path.Last();
             if (key is int)
             {
-                var array = obj as object[];
+                var array = obj as List<object>;
                 array.ShouldNotBeNull();
                 var output = array[(int)key];
                 output.ShouldEqual(value);
@@ -236,9 +236,9 @@ namespace GraphQL.Conventions.Tests.Templates.Extensions
                 obj = obj[key] as Dictionary<string, object>;
                 obj.ShouldNotBeNull();
             }
-            var array = obj[path.Last()] as object[];
+            var array = obj[path.Last()] as List<object>;
             array.ShouldNotBeNull();
-            array.Length.ShouldEqual(value ?? -1);
+            array.Count.ShouldEqual(value ?? -1);
         }
 
         private static string CleanMultilineText(string value)

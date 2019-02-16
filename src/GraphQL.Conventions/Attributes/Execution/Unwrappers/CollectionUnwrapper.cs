@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using GraphQL.Conventions.Types.Resolution.Extensions;
 
 namespace GraphQL.Conventions.Attributes.Execution.Unwrappers
@@ -17,8 +18,10 @@ namespace GraphQL.Conventions.Attributes.Execution.Unwrappers
                 return value;
             }
 
+            //map was removed from GraphQL in https://github.com/graphql-dotnet/graphql-dotnet/commit/952b4ef6950e51bbfe009354f0520180c343e8d4#diff-992f25705b68d8de6f63113661c3a037
             var enumerable = value as IEnumerable;
-            return enumerable.Map(element => _parent.Unwrap(element));
+            return from object item in enumerable
+                   select _parent.Unwrap(item);
         }
     }
 }

@@ -16,8 +16,7 @@ namespace DataLoaderWithEFCore.GraphApi
 
         public Task FetchData(CancellationToken token)
         {
-            _context.DispatchAll(token);
-            return Task.CompletedTask;
+            return _context.DispatchAllAsync(token);
         }
     }
 }
