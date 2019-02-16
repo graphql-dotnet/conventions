@@ -10,7 +10,7 @@ using GraphQL.Conventions.Tests;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 
-namespace Tests.Adapters.Engine
+namespace GraphQL.Conventions.Tests.Adapters.Engine
 {
     public class CustomErrorTransformationTests : TestBase
     {
