@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Hudl.GraphQL.Builders.Helpers
+namespace GraphQL.Conventions
 {
     // Asynchronous Helper Functions; source: http://bit.ly/1HAxjNy
     public static class AsyncHelpers

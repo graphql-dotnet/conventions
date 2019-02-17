@@ -11,7 +11,6 @@ using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
 using GraphQL.Resolvers;
 using GraphQL.Types;
-using Hudl.GraphQL.Builders.Helpers;
 
 namespace GraphQL.Conventions.Adapters
 {

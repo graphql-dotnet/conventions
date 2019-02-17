@@ -6,6 +6,9 @@ using Newtonsoft.Json;
 
 namespace GraphQL.Conventions.Web
 {
+    /// <summary>
+    /// Representation of a web request.
+    /// </summary>
     public class Request
     {
         static readonly IRequestDeserializer _requestDeserializer = new RequestDeserializer();
@@ -73,10 +76,19 @@ namespace GraphQL.Conventions.Web
 
         public string QueryId => _queryId;
 
+        /// <summary>
+        /// The GraphQL query part of the request.
+        /// </summary>
         public string QueryString => _queryInput?.QueryString ?? string.Empty;
 
+        /// <summary>
+        /// The variables passed in to the GraphQL query.
+        /// </summary>
         public Dictionary<string, object> Variables => _queryInput?.Variables;
 
+        /// <summary>
+        /// An optional operation name, determining which operation of the GraphQL query to run.
+        /// </summary>
         public string OperationName => _queryInput?.OperationName;
 
         public bool IsValid => _exception == null;
