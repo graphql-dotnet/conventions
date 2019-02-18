@@ -62,6 +62,11 @@ namespace GraphQL.Conventions.Tests.Templates.Extensions
             Assert.IsFalse(actual, message);
         }
 
+        public static void ShouldBeTrue(this bool actual, string message)
+        {
+            Assert.IsTrue(actual, message);
+        }
+
         public static void ShouldContain<T>(this IEnumerable<T> collection, T element)
         {
             Assert.IsTrue(collection.Contains(element));
