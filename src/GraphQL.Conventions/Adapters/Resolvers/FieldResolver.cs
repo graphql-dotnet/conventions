@@ -58,6 +58,11 @@ namespace GraphQL.Conventions.Adapters
                 .Arguments
                 .Select(arg => context.GetArgument(arg));
 
+            if (fieldInfo.IsExtensionMethod)
+            {
+                arguments = new[] { source }.Concat(arguments);
+            }
+
             return methodInfo?.Invoke(source, arguments.ToArray());
         }
 

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using GraphQL.Conventions.Attributes;
 using GraphQL.Conventions.Types.Resolution;
+using GraphQL.Conventions.Types.Resolution.Extensions;
 
 namespace GraphQL.Conventions.Types.Descriptors
 {
@@ -12,6 +13,7 @@ namespace GraphQL.Conventions.Types.Descriptors
         public GraphFieldInfo(ITypeResolver typeResolver, MemberInfo field = null)
             : base(typeResolver, field)
         {
+            IsExtensionMethod = (AttributeProvider as MethodInfo)?.IsExtensionMethod() ?? false;
         }
 
         public GraphTypeInfo DeclaringType { get; set; }
@@ -29,6 +31,8 @@ namespace GraphQL.Conventions.Types.Descriptors
             new List<IExecutionFilterAttribute>();
 
         public bool IsMethod => AttributeProvider is MethodInfo;
+
+        public bool IsExtensionMethod { get; private set; }
 
         public override string ToString() => $"{nameof(GraphFieldInfo)}:{Name}";
     }

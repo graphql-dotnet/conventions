@@ -97,5 +97,8 @@ namespace GraphQL.Conventions.Types.Resolution
             foreach (var @namespace in namespacesToIgnore.Distinct())
                 _reflector.IgnoredNamespaces.Add(@namespace);
         }
+
+        public void AddExtensions(Type typeExtensions) =>
+            _reflector.AddExtensions(typeExtensions.GetTypeInfo());
     }
 }
