@@ -90,6 +90,13 @@ namespace GraphQL.Conventions.Web
                 return this;
             }
 
+
+            public RequestHandlerBuilder WithQueryAndExtensions<TQuery>(Type type)
+            {
+                _schemaTypes.Add(typeof(SchemaDefinitionWithQueryAndQueryExtensions<,>).MakeGenericType(typeof(TQuery), type));
+                return this;
+            }
+
             public RequestHandlerBuilder WithSubscription<TSubscription>()
             {
                 _schemaTypes.Add(typeof(SchemaDefinitionWithSubscription<TSubscription>));

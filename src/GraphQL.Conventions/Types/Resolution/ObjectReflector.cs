@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using GraphQL.Conventions.Extensions;
 using GraphQL.Conventions.Handlers;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
@@ -39,6 +40,7 @@ namespace GraphQL.Conventions.Types.Resolution
             var queryField = typeInfo.GetProperty("Query");
             var mutationField = typeInfo.GetProperty("Mutation");
             var subscriptionField = typeInfo.GetProperty("Subscription");
+            var queryExtensions = typeInfo.GetProperty("QueryExtensions");
 
             if (queryField == null)
             {
@@ -47,19 +49,20 @@ namespace GraphQL.Conventions.Types.Resolution
 
             var schemaInfo = new GraphSchemaInfo();
             _typeResolver.ActiveSchema = schemaInfo;
-            schemaInfo.Query = GetType(queryField.PropertyType.GetTypeInfo());
+            schemaInfo.Query = GetType(queryField.PropertyType.GetTypeInfo(), extensionsTypeInfo: queryExtensions?.PropertyType?.GetTypeInfo());
             schemaInfo.Mutation = mutationField != null
                 ? GetType(mutationField.PropertyType.GetTypeInfo())
                 : null;
             schemaInfo.Subscription = subscriptionField != null
                 ? GetType(subscriptionField.PropertyType.GetTypeInfo())
                 : null;
+
             schemaInfo.Types.AddRange(_typeCache.Entities.Where(t => IsValidType(t.GetTypeRepresentation())));
 
             return schemaInfo;
         }
 
-        public GraphTypeInfo GetType(TypeInfo typeInfo, bool isInjected = false)
+        public GraphTypeInfo GetType(TypeInfo typeInfo, bool isInjected = false, TypeInfo extensionsTypeInfo = null)
         {
             var type = _typeCache.GetEntity(typeInfo);
             if (type != null)
@@ -103,7 +106,7 @@ namespace GraphQL.Conventions.Types.Resolution
                 !type.IsUnionType &&
                 !isInjectedType)
             {
-                DeriveFields(type);
+                DeriveFields(type, extensionsTypeInfo);
             }
 
             _metaDataHandler.DeriveMetaData(type, GetTypeInfo(typeInfo));
@@ -160,12 +163,12 @@ namespace GraphQL.Conventions.Types.Resolution
             }
         }
 
-        private void DeriveFields(GraphTypeInfo type)
+        private void DeriveFields(GraphTypeInfo type, TypeInfo extensionsTypeInfo = null)
         {
             var typeInfo = GetTypeInfo(type);
             var fieldInfos = type.IsEnumerationType
                 ? GetEnumValues(typeInfo)
-                : GetFields(typeInfo);
+                : GetFields(typeInfo, extensionsTypeInfo);
             var addedFields = new HashSet<string>();
             foreach (var fieldInfo in fieldInfos)
             {
@@ -185,7 +188,7 @@ namespace GraphQL.Conventions.Types.Resolution
         private TypeInfo GetTypeInfo(ICustomAttributeProvider attributeProvider) =>
             ((TypeInfo)attributeProvider).GetTypeRepresentation();
 
-        private IEnumerable<GraphFieldInfo> GetFields(TypeInfo typeInfo)
+        private IEnumerable<GraphFieldInfo> GetFields(TypeInfo typeInfo, TypeInfo extensionsTypeInfo = null)
         {
             var implementedProperties = typeInfo
                 .ImplementedInterfaces
@@ -201,9 +204,14 @@ namespace GraphQL.Conventions.Types.Resolution
                 .ImplementedInterfaces
                 .SelectMany(iface => iface.GetMethods(DefaultBindingFlags));
 
+            var extensionMethods = extensionsTypeInfo != null ?
+                typeInfo.GetExtensionMethods(extensionsTypeInfo) :
+                new MethodInfo[] {}; 
+
             return typeInfo
                 .GetMethods(DefaultBindingFlags)
                 .Union(implementedMethods)
+                .Union(extensionMethods)
                 .Where(IsValidMember)
                 .Where(methodInfo => !methodInfo.IsSpecialName)
                 .Cast<MemberInfo>()
