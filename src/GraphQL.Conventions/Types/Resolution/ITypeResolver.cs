@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using GraphQL.Conventions.Types.Descriptors;
 
@@ -18,6 +19,8 @@ namespace GraphQL.Conventions.Types.Resolution
         void RegisterScalarType<TType>(string typeName);
 
         TypeRegistration LookupType(TypeInfo typeInfo);
+
+        void RegisterAttributesInAssembly(Type assemblyType);
 
         void IgnoreTypesFromNamespacesStartingWith(params string[] namespacesToIgnore);
 

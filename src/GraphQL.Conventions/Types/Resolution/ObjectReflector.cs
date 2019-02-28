@@ -8,357 +8,360 @@ using GraphQL.Conventions.Types.Resolution.Extensions;
 
 namespace GraphQL.Conventions.Types.Resolution
 {
-    class ObjectReflector
+    partial class TypeResolver
     {
-        private const BindingFlags DefaultBindingFlags =
-            BindingFlags.Public |
-            BindingFlags.Instance |
-            BindingFlags.FlattenHierarchy;
-
-        private const BindingFlags DefaultEnumBindingFlags =
-            BindingFlags.Static |
-            BindingFlags.Public |
-            BindingFlags.DeclaredOnly |
-            BindingFlags.FlattenHierarchy;
-
-        private readonly ITypeResolver _typeResolver;
-
-        private readonly CachedRegistry<TypeInfo, GraphTypeInfo> _typeCache = new CachedRegistry<TypeInfo, GraphTypeInfo>();
-
-        private readonly MetaDataAttributeHandler _metaDataHandler = new MetaDataAttributeHandler();
-
-        public HashSet<string> IgnoredNamespaces { get; } = new HashSet<string>() { nameof(System) + "." };
-
-        public ObjectReflector(ITypeResolver typeResolver)
+        protected class ObjectReflector
         {
-            _typeResolver = typeResolver;
-        }
+            private const BindingFlags DefaultBindingFlags =
+                BindingFlags.Public |
+                BindingFlags.Instance |
+                BindingFlags.FlattenHierarchy;
 
-        public GraphSchemaInfo GetSchema(TypeInfo typeInfo)
-        {
-            var queryField = typeInfo.GetProperty("Query");
-            var mutationField = typeInfo.GetProperty("Mutation");
-            var subscriptionField = typeInfo.GetProperty("Subscription");
+            private const BindingFlags DefaultEnumBindingFlags =
+                BindingFlags.Static |
+                BindingFlags.Public |
+                BindingFlags.DeclaredOnly |
+                BindingFlags.FlattenHierarchy;
 
-            if (queryField == null)
+            private readonly ITypeResolver _typeResolver;
+
+            private readonly CachedRegistry<TypeInfo, GraphTypeInfo> _typeCache = new CachedRegistry<TypeInfo, GraphTypeInfo>();
+
+            private readonly MetaDataAttributeHandler _metaDataHandler = new MetaDataAttributeHandler();
+
+            public HashSet<string> IgnoredNamespaces { get; } = new HashSet<string>() { nameof(System) + "." };
+
+            public ObjectReflector(ITypeResolver typeResolver)
             {
-                throw new ArgumentException("Schema has no query type.");
+                _typeResolver = typeResolver;
             }
 
-            var schemaInfo = new GraphSchemaInfo();
-            _typeResolver.ActiveSchema = schemaInfo;
-            schemaInfo.Query = GetType(queryField.PropertyType.GetTypeInfo());
-            schemaInfo.Mutation = mutationField != null
-                ? GetType(mutationField.PropertyType.GetTypeInfo())
-                : null;
-            schemaInfo.Subscription = subscriptionField != null
-                ? GetType(subscriptionField.PropertyType.GetTypeInfo())
-                : null;
-            schemaInfo.Types.AddRange(_typeCache.Entities.Where(t => IsValidType(t.GetTypeRepresentation())));
-
-            return schemaInfo;
-        }
-
-        public GraphTypeInfo GetType(TypeInfo typeInfo, bool isInjected = false)
-        {
-            var type = _typeCache.GetEntity(typeInfo);
-            if (type != null)
+            public GraphSchemaInfo GetSchema(TypeInfo typeInfo)
             {
-                return type;
-            }
+                var queryField = typeInfo.GetProperty("Query");
+                var mutationField = typeInfo.GetProperty("Mutation");
+                var subscriptionField = typeInfo.GetProperty("Subscription");
 
-            type = _typeCache.AddEntity(typeInfo, new GraphTypeInfo(_typeResolver, typeInfo));
-            if (type.IsPrimitive && !type.IsEnumerationType)
-            {
-                return type;
-            }
-
-            if (isInjected)
-            {
-                type.IsIgnored = true;
-                return type;
-            }
-
-            if (typeInfo.IsGenericParameter || typeInfo.ContainsGenericParameters)
-            {
-                type.IsIgnored = true;
-                return type;
-            }
-
-            var isInjectedType =
-                type.TypeRepresentation.AsType() == typeof(IResolutionContext) ||
-                type.TypeRepresentation.AsType() == typeof(IUserContext);
-
-            if (!type.IsEnumerationType &&
-                !type.IsScalarType &&
-                !type.IsInterfaceType &&
-                !type.IsUnionType &&
-                !type.IsIgnored &&
-                !isInjectedType)
-            {
-                DeriveInterfaces(type);
-            }
-
-            if ((!type.IsScalarType || type.IsEnumerationType) &&
-                !type.IsUnionType &&
-                !isInjectedType)
-            {
-                DeriveFields(type);
-            }
-
-            _metaDataHandler.DeriveMetaData(type, GetTypeInfo(typeInfo));
-
-            if (type.IsInterfaceType && !type.IsIgnored && !isInjectedType)
-            {
-                var iface = type.GetTypeRepresentation();
-                var types = TypeRegistry.Get(iface).Where(t => iface.IsAssignableFrom(t));
-                foreach (var t in types)
+                if (queryField == null)
                 {
-                    var ti = t.GetTypeInfo();
-                    if (!ti.IsInterface && IsValidType(ti))
+                    throw new ArgumentException("Schema has no query type.");
+                }
+
+                var schemaInfo = new GraphSchemaInfo();
+                _typeResolver.ActiveSchema = schemaInfo;
+                schemaInfo.Query = GetType(queryField.PropertyType.GetTypeInfo());
+                schemaInfo.Mutation = mutationField != null
+                    ? GetType(mutationField.PropertyType.GetTypeInfo())
+                    : null;
+                schemaInfo.Subscription = subscriptionField != null
+                    ? GetType(subscriptionField.PropertyType.GetTypeInfo())
+                    : null;
+                schemaInfo.Types.AddRange(_typeCache.Entities.Where(t => IsValidType(t.GetTypeRepresentation())));
+
+                return schemaInfo;
+            }
+
+            public GraphTypeInfo GetType(TypeInfo typeInfo, bool isInjected = false)
+            {
+                var type = _typeCache.GetEntity(typeInfo);
+                if (type != null)
+                {
+                    return type;
+                }
+
+                type = _typeCache.AddEntity(typeInfo, new GraphTypeInfo(_typeResolver, typeInfo));
+                if (type.IsPrimitive && !type.IsEnumerationType)
+                {
+                    return type;
+                }
+
+                if (isInjected)
+                {
+                    type.IsIgnored = true;
+                    return type;
+                }
+
+                if (typeInfo.IsGenericParameter || typeInfo.ContainsGenericParameters)
+                {
+                    type.IsIgnored = true;
+                    return type;
+                }
+
+                var isInjectedType =
+                    type.TypeRepresentation.AsType() == typeof(IResolutionContext) ||
+                    type.TypeRepresentation.AsType() == typeof(IUserContext);
+
+                if (!type.IsEnumerationType &&
+                    !type.IsScalarType &&
+                    !type.IsInterfaceType &&
+                    !type.IsUnionType &&
+                    !type.IsIgnored &&
+                    !isInjectedType)
+                {
+                    DeriveInterfaces(type);
+                }
+
+                if ((!type.IsScalarType || type.IsEnumerationType) &&
+                    !type.IsUnionType &&
+                    !isInjectedType)
+                {
+                    DeriveFields(type);
+                }
+
+                _metaDataHandler.DeriveMetaData(type, GetTypeInfo(typeInfo));
+
+                if (type.IsInterfaceType && !type.IsIgnored && !isInjectedType)
+                {
+                    var iface = type.GetTypeRepresentation();
+                    var types = TypeRegistry.Get(iface).Where(t => iface.IsAssignableFrom(t));
+                    foreach (var t in types)
                     {
-                        GetType(ti);
+                        var ti = t.GetTypeInfo();
+                        if (!ti.IsInterface && IsValidType(ti))
+                        {
+                            GetType(ti);
+                        }
                     }
                 }
+
+                return type;
             }
 
-            return type;
-        }
-
-        public GraphEntityInfo ApplyAttributes(GraphEntityInfo entityInfo)
-        {
-            var attributeProvider = entityInfo.AttributeProvider is TypeInfo
-                ? GetTypeInfo(entityInfo.AttributeProvider)
-                : entityInfo.AttributeProvider;
-            _metaDataHandler.DeriveMetaData(entityInfo, attributeProvider);
-            return entityInfo;
-        }
-
-        internal void DiscoverAndRegisterDefaultAttributesInAssembly(Type assemblyType)
-        {
-            _metaDataHandler.DiscoverAndRegisterDefaultAttributesInAssembly(assemblyType);
-        }
-
-        private void DeriveInterfaces(GraphTypeInfo type)
-        {
-            var typeInfo = GetTypeInfo(type);
-            var nativeInterfaces = typeInfo.GetInterfaces();
-
-            if (nativeInterfaces.Any(iface => iface == typeof(IUserContext)))
+            public GraphEntityInfo ApplyAttributes(GraphEntityInfo entityInfo)
             {
-                return;
+                var attributeProvider = entityInfo.AttributeProvider is TypeInfo
+                    ? GetTypeInfo(entityInfo.AttributeProvider)
+                    : entityInfo.AttributeProvider;
+                _metaDataHandler.DeriveMetaData(entityInfo, attributeProvider);
+                return entityInfo;
             }
 
-            var interfaces = nativeInterfaces
-                .Where(t => IsValidType(t.GetTypeInfo()))
-                .Select(iface => GetType(iface.GetTypeInfo()))
-                .Where(iface => iface.IsInterfaceType && !iface.IsIgnored);
-
-            foreach (var iface in interfaces)
+            public void DiscoverAndRegisterDefaultAttributesInAssembly(Type assemblyType)
             {
-                type.AddInterface(iface);
+                _metaDataHandler.DiscoverAndRegisterDefaultAttributesInAssembly(assemblyType);
             }
-        }
 
-        private void DeriveFields(GraphTypeInfo type)
-        {
-            var typeInfo = GetTypeInfo(type);
-            var fieldInfos = type.IsEnumerationType
-                ? GetEnumValues(typeInfo)
-                : GetFields(typeInfo);
-            var addedFields = new HashSet<string>();
-            foreach (var fieldInfo in fieldInfos)
+            private void DeriveInterfaces(GraphTypeInfo type)
             {
-                if (addedFields.Contains(fieldInfo.Name))
+                var typeInfo = GetTypeInfo(type);
+                var nativeInterfaces = typeInfo.GetInterfaces();
+
+                if (nativeInterfaces.Any(iface => iface == typeof(IUserContext)))
                 {
-                    continue;
+                    return;
                 }
-                fieldInfo.DeclaringType = type;
-                type.Fields.Add(fieldInfo);
-                addedFields.Add(fieldInfo.Name);
-            }
-        }
 
-        private TypeInfo GetTypeInfo(GraphTypeInfo type) =>
-            GetTypeInfo(type.AttributeProvider);
+                var interfaces = nativeInterfaces
+                    .Where(t => IsValidType(t.GetTypeInfo()))
+                    .Select(iface => GetType(iface.GetTypeInfo()))
+                    .Where(iface => iface.IsInterfaceType && !iface.IsIgnored);
 
-        private TypeInfo GetTypeInfo(ICustomAttributeProvider attributeProvider) =>
-            ((TypeInfo)attributeProvider).GetTypeRepresentation();
-
-        private IEnumerable<GraphFieldInfo> GetFields(TypeInfo typeInfo)
-        {
-            var implementedProperties = typeInfo
-                .ImplementedInterfaces
-                .SelectMany(iface => iface.GetProperties(DefaultBindingFlags));
-
-            var properties = typeInfo
-                .GetProperties(DefaultBindingFlags)
-                .Union(implementedProperties)
-                .Where(IsValidMember)
-                .Where(propertyInfo => !propertyInfo.IsSpecialName);
-
-            var implementedMethods = typeInfo
-                .ImplementedInterfaces
-                .SelectMany(iface => iface.GetMethods(DefaultBindingFlags));
-
-            return typeInfo
-                .GetMethods(DefaultBindingFlags)
-                .Union(implementedMethods)
-                .Where(IsValidMember)
-                .Where(methodInfo => !methodInfo.IsSpecialName)
-                .Cast<MemberInfo>()
-                .Union(properties)
-                .Select(DeriveField)
-                .Where(field => !field.IsIgnored)
-                .OrderBy(field => field.Name);
-        }
-
-        private IEnumerable<GraphArgumentInfo> GetArguments(MethodInfo methodInfo)
-        {
-            foreach (var argument in methodInfo?
-                .GetParameters()
-                .Select(DeriveArgument)
-                ?? new GraphArgumentInfo[0])
-            {
-                if (argument.IsInjected)
+                foreach (var iface in interfaces)
                 {
-                    argument.Type.IsIgnored = true;
+                    type.AddInterface(iface);
                 }
-                yield return argument;
-            }
-        }
-
-        private IEnumerable<GraphEnumMemberInfo> GetEnumValues(TypeInfo typeInfo)
-        {
-            return typeInfo
-                .GetEnumNames()
-                .Select(name => DeriveEnumValue(name, typeInfo))
-                .Where(member => !member.IsIgnored)
-                .OrderBy(member => member.Name);
-        }
-
-        private GraphFieldInfo DeriveField(MemberInfo memberInfo)
-        {
-            var field = new GraphFieldInfo(_typeResolver, memberInfo);
-
-            var propertyInfo = memberInfo as PropertyInfo;
-            if (propertyInfo != null)
-            {
-                field.Type = GetType(propertyInfo.PropertyType.GetTypeInfo());
             }
 
-            var fieldInfo = memberInfo as FieldInfo;
-            if (fieldInfo != null)
+            private void DeriveFields(GraphTypeInfo type)
             {
-                field.Type = GetType(fieldInfo.FieldType.GetTypeInfo());
-            }
-
-            var methodInfo = memberInfo as MethodInfo;
-            if (methodInfo != null)
-            {
-                field.Type = GetType(methodInfo.ReturnType.GetTypeInfo());
-                field.Arguments.AddRange(GetArguments(methodInfo));
-            }
-
-            _metaDataHandler.DeriveMetaData(field, memberInfo);
-            return field;
-        }
-
-        private GraphArgumentInfo DeriveArgument(ParameterInfo parameterInfo)
-        {
-            var parameterType = parameterInfo.ParameterType;
-            var parameterTypeInfo = parameterType.GetTypeInfo();
-            var argument = new GraphArgumentInfo(_typeResolver, parameterInfo);
-
-            if (_metaDataHandler.HasAttribute<InjectAttribute>(parameterInfo))
-            {
-                argument.Type = GetType(parameterTypeInfo, true);
-                argument.IsInjected = true;
-            }
-            else if (parameterType == typeof(object))
-            {
-                argument.Type = GetType(parameterTypeInfo, true);
-                argument.IsInjected = true;
-            }
-            else if (parameterTypeInfo.GetInterfaces().Any(iface => iface == typeof(IUserContext)))
-            {
-                argument.Type = GetType(parameterTypeInfo, true);
-                argument.IsInjected = true;
-            }
-            else if (parameterType == typeof(IResolutionContext))
-            {
-                argument.Type = GetType(parameterTypeInfo, true);
-                argument.IsInjected = true;
-            }
-            else
-            {
-                argument.Type = GetType(parameterTypeInfo);
-            }
-
-            if (parameterInfo.HasDefaultValue)
-            {
-                var baseType = argument.Type.TypeRepresentation.BaseType();
-                if (baseType.IsEnum && parameterInfo.DefaultValue != null)
+                var typeInfo = GetTypeInfo(type);
+                var fieldInfos = type.IsEnumerationType
+                    ? GetEnumValues(typeInfo)
+                    : GetFields(typeInfo);
+                var addedFields = new HashSet<string>();
+                foreach (var fieldInfo in fieldInfos)
                 {
-                    argument.DefaultValue = Enum.ToObject(baseType.AsType(), parameterInfo.DefaultValue);
+                    if (addedFields.Contains(fieldInfo.Name))
+                    {
+                        continue;
+                    }
+                    fieldInfo.DeclaringType = type;
+                    type.Fields.Add(fieldInfo);
+                    addedFields.Add(fieldInfo.Name);
+                }
+            }
+
+            private TypeInfo GetTypeInfo(GraphTypeInfo type) =>
+                GetTypeInfo(type.AttributeProvider);
+
+            private TypeInfo GetTypeInfo(ICustomAttributeProvider attributeProvider) =>
+                ((TypeInfo)attributeProvider).GetTypeRepresentation();
+
+            private IEnumerable<GraphFieldInfo> GetFields(TypeInfo typeInfo)
+            {
+                var implementedProperties = typeInfo
+                    .ImplementedInterfaces
+                    .SelectMany(iface => iface.GetProperties(DefaultBindingFlags));
+
+                var properties = typeInfo
+                    .GetProperties(DefaultBindingFlags)
+                    .Union(implementedProperties)
+                    .Where(IsValidMember)
+                    .Where(propertyInfo => !propertyInfo.IsSpecialName);
+
+                var implementedMethods = typeInfo
+                    .ImplementedInterfaces
+                    .SelectMany(iface => iface.GetMethods(DefaultBindingFlags));
+
+                return typeInfo
+                    .GetMethods(DefaultBindingFlags)
+                    .Union(implementedMethods)
+                    .Where(IsValidMember)
+                    .Where(methodInfo => !methodInfo.IsSpecialName)
+                    .Cast<MemberInfo>()
+                    .Union(properties)
+                    .Select(DeriveField)
+                    .Where(field => !field.IsIgnored)
+                    .OrderBy(field => field.Name);
+            }
+
+            private IEnumerable<GraphArgumentInfo> GetArguments(MethodInfo methodInfo)
+            {
+                foreach (var argument in methodInfo?
+                    .GetParameters()
+                    .Select(DeriveArgument)
+                    ?? new GraphArgumentInfo[0])
+                {
+                    if (argument.IsInjected)
+                    {
+                        argument.Type.IsIgnored = true;
+                    }
+                    yield return argument;
+                }
+            }
+
+            private IEnumerable<GraphEnumMemberInfo> GetEnumValues(TypeInfo typeInfo)
+            {
+                return typeInfo
+                    .GetEnumNames()
+                    .Select(name => DeriveEnumValue(name, typeInfo))
+                    .Where(member => !member.IsIgnored)
+                    .OrderBy(member => member.Name);
+            }
+
+            private GraphFieldInfo DeriveField(MemberInfo memberInfo)
+            {
+                var field = new GraphFieldInfo(_typeResolver, memberInfo);
+
+                var propertyInfo = memberInfo as PropertyInfo;
+                if (propertyInfo != null)
+                {
+                    field.Type = GetType(propertyInfo.PropertyType.GetTypeInfo());
+                }
+
+                var fieldInfo = memberInfo as FieldInfo;
+                if (fieldInfo != null)
+                {
+                    field.Type = GetType(fieldInfo.FieldType.GetTypeInfo());
+                }
+
+                var methodInfo = memberInfo as MethodInfo;
+                if (methodInfo != null)
+                {
+                    field.Type = GetType(methodInfo.ReturnType.GetTypeInfo());
+                    field.Arguments.AddRange(GetArguments(methodInfo));
+                }
+
+                _metaDataHandler.DeriveMetaData(field, memberInfo);
+                return field;
+            }
+
+            private GraphArgumentInfo DeriveArgument(ParameterInfo parameterInfo)
+            {
+                var parameterType = parameterInfo.ParameterType;
+                var parameterTypeInfo = parameterType.GetTypeInfo();
+                var argument = new GraphArgumentInfo(_typeResolver, parameterInfo);
+
+                if (_metaDataHandler.HasAttribute<InjectAttribute>(parameterInfo))
+                {
+                    argument.Type = GetType(parameterTypeInfo, true);
+                    argument.IsInjected = true;
+                }
+                else if (parameterType == typeof(object))
+                {
+                    argument.Type = GetType(parameterTypeInfo, true);
+                    argument.IsInjected = true;
+                }
+                else if (parameterTypeInfo.GetInterfaces().Any(iface => iface == typeof(IUserContext)))
+                {
+                    argument.Type = GetType(parameterTypeInfo, true);
+                    argument.IsInjected = true;
+                }
+                else if (parameterType == typeof(IResolutionContext))
+                {
+                    argument.Type = GetType(parameterTypeInfo, true);
+                    argument.IsInjected = true;
                 }
                 else
                 {
-                    argument.DefaultValue = parameterInfo.DefaultValue;
+                    argument.Type = GetType(parameterTypeInfo);
                 }
+
+                if (parameterInfo.HasDefaultValue)
+                {
+                    var baseType = argument.Type.TypeRepresentation.BaseType();
+                    if (baseType.IsEnum && parameterInfo.DefaultValue != null)
+                    {
+                        argument.DefaultValue = Enum.ToObject(baseType.AsType(), parameterInfo.DefaultValue);
+                    }
+                    else
+                    {
+                        argument.DefaultValue = parameterInfo.DefaultValue;
+                    }
+                }
+
+                _metaDataHandler.DeriveMetaData(argument, parameterInfo);
+                return argument;
             }
 
-            _metaDataHandler.DeriveMetaData(argument, parameterInfo);
-            return argument;
-        }
-
-        private GraphEnumMemberInfo DeriveEnumValue(string name, TypeInfo type)
-        {
-            var memberInfo = type
-                .GetMember(name, DefaultEnumBindingFlags)
-                .First();
-            var enumValue = new GraphEnumMemberInfo(_typeResolver, memberInfo);
-            enumValue.Name = name;
-            enumValue.Value = Enum.Parse(type.AsType(), enumValue.Name);
-            _metaDataHandler.DeriveMetaData(enumValue, memberInfo);
-            return enumValue;
-        }
-
-        private bool IsValidType(TypeInfo typeInfo)
-        {
-            return typeInfo.Namespace != nameof(System) &&
-                   !IgnoredNamespaces.Any(n => typeInfo.Namespace?.StartsWith(n) ?? false) &&
-                   !typeInfo.ContainsGenericParameters &&
-                   !typeInfo.IsGenericType;
-        }
-
-        private bool IsValidMember(MemberInfo memberInfo)
-        {
-            return memberInfo != null &&
-                   memberInfo.DeclaringType != null &&
-                   memberInfo.DeclaringType.Namespace != nameof(System) &&
-                   !IgnoredNamespaces.Any(n => memberInfo.DeclaringType.Namespace?.StartsWith(n) ?? false) &&
-                   !(memberInfo.DeclaringType.GetTypeInfo()?.IsValueType ?? false) &&
-                   memberInfo.Name != nameof(object.ToString) &&
-                   HasValidReturnType(memberInfo);
-        }
-
-        private static bool HasValidReturnType(MemberInfo memberInfo)
-        {
-            Type returnType;
-            if (memberInfo is PropertyInfo)
+            private GraphEnumMemberInfo DeriveEnumValue(string name, TypeInfo type)
             {
-                returnType = ((PropertyInfo)memberInfo).PropertyType;
+                var memberInfo = type
+                    .GetMember(name, DefaultEnumBindingFlags)
+                    .First();
+                var enumValue = new GraphEnumMemberInfo(_typeResolver, memberInfo);
+                enumValue.Name = name;
+                enumValue.Value = Enum.Parse(type.AsType(), enumValue.Name);
+                _metaDataHandler.DeriveMetaData(enumValue, memberInfo);
+                return enumValue;
             }
-            else if (memberInfo is MethodInfo)
+
+            private bool IsValidType(TypeInfo typeInfo)
             {
-                returnType = ((MethodInfo)memberInfo).ReturnType;
+                return typeInfo.Namespace != nameof(System) &&
+                       !IgnoredNamespaces.Any(n => typeInfo.Namespace?.StartsWith(n) ?? false) &&
+                       !typeInfo.ContainsGenericParameters &&
+                       !typeInfo.IsGenericType;
             }
-            else
+
+            private bool IsValidMember(MemberInfo memberInfo)
             {
-                return true;
+                return memberInfo != null &&
+                       memberInfo.DeclaringType != null &&
+                       memberInfo.DeclaringType.Namespace != nameof(System) &&
+                       !IgnoredNamespaces.Any(n => memberInfo.DeclaringType.Namespace?.StartsWith(n) ?? false) &&
+                       !(memberInfo.DeclaringType.GetTypeInfo()?.IsValueType ?? false) &&
+                       memberInfo.Name != nameof(object.ToString) &&
+                       HasValidReturnType(memberInfo);
             }
-            return returnType != typeof(object) && returnType != typeof(void);
+
+            private static bool HasValidReturnType(MemberInfo memberInfo)
+            {
+                Type returnType;
+                if (memberInfo is PropertyInfo)
+                {
+                    returnType = ((PropertyInfo)memberInfo).PropertyType;
+                }
+                else if (memberInfo is MethodInfo)
+                {
+                    returnType = ((MethodInfo)memberInfo).ReturnType;
+                }
+                else
+                {
+                    return true;
+                }
+                return returnType != typeof(object) && returnType != typeof(void);
+            }
         }
     }
 }
