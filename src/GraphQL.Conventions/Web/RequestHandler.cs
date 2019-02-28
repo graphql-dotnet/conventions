@@ -90,10 +90,9 @@ namespace GraphQL.Conventions.Web
                 return this;
             }
 
-
-            public RequestHandlerBuilder WithQueryAndExtensions<TQuery>(Type type)
+            public RequestHandlerBuilder WithQueryExtensions(Type typeExtensions)
             {
-                _schemaTypes.Add(typeof(SchemaDefinitionWithQueryAndQueryExtensions<,>).MakeGenericType(typeof(TQuery), type));
+                _typeResolver.AddExtensions(typeExtensions);
                 return this;
             }
 

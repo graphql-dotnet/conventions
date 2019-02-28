@@ -102,7 +102,7 @@ namespace GraphQL.Conventions.Tests.Web
             var request = Request.New("{ \"query\": \"{ helloExtended(v: 10) }\" }");
             var response = await RequestHandler
                 .New()
-                .WithQueryAndExtensions<SimpleQuery>(typeof(QueryExtensions))
+                .WithQueryExtensions(typeof(QueryExtensions))
                 .Generate()
                 .ProcessRequest(request, null);
 

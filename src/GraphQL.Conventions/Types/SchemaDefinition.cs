@@ -17,12 +17,6 @@ namespace GraphQL.Conventions
         public TSubscription Subscription { get; set; }
     }
 
-    public class SchemaDefinitionWithQueryAndQueryExtensions<TQuery, TQueryExtensions>
-    {
-        public TQuery Query { get; set; }
-        public TQueryExtensions QueryExtensions { get; set; }
-    }
-
     public class SchemaDefinitionWithMutationAndSubscription<TMutation, TSubscription>
         : SchemaDefinition<Query, TMutation, TSubscription>
     {
