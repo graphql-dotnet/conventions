@@ -23,7 +23,7 @@ namespace GraphQL.Conventions
 {
     public class GraphQLEngine
     {
-        readonly TypeResolver _typeResolver = new TypeResolver();
+        readonly ITypeResolver _typeResolver = new TypeResolver();
 
         readonly GraphTypeAdapter _graphTypeAdapter = new GraphTypeAdapter();
 
@@ -76,7 +76,7 @@ namespace GraphQL.Conventions
             }
         }
 
-        public GraphQLEngine(Func<System.Type, object> typeResolutionDelegate = null, TypeResolver typeResolver = null)
+        public GraphQLEngine(Func<System.Type, object> typeResolutionDelegate = null, ITypeResolver typeResolver = null)
         {
             _typeResolver = typeResolver ?? _typeResolver;
             _constructor = new SchemaConstructor<ISchema, IGraphType>(_graphTypeAdapter, _typeResolver);
