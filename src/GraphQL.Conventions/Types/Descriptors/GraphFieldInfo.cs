@@ -13,7 +13,6 @@ namespace GraphQL.Conventions.Types.Descriptors
         public GraphFieldInfo(ITypeResolver typeResolver, MemberInfo field = null)
             : base(typeResolver, field)
         {
-            IsExtensionMethod = (AttributeProvider as MethodInfo)?.IsExtensionMethod() ?? false;
         }
 
         public GraphTypeInfo DeclaringType { get; set; }
@@ -32,7 +31,7 @@ namespace GraphQL.Conventions.Types.Descriptors
 
         public bool IsMethod => AttributeProvider is MethodInfo;
 
-        public bool IsExtensionMethod { get; private set; }
+        public bool IsExtensionMethod => (AttributeProvider as MethodInfo).IsExtensionMethod();
 
         public override string ToString() => $"{nameof(GraphFieldInfo)}:{Name}";
     }

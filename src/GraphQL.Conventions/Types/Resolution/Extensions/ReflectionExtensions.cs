@@ -114,7 +114,7 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
 
         public static bool IsExtensionMethod(this MethodInfo methodInfo)
         {
-            return methodInfo.IsDefined(typeof(ExtensionAttribute), false);
+            return methodInfo?.IsDefined(typeof(ExtensionAttribute), false) ?? false;
         }
     }
 }
