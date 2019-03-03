@@ -27,11 +27,26 @@ namespace GraphQL.Conventions.Types.Resolution
 
         private readonly MetaDataAttributeHandler _metaDataHandler = new MetaDataAttributeHandler();
 
+        private readonly Dictionary<Type, List<MethodInfo>> _typeExtensionMethods = new Dictionary<Type, List<MethodInfo>>();
+
         public HashSet<string> IgnoredNamespaces { get; } = new HashSet<string>() { nameof(System) + "." };
 
         public ObjectReflector(ITypeResolver typeResolver)
         {
             _typeResolver = typeResolver;
+        }
+
+        public void AddExtensions(TypeInfo typeExtensions)
+        {
+            var extensionMethods = typeExtensions
+                .GetMethods(BindingFlags.Static | BindingFlags.Public)
+                .Where(m => m.IsExtensionMethod())
+                .GroupBy(m => m.GetParameters()[0].ParameterType);
+
+            foreach (var methodGroup in extensionMethods)
+            {
+                GetExtensionMethods(methodGroup.Key).AddRange(methodGroup);
+            }
         }
 
         public GraphSchemaInfo GetSchema(TypeInfo typeInfo)
@@ -185,6 +200,20 @@ namespace GraphQL.Conventions.Types.Resolution
         private TypeInfo GetTypeInfo(ICustomAttributeProvider attributeProvider) =>
             ((TypeInfo)attributeProvider).GetTypeRepresentation();
 
+        private List<MethodInfo> GetExtensionMethods(TypeInfo typeInfo)
+            => GetExtensionMethods(typeInfo.UnderlyingSystemType);
+
+        private List<MethodInfo> GetExtensionMethods(Type type)
+        {
+            List<MethodInfo> methods;
+            if (!_typeExtensionMethods.TryGetValue(type, out methods))
+            {
+                methods = new List<MethodInfo>();
+                _typeExtensionMethods.Add(type, methods);
+            }
+            return methods;
+        }
+
         private IEnumerable<GraphFieldInfo> GetFields(TypeInfo typeInfo)
         {
             var implementedProperties = typeInfo
@@ -204,6 +233,7 @@ namespace GraphQL.Conventions.Types.Resolution
             return typeInfo
                 .GetMethods(DefaultBindingFlags)
                 .Union(implementedMethods)
+                .Union(GetExtensionMethods(typeInfo))
                 .Where(IsValidMember)
                 .Where(methodInfo => !methodInfo.IsSpecialName)
                 .Cast<MemberInfo>()
@@ -217,6 +247,7 @@ namespace GraphQL.Conventions.Types.Resolution
         {
             foreach (var argument in methodInfo?
                 .GetParameters()
+                .Skip(methodInfo.IsExtensionMethod() ? 1 : 0)
                 .Select(DeriveArgument)
                 ?? new GraphArgumentInfo[0])
             {

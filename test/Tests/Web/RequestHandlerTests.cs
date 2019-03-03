@@ -96,6 +96,64 @@ namespace GraphQL.Conventions.Tests.Web
             response.Body.ShouldContain("VALIDATION_ERROR");
         }
 
+        [Test]
+        public async Task Can_Run_Query_With_Type_Extensions()
+        {
+            var request = Request.New("{ \"query\": \"{ helloExtended(v: 10) }\" }");
+            var response = await RequestHandler
+                .New()
+                .WithQuery<SimpleQuery>()
+                .WithQueryExtensions(typeof(QueryExtensions))
+                .Generate()
+                .ProcessRequest(request, null, null);
+
+            response.ExecutionResult.Data.ShouldHaveFieldWithValue("helloExtended", "Extended-10");
+            response.Body.ShouldEqual("{\"data\":{\"helloExtended\":\"Extended-10\"}}");
+            response.Errors.Count.ShouldEqual(0);
+            response.Warnings.Count.ShouldEqual(0);
+        }
+
+        [Test]
+        public async Task Can_Run_Query_With_Nested_Type_Extensions()
+        {
+            var request = Request.New("{ \"query\": \"{ helloType(v: 1) { myName }}\" }");
+            var response = await RequestHandler
+                .New()
+                .WithQuery<SimpleQuery>()
+                .WithQueryExtensions(typeof(QueryExtensions))
+                .Generate()
+                .ProcessRequest(request, null, null);
+
+            response.Body.ShouldEqual("{\"data\":{\"helloType\":{\"myName\":\"Name-1\"}}}");
+            response.Errors.Count.ShouldEqual(0);
+            response.Warnings.Count.ShouldEqual(0);
+        }
+
+        [Test]
+        public void Can_Construct_And_Describe_Schema_With_Extensions()
+        {
+            var schema = RequestHandler
+                .New()
+                .WithQuery<SimpleQuery>()
+                .WithQueryExtensions(typeof(QueryExtensions))
+                .Generate()
+                .DescribeSchema(false, false, false);
+
+            schema.ShouldEqualWhenReformatted(@"
+                schema {
+                    query: SimpleQuery
+                }
+                type HelloType {
+                    myName: String
+                }
+                type SimpleQuery {
+                    hello: String
+                    helloExtended(v: Int!): String
+                    helloType(v: Int!): HelloType
+                }
+            ");
+        }
+
         class TestQuery
         {
             public string Hello => "World";
@@ -124,6 +182,30 @@ namespace GraphQL.Conventions.Tests.Web
             public TestQuery Earth => new TestQuery();
             public Unwanted.TestQuery2 Mars => new Unwanted.TestQuery2();
         }
+    }
+
+    class SimpleQuery
+    {
+        public string Hello => "World";
+        public HelloType HelloType(int v) => new HelloType(v);
+    }
+
+    class HelloType
+    {
+        [Ignore]
+        public int HiddenVersion { get; set; }
+
+        public HelloType(int v)
+        {
+            HiddenVersion = v;
+        }
+    }
+
+    static class QueryExtensions
+    {
+        public static string HelloExtended(this SimpleQuery query, int v) => $"Extended-{v}";
+
+        public static string MyName(this HelloType helloType) => $"Name-{helloType.HiddenVersion}";
     }
 
     namespace Unwanted

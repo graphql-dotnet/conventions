@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using GraphQL.Conventions.Types.Descriptors;
 
@@ -20,6 +21,8 @@ namespace GraphQL.Conventions.Types.Resolution
         TypeRegistration LookupType(TypeInfo typeInfo);
 
         void IgnoreTypesFromNamespacesStartingWith(params string[] namespacesToIgnore);
+
+        void AddExtensions(Type typeExtensions);
 
         GraphSchemaInfo ActiveSchema { get; set; }
     }
