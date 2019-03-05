@@ -275,7 +275,8 @@ namespace GraphQL.Conventions.Adapters
             graphType.IsTypeOf = obj =>
             {
                 var objType = UnwrapObject(obj)?.GetType().GetTypeRepresentation();
-                return objType == typeInfo.GetTypeRepresentation();
+                var typeRepresentation = typeInfo.GetTypeRepresentation();
+                return objType == typeRepresentation || objType.IsSubclassOf(typeRepresentation.UnderlyingSystemType);
             };
             DeriveFields(typeInfo, graphType);
             return WrapNonNullableType(typeInfo, graphType);
