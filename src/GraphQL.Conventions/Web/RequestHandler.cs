@@ -27,7 +27,7 @@ namespace GraphQL.Conventions.Web
 
             readonly List<Type> _middleware = new List<Type>();
 
-            readonly TypeResolver _typeResolver = new TypeResolver();
+            readonly ITypeResolver _typeResolver = new TypeResolver();
 
             IDependencyInjector _dependencyInjector;
 
@@ -217,7 +217,7 @@ namespace GraphQL.Conventions.Web
                 FieldResolutionStrategy fieldResolutionStrategy,
                 ComplexityConfiguration complexityConfiguration,
                 IEnumerable<Type> middleware,
-                TypeResolver typeResolver)
+                ITypeResolver typeResolver)
             {
                 _engine = new GraphQLEngine(typeResolver: typeResolver);
                 _dependencyInjector = dependencyInjector;

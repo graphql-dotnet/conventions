@@ -8,7 +8,7 @@ using GraphQL.Conventions.Types.Resolution.Extensions;
 
 namespace GraphQL.Conventions.Types.Resolution
 {
-    class ObjectReflector
+    public class ObjectReflector
     {
         private const BindingFlags DefaultBindingFlags =
             BindingFlags.Public |
@@ -149,7 +149,7 @@ namespace GraphQL.Conventions.Types.Resolution
             return entityInfo;
         }
 
-        internal void DiscoverAndRegisterDefaultAttributesInAssembly(Type assemblyType)
+        public void DiscoverAndRegisterDefaultAttributesInAssembly(Type assemblyType)
         {
             _metaDataHandler.DiscoverAndRegisterDefaultAttributesInAssembly(assemblyType);
         }
@@ -205,8 +205,7 @@ namespace GraphQL.Conventions.Types.Resolution
 
         private List<MethodInfo> GetExtensionMethods(Type type)
         {
-            List<MethodInfo> methods;
-            if (!_typeExtensionMethods.TryGetValue(type, out methods))
+            if (!_typeExtensionMethods.TryGetValue(type, out List<MethodInfo> methods))
             {
                 methods = new List<MethodInfo>();
                 _typeExtensionMethods.Add(type, methods);

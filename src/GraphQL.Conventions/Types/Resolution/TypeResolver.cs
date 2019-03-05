@@ -9,9 +9,9 @@ namespace GraphQL.Conventions.Types.Resolution
 {
     public class TypeResolver : ITypeResolver
     {
-        private readonly ObjectReflector _reflector;
+        protected readonly ObjectReflector _reflector;
 
-        private readonly Dictionary<Type, TypeRegistration> _typeMap = new Dictionary<Type, TypeRegistration>();
+        protected readonly Dictionary<Type, TypeRegistration> _typeMap = new Dictionary<Type, TypeRegistration>();
 
         public TypeResolver()
         {
@@ -19,26 +19,26 @@ namespace GraphQL.Conventions.Types.Resolution
             RegisterKnownTypes();
         }
 
-        public GraphSchemaInfo DeriveSchema(TypeInfo typeInfo) => _reflector.GetSchema(typeInfo);
+        public virtual GraphSchemaInfo DeriveSchema(TypeInfo typeInfo) => _reflector.GetSchema(typeInfo);
 
-        public GraphTypeInfo DeriveType(TypeInfo typeInfo) => _reflector.GetType(typeInfo);
+        public virtual GraphTypeInfo DeriveType(TypeInfo typeInfo) => _reflector.GetType(typeInfo);
 
-        public GraphTypeInfo DeriveType<TType>() => DeriveType(typeof(TType).GetTypeInfo());
+        public virtual GraphTypeInfo DeriveType<TType>() => DeriveType(typeof(TType).GetTypeInfo());
 
-        public GraphEntityInfo ApplyAttributes(GraphEntityInfo entityInfo) =>
+        public virtual GraphEntityInfo ApplyAttributes(GraphEntityInfo entityInfo) =>
             _reflector.ApplyAttributes(entityInfo);
 
-        public void RegisterType(TypeInfo typeInfo, TypeRegistration typeRegistration)
+        public virtual void RegisterType(TypeInfo typeInfo, TypeRegistration typeRegistration)
         {
             _typeMap[typeInfo.AsType()] = typeRegistration;
         }
 
-        public void RegisterType<TType>(TypeRegistration typeRegistration)
+        public virtual void RegisterType<TType>(TypeRegistration typeRegistration)
         {
             RegisterType(typeof(TType).GetTypeInfo(), typeRegistration);
         }
 
-        public void RegisterScalarType<TType>(string typeName)
+        public virtual void RegisterScalarType<TType>(string typeName)
         {
             RegisterType<TType>(new TypeRegistration
             {
@@ -47,7 +47,7 @@ namespace GraphQL.Conventions.Types.Resolution
             });
         }
 
-        public TypeRegistration LookupType(TypeInfo typeInfo)
+        public virtual TypeRegistration LookupType(TypeInfo typeInfo)
         {
             TypeRegistration registration;
             if (_typeMap.TryGetValue(typeInfo.AsType(), out registration))
@@ -57,12 +57,12 @@ namespace GraphQL.Conventions.Types.Resolution
             return null;
         }
 
-        public void RegisterAttributesInAssembly(Type assemblyType)
+        public virtual void RegisterAttributesInAssembly(Type assemblyType)
         {
             _reflector.DiscoverAndRegisterDefaultAttributesInAssembly(assemblyType);
         }
 
-        public GraphSchemaInfo ActiveSchema { get; set; }
+        public virtual GraphSchemaInfo ActiveSchema { get; set; }
 
         private void RegisterKnownTypes()
         {
@@ -89,7 +89,7 @@ namespace GraphQL.Conventions.Types.Resolution
             RegisterScalarType<Guid>(TypeNames.Guid);
         }
 
-        public void IgnoreTypesFromNamespacesStartingWith(params string[] namespacesToIgnore)
+        public virtual void IgnoreTypesFromNamespacesStartingWith(params string[] namespacesToIgnore)
         {
             if (namespacesToIgnore == null || !namespacesToIgnore.Any())
                 return;

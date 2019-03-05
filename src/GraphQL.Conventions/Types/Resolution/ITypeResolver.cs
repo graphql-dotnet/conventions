@@ -20,6 +20,8 @@ namespace GraphQL.Conventions.Types.Resolution
 
         TypeRegistration LookupType(TypeInfo typeInfo);
 
+        void RegisterAttributesInAssembly(Type assemblyType);
+
         void IgnoreTypesFromNamespacesStartingWith(params string[] namespacesToIgnore);
 
         void AddExtensions(Type typeExtensions);
