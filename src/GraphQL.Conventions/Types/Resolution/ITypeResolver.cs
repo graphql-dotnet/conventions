@@ -24,6 +24,8 @@ namespace GraphQL.Conventions.Types.Resolution
 
         void IgnoreTypesFromNamespacesStartingWith(params string[] namespacesToIgnore);
 
+        void AddExtensions(Type typeExtensions);
+
         GraphSchemaInfo ActiveSchema { get; set; }
     }
 }

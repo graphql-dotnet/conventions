@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Types.Descriptors;
 
@@ -109,6 +110,11 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
                 .GetMethod("ConvertToArray", BindingFlags.Static | BindingFlags.Public);
             var genericMethod = convertMethod.MakeGenericMethod(elementType);
             return genericMethod.Invoke(null, new object[] {list});
+        }
+
+        public static bool IsExtensionMethod(this MethodInfo methodInfo)
+        {
+            return methodInfo?.IsDefined(typeof(ExtensionAttribute), false) ?? false;
         }
     }
 }

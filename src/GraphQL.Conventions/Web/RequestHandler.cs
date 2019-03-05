@@ -90,6 +90,12 @@ namespace GraphQL.Conventions.Web
                 return this;
             }
 
+            public RequestHandlerBuilder WithQueryExtensions(Type typeExtensions)
+            {
+                _typeResolver.AddExtensions(typeExtensions);
+                return this;
+            }
+
             public RequestHandlerBuilder WithSubscription<TSubscription>()
             {
                 _schemaTypes.Add(typeof(SchemaDefinitionWithSubscription<TSubscription>));

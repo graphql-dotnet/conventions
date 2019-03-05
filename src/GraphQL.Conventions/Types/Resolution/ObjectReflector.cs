@@ -29,18 +29,33 @@ namespace GraphQL.Conventions.Types.Resolution
 
             private readonly MetaDataAttributeHandler _metaDataHandler = new MetaDataAttributeHandler();
 
-            public HashSet<string> IgnoredNamespaces { get; } = new HashSet<string>() { nameof(System) + "." };
+        private readonly Dictionary<Type, List<MethodInfo>> _typeExtensionMethods = new Dictionary<Type, List<MethodInfo>>();
+
+        public HashSet<string> IgnoredNamespaces { get; } = new HashSet<string>() { nameof(System) + "." };
 
             public ObjectReflector(ITypeResolver typeResolver)
             {
                 _typeResolver = typeResolver;
             }
 
-            public GraphSchemaInfo GetSchema(TypeInfo typeInfo)
+        public void AddExtensions(TypeInfo typeExtensions)
+        {
+            var extensionMethods = typeExtensions
+                .GetMethods(BindingFlags.Static | BindingFlags.Public)
+                .Where(m => m.IsExtensionMethod())
+                .GroupBy(m => m.GetParameters()[0].ParameterType);
+
+            foreach (var methodGroup in extensionMethods)
             {
-                var queryField = typeInfo.GetProperty("Query");
-                var mutationField = typeInfo.GetProperty("Mutation");
-                var subscriptionField = typeInfo.GetProperty("Subscription");
+                GetExtensionMethods(methodGroup.Key).AddRange(methodGroup);
+            }
+        }
+
+        public GraphSchemaInfo GetSchema(TypeInfo typeInfo)
+        {
+            var queryField = typeInfo.GetProperty("Query");
+            var mutationField = typeInfo.GetProperty("Mutation");
+            var subscriptionField = typeInfo.GetProperty("Subscription");
 
                 if (queryField == null)
                 {
@@ -187,11 +202,25 @@ namespace GraphQL.Conventions.Types.Resolution
             private TypeInfo GetTypeInfo(ICustomAttributeProvider attributeProvider) =>
                 ((TypeInfo)attributeProvider).GetTypeRepresentation();
 
-            private IEnumerable<GraphFieldInfo> GetFields(TypeInfo typeInfo)
+        private List<MethodInfo> GetExtensionMethods(TypeInfo typeInfo)
+            => GetExtensionMethods(typeInfo.UnderlyingSystemType);
+
+        private List<MethodInfo> GetExtensionMethods(Type type)
+        {
+            List<MethodInfo> methods;
+            if (!_typeExtensionMethods.TryGetValue(type, out methods))
             {
-                var implementedProperties = typeInfo
-                    .ImplementedInterfaces
-                    .SelectMany(iface => iface.GetProperties(DefaultBindingFlags));
+                methods = new List<MethodInfo>();
+                _typeExtensionMethods.Add(type, methods);
+            }
+            return methods;
+        }
+
+        private IEnumerable<GraphFieldInfo> GetFields(TypeInfo typeInfo)
+        {
+            var implementedProperties = typeInfo
+                .ImplementedInterfaces
+                .SelectMany(iface => iface.GetProperties(DefaultBindingFlags));
 
                 var properties = typeInfo
                     .GetProperties(DefaultBindingFlags)
@@ -203,32 +232,34 @@ namespace GraphQL.Conventions.Types.Resolution
                     .ImplementedInterfaces
                     .SelectMany(iface => iface.GetMethods(DefaultBindingFlags));
 
-                return typeInfo
-                    .GetMethods(DefaultBindingFlags)
-                    .Union(implementedMethods)
-                    .Where(IsValidMember)
-                    .Where(methodInfo => !methodInfo.IsSpecialName)
-                    .Cast<MemberInfo>()
-                    .Union(properties)
-                    .Select(DeriveField)
-                    .Where(field => !field.IsIgnored)
-                    .OrderBy(field => field.Name);
-            }
+            return typeInfo
+                .GetMethods(DefaultBindingFlags)
+                .Union(implementedMethods)
+                .Union(GetExtensionMethods(typeInfo))
+                .Where(IsValidMember)
+                .Where(methodInfo => !methodInfo.IsSpecialName)
+                .Cast<MemberInfo>()
+                .Union(properties)
+                .Select(DeriveField)
+                .Where(field => !field.IsIgnored)
+                .OrderBy(field => field.Name);
+        }
 
-            private IEnumerable<GraphArgumentInfo> GetArguments(MethodInfo methodInfo)
+        private IEnumerable<GraphArgumentInfo> GetArguments(MethodInfo methodInfo)
+        {
+            foreach (var argument in methodInfo?
+                .GetParameters()
+                .Skip(methodInfo.IsExtensionMethod() ? 1 : 0)
+                .Select(DeriveArgument)
+                ?? new GraphArgumentInfo[0])
             {
-                foreach (var argument in methodInfo?
-                    .GetParameters()
-                    .Select(DeriveArgument)
-                    ?? new GraphArgumentInfo[0])
+                if (argument.IsInjected)
                 {
-                    if (argument.IsInjected)
-                    {
-                        argument.Type.IsIgnored = true;
-                    }
-                    yield return argument;
+                    argument.Type.IsIgnored = true;
                 }
+                yield return argument;
             }
+        }
 
             private IEnumerable<GraphEnumMemberInfo> GetEnumValues(TypeInfo typeInfo)
             {
