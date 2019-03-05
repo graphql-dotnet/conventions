@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace GraphQL.Conventions.Types.Resolution
 {
-    public partial class TypeResolver : ITypeResolver
+    public class TypeResolver : ITypeResolver
     {
         protected readonly ObjectReflector _reflector;
 
