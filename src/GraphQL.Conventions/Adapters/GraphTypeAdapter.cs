@@ -133,7 +133,8 @@ namespace GraphQL.Conventions.Adapters
 
         private Func<ResolveEventStreamContext, T> CreateSubscriptionFunc<T>(GraphFieldInfo fieldInfo) 
         {
-            return new Func<ResolveEventStreamContext, T>(ctx => {
+            return new Func<ResolveEventStreamContext, T>(ctx => 
+            {
                 return (T)ctx.Source.GetPropertyValue(fieldInfo.Name);
             });
         }
