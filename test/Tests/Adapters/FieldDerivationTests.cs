@@ -125,6 +125,13 @@ namespace GraphQL.Conventions.Tests.Adapters
             type.ShouldHaveFieldWithName("b").OfType<NonNullGraphType<IntGraphType>>();
         }
 
+        [Test]
+        public void Can_Return_Values_From_Derived_Instance()
+        {
+            var type = OutputType<FooDto>();
+            Assert.IsTrue(type.IsTypeOf(new Foo()));
+        }
+
         class OutputTypeWithNoFields
         {
         }
