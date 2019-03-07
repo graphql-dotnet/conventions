@@ -1,20 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
 using GraphQL.Resolvers;
-using GraphQL.Subscription;
 using GraphQL.Types;
 
 namespace GraphQL.Conventions.Adapters
 {
     public class GraphTypeAdapter : IGraphTypeAdapter<ISchema, IGraphType>
     {
-        readonly CachedRegistry<Type, IGraphType> _typeDescriptors = new CachedRegistry<Type, IGraphType>();
+        private readonly CachedRegistry<Type, IGraphType> _typeDescriptors = new CachedRegistry<Type, IGraphType>();
 
-        readonly Dictionary<string, Type> _registeredScalarTypes = new Dictionary<string, Type>();
+        private readonly Dictionary<string, Type> _registeredScalarTypes = new Dictionary<string, Type>();
 
         public Func<GraphFieldInfo, IFieldResolver> FieldResolverFactory { get; set; } = (fieldInfo) => new FieldResolver(fieldInfo);
 
@@ -81,10 +79,9 @@ namespace GraphQL.Conventions.Adapters
 
         private FieldType DeriveField(GraphFieldInfo fieldInfo)
         {
-            if (fieldInfo.Type.IsObservable) 
+            if (fieldInfo.Type.IsObservable)
             {
-                var genericTypeParameter = fieldInfo.Type.TypeRepresentation;
-                var type = new EventStreamFieldType 
+                return new EventStreamFieldType
                 {
                     Name = fieldInfo.Name,
                     Description = fieldInfo.Description,
@@ -92,10 +89,9 @@ namespace GraphQL.Conventions.Adapters
                     DefaultValue = fieldInfo.DefaultValue,
                     Type = GetType(fieldInfo.Type),
                     Arguments = new QueryArguments(fieldInfo.Arguments.Where(arg => !arg.IsInjected).Select(DeriveArgument)),
-                    Resolver = FieldResolverFactory(fieldInfo)
+                    Resolver = FieldResolverFactory(fieldInfo),
+                    Subscriber = new Resolvers.EventStreamResolver(fieldInfo)
                 };
-                type.Subscriber = CreateEventStreamResolver(fieldInfo);
-                return type;
             }
             return new FieldType
             {
@@ -117,26 +113,6 @@ namespace GraphQL.Conventions.Adapters
                 Description = argumentInfo.Description,
                 DefaultValue = argumentInfo.DefaultValue,
             };
-        }
-
-        private IEventStreamResolver CreateEventStreamResolver(GraphFieldInfo fieldInfo)
-        {
-            var genericTypeParameter = fieldInfo.Type.TypeRepresentation.TypeParameter();
-            var resolverType = typeof(EventStreamResolver<>).MakeGenericType(genericTypeParameter.UnderlyingSystemType);
-            var typedObservable = typeof(IObservable<>).MakeGenericType(genericTypeParameter.UnderlyingSystemType);
-            var method = typeof(GraphTypeAdapter)
-                .GetMethod(nameof(CreateSubscriptionFunc), BindingFlags.NonPublic | BindingFlags.Instance)
-                .MakeGenericMethod(typedObservable);
-            var args = new object[1] { method.Invoke(this, new object[1] { fieldInfo }) };
-            return (IEventStreamResolver)Activator.CreateInstance(resolverType, args);
-        }
-
-        private Func<ResolveEventStreamContext, T> CreateSubscriptionFunc<T>(GraphFieldInfo fieldInfo) 
-        {
-            return new Func<ResolveEventStreamContext, T>(ctx => 
-            {
-                return (T)ctx.Source.GetPropertyValue(fieldInfo.Name);
-            });
         }
 
         private Type GetType(GraphTypeInfo typeInfo) => DeriveType(typeInfo).GetType();

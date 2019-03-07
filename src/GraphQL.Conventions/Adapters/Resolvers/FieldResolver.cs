@@ -11,16 +11,16 @@ using GraphQL.Types;
 
 namespace GraphQL.Conventions.Adapters
 {
-    class FieldResolver : IFieldResolver
+    internal class FieldResolver : IFieldResolver
     {
-        private static readonly ExecutionFilterAttributeHandler ExecutionFilterHandler =
+        protected static readonly ExecutionFilterAttributeHandler ExecutionFilterHandler =
             new ExecutionFilterAttributeHandler();
 
         private static readonly IWrapper Wrapper = new ValueWrapper();
 
-        private static readonly IUnwrapper Unwrapper = new ValueUnwrapper();
+        protected static readonly IUnwrapper Unwrapper = new ValueUnwrapper();
 
-        private readonly GraphFieldInfo _fieldInfo;
+        protected readonly GraphFieldInfo _fieldInfo;
 
         public FieldResolver(GraphFieldInfo fieldInfo)
         {
