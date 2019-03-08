@@ -9,7 +9,7 @@ using GraphQL.Validation.Complexity;
 
 namespace GraphQL.Conventions
 {
-    public class GraphQLExecutor : IGraphQLExecutor<ExecutionResult>, IDocumentExecuter
+    public class GraphQLExecutor : IGraphQLExecutor<ExecutionResult>
     {
         private readonly GraphQLEngine _engine;
 
@@ -148,44 +148,5 @@ namespace GraphQL.Conventions
                 .ConfigureAwait(false);
 
         public IValidationResult Validate() => _engine.Validate(_queryString);
-
-        async Task<ExecutionResult> IDocumentExecuter.ExecuteAsync(ISchema schema, object root, string query, string operationName, Inputs inputs, object userContext, CancellationToken cancellationToken, IEnumerable<IValidationRule> rules)
-        {
-            return await _engine.Execute(
-                root,
-                query,
-                operationName,
-                inputs,
-                _userContext,
-                _dependencyInjector,
-                _complexityConfiguration,
-                _enableValidation,
-                _enableProfiling,
-                rules,
-                cancellationToken,
-                _documentExecutionListeners);
-        }
-
-        async Task<ExecutionResult> IDocumentExecuter.ExecuteAsync(ExecutionOptions options)
-        {
-            return await _engine.Execute(
-                options.Root,
-                options.Query,
-                options.OperationName,
-                options.Inputs,
-                _userContext,
-                _dependencyInjector,
-                _complexityConfiguration,
-                _enableValidation,
-                _enableProfiling,
-                options.ValidationRules,
-                options.CancellationToken,
-                _documentExecutionListeners);
-        }
-
-        Task<ExecutionResult> IDocumentExecuter.ExecuteAsync(Action<ExecutionOptions> configure)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
