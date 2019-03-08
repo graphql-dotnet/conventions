@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace GraphQL.Conventions
 {
-    public class DocumentExecutor : IDocumentExecuter
+    public class DocumentExecuter : IDocumentExecuter
     {
         private readonly GraphQLEngine _engine;
         private readonly IDependencyInjector _dependencyInjector;
 
-        public DocumentExecutor(GraphQLEngine engine, IDependencyInjector dependencyInjector)
+        public DocumentExecuter(GraphQLEngine engine, IDependencyInjector dependencyInjector)
         {
             _engine = engine;
             _dependencyInjector = dependencyInjector;
