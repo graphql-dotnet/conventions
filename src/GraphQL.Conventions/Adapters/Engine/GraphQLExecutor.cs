@@ -1,13 +1,15 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Execution;
+using GraphQL.Types;
 using GraphQL.Validation;
 using GraphQL.Validation.Complexity;
 
 namespace GraphQL.Conventions
 {
-    public class GraphQLExecutor : IGraphQLExecutor<ExecutionResult>
+    public class GraphQLExecutor : IGraphQLExecutor<ExecutionResult>, IDocumentExecuter
     {
         private readonly GraphQLEngine _engine;
 
@@ -37,7 +39,7 @@ namespace GraphQL.Conventions
 
         private IEnumerable<IDocumentExecutionListener> _documentExecutionListeners;
 
-        internal GraphQLExecutor(GraphQLEngine engine, IRequestDeserializer requestDeserializer)
+        public GraphQLExecutor(GraphQLEngine engine, IRequestDeserializer requestDeserializer)
         {
             _engine = engine;
             _requestDeserializer = requestDeserializer;
@@ -146,5 +148,44 @@ namespace GraphQL.Conventions
                 .ConfigureAwait(false);
 
         public IValidationResult Validate() => _engine.Validate(_queryString);
+
+        async Task<ExecutionResult> IDocumentExecuter.ExecuteAsync(ISchema schema, object root, string query, string operationName, Inputs inputs, object userContext, CancellationToken cancellationToken, IEnumerable<IValidationRule> rules)
+        {
+            return await _engine.Execute(
+                root,
+                query,
+                operationName,
+                inputs,
+                _userContext,
+                _dependencyInjector,
+                _complexityConfiguration,
+                _enableValidation,
+                _enableProfiling,
+                rules,
+                cancellationToken,
+                _documentExecutionListeners);
+        }
+
+        async Task<ExecutionResult> IDocumentExecuter.ExecuteAsync(ExecutionOptions options)
+        {
+            return await _engine.Execute(
+                options.Root,
+                options.Query,
+                options.OperationName,
+                options.Inputs,
+                _userContext,
+                _dependencyInjector,
+                _complexityConfiguration,
+                _enableValidation,
+                _enableProfiling,
+                options.ValidationRules,
+                options.CancellationToken,
+                _documentExecutionListeners);
+        }
+
+        Task<ExecutionResult> IDocumentExecuter.ExecuteAsync(Action<ExecutionOptions> configure)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
