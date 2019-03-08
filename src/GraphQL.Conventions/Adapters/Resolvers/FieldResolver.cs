@@ -11,7 +11,7 @@ using GraphQL.Types;
 
 namespace GraphQL.Conventions.Adapters
 {
-    internal class FieldResolver : IFieldResolver
+    internal class FieldResolver : IFieldResolver<object>
     {
         protected static readonly ExecutionFilterAttributeHandler ExecutionFilterHandler =
             new ExecutionFilterAttributeHandler();
@@ -28,6 +28,11 @@ namespace GraphQL.Conventions.Adapters
         }
 
         public object Resolve(ResolveFieldContext context)
+        {
+            return Resolve(new ResolveFieldContext<object>(context));
+        }
+
+        public object Resolve(ResolveFieldContext<object> context)
         {
             Func<IResolutionContext, object> resolver;
             if (_fieldInfo.IsMethod)
