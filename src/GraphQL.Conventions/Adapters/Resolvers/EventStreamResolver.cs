@@ -1,6 +1,7 @@
 ﻿using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Resolvers;
 using GraphQL.Subscription;
+using GraphQL.Types;
 using System;
 using System.Threading.Tasks;
 
@@ -20,6 +21,11 @@ namespace GraphQL.Conventions.Adapters.Resolvers
                 result = (result as Task<object>).Result;
             }
             return (IObservable<object>)result;
+        }
+
+        public override object Resolve(ResolveFieldContext context)
+        {
+            return context.Source;
         }
     }
 }

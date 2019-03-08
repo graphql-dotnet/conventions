@@ -27,7 +27,7 @@ namespace GraphQL.Conventions.Adapters
             _fieldInfo = fieldInfo;
         }
 
-        public object Resolve(ResolveFieldContext context)
+        public virtual object Resolve(ResolveFieldContext context)
         {
             return Resolve(new ResolveFieldContext<object>(context));
         }
@@ -67,8 +67,8 @@ namespace GraphQL.Conventions.Adapters
             {
                 arguments = new[] { source }.Concat(arguments);
             }
-
-            return methodInfo?.Invoke(source, arguments.ToArray());
+            var result = methodInfo?.Invoke(source, arguments.ToArray());
+            return result;
         }
 
         private object GetSource(GraphFieldInfo fieldInfo, IResolutionContext context)

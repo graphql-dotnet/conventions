@@ -81,6 +81,7 @@ namespace GraphQL.Conventions.Adapters
         {
             if (fieldInfo.Type.IsObservable)
             {
+                var resolver = new Resolvers.EventStreamResolver(fieldInfo);
                 return new EventStreamFieldType
                 {
                     Name = fieldInfo.Name,
@@ -89,8 +90,8 @@ namespace GraphQL.Conventions.Adapters
                     DefaultValue = fieldInfo.DefaultValue,
                     Type = GetType(fieldInfo.Type),
                     Arguments = new QueryArguments(fieldInfo.Arguments.Where(arg => !arg.IsInjected).Select(DeriveArgument)),
-                    Resolver = FieldResolverFactory(fieldInfo),
-                    Subscriber = new Resolvers.EventStreamResolver(fieldInfo)
+                    Resolver = resolver,
+                    Subscriber = resolver
                 };
             }
             return new FieldType
@@ -123,30 +124,43 @@ namespace GraphQL.Conventions.Adapters
             {
                 case TypeNames.Integer:
                     return typeof(IntGraphType);
+
                 case TypeNames.Float:
                     return typeof(FloatGraphType);
+
                 case TypeNames.String:
                     return typeof(StringGraphType);
+
                 case TypeNames.Boolean:
                     return typeof(BooleanGraphType);
+
                 case TypeNames.Date:
                     return typeof(DateGraphType);
+
                 case TypeNames.DateTime:
                     return typeof(DateTimeGraphType);
+
                 case TypeNames.DateTimeOffset:
                     return typeof(DateTimeOffsetGraphType);
+
                 case TypeNames.Id:
                     return typeof(Types.IdGraphType);
+
                 case TypeNames.Cursor:
                     return typeof(Types.Relay.CursorGraphType);
+
                 case TypeNames.TimeSpan:
                     return typeof(Types.TimeSpanGraphType);
+
                 case TypeNames.Url:
                     return typeof(Types.UrlGraphType);
+
                 case TypeNames.Uri:
                     return typeof(Types.UriGraphType);
+
                 case TypeNames.Guid:
                     return typeof(Types.GuidGraphType);
+
                 default:
                     Type type;
                     if (!string.IsNullOrWhiteSpace(typeInfo.Name) &&
