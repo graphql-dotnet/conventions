@@ -1,15 +1,10 @@
-﻿using GraphQL.Conventions;
-using GraphQL.Conventions.Tests;
+﻿using System;
+using System.Threading.Tasks;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Tests.Adapters.Engine
+namespace GraphQL.Conventions.Tests.Adapters.Engine
 {
     public class ExposingExceptionsTests : TestBase
     {
@@ -45,7 +40,7 @@ namespace Tests.Adapters.Engine
 
             result.ExposeExceptions.ShouldBeTrue($"{nameof(result.ExposeExceptions)} should be enabled when {nameof(GraphQLEngine.WithExposedExceptions)} is called.");
             JObject.FromObject(result)["errors"].First.Value<string>("message")
-                .Contains("at Tests.Adapters.Engine.ExposingExceptionsTests.Query.QueryData() in")
+                .Contains("at GraphQL.Conventions.Tests.Adapters.Engine.ExposingExceptionsTests.Query.QueryData() in")
                 .ShouldBeTrue($"There should be stack trace in error messages when {nameof(result.ExposeExceptions)} is enabled.");
         }
         

@@ -193,6 +193,12 @@ namespace GraphQL.Conventions
             return this;
         }
 
+        public GraphQLEngine WithQueryExtensions(System.Type typeExtensions)
+        {
+            _typeResolver.AddExtensions(typeExtensions);
+            return this;
+        }
+
         public GraphQLEngine PrintFieldDescriptions(bool include = true)
         {
             _includeFieldDescriptions = include;
