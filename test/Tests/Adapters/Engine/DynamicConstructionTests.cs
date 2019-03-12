@@ -53,7 +53,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             }
             ");
 
-            var executer = new DocumentExecuter();
+            var executer = new GraphQL.DocumentExecuter();
             var result = await executer.ExecuteAsync(new ExecutionOptions
             {
                 Schema = schema,
