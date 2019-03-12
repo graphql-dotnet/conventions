@@ -2,6 +2,8 @@ using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Types;
+using System;
+using System.Linq;
 using Extended = GraphQL.Conventions.Adapters.Types;
 
 namespace GraphQL.Conventions.Tests.Adapters
@@ -132,6 +134,14 @@ namespace GraphQL.Conventions.Tests.Adapters
             Assert.IsTrue(type.IsTypeOf(new Foo()));
         }
 
+        [Test]
+        public void Can_Derive_Observables()
+        {
+            var type = OutputType<FooSub>();
+            type.ShouldHaveFields(1);
+            type.Fields.ToList()[0].ShouldBeOfType<EventStreamFieldType>();
+        }
+
         class OutputTypeWithNoFields
         {
         }
@@ -200,5 +210,9 @@ namespace GraphQL.Conventions.Tests.Adapters
             public new string C => string.Empty;
         }
 
+        class FooSub
+        {
+            public IObservable<Foo> Foos { get; }
+        }
     }
 }
