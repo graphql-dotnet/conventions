@@ -79,7 +79,7 @@ namespace GraphQL.Conventions.Types.Utilities
                 long intValue;
                 if (long.TryParse(parts.Groups[2].Value, out intValue))
                 {
-                    return Tuple.Create(parts.Groups[1].Value.ToString(), (long?)intValue);
+                    return Tuple.Create(parts.Groups[1].Value, (long?)intValue);
                 }
             }
             return Tuple.Create(unencodedIdentifier, (long?)null);
