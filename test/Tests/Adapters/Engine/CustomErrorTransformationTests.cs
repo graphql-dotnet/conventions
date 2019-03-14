@@ -2,11 +2,8 @@
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using GraphQL;
-using GraphQL.Conventions;
 using GraphQL.Conventions.Adapters.Engine.ErrorTransformations;
 using GraphQL.Conventions.Execution;
-using GraphQL.Conventions.Tests;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 
