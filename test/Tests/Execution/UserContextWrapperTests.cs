@@ -2,9 +2,7 @@
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using GraphQL.Conventions;
 using GraphQL.Conventions.Execution;
-using GraphQL.Conventions.Tests;
 using GraphQL.Conventions.Tests.Templates;
 
 namespace GraphQL.Conventions.Tests.Execution
