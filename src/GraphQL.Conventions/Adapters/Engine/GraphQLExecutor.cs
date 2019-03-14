@@ -133,8 +133,8 @@ namespace GraphQL.Conventions
             return this.EnableProfiling(false);
         }
 
-        public async Task<ExecutionResult> Execute() =>
-            await _engine
+        public Task<ExecutionResult> Execute() =>
+            _engine
                 .Execute(
                     _rootObject, _queryString, _operationName, _inputs, _userContext, _dependencyInjector,
                     enableValidation: _enableValidation,
@@ -142,8 +142,7 @@ namespace GraphQL.Conventions
                     rules: _validationRules,
                     complexityConfiguration: _complexityConfiguration,
                     cancellationToken: _cancellationToken,
-                    listeners: _documentExecutionListeners)
-                .ConfigureAwait(false);
+                    listeners: _documentExecutionListeners);
 
         public IValidationResult Validate() => _engine.Validate(_queryString);
     }
