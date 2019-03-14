@@ -22,8 +22,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
                 var obj = Activator.CreateInstance(typeInfo.GetTypeRepresentation().AsType());
                 foreach (var field in typeInfo.Fields.Where(field => !field.IsIgnored))
                 {
-                    object fieldValue;
-                    if (!input.TryGetValue(field.Name, out fieldValue))
+                    if (!input.TryGetValue(field.Name, out var fieldValue))
                     {
                         if (!field.Type.IsNullable && field.DefaultValue == null)
                         {

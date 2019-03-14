@@ -134,9 +134,8 @@ namespace GraphQL.Conventions.Adapters
                 case TypeNames.Guid:
                     return typeof(Types.GuidGraphType);
                 default:
-                    Type type;
                     if (!string.IsNullOrWhiteSpace(typeInfo.Name) &&
-                        _registeredScalarTypes.TryGetValue(typeInfo.Name, out type))
+                        _registeredScalarTypes.TryGetValue(typeInfo.Name, out var type))
                     {
                         return type;
                     }

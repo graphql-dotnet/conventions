@@ -31,8 +31,7 @@ namespace GraphQL.Conventions.Types.Descriptors
 
         public T GetAttribute<T>(string key, T defaultValue = default(T))
         {
-            object value;
-            if (_attributes.TryGetValue(key, out value))
+            if (_attributes.TryGetValue(key, out var value))
             {
                 return value is T ? (T)value : defaultValue;
             }

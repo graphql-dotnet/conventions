@@ -49,8 +49,7 @@ namespace GraphQL.Conventions.Types.Resolution
 
         public virtual TypeRegistration LookupType(TypeInfo typeInfo)
         {
-            TypeRegistration registration;
-            if (_typeMap.TryGetValue(typeInfo.AsType(), out registration))
+            if (_typeMap.TryGetValue(typeInfo.AsType(), out var registration))
             {
                 return registration;
             }

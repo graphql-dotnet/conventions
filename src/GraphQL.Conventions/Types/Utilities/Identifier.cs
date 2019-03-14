@@ -47,9 +47,7 @@ namespace GraphQL.Conventions.Types.Utilities
                     {
                         var value1 = unencodedIdentifier1.Substring(colon1 + 1);
                         var value2 = unencodedIdentifier2.Substring(colon2 + 1);
-                        long intValue1;
-                        long intValue2;
-                        if (long.TryParse(value1, out intValue1) && long.TryParse(value2, out intValue2))
+                        if (long.TryParse(value1, out var intValue1) && long.TryParse(value2, out var intValue2))
                         {
                             return Math.Sign(intValue1 - intValue2);
                         }
@@ -76,8 +74,7 @@ namespace GraphQL.Conventions.Types.Utilities
             var parts = _regex.Match(unencodedIdentifier);
             if (parts.Success && parts.Groups.Count == 3)
             {
-                long intValue;
-                if (long.TryParse(parts.Groups[2].Value, out intValue))
+                if (long.TryParse(parts.Groups[2].Value, out var intValue))
                 {
                     return Tuple.Create(parts.Groups[1].Value.ToString(), (long?)intValue);
                 }

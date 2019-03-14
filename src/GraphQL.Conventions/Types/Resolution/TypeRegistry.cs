@@ -15,8 +15,7 @@ namespace GraphQL.Conventions
 
         public static void Add<TInterface>(params Type[] implementationTypes)
         {
-            List<Type> typeList;
-            if (!_registry.TryGetValue(typeof(TInterface), out typeList))
+            if (!_registry.TryGetValue(typeof(TInterface), out var typeList))
             {
                 typeList = _registry[typeof(TInterface)] = new List<Type>();
             }
@@ -30,8 +29,7 @@ namespace GraphQL.Conventions
                 yield return assemblyType;
             }
 
-            List<Type> typeList;
-            if (_registry.TryGetValue(@type.AsType(), out typeList))
+            if (_registry.TryGetValue(@type.AsType(), out var typeList))
             {
                 foreach (var registryType in typeList)
                 {

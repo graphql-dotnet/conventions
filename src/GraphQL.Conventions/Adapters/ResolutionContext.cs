@@ -23,9 +23,8 @@ namespace GraphQL.Conventions.Adapters
         {
             lock (_lock)
             {
-                object value;
                 if (FieldContext.Arguments != null &&
-                    FieldContext.Arguments.TryGetValue(name, out value))
+                    FieldContext.Arguments.TryGetValue(name, out var value))
                 {
                     return value;
                 }

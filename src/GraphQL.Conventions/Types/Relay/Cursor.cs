@@ -59,14 +59,12 @@ namespace GraphQL.Conventions.Relay
 
         public int? IntegerForCursor<TType>()
         {
-            int intVal;
-            return int.TryParse(CursorForType(typeof(TType)), out intVal) ? intVal : (int?)null;
+            return int.TryParse(CursorForType(typeof(TType)), out var intVal) ? intVal : (int?)null;
         }
 
         public long? LongForCursor<TType>()
         {
-            long intVal;
-            return long.TryParse(CursorForType(typeof(TType)), out intVal) ? intVal : (long?)null;
+            return long.TryParse(CursorForType(typeof(TType)), out var intVal) ? intVal : (long?)null;
         }
 
         public static Cursor New(Type type, string index, bool? serializeUsingColon = null) =>

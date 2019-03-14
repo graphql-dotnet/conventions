@@ -21,10 +21,9 @@ namespace GraphQL.Conventions
 
         public TValue GetOrAddEntity(TKey key, Func<TValue> valueGenerator)
         {
-            TValue value;
             lock (_lock)
             {
-                if (!_cache.TryGetValue(key, out value))
+                if (!_cache.TryGetValue(key, out var value))
                 {
                     value = _cache[key] = valueGenerator();
                 }
@@ -34,10 +33,9 @@ namespace GraphQL.Conventions
 
         public TValue GetEntity(TKey key)
         {
-            TValue value;
             lock (_lock)
             {
-                return _cache.TryGetValue(key, out value) ? value : default(TValue);
+                return _cache.TryGetValue(key, out var value) ? value : default(TValue);
             }
         }
 

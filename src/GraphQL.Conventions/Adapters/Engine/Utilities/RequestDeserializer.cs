@@ -21,10 +21,7 @@ namespace GraphQL.Conventions
                 throw new ArgumentException($"Unable to deserialize JSON '{requestBody}'.");
             }
 
-            object data;
-            object queryString;
-
-            if (!request.TryGetValue("query", out queryString) && request.TryGetValue("data", out data))
+            if (!request.TryGetValue("query", out var queryString) && request.TryGetValue("data", out var data))
             {
                 request = data as Dictionary<string, object>;
             }
@@ -34,14 +31,12 @@ namespace GraphQL.Conventions
                 query.QueryString = queryString as string ?? string.Empty;
             }
 
-            object operationName;
-            if (request.TryGetValue("operationName", out operationName))
+            if (request.TryGetValue("operationName", out var operationName))
             {
                 query.OperationName = operationName as string;
             }
 
-            object variables;
-            if (request.TryGetValue("variables", out variables))
+            if (request.TryGetValue("variables", out var variables))
             {
                 var variablesString = variables as string;
                 if (!string.IsNullOrWhiteSpace(variablesString))
