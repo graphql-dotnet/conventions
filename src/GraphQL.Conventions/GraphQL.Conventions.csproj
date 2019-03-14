@@ -10,7 +10,7 @@
     <PackageId>GraphQL.Conventions</PackageId>
     <PackageTags>GraphQL;json;api</PackageTags>
     <PackageProjectUrl>https://github.com/graphql-dotnet/conventions</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/graphql-dotnet/conventions/master/src/GraphQL.Conventions/LICENSE.md</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/graphql-dotnet/conventions</RepositoryUrl>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.5' ">$(PackageTargetFallback);dnxcore50;portable-net45+win8</PackageTargetFallback>
@@ -41,7 +41,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="GraphQL" Version="2.4.0" />
   </ItemGroup>
-  
+
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
   </PropertyGroup>
