@@ -16,8 +16,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
 
         public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value)
         {
-            var input = value as Dictionary<string, object>;
-            if (typeInfo.IsInputType && input != null)
+            if (typeInfo.IsInputType && value is Dictionary<string, object> input)
             {
                 var obj = Activator.CreateInstance(typeInfo.GetTypeRepresentation().AsType());
                 foreach (var field in typeInfo.Fields.Where(field => !field.IsIgnored))
@@ -31,8 +30,8 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
                         }
                         fieldValue = field.DefaultValue;
                     }
-                    var propertyInfo = field.AttributeProvider as PropertyInfo;
-                    if (propertyInfo == null)
+
+                    if (!(field.AttributeProvider is PropertyInfo propertyInfo))
                     {
                         throw new Exception($"Invalid field '{field.Name}' on input object; must be a property.");
                     }

@@ -13,9 +13,7 @@ namespace GraphQL.Conventions.Relay
             var output = await next(context).ConfigureAwait(false);
             var input = Unwrap(context.GetArgument("input"));
 
-            var inputObj = input as IRelayMutationInputObject;
-            var outputObj = output as IRelayMutationOutputObject;
-            if (inputObj != null && outputObj != null)
+            if (input is IRelayMutationInputObject inputObj && output is IRelayMutationOutputObject outputObj)
             {
                 outputObj.ClientMutationId = inputObj.ClientMutationId;
             }

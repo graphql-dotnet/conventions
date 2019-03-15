@@ -271,20 +271,17 @@ namespace GraphQL.Conventions.Types.Resolution
         {
             var field = new GraphFieldInfo(_typeResolver, memberInfo);
 
-            var propertyInfo = memberInfo as PropertyInfo;
-            if (propertyInfo != null)
+            if (memberInfo is PropertyInfo propertyInfo)
             {
                 field.Type = GetType(propertyInfo.PropertyType.GetTypeInfo());
             }
 
-            var fieldInfo = memberInfo as FieldInfo;
-            if (fieldInfo != null)
+            if (memberInfo is FieldInfo fieldInfo)
             {
                 field.Type = GetType(fieldInfo.FieldType.GetTypeInfo());
             }
 
-            var methodInfo = memberInfo as MethodInfo;
-            if (methodInfo != null)
+            if (memberInfo is MethodInfo methodInfo)
             {
                 field.Type = GetType(methodInfo.ReturnType.GetTypeInfo());
                 field.Arguments.AddRange(GetArguments(methodInfo));

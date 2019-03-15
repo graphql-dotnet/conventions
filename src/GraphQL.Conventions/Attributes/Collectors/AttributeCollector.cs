@@ -109,8 +109,7 @@ namespace GraphQL.Conventions.Attributes.Collectors
 
         private static IEnumerable<WrappedAttribute> GetAttributes(ICustomAttributeProvider obj)
         {
-            var memberInfo = obj as MemberInfo;
-            if (memberInfo != null)
+            if (obj is MemberInfo memberInfo)
             {
                 var attributes = memberInfo.GetCustomAttributes(true).OfType<TAttribute>();
                 return FlattenAttributeCollection(attributes);

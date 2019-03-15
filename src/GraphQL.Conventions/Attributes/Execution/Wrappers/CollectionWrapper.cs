@@ -17,8 +17,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
         {
             if (typeInfo.IsListType)
             {
-                var input = value as IEnumerable;
-                if (input == null)
+                if (!(value is IEnumerable input))
                 {
                     return null;
                 }
