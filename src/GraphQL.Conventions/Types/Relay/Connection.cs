@@ -26,6 +26,6 @@ namespace GraphQL.Conventions.Relay
             "`cursor` field on the edge to enable efficient pagination, this shortcut cannot be used, and " +
             "the full `{ edges { node } }` version should be used instead.")]
         public IEnumerable<T> Items => Edges?
-            .Select(edge => edge != null ? edge.Node : default(T));
+            .Select(edge => edge != null ? edge.Node : default);
     }
 }
