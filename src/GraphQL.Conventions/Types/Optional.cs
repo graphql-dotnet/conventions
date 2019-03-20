@@ -30,6 +30,11 @@ namespace GraphQL.Conventions
 
         static Optional()
         {
+            ValidateType();
+        }
+
+        public static void ValidateType()
+        { 
             var typeInfo = typeof(T).GetTypeInfo();
             if ((typeInfo.IsValueType && !typeInfo.IsGenericType(typeof(Nullable<>))) || typeInfo.IsGenericType(typeof(NonNull<>)))
             {
@@ -37,7 +42,7 @@ namespace GraphQL.Conventions
                     string.Format("Cannot instantiate with non-nullable type: {0}",
                         typeof(T)));
             }
-        }
+        }        
     }
 
     public static class Optional
