@@ -22,15 +22,15 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
             NextWrapper = unwrapper;
             return NextWrapper;
         }
-        public object Wrap(GraphEntityInfo entity, GraphTypeInfo type, object value)
+        public object Wrap(GraphEntityInfo entity, GraphTypeInfo type, object value, bool isSpecified)
         {
-            value = WrapValue(entity, type, value);
+            value = WrapValue(entity, type, value, isSpecified);
             return NextWrapper != null
-                ? NextWrapper.Wrap(entity, type, value)
+                ? NextWrapper.Wrap(entity, type, value, isSpecified)
                 : value;
         }
 
-        public abstract object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value);
+        public abstract object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value, bool isSpecified);
 
         protected string GetEntityDescription(GraphEntityInfo entity)
         {

@@ -14,7 +14,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
         {
         }
 
-        public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value)
+        public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value, bool isSpecified)
         {
             var input = value as Dictionary<string, object>;
             if (typeInfo.IsInputType && input != null)
@@ -23,12 +23,14 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
                 foreach (var field in typeInfo.Fields.Where(field => !field.IsIgnored))
                 {
                     object fieldValue;
+                    isSpecified = true;
                     if (!input.TryGetValue(field.Name, out fieldValue))
                     {
                         if (!field.Type.IsNullable && field.DefaultValue == null)
                         {
                             throw new Exception($"Value for non-nullable field '{field.Name}' not provided.");
                         }
+                        isSpecified = false;
                         fieldValue = field.DefaultValue;
                     }
                     var propertyInfo = field.AttributeProvider as PropertyInfo;
@@ -36,7 +38,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
                     {
                         throw new Exception($"Invalid field '{field.Name}' on input object; must be a property.");
                     }
-                    propertyInfo.SetValue(obj, _parent.Wrap(field, field.Type, fieldValue));
+                    propertyInfo.SetValue(obj, _parent.Wrap(field, field.Type, fieldValue, isSpecified));
                 }
                 return obj;
             }

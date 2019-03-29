@@ -8,10 +8,11 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
         {
             this.Next(new ObjectWrapper(this))
                 .Next(new CollectionWrapper(this))
+                .Next(new OptionalWrapper())
                 .Next(new NonNullWrapper())
                 .Next(new PrimitiveWrapper());
         }
 
-        public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value) => value;
+        public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value, bool isSpecified) => value;
     }
 }
