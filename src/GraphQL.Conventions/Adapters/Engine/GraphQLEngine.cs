@@ -23,37 +23,37 @@ namespace GraphQL.Conventions
 {
     public class GraphQLEngine
     {
-        readonly ITypeResolver _typeResolver = new TypeResolver();
+        private readonly ITypeResolver _typeResolver = new TypeResolver();
 
-        readonly GraphTypeAdapter _graphTypeAdapter = new GraphTypeAdapter();
+        private readonly GraphTypeAdapter _graphTypeAdapter = new GraphTypeAdapter();
 
-        readonly SchemaConstructor<ISchema, IGraphType> _constructor;
+        private readonly SchemaConstructor<ISchema, IGraphType> _constructor;
 
-        readonly DocumentExecuter _documentExecutor = new DocumentExecuter();
+        private readonly IDocumentExecuter _documentExecutor = new GraphQL.DocumentExecuter();
 
-        readonly IDocumentBuilder _documentBuilder = new GraphQLDocumentBuilder();
+        private readonly IDocumentBuilder _documentBuilder = new GraphQLDocumentBuilder();
 
-        readonly DocumentValidator _documentValidator = new DocumentValidator();
+        private readonly DocumentValidator _documentValidator = new DocumentValidator();
 
-        readonly DocumentWriter _documentWriter = new DocumentWriter();
+        private readonly DocumentWriter _documentWriter = new DocumentWriter();
 
-        SchemaPrinter _schemaPrinter;
+        private SchemaPrinter _schemaPrinter;
 
-        ISchema _schema;
+        private ISchema _schema;
 
-        List<System.Type> _schemaTypes = new List<System.Type>();
+        private List<System.Type> _schemaTypes = new List<System.Type>();
 
-        List<System.Type> _middleware = new List<System.Type>();
+        private List<System.Type> _middleware = new List<System.Type>();
 
-        IErrorTransformation _errorTransformation = new DefaultErrorTransformation();
+        private IErrorTransformation _errorTransformation = new DefaultErrorTransformation();
 
-        bool _includeFieldDescriptions;
+        private bool _includeFieldDescriptions;
 
-        bool _includeFieldDeprecationReasons;
+        private bool _includeFieldDeprecationReasons;
 
-        bool _exposeExceptions;
+        private bool _exposeExceptions;
 
-        class NoopValidationRule : IValidationRule
+        private class NoopValidationRule : IValidationRule
         {
             public INodeVisitor Validate(ValidationContext context)
             {
@@ -61,9 +61,9 @@ namespace GraphQL.Conventions
             }
         }
 
-        class WrappedDependencyInjector : IDependencyInjector
+        private class WrappedDependencyInjector : IDependencyInjector
         {
-            readonly Func<System.Type, object> _typeResolutionDelegate;
+            private readonly Func<System.Type, object> _typeResolutionDelegate;
 
             public WrappedDependencyInjector(Func<System.Type, object> typeResolutionDelegate)
             {
@@ -111,9 +111,11 @@ namespace GraphQL.Conventions
                 default:
                     _graphTypeAdapter.FieldResolverFactory = (FieldInfo) => new FieldResolver(FieldInfo);
                     break;
+
                 case FieldResolutionStrategy.WrappedAsynchronous:
                     _graphTypeAdapter.FieldResolverFactory = (FieldInfo) => new WrappedAsyncFieldResolver(FieldInfo);
                     break;
+
                 case FieldResolutionStrategy.WrappedSynchronous:
                     _graphTypeAdapter.FieldResolverFactory = (FieldInfo) => new WrappedSyncFieldResolver(FieldInfo);
                     break;
@@ -326,7 +328,7 @@ namespace GraphQL.Conventions
             return _documentValidator.Validate(queryString, _schema, document);
         }
 
-        object CreateInstance(System.Type type)
+        private object CreateInstance(System.Type type)
         {
             var typeInfo = type.GetTypeInfo();
             if (!typeInfo.IsAbstract && !typeInfo.ContainsGenericParameters)

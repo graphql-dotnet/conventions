@@ -11,7 +11,7 @@ namespace GraphQL.Conventions.Adapters
     {
         private static object _lock = new object();
 
-        public ResolutionContext(GraphFieldInfo fieldInfo, ResolveFieldContext fieldContext)
+        public ResolutionContext(GraphFieldInfo fieldInfo, ResolveFieldContext<object> fieldContext)
         {
             FieldContext = fieldContext;
             FieldInfo = fieldInfo;
@@ -67,6 +67,6 @@ namespace GraphQL.Conventions.Adapters
 
         public IEnumerable<string> Path => FieldContext.Path;
 
-        public ResolveFieldContext FieldContext { get; private set; }
+        public ResolveFieldContext<object> FieldContext { get; private set; }
     }
 }

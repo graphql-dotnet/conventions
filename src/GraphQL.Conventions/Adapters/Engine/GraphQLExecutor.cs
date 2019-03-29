@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Execution;
+using GraphQL.Types;
 using GraphQL.Validation;
 using GraphQL.Validation.Complexity;
 
@@ -37,7 +39,7 @@ namespace GraphQL.Conventions
 
         private IEnumerable<IDocumentExecutionListener> _documentExecutionListeners;
 
-        internal GraphQLExecutor(GraphQLEngine engine, IRequestDeserializer requestDeserializer)
+        public GraphQLExecutor(GraphQLEngine engine, IRequestDeserializer requestDeserializer)
         {
             _engine = engine;
             _requestDeserializer = requestDeserializer;

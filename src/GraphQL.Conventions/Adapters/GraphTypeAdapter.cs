@@ -10,9 +10,9 @@ namespace GraphQL.Conventions.Adapters
 {
     public class GraphTypeAdapter : IGraphTypeAdapter<ISchema, IGraphType>
     {
-        readonly CachedRegistry<Type, IGraphType> _typeDescriptors = new CachedRegistry<Type, IGraphType>();
+        private readonly CachedRegistry<Type, IGraphType> _typeDescriptors = new CachedRegistry<Type, IGraphType>();
 
-        readonly Dictionary<string, Type> _registeredScalarTypes = new Dictionary<string, Type>();
+        private readonly Dictionary<string, Type> _registeredScalarTypes = new Dictionary<string, Type>();
 
         public Func<GraphFieldInfo, IFieldResolver> FieldResolverFactory { get; set; } = (fieldInfo) => new FieldResolver(fieldInfo);
 
@@ -79,6 +79,21 @@ namespace GraphQL.Conventions.Adapters
 
         private FieldType DeriveField(GraphFieldInfo fieldInfo)
         {
+            if (fieldInfo.Type.IsObservable)
+            {
+                var resolver = new Resolvers.EventStreamResolver(fieldInfo);
+                return new EventStreamFieldType
+                {
+                    Name = fieldInfo.Name,
+                    Description = fieldInfo.Description,
+                    DeprecationReason = fieldInfo.DeprecationReason,
+                    DefaultValue = fieldInfo.DefaultValue,
+                    Type = GetType(fieldInfo.Type),
+                    Arguments = new QueryArguments(fieldInfo.Arguments.Where(arg => !arg.IsInjected).Select(DeriveArgument)),
+                    Resolver = resolver,
+                    Subscriber = resolver
+                };
+            }
             return new FieldType
             {
                 Name = fieldInfo.Name,
@@ -109,30 +124,43 @@ namespace GraphQL.Conventions.Adapters
             {
                 case TypeNames.Integer:
                     return typeof(IntGraphType);
+
                 case TypeNames.Float:
                     return typeof(FloatGraphType);
+
                 case TypeNames.String:
                     return typeof(StringGraphType);
+
                 case TypeNames.Boolean:
                     return typeof(BooleanGraphType);
+
                 case TypeNames.Date:
                     return typeof(DateGraphType);
+
                 case TypeNames.DateTime:
                     return typeof(DateTimeGraphType);
+
                 case TypeNames.DateTimeOffset:
                     return typeof(DateTimeOffsetGraphType);
+
                 case TypeNames.Id:
                     return typeof(Types.IdGraphType);
+
                 case TypeNames.Cursor:
                     return typeof(Types.Relay.CursorGraphType);
+
                 case TypeNames.TimeSpan:
                     return typeof(Types.TimeSpanGraphType);
+
                 case TypeNames.Url:
                     return typeof(Types.UrlGraphType);
+
                 case TypeNames.Uri:
                     return typeof(Types.UriGraphType);
+
                 case TypeNames.Guid:
                     return typeof(Types.GuidGraphType);
+
                 default:
                     Type type;
                     if (!string.IsNullOrWhiteSpace(typeInfo.Name) &&

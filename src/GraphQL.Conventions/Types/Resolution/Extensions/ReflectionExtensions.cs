@@ -80,7 +80,8 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
 
         public static TypeInfo GetTypeRepresentation(this TypeInfo typeInfo)
         {
-            if (typeInfo.IsGenericType(typeof(Task<>)))
+            if (typeInfo.IsGenericType(typeof(Task<>)) ||
+                typeInfo.IsGenericType(typeof(IObservable<>)))
             {
                 typeInfo = typeInfo.TypeParameter();
             }
@@ -109,7 +110,7 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
                 .GetTypeInfo()
                 .GetMethod("ConvertToArray", BindingFlags.Static | BindingFlags.Public);
             var genericMethod = convertMethod.MakeGenericMethod(elementType);
-            return genericMethod.Invoke(null, new object[] {list});
+            return genericMethod.Invoke(null, new object[] { list });
         }
 
         public static bool IsExtensionMethod(this MethodInfo methodInfo)

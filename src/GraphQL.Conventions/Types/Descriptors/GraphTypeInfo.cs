@@ -46,6 +46,8 @@ namespace GraphQL.Conventions.Types.Descriptors
 
         public bool IsArrayType { get; set; }
 
+        public bool IsObservable { get; set; }
+
         public List<GraphTypeInfo> Interfaces => _interfaces;
 
         public List<GraphTypeInfo> PossibleTypes => _possibleTypes;
@@ -91,6 +93,12 @@ namespace GraphQL.Conventions.Types.Descriptors
         private void DeriveMetaData()
         {
             var type = TypeRepresentation;
+
+            if (type.IsGenericType(typeof(IObservable<>))) 
+            {
+                IsObservable = true;
+                type = type.TypeParameter();
+            }
 
             if (type.IsGenericType(typeof(Task<>)))
             {

@@ -11,23 +11,28 @@ using GraphQL.Types;
 
 namespace GraphQL.Conventions.Adapters
 {
-    class FieldResolver : IFieldResolver
+    internal class FieldResolver : IFieldResolver<object>
     {
-        private static readonly ExecutionFilterAttributeHandler ExecutionFilterHandler =
+        protected static readonly ExecutionFilterAttributeHandler ExecutionFilterHandler =
             new ExecutionFilterAttributeHandler();
 
         private static readonly IWrapper Wrapper = new ValueWrapper();
 
-        private static readonly IUnwrapper Unwrapper = new ValueUnwrapper();
+        protected static readonly IUnwrapper Unwrapper = new ValueUnwrapper();
 
-        private readonly GraphFieldInfo _fieldInfo;
+        protected readonly GraphFieldInfo _fieldInfo;
 
         public FieldResolver(GraphFieldInfo fieldInfo)
         {
             _fieldInfo = fieldInfo;
         }
 
-        public object Resolve(ResolveFieldContext context)
+        public virtual object Resolve(ResolveFieldContext context)
+        {
+            return Resolve(new ResolveFieldContext<object>(context));
+        }
+
+        public object Resolve(ResolveFieldContext<object> context)
         {
             Func<IResolutionContext, object> resolver;
             if (_fieldInfo.IsMethod)
@@ -62,8 +67,8 @@ namespace GraphQL.Conventions.Adapters
             {
                 arguments = new[] { source }.Concat(arguments);
             }
-
-            return methodInfo?.Invoke(source, arguments.ToArray());
+            var result = methodInfo?.Invoke(source, arguments.ToArray());
+            return result;
         }
 
         private object GetSource(GraphFieldInfo fieldInfo, IResolutionContext context)
