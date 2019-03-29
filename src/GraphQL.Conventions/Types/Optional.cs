@@ -42,7 +42,7 @@ namespace GraphQL.Conventions
                     string.Format("Cannot instantiate with non-nullable type: {0}",
                         typeof(T)));
             }
-        }        
+        }
     }
 
     public static class Optional
