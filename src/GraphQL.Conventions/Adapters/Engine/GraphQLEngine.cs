@@ -29,7 +29,7 @@ namespace GraphQL.Conventions
 
         private readonly SchemaConstructor<ISchema, IGraphType> _constructor;
 
-        private readonly IDocumentExecuter _documentExecutor = new GraphQL.DocumentExecuter();
+        private readonly IDocumentExecuter _documentExecutor;
 
         private readonly IDocumentBuilder _documentBuilder = new GraphQLDocumentBuilder();
 
@@ -76,8 +76,9 @@ namespace GraphQL.Conventions
             }
         }
 
-        public GraphQLEngine(Func<System.Type, object> typeResolutionDelegate = null, ITypeResolver typeResolver = null)
+        public GraphQLEngine(Func<System.Type, object> typeResolutionDelegate = null, ITypeResolver typeResolver = null, IDocumentExecuter documentExecuter = null)
         {
+            _documentExecutor = documentExecuter ?? new GraphQL.DocumentExecuter();
             _typeResolver = typeResolver ?? _typeResolver;
             _constructor = new SchemaConstructor<ISchema, IGraphType>(_graphTypeAdapter, _typeResolver);
             _constructor.TypeResolutionDelegate = typeResolutionDelegate != null
