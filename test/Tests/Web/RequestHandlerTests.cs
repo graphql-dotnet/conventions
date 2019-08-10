@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using GraphQL.Conventions.Extensions;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Web;
@@ -67,8 +66,7 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithProfiling()
                 .Generate()
                 .ProcessRequest(request, null, null);
-            response.EnrichWithProfilingInformation();
-            response.Body.ShouldContain("\"extensions\":{\"profile\":");
+            response.Body.ShouldContain("\"extensions\":{\"tracing\":");
         }
 
         [Test]

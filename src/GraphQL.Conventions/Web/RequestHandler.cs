@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using GraphQL.Instrumentation;
 using GraphQL.Validation.Complexity;
 using GraphQL.Conventions.Types.Resolution;
+using Type = System.Type;
 
 namespace GraphQL.Conventions.Web
 {
@@ -238,6 +240,8 @@ namespace GraphQL.Conventions.Web
 
             public async Task<Response> ProcessRequest(Request request, IUserContext userContext, IDependencyInjector dependencyInjector = null)
             {
+                var start = DateTime.UtcNow;
+
                 var result = await _engine
                     .NewExecutor()
                     .WithQueryString(request.QueryString)
@@ -250,6 +254,11 @@ namespace GraphQL.Conventions.Web
                     .EnableProfiling(_useProfiling)
                     .Execute()
                     .ConfigureAwait(false);
+
+                if (_useProfiling)
+                {
+                  result.EnrichWithApolloTracing(start);
+                }
 
                 var response = new Response(request, result);
                 var errors = result?.Errors?.Where(e => !string.IsNullOrWhiteSpace(e?.Message));
