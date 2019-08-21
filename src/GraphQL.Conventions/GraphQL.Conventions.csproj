@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>GraphQL Conventions for .NET</Description>
-    <VersionPrefix>2.1.0</VersionPrefix>
+    <VersionPrefix>2.1.1</VersionPrefix>
     <Authors>Tommy Lillehagen</Authors>
     <TargetFrameworks>netstandard1.6.1;net45</TargetFrameworks>
     <DebugType>portable</DebugType>
