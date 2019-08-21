@@ -6,6 +6,8 @@ namespace GraphQL.Conventions.Types.Descriptors
 
         public const string Float = "Float";
 
+        public const string Decimal = "Decimal";
+
         public const string String = "String";
 
         public const string Boolean = "Boolean";
