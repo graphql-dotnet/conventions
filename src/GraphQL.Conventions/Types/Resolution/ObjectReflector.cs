@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using GraphQL.Conventions.Handlers;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
@@ -76,6 +77,11 @@ namespace GraphQL.Conventions.Types.Resolution
 
         public GraphTypeInfo GetType(TypeInfo typeInfo, bool isInjected = false)
         {
+            if (typeInfo.IsGenericType(typeof(Task<>)))
+            {
+                typeInfo = typeInfo.TypeParameter();
+            }
+
             var type = _typeCache.GetEntity(typeInfo);
             if (type != null)
             {

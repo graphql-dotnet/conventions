@@ -1,6 +1,9 @@
 ﻿using GraphQL;
+using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Tests;
 using GraphQL.Conventions.Tests.Templates.Extensions;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Tests.Execution
 {
@@ -13,7 +16,8 @@ namespace Tests.Execution
             schema.ShouldHaveQueries(1);
             schema.ShouldHaveMutations(0);
             schema.Query.ShouldHaveFieldWithName("test");
-            var res = schema.Execute((e) => e.Query = "query { test }");
+            var result = schema.Execute((e) => e.Query = "query { test }");
+            ResultHelpers.AssertNoErrorsInResult(result);
         }
 
         class SchemaTypeWithDecimal
