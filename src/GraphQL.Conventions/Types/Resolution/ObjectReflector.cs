@@ -169,12 +169,19 @@ namespace GraphQL.Conventions.Types.Resolution
             var interfaces = nativeInterfaces
                 .Where(t => IsValidType(t.GetTypeInfo()))
                 .Select(iface => GetType(iface.GetTypeInfo()))
-                .Where(iface => iface.IsInterfaceType && !iface.IsIgnored);
+                .Where(iface => IsValidInterface(iface));
 
             foreach (var iface in interfaces)
             {
                 type.AddInterface(iface);
             }
+        }
+
+        private  bool IsValidInterface(GraphTypeInfo iface)
+        {
+            return iface.IsInterfaceType 
+                && !iface.IsIgnored
+                && (IgnoreTypeCallback == null || !IgnoreTypeCallback(iface.GetType(), null));
         }
 
         private void DeriveFields(GraphTypeInfo type)
