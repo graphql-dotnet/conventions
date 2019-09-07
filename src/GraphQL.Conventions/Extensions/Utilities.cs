@@ -1,5 +1,6 @@
-using GraphQL.Conventions;
-using GraphQL.Conventions.Web;
+using System;
+using System.Linq;
+using System.Reflection;
 
 namespace GraphQL.Conventions.Extensions
 {
@@ -22,5 +23,12 @@ namespace GraphQL.Conventions.Extensions
 
         public static bool IsIdentifierForType<T>(this NonNull<string> id) =>
             id.Value.IsIdentifierForType<T>();
+
+        public static bool IsCastableTo<T>(this Type self) =>
+            self.IsCastableTo(typeof(T));
+
+        public static bool IsCastableTo(this Type self, params Type[] types) =>
+            types.Any(t => (t == self || t.IsAssignableFrom(self)));
+
     }
 }

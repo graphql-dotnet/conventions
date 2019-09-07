@@ -31,6 +31,8 @@ namespace GraphQL.Conventions.Types.Resolution
 
         public HashSet<string> IgnoredNamespaces { get; } = new HashSet<string>() { nameof(System) + "." };
 
+        public Func<Type, MemberInfo, bool> IgnoreTypeCallback { get; set; }
+
         public ObjectReflector(ITypeResolver typeResolver)
         {
             _typeResolver = typeResolver;
@@ -363,7 +365,8 @@ namespace GraphQL.Conventions.Types.Resolution
             return typeInfo.Namespace != nameof(System) &&
                    !IgnoredNamespaces.Any(n => typeInfo.Namespace?.StartsWith(n) ?? false) &&
                    !typeInfo.ContainsGenericParameters &&
-                   !typeInfo.IsGenericType;
+                   !typeInfo.IsGenericType &&
+                   (IgnoreTypeCallback == null || !IgnoreTypeCallback(typeInfo.AsType(), null));
         }
 
         private bool IsValidMember(MemberInfo memberInfo)
@@ -374,7 +377,8 @@ namespace GraphQL.Conventions.Types.Resolution
                    !IgnoredNamespaces.Any(n => memberInfo.DeclaringType.Namespace?.StartsWith(n) ?? false) &&
                    !(memberInfo.DeclaringType.GetTypeInfo()?.IsValueType ?? false) &&
                    memberInfo.Name != nameof(object.ToString) &&
-                   HasValidReturnType(memberInfo);
+                   HasValidReturnType(memberInfo) &&
+                   (IgnoreTypeCallback == null || !IgnoreTypeCallback(memberInfo.DeclaringType, memberInfo));
         }
 
         private static bool HasValidReturnType(MemberInfo memberInfo)

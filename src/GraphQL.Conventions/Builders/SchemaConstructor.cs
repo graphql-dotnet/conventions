@@ -147,6 +147,12 @@ namespace GraphQL.Conventions.Builders
             return this;
         }
 
+        public SchemaConstructor<TSchemaType, TGraphType> IgnoreTypes(Func<Type, MemberInfo, bool> ignoreTypeCallback)
+        {
+            _typeResolver.IgnoreTypes(ignoreTypeCallback);
+            return this;
+        }
+
         private class Query { }
 
         private class Mutation { }

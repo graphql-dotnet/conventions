@@ -1,8 +1,11 @@
 using GraphQL.Conventions.Adapters;
 using GraphQL.Conventions.Builders;
+using GraphQL.Conventions.Extensions;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Types;
+using System;
+using System.Reflection;
 
 namespace GraphQL.Conventions.Tests.Builders
 {
@@ -82,6 +85,35 @@ namespace GraphQL.Conventions.Tests.Builders
                 schema.Mutation.ShouldHaveFieldWithName("updateSomething");
                 schema.Mutation.ShouldNotHaveFieldWithName("updateSomethingIgnored");
             }
+        }
+
+        [Test]
+        public void Can_Ignore_Unwanted_Types()
+        {
+            // Ignore specific types from the 'Unwanted' namespace.
+
+            var schema = new SchemaConstructor<ISchema, IGraphType>(new GraphTypeAdapter())
+                    .IgnoreTypes((Type t, MemberInfo m) => {
+                        // Ignore based on the type:
+                        if (t.IsCastableTo<Unwanted.QueryType3>()) { return true; }
+                        // Ignore based on name of the method:
+                        if (m !=null && m.Name== "UpdateSomethingIgnored") { return true; }
+                        return false;
+                    })
+                    .Build(
+                        typeof(SchemaType1),
+                        typeof(SchemaType2),
+                        typeof(Unwanted.SchemaType3)
+                    );
+
+            schema.ShouldHaveQueries(3);
+            schema.ShouldHaveMutations(1);
+            schema.Query.ShouldHaveFieldWithName("foo");
+            schema.Query.ShouldHaveFieldWithName("bar");
+            schema.Query.ShouldHaveFieldWithName("baz");
+            schema.Query.ShouldNotHaveFieldWithName("bazIgnored");
+            schema.Mutation.ShouldHaveFieldWithName("updateSomething");
+            schema.Mutation.ShouldNotHaveFieldWithName("updateSomethingIgnored");
         }
 
         class SchemaType1
