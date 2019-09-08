@@ -95,7 +95,7 @@ namespace GraphQL.Conventions.Tests.Builders
             var schema = new SchemaConstructor<ISchema, IGraphType>(new GraphTypeAdapter())
                     .IgnoreTypes((Type t, MemberInfo m) => {
                         // Ignore based on the type:
-                        if (t.IsCastableTo<Unwanted.QueryType3>()) { return true; }
+                        if (t == typeof(Unwanted.QueryType3)) { return true; }
                         // Ignore based on name of the method:
                         if (m !=null && m.Name== "UpdateSomethingIgnored") { return true; }
                         return false;
