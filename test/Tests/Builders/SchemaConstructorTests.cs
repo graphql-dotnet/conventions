@@ -97,7 +97,7 @@ namespace GraphQL.Conventions.Tests.Builders
                         // Ignore based on the type:
                         if (t == typeof(Unwanted.QueryType3)) { return true; }
                         // Ignore based on name of the method:
-                        if (m !=null && m.Name== "UpdateSomethingIgnored") { return true; }
+                        if (m != null && m.Name == "UpdateSomethingIgnored") { return true; }
                         return false;
                     })
                     .Build(
