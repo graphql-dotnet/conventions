@@ -7,7 +7,14 @@ namespace GraphQL.Conventions.Tests.Templates
 {
     public abstract class ConstructionTestBase : TestBase
     {
-        protected ISchema Schema<TSchema>() => SchemaBuilderHelpers.Schema<TSchema>();
+        protected ISchema Schema<TSchema>()
+        {
+            var typeAdapter = new GraphTypeAdapter();
+            var constructor = new SchemaConstructor<ISchema, IGraphType>(typeAdapter);
+            var schema = constructor.Build(typeof(TSchema));
+            Assert.IsNotNull(schema);
+            return schema;
+        }
 
         protected ISchema Schema<TSchema1, TSchema2>()
         {
