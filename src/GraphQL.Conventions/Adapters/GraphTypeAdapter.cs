@@ -128,6 +128,9 @@ namespace GraphQL.Conventions.Adapters
                 case TypeNames.Float:
                     return typeof(FloatGraphType);
 
+                case TypeNames.Decimal:
+                    return typeof(DecimalGraphType);
+
                 case TypeNames.String:
                     return typeof(StringGraphType);
 
