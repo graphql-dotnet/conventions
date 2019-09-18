@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Conventions.Types.Resolution.Extensions;
@@ -9,12 +10,6 @@ namespace GraphQL.Conventions.Types.Descriptors
 {
     public class GraphTypeInfo : GraphEntityInfo
     {
-        private readonly List<GraphTypeInfo> _interfaces = new List<GraphTypeInfo>();
-
-        private readonly List<GraphTypeInfo> _possibleTypes = new List<GraphTypeInfo>();
-
-        private readonly List<GraphTypeInfo> _unionTypes = new List<GraphTypeInfo>();
-
         public GraphTypeInfo(ITypeResolver typeResolver, TypeInfo type)
             : base(typeResolver, type)
         {
@@ -48,9 +43,9 @@ namespace GraphQL.Conventions.Types.Descriptors
 
         public bool IsObservable { get; set; }
 
-        public List<GraphTypeInfo> Interfaces => _interfaces;
+        public List<GraphTypeInfo> Interfaces { get; } = new List<GraphTypeInfo>();
 
-        public List<GraphTypeInfo> PossibleTypes => _possibleTypes;
+        public List<GraphTypeInfo> PossibleTypes { get; } = new List<GraphTypeInfo>();
 
         public List<GraphTypeInfo> UnionTypes => IsUnionType ? PossibleTypes : new List<GraphTypeInfo>();
 
@@ -58,7 +53,24 @@ namespace GraphQL.Conventions.Types.Descriptors
 
         public TypeInfo TypeRepresentation { get; set; }
 
-        public GraphTypeInfo TypeParameter { get; set; }
+        private Lazy<GraphTypeInfo> derivedTypeParameter;
+
+        internal void EnsureTypeParameterInitialized()
+        {
+            if (derivedTypeParameter == null)
+                return;
+            var _ = derivedTypeParameter.IsValueCreated ? null : derivedTypeParameter.Value;
+        }
+
+        /// <summary>
+        /// The information about type parameter.
+        /// By default it is lazy-initialized with info derived from array/ list items type.
+        /// </summary>
+        public GraphTypeInfo TypeParameter
+        {
+            get => derivedTypeParameter?.Value;
+            set => derivedTypeParameter = new Lazy<GraphTypeInfo>(() => value, isThreadSafe: true);
+        }
 
         public object DefaultValue =>
             TypeRepresentation.IsValueType && !IsNullable && !TypeRepresentation.IsGenericType(typeof(NonNull<>))
@@ -67,7 +79,7 @@ namespace GraphQL.Conventions.Types.Descriptors
 
         public void AddInterface(GraphTypeInfo typeInfo)
         {
-            _interfaces.Add(typeInfo);
+            Interfaces.Add(typeInfo);
             typeInfo.AddPossibleType(this);
 
             if (typeInfo.IsInputType && !typeInfo.IsOutputType)
@@ -79,7 +91,7 @@ namespace GraphQL.Conventions.Types.Descriptors
 
         public void AddPossibleType(GraphTypeInfo typeInfo)
         {
-            _possibleTypes.Add(typeInfo);
+            PossibleTypes.Add(typeInfo);
         }
 
         public void AddUnionType(GraphTypeInfo typeInfo)
@@ -94,7 +106,7 @@ namespace GraphQL.Conventions.Types.Descriptors
         {
             var type = TypeRepresentation;
 
-            if (type.IsGenericType(typeof(IObservable<>))) 
+            if (type.IsGenericType(typeof(IObservable<>)))
             {
                 IsObservable = true;
                 type = type.TypeParameter();
@@ -139,7 +151,7 @@ namespace GraphQL.Conventions.Types.Descriptors
                 IsListType = true;
                 IsArrayType = type.IsArray;
                 IsPrimitive = true;
-                TypeParameter = TypeResolver.DeriveType(type.TypeParameter());
+                derivedTypeParameter = new Lazy<GraphTypeInfo>(() => TypeResolver.DeriveType(type.TypeParameter()), LazyThreadSafetyMode.ExecutionAndPublication);
             }
             else
             {

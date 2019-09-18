@@ -102,6 +102,8 @@ namespace GraphQL.Conventions.Types.Resolution
                 return type;
             }
 
+            type.EnsureTypeParameterInitialized();
+
             var isInjectedType =
                 type.TypeRepresentation.AsType() == typeof(IResolutionContext) ||
                 type.TypeRepresentation.AsType() == typeof(IUserContext);
