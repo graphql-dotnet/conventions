@@ -64,6 +64,7 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
             return type.IsGenericType(typeof(List<>)) ||
                    type.IsGenericType(typeof(IList<>)) ||
                    type.IsGenericType(typeof(IEnumerable<>)) ||
+                   (type.IsGenericType && type.DeclaringType == typeof(Enumerable)) || // Handles internal Iterator implementations for LINQ; for reference https://referencesource.microsoft.com/#system.core/System/Linq/Enumerable.cs
                    type.IsArray;
         }
 
