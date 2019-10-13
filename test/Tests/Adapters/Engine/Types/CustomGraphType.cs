@@ -13,7 +13,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine.Types
 
         public override object Serialize(object value)
         {
-            return $"CUSTOM:{value?.ToString()}";
+            return $"CUSTOM:{value}";
         }
 
         public override object ParseValue(object value)

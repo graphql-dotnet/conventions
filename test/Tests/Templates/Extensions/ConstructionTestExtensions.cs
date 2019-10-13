@@ -148,7 +148,7 @@ namespace GraphQL.Conventions.Tests.Templates.Extensions
         {
             var locationStrings = error.Locations?.Select(loc => $"(Line: {loc.Line}, Column: {loc.Column})");
             var locations = locationStrings != null ? string.Join(", ", locationStrings) : string.Empty;
-            return $"{error.Message}\nLocations: {locations}\n{error.ToString()}";
+            return $"{error.Message}\nLocations: {locations}\n{error}";
         }
     }
 }
