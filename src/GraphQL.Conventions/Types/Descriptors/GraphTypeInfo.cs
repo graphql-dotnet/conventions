@@ -94,15 +94,15 @@ namespace GraphQL.Conventions.Types.Descriptors
         {
             var type = TypeRepresentation;
 
-            if (type.IsGenericType(typeof(IObservable<>))) 
-            {
-                IsObservable = true;
-                type = type.TypeParameter();
-            }
-
             if (type.IsGenericType(typeof(Task<>)))
             {
                 IsTask = true;
+                type = type.TypeParameter();
+            }
+
+            if (type.IsGenericType(typeof(IObservable<>))) 
+            {
+                IsObservable = true;
                 type = type.TypeParameter();
             }
 
