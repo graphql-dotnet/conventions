@@ -80,8 +80,11 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
 
         public static TypeInfo GetTypeRepresentation(this TypeInfo typeInfo)
         {
-            if (typeInfo.IsGenericType(typeof(Task<>)) ||
-                typeInfo.IsGenericType(typeof(IObservable<>)))
+            if (typeInfo.IsGenericType(typeof(Task<>)))
+            {
+                typeInfo = typeInfo.TypeParameter();
+            }
+            if (typeInfo.IsGenericType(typeof(IObservable<>)))
             {
                 typeInfo = typeInfo.TypeParameter();
             }
