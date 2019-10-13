@@ -34,8 +34,7 @@ namespace GraphQL.Conventions.Handlers
                 }
             }
 
-            var fieldInfo = entity as GraphFieldInfo;
-            if (fieldInfo != null)
+            if (entity is GraphFieldInfo fieldInfo)
             {
                 fieldInfo.ExecutionFilters.AddRange(_executionFilterCollector.CollectAttributes(obj));
             }

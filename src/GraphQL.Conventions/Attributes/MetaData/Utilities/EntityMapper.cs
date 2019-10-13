@@ -15,16 +15,13 @@ namespace GraphQL.Conventions.Attributes.MetaData.Utilities
 
         public void MapEntity(GraphEntityInfo entity)
         {
-            var argumentEntity = entity as GraphArgumentInfo;
-            var parameterInfo = entity.AttributeProvider as ParameterInfo;
-            if (argumentEntity != null && parameterInfo != null)
+            if (entity is GraphArgumentInfo argumentEntity && entity.AttributeProvider is ParameterInfo parameterInfo)
             {
                 _mappableTarget.MapArgument(argumentEntity, parameterInfo);
                 return;
             }
 
-            var fieldEntity = entity as GraphFieldInfo;
-            if (fieldEntity != null)
+            if (entity is GraphFieldInfo fieldEntity)
             {
                 var memberInfo = entity.AttributeProvider as MemberInfo;
                 if (memberInfo is PropertyInfo || memberInfo is MethodInfo)
@@ -33,8 +30,7 @@ namespace GraphQL.Conventions.Attributes.MetaData.Utilities
                     return;
                 }
 
-                var fieldInfo = entity.AttributeProvider as FieldInfo;
-                if (fieldInfo != null)
+                if (entity.AttributeProvider is FieldInfo fieldInfo)
                 {
                     if (fieldInfo.IsLiteral)
                     {
@@ -48,9 +44,7 @@ namespace GraphQL.Conventions.Attributes.MetaData.Utilities
                 }
             }
 
-            var typeEntity = entity as GraphTypeInfo;
-            var typeInfo = entity.AttributeProvider as TypeInfo;
-            if (typeEntity != null && typeInfo != null)
+            if (entity is GraphTypeInfo typeEntity && entity.AttributeProvider is TypeInfo typeInfo)
             {
                 _mappableTarget.MapType(typeEntity, typeInfo);
                 return;
