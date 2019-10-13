@@ -6,6 +6,10 @@
     <StartupObject>GraphQL.Conventions.Tests.Program</StartupObject>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="../../src/GraphQL.Conventions/GraphQL.Conventions.csproj" />
   </ItemGroup>
