@@ -218,7 +218,7 @@ namespace GraphQL.Conventions.Adapters
         private TType CreateTypeInstance<TType>(Type type)
         {
             var obj = Activator.CreateInstance(type);
-            return obj is TType ? (TType)obj : default(TType);
+            return obj is TType ? (TType)obj : default;
         }
 
         private IGraphType WrapNonNullableType(GraphTypeInfo typeInfo, IGraphType graphType) =>
@@ -233,7 +233,7 @@ namespace GraphQL.Conventions.Adapters
             var type = CreateTypeInstance<TReturnType>(template.MakeGenericType(typeParameter.AsType()));
             if (type == null)
             {
-                return default(TReturnType);
+                return default;
             }
             type.Name = typeInfo.Name;
             type.Description = typeInfo.Description;
