@@ -32,6 +32,8 @@ namespace GraphQL.Conventions.Types.Resolution
 
         public HashSet<string> IgnoredNamespaces { get; } = new HashSet<string>() { nameof(System) + "." };
 
+        public Func<Type, MemberInfo, bool> IgnoreTypeCallback { get; set; }
+
         public ObjectReflector(ITypeResolver typeResolver)
         {
             _typeResolver = typeResolver;
@@ -106,6 +108,8 @@ namespace GraphQL.Conventions.Types.Resolution
                 return type;
             }
 
+            type.EnsureTypeParameterInitialized();
+
             var isInjectedType =
                 type.TypeRepresentation.AsType() == typeof(IResolutionContext) ||
                 type.TypeRepresentation.AsType() == typeof(IUserContext);
@@ -173,12 +177,19 @@ namespace GraphQL.Conventions.Types.Resolution
             var interfaces = nativeInterfaces
                 .Where(t => IsValidType(t.GetTypeInfo()))
                 .Select(iface => GetType(iface.GetTypeInfo()))
-                .Where(iface => iface.IsInterfaceType && !iface.IsIgnored);
+                .Where(iface => IsValidInterface(iface));
 
             foreach (var iface in interfaces)
             {
                 type.AddInterface(iface);
             }
+        }
+
+        private  bool IsValidInterface(GraphTypeInfo iface)
+        {
+            return iface.IsInterfaceType 
+                && !iface.IsIgnored
+                && (IgnoreTypeCallback == null || !IgnoreTypeCallback(iface.GetType(), null));
         }
 
         private void DeriveFields(GraphTypeInfo type)
@@ -281,20 +292,17 @@ namespace GraphQL.Conventions.Types.Resolution
         {
             var field = new GraphFieldInfo(_typeResolver, memberInfo);
 
-            var propertyInfo = memberInfo as PropertyInfo;
-            if (propertyInfo != null)
+            if (memberInfo is PropertyInfo propertyInfo)
             {
                 field.Type = GetType(propertyInfo.PropertyType.GetTypeInfo());
             }
 
-            var fieldInfo = memberInfo as FieldInfo;
-            if (fieldInfo != null)
+            if (memberInfo is FieldInfo fieldInfo)
             {
                 field.Type = GetType(fieldInfo.FieldType.GetTypeInfo());
             }
 
-            var methodInfo = memberInfo as MethodInfo;
-            if (methodInfo != null)
+            if (memberInfo is MethodInfo methodInfo)
             {
                 field.Type = GetType(methodInfo.ReturnType.GetTypeInfo());
                 field.Arguments.AddRange(GetArguments(methodInfo));
@@ -369,7 +377,8 @@ namespace GraphQL.Conventions.Types.Resolution
             return typeInfo.Namespace != nameof(System) &&
                    !IgnoredNamespaces.Any(n => typeInfo.Namespace?.StartsWith(n) ?? false) &&
                    !typeInfo.ContainsGenericParameters &&
-                   !typeInfo.IsGenericType;
+                   !typeInfo.IsGenericType &&
+                   (IgnoreTypeCallback == null || !IgnoreTypeCallback(typeInfo.AsType(), null));
         }
 
         private bool IsValidMember(MemberInfo memberInfo)
@@ -380,7 +389,8 @@ namespace GraphQL.Conventions.Types.Resolution
                    !IgnoredNamespaces.Any(n => memberInfo.DeclaringType.Namespace?.StartsWith(n) ?? false) &&
                    !(memberInfo.DeclaringType.GetTypeInfo()?.IsValueType ?? false) &&
                    memberInfo.Name != nameof(object.ToString) &&
-                   HasValidReturnType(memberInfo);
+                   HasValidReturnType(memberInfo) &&
+                   (IgnoreTypeCallback == null || !IgnoreTypeCallback(memberInfo.DeclaringType, memberInfo));
         }
 
         private static bool HasValidReturnType(MemberInfo memberInfo)

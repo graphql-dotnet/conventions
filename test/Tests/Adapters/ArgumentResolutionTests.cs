@@ -93,7 +93,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         {
             var id = Id.New<Dependency>("12345");
             var result = await ExecuteQuery(
-                @"{ nullableIdField(idArg: """ + id.ToString() +  @""") }");
+                @"{ nullableIdField(idArg: """ + id +  @""") }");
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("nullableIdField", id.IdentifierForType<Dependency>());
 
@@ -109,7 +109,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         {
             var id = Id.New<Dependency>("12345");
             var result = await ExecuteQuery(
-                @"{ nonNullableIdField(idArg: """ + id.ToString() +  @""") }");
+                @"{ nonNullableIdField(idArg: """ + id +  @""") }");
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("nonNullableIdField", id.IdentifierForType<Dependency>());
 

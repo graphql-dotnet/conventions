@@ -13,7 +13,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine.Types
 
         public override object Serialize(object value)
         {
-            return $"CUSTOM:{value?.ToString()}";
+            return $"CUSTOM:{value}";
         }
 
         public override object ParseValue(object value)
@@ -26,8 +26,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine.Types
 
         public override object ParseLiteral(IValue value)
         {
-            var str = value as StringValue;
-            if (str != null)
+            if (value is StringValue str)
             {
                 return ParseValue(str.Value);
             }

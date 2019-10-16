@@ -29,7 +29,7 @@ namespace GraphQL.Conventions.Types.Descriptors
             set { _attributes[key] = value; }
         }
 
-        public T GetAttribute<T>(string key, T defaultValue = default(T))
+        public T GetAttribute<T>(string key, T defaultValue = default)
         {
             object value;
             if (_attributes.TryGetValue(key, out value))

@@ -1,23 +1,25 @@
 ﻿using GraphQL;
 using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Tests;
+using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace Tests.Execution
 {
-    public class SchemaExecutionTests
+    public class SchemaExecutionTests : ConstructionTestBase
     {
         [Test]
         public void Can_Have_Decimals_In_Schema()
         {
-            var schema = SchemaBuilderHelpers.Schema<SchemaTypeWithDecimal>();
+            var schema = Schema<SchemaTypeWithDecimal>();
             schema.ShouldHaveQueries(1);
             schema.ShouldHaveMutations(0);
             schema.Query.ShouldHaveFieldWithName("test");
             var result = schema.Execute((e) => e.Query = "query { test }");
-            ResultHelpers.AssertNoErrorsInResult(result);
+            Assert.IsNull(JObject
+                .Parse(result)
+                .GetValue("errors"));
         }
 
         class SchemaTypeWithDecimal

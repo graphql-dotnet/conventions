@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>GraphQL Conventions for .NET</Description>
-    <VersionPrefix>2.1.3</VersionPrefix>
+    <VersionPrefix>2.3.0</VersionPrefix>
     <Authors>Tommy Lillehagen</Authors>
     <TargetFrameworks>netstandard1.6.1;net45</TargetFrameworks>
     <DebugType>portable</DebugType>
@@ -10,7 +10,7 @@
     <PackageId>GraphQL.Conventions</PackageId>
     <PackageTags>GraphQL;json;api</PackageTags>
     <PackageProjectUrl>https://github.com/graphql-dotnet/conventions</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/graphql-dotnet/conventions/master/src/GraphQL.Conventions/LICENSE.md</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/graphql-dotnet/conventions</RepositoryUrl>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.5' ">$(PackageTargetFallback);dnxcore50;portable-net45+win8</PackageTargetFallback>
@@ -23,6 +23,10 @@
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6.1' ">
@@ -41,7 +45,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="GraphQL" Version="2.4.0" />
   </ItemGroup>
-  
+
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
   </PropertyGroup>
@@ -50,7 +54,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 
 </Project>

@@ -25,7 +25,7 @@ namespace GraphQL.Conventions
 
         private Inputs _inputs;
 
-        private CancellationToken _cancellationToken = default(CancellationToken);
+        private CancellationToken _cancellationToken = default;
 
         private IDependencyInjector _dependencyInjector;
 

@@ -37,7 +37,7 @@ namespace GraphQL.Conventions
             TValue value;
             lock (_lock)
             {
-                return _cache.TryGetValue(key, out value) ? value : default(TValue);
+                return _cache.TryGetValue(key, out value) ? value : default;
             }
         }
 

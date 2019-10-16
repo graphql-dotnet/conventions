@@ -49,8 +49,7 @@ namespace GraphQL.Conventions
                     variables = ConvertJsonToDictionary(variablesString);
                 }
 
-                var variablesDictionary = variables as Dictionary<string, object>;
-                if (variablesDictionary != null)
+                if (variables is Dictionary<string, object> variablesDictionary)
                 {
                     query.Variables = variablesDictionary;
                 }
@@ -71,8 +70,7 @@ namespace GraphQL.Conventions
 
         private static object GetValue(object value)
         {
-            var objectValue = value as JObject;
-            if (objectValue != null)
+            if (value is JObject objectValue)
             {
                 var output = new Dictionary<string, object>();
                 foreach (var kvp in objectValue)
@@ -82,8 +80,7 @@ namespace GraphQL.Conventions
                 return output;
             }
 
-            var propertyValue = value as JProperty;
-            if (propertyValue != null)
+            if (value is JProperty propertyValue)
             {
                 return new Dictionary<string, object>
                 {
@@ -91,8 +88,7 @@ namespace GraphQL.Conventions
                 };
             }
 
-            var arrayValue = value as JArray;
-            if (arrayValue != null)
+            if (value is JArray arrayValue)
             {
                 return arrayValue.Children().Aggregate(new List<object>(), (list, token) =>
                 {
@@ -101,8 +97,7 @@ namespace GraphQL.Conventions
                 });
             }
 
-            var rawValue = value as JValue;
-            if (rawValue != null)
+            if (value is JValue rawValue)
             {
                 var val = rawValue.Value;
                 if (val is long)

@@ -4,8 +4,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Unwrappers
     {
         public override object UnwrapValue(object value)
         {
-            var result = value as Union;
-            return (result != null)
+            return (value is Union result)
                 ? result.Instance
                 : value;
         }
