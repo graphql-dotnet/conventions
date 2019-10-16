@@ -43,7 +43,7 @@ namespace Tests.Execution
 
         private class BugReproQueryTaskFirst
         {
-            public Task<Broken> AName() => Task.FromResult(new Broken()); // Changes the name of the method to 'Broken' and it will work...
+            public Task<Broken> AName() => Task.FromResult(new Broken());
 
             public Task<Connection<Holder>> Holders() =>
                 Task.FromResult(new Connection<Holder>
@@ -71,7 +71,7 @@ namespace Tests.Execution
 
         private class BugReproQueryTaskSecond
         {
-            public Task<Broken> ZName() => Task.FromResult(new Broken()); // Changes the name of the method to 'Broken' and it will work...
+            public Task<Broken> ZName() => Task.FromResult(new Broken());
 
             public Task<Connection<Holder>> Holders() =>
                 Task.FromResult(new Connection<Holder>
