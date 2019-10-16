@@ -1,15 +1,14 @@
 ﻿using GraphQL;
 using GraphQL.Conventions;
 using GraphQL.Conventions.Tests;
+using GraphQL.Conventions.Tests.Templates;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Tests.Execution
 {
-    public class LinqIteratorUnwrappingTests
+    public class LinqIteratorUnwrappingTests : ConstructionTestBase
     {
         [Test]
         public void Schema_Will_Execute_With_No_Errors_When_A_Type_Is_In_A_Linq_Iterator()
@@ -19,7 +18,7 @@ namespace Tests.Execution
                 testWhereIterator
             }";
 
-            var schema = SchemaBuilderHelpers.Schema<BugReproSchemaTaskFirst>();
+            var schema = Schema<BugReproSchemaTaskFirst>();
             var result = schema.Execute((e) => e.Query = query);
             ResultHelpers.AssertNoErrorsInResult(result);
             string testSelectIterator = (string)JObject.Parse(result)["data"]["testSelectIterator"][0];

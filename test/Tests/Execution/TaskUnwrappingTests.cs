@@ -1,13 +1,13 @@
 ﻿using GraphQL;
 using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Tests;
-using Newtonsoft.Json.Linq;
+using GraphQL.Conventions.Tests.Templates;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Tests.Execution
 {
-    public class TaskUnwrappingTests
+    public class TaskUnwrappingTests : ConstructionTestBase
     {
         [Test]
         public void Schema_Will_Execute_With_No_Errors_When_A_Type_Is_In_A_Task()
@@ -22,11 +22,11 @@ namespace Tests.Execution
                 }
             }";
 
-            var schema = SchemaBuilderHelpers.Schema<BugReproSchemaTaskFirst>();
+            var schema = Schema<BugReproSchemaTaskFirst>();
             var result = schema.Execute((e) => e.Query = query);
             ResultHelpers.AssertNoErrorsInResult(result);
 
-            schema = SchemaBuilderHelpers.Schema<BugReproSchemaTaskSecond>();
+            schema = Schema<BugReproSchemaTaskSecond>();
             result = schema.Execute((e) => e.Query = query);
             ResultHelpers.AssertNoErrorsInResult(result);
         }
