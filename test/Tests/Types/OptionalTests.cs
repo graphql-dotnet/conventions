@@ -1,5 +1,8 @@
 using System;
+using System.Reflection;
 using GraphQL.Conventions.Tests.Templates;
+using GraphQL.Conventions.Types.Resolution;
+using GraphQL.Conventions.Types.Descriptors;
 
 namespace GraphQL.Conventions.Tests.Types
 {
@@ -105,6 +108,43 @@ namespace GraphQL.Conventions.Tests.Types
         public void Can_Define_Url()
         {
             Optional<Url>.ValidateType();
+        }
+
+        [Test]
+        public void Can_Construct_WithNull()
+        {
+            var typeResolver = new TypeResolver();
+            var typeInfo = typeof(Optional<int?>).GetTypeInfo();
+            var graphTypeInfo = new GraphTypeInfo(typeResolver, typeInfo);
+            var optional = (Optional<int?>) Optional.Construct(graphTypeInfo, null, true);
+            Assert.IsNotNull(optional);
+            Assert.IsNull(optional.Value);
+        }
+
+        [Test]
+        public void Can_Construct_WithValueType()
+        {
+            int value = 2;
+            var typeResolver = new TypeResolver();
+            var typeInfo = typeof(Optional<int?>).GetTypeInfo();
+            var graphTypeInfo = new GraphTypeInfo(typeResolver, typeInfo);
+            var optional = (Optional<int?>)Optional.Construct(graphTypeInfo, value, true);
+            Assert.IsNotNull(optional);
+            Assert.IsNotNull(optional.Value);
+            Assert.AreEqual(value, optional.Value);
+        }
+
+        [Test]
+        public void Can_Construct_WithNullable()
+        {
+            int? value = 2;
+            var typeResolver = new TypeResolver();
+            var typeInfo = typeof(Optional<int?>).GetTypeInfo();
+            var graphTypeInfo = new GraphTypeInfo(typeResolver, typeInfo);
+            var optional = (Optional<int?>)Optional.Construct(graphTypeInfo, value, true);
+            Assert.IsNotNull(optional);
+            Assert.IsNotNull(optional.Value);
+            Assert.AreEqual(value, optional.Value);
         }
     }
 }

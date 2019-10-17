@@ -52,6 +52,12 @@ namespace GraphQL.Conventions
             if (typeInfo.IsNullable &&
                 typeInfo.TypeRepresentation.IsGenericType(typeof(Optional<>)))
             {
+                var genericType = typeInfo.TypeRepresentation.GenericTypeArguments[0];
+                if (genericType.GetTypeInfo().IsGenericType(typeof(Nullable<>)) && value != null)
+                {
+                    // make value nullable to satisfy Optional constructor
+                    value = Activator.CreateInstance(genericType, new[] { value });
+                }
                 return Activator.CreateInstance(typeInfo.TypeRepresentation.AsType(), new[] { value, isSpecified });
             }
             else
