@@ -2,7 +2,6 @@
 using GraphQL.Conventions.Tests;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
-using Newtonsoft.Json.Linq;
 
 namespace Tests.Execution
 {
@@ -16,9 +15,7 @@ namespace Tests.Execution
             schema.ShouldHaveMutations(0);
             schema.Query.ShouldHaveFieldWithName("test");
             var result = schema.Execute((e) => e.Query = "query { test }");
-            Assert.IsNull(JObject
-                .Parse(result)
-                .GetValue("errors"));
+            ResultHelpers.AssertNoErrorsInResult(result);
         }
 
         class SchemaTypeWithDecimal
