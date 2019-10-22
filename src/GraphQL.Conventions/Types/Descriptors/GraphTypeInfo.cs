@@ -53,24 +53,7 @@ namespace GraphQL.Conventions.Types.Descriptors
 
         public TypeInfo TypeRepresentation { get; set; }
 
-        private Lazy<GraphTypeInfo> derivedTypeParameter;
-
-        internal void EnsureTypeParameterInitialized()
-        {
-            if (derivedTypeParameter == null)
-                return;
-            var _ = derivedTypeParameter.IsValueCreated ? null : derivedTypeParameter.Value;
-        }
-
-        /// <summary>
-        /// The information about type parameter.
-        /// By default it is lazy-initialized with info derived from array/ list items type.
-        /// </summary>
-        public GraphTypeInfo TypeParameter
-        {
-            get => derivedTypeParameter?.Value;
-            set => derivedTypeParameter = new Lazy<GraphTypeInfo>(() => value, isThreadSafe: true);
-        }
+        public GraphTypeInfo TypeParameter { get; set; }
 
         public object DefaultValue =>
             TypeRepresentation.IsValueType && !IsNullable && !TypeRepresentation.IsGenericType(typeof(NonNull<>))
@@ -151,7 +134,7 @@ namespace GraphQL.Conventions.Types.Descriptors
                 IsListType = true;
                 IsArrayType = type.IsArray;
                 IsPrimitive = true;
-                derivedTypeParameter = new Lazy<GraphTypeInfo>(() => TypeResolver.DeriveType(type.TypeParameter()), LazyThreadSafetyMode.ExecutionAndPublication);
+                TypeParameter = TypeResolver.DeriveType(type.TypeParameter());
             }
             else
             {
