@@ -1,7 +1,10 @@
+using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Execution;
 
 namespace GraphQL.Conventions.Tests.Adapters.Engine
 {
@@ -56,6 +59,24 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
 
             result2.ShouldHaveNoErrors();
             result2.Data.ShouldHaveFieldWithValue("field", "Injector2");
+        }
+
+        [Test]
+        public async Task Executor_Should_Use_UserContext_Injector()
+        {
+            var engine = new GraphQLEngine(documentExecuter: new ScopedDocumentExecuter())
+                .WithQuery<Query>()
+                .BuildSchema();
+
+            var executor1 = engine
+                .NewExecutor()
+                .WithQueryString("{ field }")
+                .WithDependencyInjector(new DependencyInjector("Injector"));
+
+            var result1 = await executor1.Execute();
+
+            result1.ShouldHaveNoErrors();
+            result1.Data.ShouldHaveFieldWithValue("field", "Injector->ChildScope");
         }
 
         [Test]
@@ -150,7 +171,56 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 {
                     return new Dependency();
                 }
+                if (typeInfo.AsType() == typeof(ChildDependencyInjector))
+                {
+                    return new ChildDependencyInjector($"{_value}->ChildScope");
+                }
                 return null;
+            }
+        }
+
+        class ChildDependencyInjector : DependencyInjector
+        {
+            public ChildDependencyInjector(string value) : base(value) { }
+        }
+
+        class ScopedDocumentExecuter : GraphQL.DocumentExecuter
+        {
+            protected override IExecutionStrategy SelectExecutionStrategy(ExecutionContext context)
+            {
+                var injector = GetChildInjector(context.UserContext as IDependencyInjectorAccessor);
+                return new ScopedExecutionStrategy(injector, base.SelectExecutionStrategy(context));
+            }
+
+            private IDependencyInjector GetChildInjector(IDependencyInjectorAccessor dependencyInjectorAccessor)
+                => dependencyInjectorAccessor?.DependencyInjector.Resolve<ChildDependencyInjector>() ?? dependencyInjectorAccessor?.DependencyInjector;
+
+            private class ScopedExecutionStrategy : IExecutionStrategy
+            {
+                private readonly IDependencyInjector _injector;
+                private readonly IExecutionStrategy _innerStrategy;
+
+                public ScopedExecutionStrategy(IDependencyInjector injector, IExecutionStrategy innerStrategy)
+                {
+                    _injector = injector;
+                    _innerStrategy = innerStrategy;
+                }
+
+                public async Task<ExecutionResult> ExecuteAsync(ExecutionContext context)
+                {
+                    var outerUserContextWrapper = context.UserContext;
+                    var userContext = (context.UserContext as IUserContextAccessor)?.UserContext;
+
+                    try
+                    {
+                        context.UserContext = UserContextWrapper.Create(userContext, _injector);
+                        return await _innerStrategy.ExecuteAsync(context);
+                    }
+                    finally
+                    {
+                        context.UserContext = outerUserContextWrapper;
+                    }
+                }
             }
         }
     }
