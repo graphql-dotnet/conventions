@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Attributes.Execution.Unwrappers;
 using GraphQL.Conventions.Attributes.Execution.Wrappers;
@@ -56,6 +57,10 @@ namespace GraphQL.Conventions.Handlers
                     argumentType.ImplementedInterfaces.Any(iface => iface == typeof(IUserContext)))
                 {
                     obj = resolutionContext.UserContext;
+                }
+                else if (argumentType.AsType() == typeof(CancellationToken))
+                {
+                    obj = resolutionContext.CancellationToken;
                 }
                 else
                 {

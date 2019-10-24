@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Handlers;
 using GraphQL.Conventions.Types.Descriptors;
@@ -334,6 +335,11 @@ namespace GraphQL.Conventions.Types.Resolution
                 argument.IsInjected = true;
             }
             else if (parameterType == typeof(IResolutionContext))
+            {
+                argument.Type = GetType(parameterTypeInfo, true);
+                argument.IsInjected = true;
+            }
+            else if (parameterType == typeof(CancellationToken))
             {
                 argument.Type = GetType(parameterTypeInfo, true);
                 argument.IsInjected = true;
