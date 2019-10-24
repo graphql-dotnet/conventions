@@ -242,6 +242,12 @@ namespace GraphQL.Conventions
             return _schemaPrinter.Print();
         }
 
+        public ISchema GetSchema()
+        {
+            BuildSchema(); // Ensure that the schema has been constructed
+            return _schema;
+        }
+
         public GraphQLExecutor NewExecutor(IRequestDeserializer requestDeserializer = null)
         {
             BuildSchema(); // Ensure that the schema has been constructed
