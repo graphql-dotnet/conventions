@@ -1,9 +1,7 @@
-﻿using GraphQL;
-using GraphQL.Conventions.Tests;
-using GraphQL.Conventions.Tests.Templates;
+﻿using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 
-namespace Tests.Execution
+namespace GraphQL.Conventions.Tests.Execution
 {
     public class SchemaExecutionTests : ConstructionTestBase
     {

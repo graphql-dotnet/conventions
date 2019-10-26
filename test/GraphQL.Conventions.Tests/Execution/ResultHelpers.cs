@@ -1,10 +1,6 @@
-﻿using GraphQL.Conventions.Tests;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Newtonsoft.Json.Linq;
 
-namespace Tests.Execution
+namespace GraphQL.Conventions.Tests.Execution
 {
     public static class ResultHelpers
     {

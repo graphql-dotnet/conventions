@@ -4,7 +4,7 @@
     <Description>GraphQL Conventions for .NET</Description>
     <VersionPrefix>2.5.0</VersionPrefix>
     <Authors>Tommy Lillehagen</Authors>
-    <TargetFrameworks>netstandard1.6.1;net45</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard1.6.1</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>GraphQL.Conventions</AssemblyName>
     <PackageId>GraphQL.Conventions</PackageId>
