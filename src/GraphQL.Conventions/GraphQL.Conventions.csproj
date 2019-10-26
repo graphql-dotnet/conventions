@@ -5,6 +5,7 @@
     <VersionPrefix>2.5.0</VersionPrefix>
     <Authors>Tommy Lillehagen</Authors>
     <TargetFrameworks>net45;netstandard1.6.1</TargetFrameworks>
+    <DepsFileGenerationMode>old</DepsFileGenerationMode>
     <DebugType>portable</DebugType>
     <AssemblyName>GraphQL.Conventions</AssemblyName>
     <PackageId>GraphQL.Conventions</PackageId>
