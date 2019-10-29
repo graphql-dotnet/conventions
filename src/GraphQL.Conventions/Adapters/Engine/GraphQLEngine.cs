@@ -261,10 +261,9 @@ namespace GraphQL.Conventions
             return this;
         }
 
-        public string SerializeResult(ExecutionResult result)
-        {
-            return _documentWriter.WriteToStringAsync(result).GetAwaiter().GetResult();
-        }
+        public string SerializeResult(ExecutionResult result) => SerializeResultAsync(result).GetAwaiter().GetResult();
+
+        public Task<string> SerializeResultAsync(ExecutionResult result) => _documentWriter.WriteToStringAsync(result);
 
         internal async Task<ExecutionResult> Execute(
             object rootObject,

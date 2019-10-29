@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GraphQL.Http;
 
 namespace GraphQL.Conventions.Web
@@ -26,33 +28,26 @@ namespace GraphQL.Conventions.Web
             ValidationResult = result;
         }
 
-        public Request Request { get; private set; }
+        public Request Request { get; }
 
         public string QueryId => Request?.QueryId;
 
-        public ExecutionResult ExecutionResult { get; private set; }
+        public ExecutionResult ExecutionResult { get; }
 
-        public Validation.IValidationResult ValidationResult { get; private set; }
+        public Validation.IValidationResult ValidationResult { get; }
 
-        public string Body
+        public string Body => GetBodyAsync().GetAwaiter().GetResult();
+
+        public async Task<string> GetBodyAsync()
         {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(_body) && ExecutionResult != null)
-                {
-                    _body = _writer.WriteToStringAsync(ExecutionResult)
-                        .ConfigureAwait(false)
-                        .GetAwaiter()
-                        .GetResult();
-                }
-                return _body;
-            }
-            internal set
-            {
-                _body = value;
-            }
+            if (string.IsNullOrWhiteSpace(_body) && ExecutionResult != null)
+                _body = await _writer.WriteToStringAsync(ExecutionResult);
+
+            return _body;
         }
 
+        internal void SetBody(string value) => _body = value;
+        
         public void AddExtra(string key, object value)
         {
             if (ExecutionResult.Extensions == null)

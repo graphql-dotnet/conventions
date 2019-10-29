@@ -23,7 +23,7 @@ namespace GraphQL.Conventions.Adapters.Types
             var id = value?.ToString().StripQuotes();
             return NullableId(id);
         }
-        
+
         public override object ParseLiteral(IValue value)
         {
             if (value is StringValue str)

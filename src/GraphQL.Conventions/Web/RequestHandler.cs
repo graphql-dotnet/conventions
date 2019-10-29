@@ -275,7 +275,7 @@ namespace GraphQL.Conventions.Web
                 }
                 result.Errors = new ExecutionErrors();
                 result.Errors.AddRange(response.Errors);
-                response.Body = _engine.SerializeResult(result);
+                response.SetBody(await _engine.SerializeResultAsync(result));
                 return response;
             }
 
