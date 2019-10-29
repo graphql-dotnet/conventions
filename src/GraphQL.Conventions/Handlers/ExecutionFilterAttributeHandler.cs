@@ -11,7 +11,7 @@ using GraphQL.Conventions.Types.Resolution.Extensions;
 
 namespace GraphQL.Conventions.Handlers
 {
-    class ExecutionFilterAttributeHandler
+    public class ExecutionFilterAttributeHandler
     {
         private static readonly IWrapper Wrapper = new ValueWrapper();
 

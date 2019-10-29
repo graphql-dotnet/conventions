@@ -1,11 +1,9 @@
-﻿using GraphQL;
-using GraphQL.Conventions.Relay;
-using GraphQL.Conventions.Tests;
+﻿using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Tests.Templates;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Tests.Execution
+namespace GraphQL.Conventions.Tests.Execution
 {
     public class TaskUnwrappingTests : ConstructionTestBase
     {

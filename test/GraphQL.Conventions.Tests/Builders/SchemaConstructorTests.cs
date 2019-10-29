@@ -1,6 +1,5 @@
 using GraphQL.Conventions.Adapters;
 using GraphQL.Conventions.Builders;
-using GraphQL.Conventions.Extensions;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Types;
