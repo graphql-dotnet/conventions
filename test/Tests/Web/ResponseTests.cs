@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Web;
@@ -23,7 +24,7 @@ namespace GraphQL.Conventions.Tests.Web
         public void Can_Instantiate_Response_Object_From_Validation_Result()
         {
             var request = Request.New("{\"query\":\"{}\"}");
-            var result = new ValidationResult();
+            var result = new ValidationResult(Enumerable.Empty<ValidationError>());
             result.Errors.Add(new ExecutionError("Test"));
             var response = new Response(request, result);
             response.ValidationResult.Errors.Count.ShouldEqual(1);

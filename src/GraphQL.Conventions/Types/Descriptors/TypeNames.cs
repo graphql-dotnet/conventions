@@ -12,7 +12,7 @@ namespace GraphQL.Conventions.Types.Descriptors
 
         public const string Boolean = "Boolean";
 
-        public const string Id = "ID";
+        public const string Identity = "Identity";
 
         public const string Cursor = "Cursor";
 

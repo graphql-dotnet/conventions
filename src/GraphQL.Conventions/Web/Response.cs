@@ -6,7 +6,7 @@ namespace GraphQL.Conventions.Web
 {
     public class Response
     {
-        private static DocumentWriter _writer = new DocumentWriter();
+        private static readonly DocumentWriter _writer = new DocumentWriter();
 
         private string _body;
 
@@ -40,7 +40,10 @@ namespace GraphQL.Conventions.Web
             {
                 if (string.IsNullOrWhiteSpace(_body) && ExecutionResult != null)
                 {
-                    _body = _writer.Write(ExecutionResult);
+                    _body = _writer.WriteToStringAsync(ExecutionResult)
+                        .ConfigureAwait(false)
+                        .GetAwaiter()
+                        .GetResult();
                 }
                 return _body;
             }

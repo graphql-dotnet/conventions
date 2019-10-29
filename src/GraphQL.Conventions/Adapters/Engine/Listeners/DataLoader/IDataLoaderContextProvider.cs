@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace GraphQL.Conventions
 {
-    public interface IDataLoaderContextProvider
+    public interface IDataLoaderContextProvider : IUserContext
     {
         Task FetchData(CancellationToken token);
     }

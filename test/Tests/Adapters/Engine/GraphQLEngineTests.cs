@@ -31,6 +31,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 floatField2: Float!
                 fooField1: Foo
                 fooField2: Foo!
+                guidField1: GUID
+                guidField2: GUID!
                 intField1: Int
                 intField2: Int!
                 stringField1: String
@@ -41,7 +43,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 urlField2: URL!
             }
             type Foo {
-                id: ID!
+                id: Identity!
             }
             ");
         }
@@ -157,7 +159,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             type QueryWithInterfaces {
                 field: TypeFromTwoInterfaces
             }
-            type TypeFromTwoInterfaces implements Interface1, Interface2 {
+            type TypeFromTwoInterfaces implements Interface1 & Interface2 {
                 field1: String
                 field2: String
             }
@@ -260,6 +262,10 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             public Url UrlField1 { get; }
 
             public NonNull<Url> UrlField2 { get; }
+
+            public Guid? GuidField1 { get; }
+
+            public Guid GuidField2 { get; }
         }
 
         class Foo

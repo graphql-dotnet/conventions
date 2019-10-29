@@ -99,7 +99,7 @@ namespace Tests.Execution
 
         private class Holder
         {
-            public async Task<IEnumerable<ICommonInterface>> InterfaceConnection() => new[] { new Broken() };
+            public async Task<IEnumerable<ICommonInterface>> InterfaceConnection() => await Task.FromResult(new[] { new Broken() });
         }
 
         private interface ICommonInterface

@@ -35,7 +35,7 @@ namespace GraphQL.Conventions.Adapters
                 .SelectMany(t => t.PossibleTypes)
                 .GroupBy(t => t.Name)
                 .Select(g => g.First());
-            var schema = new Schema(new FuncDependencyResolver(DeriveTypeFromTypeInfo))
+            var schema = new Schema(new FuncServiceProvider(DeriveTypeFromTypeInfo))
             {
                 Query = DeriveOperationType(schemaInfo.Query),
                 Mutation = DeriveOperationType(schemaInfo.Mutation),
@@ -146,7 +146,7 @@ namespace GraphQL.Conventions.Adapters
                 case TypeNames.DateTimeOffset:
                     return typeof(DateTimeOffsetGraphType);
 
-                case TypeNames.Id:
+                case TypeNames.Identity:
                     return typeof(Types.IdGraphType);
 
                 case TypeNames.Cursor:

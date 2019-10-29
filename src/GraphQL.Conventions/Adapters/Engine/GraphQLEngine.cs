@@ -263,7 +263,7 @@ namespace GraphQL.Conventions
 
         public string SerializeResult(ExecutionResult result)
         {
-            return _documentWriter.Write(result);
+            return _documentWriter.WriteToStringAsync(result).GetAwaiter().GetResult();
         }
 
         internal async Task<ExecutionResult> Execute(
@@ -284,6 +284,7 @@ namespace GraphQL.Conventions
             {
                 rules = new[] { new NoopValidationRule() };
             }
+
             var configuration = new ExecutionOptions
             {
                 Schema = _schema,
@@ -291,7 +292,11 @@ namespace GraphQL.Conventions
                 Query = query,
                 OperationName = operationName,
                 Inputs = inputs,
-                UserContext = UserContextWrapper.Create(userContext, dependencyInjector ?? new WrappedDependencyInjector(_constructor.TypeResolutionDelegate)),
+                UserContext = new Dictionary<string, object>()
+                {
+                    { typeof(IUserContext).FullName, userContext},
+                    { typeof(IDependencyInjector).FullName, dependencyInjector ?? new WrappedDependencyInjector(_constructor.TypeResolutionDelegate)},
+                },
                 ValidationRules = rules != null && rules.Any() ? rules : null,
                 ComplexityConfiguration = complexityConfiguration,
                 CancellationToken = cancellationToken,

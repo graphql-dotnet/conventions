@@ -82,7 +82,7 @@ namespace GraphQL.Conventions.Types.Resolution
             RegisterScalarType<DateTime>(TypeNames.DateTime);
             RegisterScalarType<DateTimeOffset>(TypeNames.DateTimeOffset);
             RegisterScalarType<TimeSpan>(TypeNames.TimeSpan);
-            RegisterScalarType<Id>(TypeNames.Id);
+            RegisterScalarType<Id>(TypeNames.Identity);
             RegisterScalarType<Cursor>(TypeNames.Cursor);
             RegisterScalarType<Url>(TypeNames.Url);
             RegisterScalarType<Uri>(TypeNames.Uri);
