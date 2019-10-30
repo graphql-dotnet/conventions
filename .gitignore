@@ -17,3 +17,9 @@ TestResults/
 packages/
 node_modules/
 nuget/lib
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings
+*.DotSettings.user
