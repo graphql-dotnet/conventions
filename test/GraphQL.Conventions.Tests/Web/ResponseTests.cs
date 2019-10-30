@@ -31,7 +31,7 @@ namespace GraphQL.Conventions.Tests.Web
         }
 
         [Test]
-        public void Can_Instantiate_Response_Object_With_Extra_Data()
+        public async void Can_Instantiate_Response_Object_With_Extra_Data()
         {
             var request = Request.New("{\"query\":\"{}\"}");
             var result = new ExecutionResult
@@ -53,7 +53,9 @@ namespace GraphQL.Conventions.Tests.Web
             var response = new Response(request, result);
             response.HasData.ShouldEqual(true);
             response.HasErrors.ShouldEqual(false);
-            response.Body.ShouldEqual("{\"data\":{},\"extensions\":{\"trace\":{\"foo\":1,\"bar\":{\"baz\":\"hello\"}}}}");
+            
+            var body = await response.GetBodyAsync();
+            body.ShouldEqual("{\"data\":{},\"extensions\":{\"trace\":{\"foo\":1,\"bar\":{\"baz\":\"hello\"}}}}");
         }
     }
 }

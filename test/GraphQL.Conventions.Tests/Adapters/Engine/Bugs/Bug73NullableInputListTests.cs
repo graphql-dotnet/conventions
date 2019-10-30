@@ -16,7 +16,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine.Bugs
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(@"query _ { example(testInputs:null) }")
-                .Execute();
+                .ExecuteAsync();
+
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("example", "null");
         }
@@ -33,7 +34,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine.Bugs
                 {
                     { "inputs", null} ,
                 })
-                .Execute();
+                .ExecuteAsync();
+
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("example", "null");
         }

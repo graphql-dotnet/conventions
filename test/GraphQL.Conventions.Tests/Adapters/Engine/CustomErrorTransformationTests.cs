@@ -18,7 +18,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("query { queryData }")
-                .Execute();
+                .ExecuteAsync();
 
             result.Errors.ShouldNotBeNull();
             result.Errors.Count.ShouldEqual(1);
@@ -36,7 +36,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .WithCustomErrorTransformation(new CustomErrorTransformation())
                 .NewExecutor()
                 .WithQueryString("query { queryData }")
-                .Execute();
+                .ExecuteAsync();
 
             result.Errors.ShouldNotBeNull();
             result.Errors.Count.ShouldEqual(1);

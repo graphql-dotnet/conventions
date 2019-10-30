@@ -16,7 +16,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("query Blah { getObject { field { test } } }")
-                .Execute();
+                .ExecuteAsync();
 
             result.Errors.ShouldNotBeNull();
             result.Errors.Count.ShouldEqual(1);
@@ -36,7 +36,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("{ getObject { field { test } } }")
-                .Execute();
+                .ExecuteAsync();
 
             result.Errors.ShouldNotBeNull();
             result.Errors.Count.ShouldEqual(1);
@@ -56,7 +56,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("{ yo: getObject { foo: field { bar: test } } }")
-                .Execute();
+                .ExecuteAsync();
 
             result.Errors.ShouldNotBeNull();
             result.Errors.Count.ShouldEqual(1);
@@ -76,7 +76,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("query Blah { getObject { arrayField { test } } }")
-                .Execute();
+                .ExecuteAsync();
 
             result.Data.ShouldHaveFieldWithValue("getObject", "arrayField", 0, "test", "some value");
             result.Data.ShouldHaveFieldWithValue("getObject", "arrayField", 1, "test", null);
@@ -112,7 +112,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("query Blah { errorWithData }")
-                .Execute();
+                .ExecuteAsync();
 
             result.Data.ShouldHaveFieldWithValue("errorWithData", null);
 

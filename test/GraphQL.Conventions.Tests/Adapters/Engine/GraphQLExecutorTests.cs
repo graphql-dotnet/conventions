@@ -16,7 +16,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .NewExecutor()
                 .WithQueryString("{ test }")
                 .DisableValidation()
-                .Execute();
+                .ExecuteAsync();
 
             result.Data.ShouldNotBeNull();
             var dict = result.Data as Dictionary<string, object>;
@@ -33,7 +33,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .NewExecutor()
                 .WithQueryString("{ test }")
                 .EnableValidation()
-                .Execute();
+                .ExecuteAsync();
 
             result.Errors.ShouldNotBeNull();
             result.Errors.Count.ShouldEqual(1);

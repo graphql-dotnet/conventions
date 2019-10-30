@@ -35,9 +35,7 @@ namespace GraphQL.Conventions.Web
         public ExecutionResult ExecutionResult { get; }
 
         public Validation.IValidationResult ValidationResult { get; }
-
-        public string Body => GetBodyAsync().GetAwaiter().GetResult();
-
+        
         public async Task<string> GetBodyAsync()
         {
             if (string.IsNullOrWhiteSpace(_body) && ExecutionResult != null)

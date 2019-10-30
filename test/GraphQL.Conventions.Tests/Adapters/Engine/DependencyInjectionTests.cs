@@ -29,7 +29,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .NewExecutor()
                 .WithQueryString("{ field }")
                 .WithDependencyInjector(new DependencyInjector())
-                .Execute();
+                .ExecuteAsync();
 
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("field", "Some Value");
@@ -50,8 +50,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .WithQueryString("{ field }")
                 .WithDependencyInjector(new DependencyInjector("Injector2"));
 
-            var result1 = await executor1.Execute();
-            var result2 = await executor2.Execute();
+            var result1 = await executor1.ExecuteAsync();
+            var result2 = await executor2.ExecuteAsync();
 
             result1.ShouldHaveNoErrors();
             result1.Data.ShouldHaveFieldWithValue("field", "Injector1");
@@ -72,7 +72,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .WithQueryString("{ field }")
                 .WithDependencyInjector(new DependencyInjector("Injector"));
 
-            var result1 = await executor1.Execute();
+            var result1 = await executor1.ExecuteAsync();
 
             result1.ShouldHaveNoErrors();
             result1.Data.ShouldHaveFieldWithValue("field", "Injector->ChildScope");
@@ -101,7 +101,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .NewExecutor()
                 .WithQueryString("{ withDependency }")
                 .WithDependencyInjector(new DependencyInjector())
-                .Execute();
+                .ExecuteAsync();
 
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("withDependency", 3);

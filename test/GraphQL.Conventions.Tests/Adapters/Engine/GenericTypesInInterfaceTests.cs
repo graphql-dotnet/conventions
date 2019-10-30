@@ -32,7 +32,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .NewExecutor()
                 .WithQueryString("{ account { id } }")
                 .EnableValidation()
-                .Execute();
+                .ExecuteAsync();
 
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("account", "id", 123);

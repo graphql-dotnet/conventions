@@ -238,7 +238,7 @@ namespace GraphQL.Conventions.Web
                 }
             }
 
-            public async Task<Response> ProcessRequest(Request request, IUserContext userContext, IDependencyInjector dependencyInjector = null)
+            public async Task<Response> ProcessRequestAsync(Request request, IUserContext userContext, IDependencyInjector dependencyInjector = null)
             {
                 var start = DateTime.UtcNow;
 
@@ -252,7 +252,7 @@ namespace GraphQL.Conventions.Web
                     .WithComplexityConfiguration(_complexityConfiguration)
                     .EnableValidation(_useValidation)
                     .EnableProfiling(_useProfiling)
-                    .Execute()
+                    .ExecuteAsync()
                     .ConfigureAwait(false);
 
                 if (_useProfiling)
@@ -279,26 +279,27 @@ namespace GraphQL.Conventions.Web
                 return response;
             }
 
-            public Response Validate(Request request)
+            public async Task<Response> ValidateAsync(Request request)
             {
-                var result = _engine.Validate(request.QueryString);
+                var result = await _engine.ValidateAsync(request.QueryString);
                 return new Response(request, result);
             }
 
-            public string DescribeSchema(
+            public async Task<string> DescribeSchemaAsync(
                 bool returnJson = false,
                 bool includeFieldDescriptions = false,
                 bool includeFieldDeprecationReasons = true)
             {
                 if (returnJson)
                 {
-                    var result = _engine
+                    var result = await _engine
                         .NewExecutor()
                         .WithQueryString(IntrospectionQuery)
-                        .Execute()
-                        .Result;
-                    return _engine.SerializeResult(result);
+                        .ExecuteAsync();
+
+                    return await _engine.SerializeResultAsync(result);
                 }
+
                 _engine.PrintFieldDescriptions(includeFieldDescriptions);
                 _engine.PrintFieldDeprecationReasons(includeFieldDeprecationReasons);
                 return _engine.Describe();

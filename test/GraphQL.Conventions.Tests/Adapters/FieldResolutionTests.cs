@@ -389,7 +389,8 @@ namespace GraphQL.Conventions.Tests.Adapters
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(query)
-                .Execute();
+                .ExecuteAsync();
+
             return result;
         }
 

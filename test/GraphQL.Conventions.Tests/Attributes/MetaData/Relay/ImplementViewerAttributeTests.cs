@@ -140,7 +140,8 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData.Relay
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(query)
-                .Execute();
+                .ExecuteAsync();
+
             return result;
         }
 

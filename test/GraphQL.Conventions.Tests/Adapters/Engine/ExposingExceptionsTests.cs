@@ -15,7 +15,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             GraphQL.ExecutionResult result = await engine
                 .NewExecutor()
                 .WithQueryString("query { queryData }")
-                .Execute();
+                .ExecuteAsync();
 
             result.ExposeExceptions.ShouldBeFalse("By default exposing exceptions should be disabled.");
 
@@ -36,7 +36,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .WithExposedExceptions()
                 .NewExecutor()
                 .WithQueryString("query { queryData }")
-                .Execute();
+                .ExecuteAsync();
 
             result.ExposeExceptions.ShouldBeTrue($"{nameof(result.ExposeExceptions)} should be enabled when {nameof(GraphQLEngine.WithExposedExceptions)} is called.");
             JObject.FromObject(result)["errors"].First.Value<string>("message")

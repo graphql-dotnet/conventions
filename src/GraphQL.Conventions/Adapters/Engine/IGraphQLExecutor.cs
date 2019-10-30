@@ -39,6 +39,8 @@ namespace GraphQL.Conventions
 
         IGraphQLExecutor<TResult> DisableProfiling();
         
-        Task<TResult> Execute();
+        Task<TResult> ExecuteAsync();
+        
+        Task<IValidationResult> ValidateAsync();
     }
 }

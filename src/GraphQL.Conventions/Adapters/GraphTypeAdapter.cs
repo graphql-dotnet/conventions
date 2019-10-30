@@ -314,9 +314,9 @@ namespace GraphQL.Conventions.Adapters
 
         private static object UnwrapObject(object obj)
         {
-            if (obj is INonNull @null)
+            if (obj is INonNull nonnull)
             {
-                obj = @null.ObjectValue;
+                obj = nonnull.ObjectValue;
             }
             if (obj is Union union)
             {

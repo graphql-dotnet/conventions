@@ -133,9 +133,9 @@ namespace GraphQL.Conventions
             return this.EnableProfiling(false);
         }
 
-        public async Task<ExecutionResult> Execute() =>
+        public async Task<ExecutionResult> ExecuteAsync() =>
             await _engine
-                .Execute(
+                .ExecuteAsync(
                     _rootObject, _queryString, _operationName, _inputs, _userContext, _dependencyInjector,
                     enableValidation: _enableValidation,
                     enableProfiling: _enableProfiling,
@@ -145,6 +145,6 @@ namespace GraphQL.Conventions
                     listeners: _documentExecutionListeners)
                 .ConfigureAwait(false);
 
-        public IValidationResult Validate() => _engine.Validate(_queryString);
+        public async Task<IValidationResult> ValidateAsync() => await _engine.ValidateAsync(_queryString);
     }
 }

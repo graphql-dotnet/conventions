@@ -28,7 +28,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .NewExecutor()
                 .WithQueryString("{ commonField(value: \"1970-01-01T00:00:00Z\") someOtherField }")
                 .EnableValidation()
-                .Execute();
+                .ExecuteAsync();
 
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("commonField", new DateTime(1970, 1, 1));

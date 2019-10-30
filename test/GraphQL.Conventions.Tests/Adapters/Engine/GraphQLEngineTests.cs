@@ -134,7 +134,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                     field4(input: { yetAnotherField: SOME_VALUE1 })
                     field5
                 }")
-                .Execute();
+                .ExecuteAsync();
 
             result.Data.ShouldHaveFieldWithValue("field3", "SOME_VALUE2");
             result.Data.ShouldHaveFieldWithValue("field4", "SOME_VALUE2");
@@ -176,7 +176,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(@"{ customScalarType(arg:""CUSTOM:Test"") }")
-                .Execute();
+                .ExecuteAsync();
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("customScalarType", "CUSTOM:WRAPPED:Test");
         }
@@ -195,7 +195,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                         title
                         releaseDate
                     }")
-                .Execute();
+                .ExecuteAsync();
 
             result.Data.ShouldHaveFieldWithValue("title", "Movie 1");
         }
@@ -218,7 +218,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                             lastName
                         }
                     }")
-                .Execute();
+                .ExecuteAsync();
 
             result.ShouldHaveErrors(1);
             var error = result.Errors.First().InnerException.ToString();
