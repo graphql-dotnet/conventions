@@ -145,6 +145,6 @@ namespace GraphQL.Conventions
                     listeners: _documentExecutionListeners)
                 .ConfigureAwait(false);
 
-        public async Task<IValidationResult> ValidateAsync() => await _engine.ValidateAsync(_queryString);
+        public Task<IValidationResult> ValidateAsync() => _engine.ValidateAsync(_queryString);
     }
 }

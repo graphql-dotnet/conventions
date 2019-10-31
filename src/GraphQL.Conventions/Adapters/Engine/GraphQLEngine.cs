@@ -260,7 +260,7 @@ namespace GraphQL.Conventions
             return this;
         }
 
-        public async Task<string> SerializeResultAsync(ExecutionResult result) => await _documentWriter.WriteToStringAsync(result);
+        public Task<string> SerializeResultAsync(ExecutionResult result) => _documentWriter.WriteToStringAsync(result);
 
         internal async Task<ExecutionResult> ExecuteAsync(
             object rootObject,
@@ -335,7 +335,7 @@ namespace GraphQL.Conventions
             var document = _documentBuilder.Build(queryString);
             var result = _documentValidator.Validate(queryString, _schema, document);
 
-            return await Task.FromResult(result).ConfigureAwait(false);
+            return await Task.FromResult(result);
         }
 
         private object CreateInstance(System.Type type)
