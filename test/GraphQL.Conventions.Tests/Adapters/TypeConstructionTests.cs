@@ -119,12 +119,19 @@ namespace GraphQL.Conventions.Tests.Adapters
             iface2.Name.ShouldEqual("IInterface2");
         }
 
-
         [Test]
-        public void Work_For_Nested_Nodes_Bug190()
+        public void Bug190_Work_For_Nested_Nodes()
         {
             var typeInfo = TypeInfo<NonNull<Bug190Query.Node1>>();
             var _ = Type(typeInfo);
+        }
+
+        [Test]
+        public void Bug190_Discover_Possible_Types_From_Lists()
+        {
+            var schema = GraphQLEngine.New<Bug190Query_2>().GetSchema();
+            var type = schema.FindType(nameof(Bug190Query_2.TestImpl));
+            type.ShouldNotBeNull();
         }
 
         class Bug190Query
@@ -141,6 +148,20 @@ namespace GraphQL.Conventions.Tests.Adapters
             public class Node2 : INode
             {
                 public Id Id => throw new NotImplementedException();
+            }
+        }
+
+        class Bug190Query_2
+        {
+            public ITest[] Field { get; }
+
+            public interface ITest
+            {
+                int Test { get; }
+            }
+            public class TestImpl: ITest
+            {
+                public int Test { get; }
             }
         }
 
