@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Types.Resolution;
@@ -115,6 +117,31 @@ namespace GraphQL.Conventions.Tests.Adapters
             var iface2 = Type<IInterfaceGraphType>(typeResolver.DeriveType<IInterface2>());
             iface2.PossibleTypes.ShouldContain(nameof(TypeImplementingTwoInterfaces));
             iface2.Name.ShouldEqual("IInterface2");
+        }
+
+
+        [Test]
+        public void Work_For_Nested_Nodes_Bug190()
+        {
+            var typeInfo = TypeInfo<NonNull<Bug190Query.Node1>>();
+            var _ = Type(typeInfo);
+        }
+
+        class Bug190Query
+        {
+            public NonNull<Node1> Test() => throw new NotImplementedException();
+
+            public class Node1 : INode
+            {
+                public Id Id => throw new NotImplementedException();
+
+                public Node2[] Test2() => throw new NotImplementedException();
+            }
+
+            public class Node2 : INode
+            {
+                public Id Id => throw new NotImplementedException();
+            }
         }
 
         class OutputType
