@@ -292,24 +292,26 @@ namespace GraphQL.Conventions.Types.Resolution
         private GraphFieldInfo DeriveField(MemberInfo memberInfo)
         {
             var field = new GraphFieldInfo(_typeResolver, memberInfo);
-
-            if (memberInfo is PropertyInfo propertyInfo)
-            {
-                field.Type = GetType(propertyInfo.PropertyType.GetTypeInfo());
-            }
-
-            if (memberInfo is FieldInfo fieldInfo)
-            {
-                field.Type = GetType(fieldInfo.FieldType.GetTypeInfo());
-            }
-
-            if (memberInfo is MethodInfo methodInfo)
-            {
-                field.Type = GetType(methodInfo.ReturnType.GetTypeInfo());
-                field.Arguments.AddRange(GetArguments(methodInfo));
-            }
-
             _metaDataHandler.DeriveMetaData(field, memberInfo);
+
+            if (!field.IsIgnored)
+            {
+                if (memberInfo is PropertyInfo propertyInfo)
+                {
+                    field.Type = GetType(propertyInfo.PropertyType.GetTypeInfo());
+                }
+
+                if (memberInfo is FieldInfo fieldInfo)
+                {
+                    field.Type = GetType(fieldInfo.FieldType.GetTypeInfo());
+                }
+
+                if (memberInfo is MethodInfo methodInfo)
+                {
+                    field.Type = GetType(methodInfo.ReturnType.GetTypeInfo());
+                    field.Arguments.AddRange(GetArguments(methodInfo));
+                }
+            }
             return field;
         }
 
