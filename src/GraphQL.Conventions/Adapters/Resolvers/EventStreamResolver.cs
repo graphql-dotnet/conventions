@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GraphQL.Conventions.Adapters.Resolvers
 {
-    internal class EventStreamResolver : FieldResolver, IEventStreamResolver
+    public class EventStreamResolver : FieldResolver, IEventStreamResolver
     {
         public EventStreamResolver(GraphFieldInfo fieldInfo) : base(fieldInfo)
         {

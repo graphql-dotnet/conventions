@@ -69,4 +69,4 @@ var result = await engine
 
 ## Examples
 
-More detailed examples can be found in the [unit tests](https://github.com/graphql-dotnet/conventions/tree/master/test/Tests).
+More detailed examples can be found in the [unit tests](https://github.com/graphql-dotnet/conventions/tree/master/test/GraphQL.Conventions.Tests).

@@ -92,6 +92,8 @@ namespace GraphQL.Conventions.Types.Resolution
             }
 
             type = _typeCache.AddEntity(typeInfo, new GraphTypeInfo(_typeResolver, typeInfo));
+            type.EnsureTypeParameterInitialized();
+
             if (type.IsPrimitive && !type.IsEnumerationType)
             {
                 return type;
@@ -108,8 +110,6 @@ namespace GraphQL.Conventions.Types.Resolution
                 type.IsIgnored = true;
                 return type;
             }
-
-            type.EnsureTypeParameterInitialized();
 
             var isInjectedType =
                 type.TypeRepresentation.AsType() == typeof(IResolutionContext) ||
@@ -186,9 +186,9 @@ namespace GraphQL.Conventions.Types.Resolution
             }
         }
 
-        private  bool IsValidInterface(GraphTypeInfo iface)
+        private bool IsValidInterface(GraphTypeInfo iface)
         {
-            return iface.IsInterfaceType 
+            return iface.IsInterfaceType
                 && !iface.IsIgnored
                 && (IgnoreTypeCallback == null || !IgnoreTypeCallback(iface.GetType(), null));
         }
