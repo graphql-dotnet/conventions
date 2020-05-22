@@ -29,23 +29,43 @@ namespace GraphQL.Conventions.Adapters
             var interfaces = types
                 .Where(t => t.IsInterfaceType && !t.IsInputType && t.PossibleTypes.Any())
                 .GroupBy(t => t.Name)
-                .Select(g => g.First());
-            var possibleTypes = interfaces
+                .Select(g => g.First());                
+            var myPossibleTypes = interfaces
                 .Where(t => !t.IsIgnored)
                 .SelectMany(t => t.PossibleTypes)
-                .GroupBy(t => t.Name)
-                .Select(g => g.First());
+                .Select(x => OmitNonRootTypes(x))
+                .Where(x => x != null)
+                .ToArray();
             var schema = new Schema(new FuncDependencyResolver(DeriveTypeFromTypeInfo))
             {
                 Query = DeriveOperationType(schemaInfo.Query),
                 Mutation = DeriveOperationType(schemaInfo.Mutation),
                 Subscription = DeriveOperationType(schemaInfo.Subscription),
             };
-            schema.RegisterTypes(possibleTypes
-                .Where(t => !t.IsIgnored && !t.Interfaces.Any(i => i.IsIgnored))
-                .Select(t => DeriveType(t).GetType())
-                .ToArray());
+            // Instead of using Type[] we are now using IGraphType[] for the schema registration
+            schema.RegisterTypes(myPossibleTypes);
             return schema;
+        }
+
+        public IGraphType OmitNonRootTypes(GraphTypeInfo typeInfo)
+        {
+            // Target is to avoid this error in GraphQL.net => GraphTypesLookup.cs
+            //if (type is NonNullGraphType || type is ListGraphType)
+            //{
+            //    throw new ExecutionError("Only add root types.");
+            //}
+            if (typeInfo.IsIgnored == true)
+            {
+                return null;
+            }
+            if (typeInfo.IsNullable == false)
+            {
+                return null;
+            }
+            else
+            {
+                return DeriveType(typeInfo);
+            }
         }
 
         public IGraphType DeriveType(GraphTypeInfo typeInfo)
