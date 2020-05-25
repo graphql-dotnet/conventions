@@ -59,7 +59,7 @@ namespace GraphQL.Conventions.Types.Utilities
                 {
                     var parts1 = GetComponents(unencodedIdentifier1);
                     var parts2 = GetComponents(unencodedIdentifier2);
-                    if (parts1.Item2 != null && parts1.Item2 != null)
+                    if (parts1.Item2 != null && parts2.Item2 != null)
                     {
                         int typeComparison = string.Compare(parts1.Item1, parts2.Item1, StringComparison.Ordinal);
                         return typeComparison == 0

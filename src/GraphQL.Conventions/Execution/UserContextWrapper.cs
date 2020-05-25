@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace GraphQL.Conventions.Execution
 {
-    class UserContextWrapper
+    public class UserContextWrapper : IUserContextAccessor, IDependencyInjectorAccessor
     {
         public static UserContextWrapper Create(IUserContext userContext, IDependencyInjector dependencyInjector)
         {

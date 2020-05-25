@@ -1,12 +1,9 @@
-﻿using GraphQL;
-using GraphQL.Conventions;
-using GraphQL.Conventions.Tests;
-using GraphQL.Conventions.Tests.Templates;
+﻿using GraphQL.Conventions.Tests.Templates;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Tests.Execution
+namespace GraphQL.Conventions.Tests.Execution
 {
     public class LinqIteratorUnwrappingTests : ConstructionTestBase
     {

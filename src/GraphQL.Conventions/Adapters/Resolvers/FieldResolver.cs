@@ -11,7 +11,7 @@ using GraphQL.Types;
 
 namespace GraphQL.Conventions.Adapters
 {
-    internal class FieldResolver : IFieldResolver<object>
+    public class FieldResolver : IFieldResolver<object>
     {
         protected static readonly ExecutionFilterAttributeHandler ExecutionFilterHandler =
             new ExecutionFilterAttributeHandler();

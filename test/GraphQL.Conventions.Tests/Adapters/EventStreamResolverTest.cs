@@ -1,13 +1,11 @@
-﻿using GraphQL.Conventions;
-using GraphQL.Conventions.Adapters.Resolvers;
-using GraphQL.Conventions.Tests;
+﻿using GraphQL.Conventions.Adapters.Resolvers;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Subscription;
 using GraphQL.Types;
 using System;
 using System.Threading.Tasks;
 
-namespace Tests.Adapters
+namespace GraphQL.Conventions.Tests.Adapters
 {
     public class EventStreamResolverTest : TestBase
     {

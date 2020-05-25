@@ -1,11 +1,9 @@
-﻿using GraphQL;
-using GraphQL.Conventions.Relay;
-using GraphQL.Conventions.Tests;
+﻿using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Tests.Templates;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Tests.Execution
+namespace GraphQL.Conventions.Tests.Execution
 {
     public class TaskUnwrappingTests : ConstructionTestBase
     {
@@ -99,7 +97,9 @@ namespace Tests.Execution
 
         private class Holder
         {
+            #pragma warning disable 1998
             public async Task<IEnumerable<ICommonInterface>> InterfaceConnection() => new[] { new Broken() };
+            #pragma warning restore 1998
         }
 
         private interface ICommonInterface

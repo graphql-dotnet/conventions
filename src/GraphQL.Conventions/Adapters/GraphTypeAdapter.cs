@@ -165,9 +165,8 @@ namespace GraphQL.Conventions.Adapters
                     return typeof(Types.GuidGraphType);
 
                 default:
-                    Type type;
                     if (!string.IsNullOrWhiteSpace(typeInfo.Name) &&
-                        _registeredScalarTypes.TryGetValue(typeInfo.Name, out type))
+                        _registeredScalarTypes.TryGetValue(typeInfo.Name, out var type))
                     {
                         return type;
                     }
@@ -218,7 +217,7 @@ namespace GraphQL.Conventions.Adapters
         private TType CreateTypeInstance<TType>(Type type)
         {
             var obj = Activator.CreateInstance(type);
-            return obj is TType ? (TType)obj : default;
+            return obj is TType castType ? castType : default;
         }
 
         private IGraphType WrapNonNullableType(GraphTypeInfo typeInfo, IGraphType graphType) =>
@@ -277,7 +276,7 @@ namespace GraphQL.Conventions.Adapters
             var graphType = ConstructType<UnionGraphType>(typeof(Types.UnionGraphType<>), typeInfo);
             foreach (var possibleType in typeInfo.PossibleTypes.Select(t => DeriveType(t) as IObjectGraphType))
             {
-                graphType.Type(possibleType.GetType());
+                if (possibleType != null) graphType.Type(possibleType.GetType());
             }
             return WrapNonNullableType(typeInfo, graphType);
         }
@@ -307,21 +306,21 @@ namespace GraphQL.Conventions.Adapters
             {
                 var objType = UnwrapObject(obj)?.GetType().GetTypeRepresentation();
                 var typeRepresentation = typeInfo.GetTypeRepresentation();
-                return objType == typeRepresentation || objType.IsSubclassOf(typeRepresentation.UnderlyingSystemType);
+                return objType != null && (Equals(objType, typeRepresentation) || objType.IsSubclassOf(typeRepresentation.UnderlyingSystemType));
             };
             DeriveFields(typeInfo, graphType);
             return WrapNonNullableType(typeInfo, graphType);
         }
 
-        private object UnwrapObject(object obj)
+        private static object UnwrapObject(object obj)
         {
-            if (obj is INonNull)
+            if (obj is INonNull @null)
             {
-                obj = ((INonNull)obj)?.ObjectValue;
+                obj = @null.ObjectValue;
             }
-            if (obj is Union)
+            if (obj is Union union)
             {
-                obj = ((Union)obj).Instance;
+                obj = union.Instance;
             }
             return obj;
         }
