@@ -29,23 +29,43 @@ namespace GraphQL.Conventions.Adapters
             var interfaces = types
                 .Where(t => t.IsInterfaceType && !t.IsInputType && t.PossibleTypes.Any())
                 .GroupBy(t => t.Name)
-                .Select(g => g.First());
-            var possibleTypes = interfaces
+                .Select(g => g.First());                
+            var myPossibleTypes = interfaces
                 .Where(t => !t.IsIgnored)
                 .SelectMany(t => t.PossibleTypes)
-                .GroupBy(t => t.Name)
-                .Select(g => g.First());
+                .Select(x => OmitNonRootTypes(x))
+                .Where(x => x != null)
+                .ToArray();
             var schema = new Schema(new FuncDependencyResolver(DeriveTypeFromTypeInfo))
             {
                 Query = DeriveOperationType(schemaInfo.Query),
                 Mutation = DeriveOperationType(schemaInfo.Mutation),
                 Subscription = DeriveOperationType(schemaInfo.Subscription),
             };
-            schema.RegisterTypes(possibleTypes
-                .Where(t => !t.IsIgnored && !t.Interfaces.Any(i => i.IsIgnored))
-                .Select(t => DeriveType(t).GetType())
-                .ToArray());
+            // Instead of using Type[] we are now using IGraphType[] for the schema registration
+            schema.RegisterTypes(myPossibleTypes);
             return schema;
+        }
+
+        public IGraphType OmitNonRootTypes(GraphTypeInfo typeInfo)
+        {
+            // Target is to avoid this error in GraphQL.net => GraphTypesLookup.cs
+            //if (type is NonNullGraphType || type is ListGraphType)
+            //{
+            //    throw new ExecutionError("Only add root types.");
+            //}
+            if (typeInfo.IsIgnored == true)
+            {
+                return null;
+            }
+            if (typeInfo.IsNullable == false)
+            {
+                return null;
+            }
+            else
+            {
+                return DeriveType(typeInfo);
+            }
         }
 
         public IGraphType DeriveType(GraphTypeInfo typeInfo)
@@ -165,8 +185,9 @@ namespace GraphQL.Conventions.Adapters
                     return typeof(Types.GuidGraphType);
 
                 default:
+                    Type type;
                     if (!string.IsNullOrWhiteSpace(typeInfo.Name) &&
-                        _registeredScalarTypes.TryGetValue(typeInfo.Name, out var type))
+                        _registeredScalarTypes.TryGetValue(typeInfo.Name, out type))
                     {
                         return type;
                     }
@@ -217,7 +238,7 @@ namespace GraphQL.Conventions.Adapters
         private TType CreateTypeInstance<TType>(Type type)
         {
             var obj = Activator.CreateInstance(type);
-            return obj is TType castType ? castType : default;
+            return obj is TType ? (TType)obj : default;
         }
 
         private IGraphType WrapNonNullableType(GraphTypeInfo typeInfo, IGraphType graphType) =>
@@ -276,7 +297,7 @@ namespace GraphQL.Conventions.Adapters
             var graphType = ConstructType<UnionGraphType>(typeof(Types.UnionGraphType<>), typeInfo);
             foreach (var possibleType in typeInfo.PossibleTypes.Select(t => DeriveType(t) as IObjectGraphType))
             {
-                if (possibleType != null) graphType.Type(possibleType.GetType());
+                graphType.Type(possibleType.GetType());
             }
             return WrapNonNullableType(typeInfo, graphType);
         }
@@ -306,21 +327,21 @@ namespace GraphQL.Conventions.Adapters
             {
                 var objType = UnwrapObject(obj)?.GetType().GetTypeRepresentation();
                 var typeRepresentation = typeInfo.GetTypeRepresentation();
-                return objType != null && (Equals(objType, typeRepresentation) || objType.IsSubclassOf(typeRepresentation.UnderlyingSystemType));
+                return objType == typeRepresentation || objType.IsSubclassOf(typeRepresentation.UnderlyingSystemType);
             };
             DeriveFields(typeInfo, graphType);
             return WrapNonNullableType(typeInfo, graphType);
         }
 
-        private static object UnwrapObject(object obj)
+        private object UnwrapObject(object obj)
         {
-            if (obj is INonNull @null)
+            if (obj is INonNull)
             {
-                obj = @null.ObjectValue;
+                obj = ((INonNull)obj)?.ObjectValue;
             }
-            if (obj is Union union)
+            if (obj is Union)
             {
-                obj = union.Instance;
+                obj = ((Union)obj).Instance;
             }
             return obj;
         }
