@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Handlers;
 using GraphQL.Conventions.Types.Descriptors;
@@ -91,6 +92,8 @@ namespace GraphQL.Conventions.Types.Resolution
             }
 
             type = _typeCache.AddEntity(typeInfo, new GraphTypeInfo(_typeResolver, typeInfo));
+            type.EnsureTypeParameterInitialized();
+
             if (type.IsPrimitive && !type.IsEnumerationType)
             {
                 return type;
@@ -183,9 +186,9 @@ namespace GraphQL.Conventions.Types.Resolution
             }
         }
 
-        private  bool IsValidInterface(GraphTypeInfo iface)
+        private bool IsValidInterface(GraphTypeInfo iface)
         {
-            return iface.IsInterfaceType 
+            return iface.IsInterfaceType
                 && !iface.IsIgnored
                 && (IgnoreTypeCallback == null || !IgnoreTypeCallback(iface.GetType(), null));
         }
@@ -289,24 +292,26 @@ namespace GraphQL.Conventions.Types.Resolution
         private GraphFieldInfo DeriveField(MemberInfo memberInfo)
         {
             var field = new GraphFieldInfo(_typeResolver, memberInfo);
-
-            if (memberInfo is PropertyInfo propertyInfo)
-            {
-                field.Type = GetType(propertyInfo.PropertyType.GetTypeInfo());
-            }
-
-            if (memberInfo is FieldInfo fieldInfo)
-            {
-                field.Type = GetType(fieldInfo.FieldType.GetTypeInfo());
-            }
-
-            if (memberInfo is MethodInfo methodInfo)
-            {
-                field.Type = GetType(methodInfo.ReturnType.GetTypeInfo());
-                field.Arguments.AddRange(GetArguments(methodInfo));
-            }
-
             _metaDataHandler.DeriveMetaData(field, memberInfo);
+
+            if (!field.IsIgnored)
+            {
+                if (memberInfo is PropertyInfo propertyInfo)
+                {
+                    field.Type = GetType(propertyInfo.PropertyType.GetTypeInfo());
+                }
+
+                if (memberInfo is FieldInfo fieldInfo)
+                {
+                    field.Type = GetType(fieldInfo.FieldType.GetTypeInfo());
+                }
+
+                if (memberInfo is MethodInfo methodInfo)
+                {
+                    field.Type = GetType(methodInfo.ReturnType.GetTypeInfo());
+                    field.Arguments.AddRange(GetArguments(methodInfo));
+                }
+            }
             return field;
         }
 
@@ -332,6 +337,11 @@ namespace GraphQL.Conventions.Types.Resolution
                 argument.IsInjected = true;
             }
             else if (parameterType == typeof(IResolutionContext))
+            {
+                argument.Type = GetType(parameterTypeInfo, true);
+                argument.IsInjected = true;
+            }
+            else if (parameterType == typeof(CancellationToken))
             {
                 argument.Type = GetType(parameterTypeInfo, true);
                 argument.IsInjected = true;

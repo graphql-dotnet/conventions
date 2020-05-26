@@ -4,7 +4,7 @@ VisualStudioVersion = 15.0.0.0
 MinimumVisualStudioVersion = 15.0.0.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQL.Conventions", "src\GraphQL.Conventions\GraphQL.Conventions.csproj", "{AEAC9A4B-7D5B-48C6-86A9-E665F6DE4B6C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "test\Tests\Tests.csproj", "{5CF44C73-E5C9-4E53-A69D-4013E8AE85E5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphQL.Conventions.Tests", "test\GraphQL.Conventions.Tests\GraphQL.Conventions.Tests.csproj", "{5CF44C73-E5C9-4E53-A69D-4013E8AE85E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
