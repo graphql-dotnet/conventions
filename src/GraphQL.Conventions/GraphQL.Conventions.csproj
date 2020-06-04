@@ -3,7 +3,6 @@
   <PropertyGroup>
     <Description>GraphQL Conventions for .NET</Description>
     <VersionPrefix>2.5.3</VersionPrefix>
-    <VersionSuffix>embrace</VersionSuffix>
     <Authors>Tommy Lillehagen</Authors>
     <TargetFrameworks>net45;netstandard1.6.1</TargetFrameworks>
     <DepsFileGenerationMode>old</DepsFileGenerationMode>
