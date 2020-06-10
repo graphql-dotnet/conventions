@@ -33,18 +33,21 @@ namespace GraphQL.Conventions.Adapters
             var possibleTypes = interfaces
                 .Where(t => !t.IsIgnored)
                 .SelectMany(t => t.PossibleTypes)
+                .Select(typeInfo => (typeInfo.IsIgnored || !typeInfo.IsNullable || typeInfo.Interfaces.Any(x => x.IsIgnored == true))
+                    ? null
+                    : DeriveType(typeInfo)
+                )
+                .Where(x => x != null)
                 .GroupBy(t => t.Name)
-                .Select(g => g.First());
+                .Select(g => g.First())
+                .ToArray();
             var schema = new Schema(new FuncDependencyResolver(DeriveTypeFromTypeInfo))
             {
                 Query = DeriveOperationType(schemaInfo.Query),
                 Mutation = DeriveOperationType(schemaInfo.Mutation),
                 Subscription = DeriveOperationType(schemaInfo.Subscription),
-            };
-            schema.RegisterTypes(possibleTypes
-                .Where(t => !t.IsIgnored && !t.Interfaces.Any(i => i.IsIgnored))
-                .Select(t => DeriveType(t).GetType())
-                .ToArray());
+            };            
+            schema.RegisterTypes(possibleTypes);
             return schema;
         }
 
