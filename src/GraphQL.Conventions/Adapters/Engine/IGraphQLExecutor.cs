@@ -15,7 +15,8 @@ namespace GraphQL.Conventions
 
         IGraphQLExecutor<TResult> WithOperationName(string operationName);
 
-        IGraphQLExecutor<TResult> WithInputs(Dictionary<string, object> inputs);
+        IGraphQLExecutor<TResult> WithInputs(Inputs inputs);
+        IGraphQLExecutor<ExecutionResult> WithInputs(Dictionary<string, object> inputs);
 
         IGraphQLExecutor<TResult> WithRootObject(object rootValue);
 

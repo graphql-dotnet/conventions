@@ -13,7 +13,7 @@ namespace GraphQL.Conventions.Adapters.Resolvers
         {
         }
 
-        public IObservable<object> Subscribe(ResolveEventStreamContext context)
+        public IObservable<object> Subscribe(IResolveEventStreamContext context)
         {
             var result = Resolve(context);
             if (result is Task<object>)
@@ -23,7 +23,7 @@ namespace GraphQL.Conventions.Adapters.Resolvers
             return (IObservable<object>)result;
         }
 
-        public override object Resolve(ResolveFieldContext context)
+        public object Resolve(IResolveFieldContext context)
         {
             return context.Source;
         }

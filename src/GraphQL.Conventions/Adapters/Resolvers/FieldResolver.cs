@@ -27,7 +27,7 @@ namespace GraphQL.Conventions.Adapters
             _fieldInfo = fieldInfo;
         }
 
-        public virtual object Resolve(ResolveFieldContext context)
+        public virtual object Resolve(IResolveFieldContext context)
         {
             return Resolve(new ResolveFieldContext<object>(context));
         }
@@ -85,5 +85,7 @@ namespace GraphQL.Conventions.Adapters
             source = Unwrapper.Unwrap(source);
             return source;
         }
+
+   
     }
 }

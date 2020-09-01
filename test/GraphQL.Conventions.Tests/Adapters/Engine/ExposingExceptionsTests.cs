@@ -19,7 +19,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
 
             result.ExposeExceptions.ShouldBeFalse("By default exposing exceptions should be disabled.");
 
-            var message = JObject.FromObject(result)["errors"].First.Value<string>("message");
+            var message = JObject.FromObject(result)["Errors"].First.Value<string>("Message");
 
             bool anyStackTracePart = message.Contains("at Tests.Adapters.Engine.ExposingExceptionsTests.Query.QueryData() in") ||
                 message.Contains("stack trace") ||
@@ -39,8 +39,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .Execute();
 
             result.ExposeExceptions.ShouldBeTrue($"{nameof(result.ExposeExceptions)} should be enabled when {nameof(GraphQLEngine.WithExposedExceptions)} is called.");
-            JObject.FromObject(result)["errors"].First.Value<string>("message")
-                .Contains("at GraphQL.Conventions.Tests.Adapters.Engine.ExposingExceptionsTests.Query.QueryData() in")
+            JObject.FromObject(result)["Errors"].First.Value<string>("Message")
+                .Contains(typeof(CustomException).FullName)
                 .ShouldBeTrue($"There should be stack trace in error messages when {nameof(result.ExposeExceptions)} is enabled.");
         }
         

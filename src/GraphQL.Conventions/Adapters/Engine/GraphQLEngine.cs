@@ -12,8 +12,8 @@ using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Execution;
-using GraphQL.Http;
 using GraphQL.Instrumentation;
+using GraphQL.NewtonsoftJson;
 using GraphQL.Types;
 using GraphQL.Utilities;
 using GraphQL.Validation;
@@ -58,6 +58,11 @@ namespace GraphQL.Conventions
             public INodeVisitor Validate(ValidationContext context)
             {
                 return new EnterLeaveListener(_ => { });
+            }
+
+            public Task<INodeVisitor> ValidateAsync(ValidationContext context)
+            {
+                return Task.FromResult(Validate(context));
             }
         }
 
@@ -333,10 +338,10 @@ namespace GraphQL.Conventions
             return result;
         }
 
-        internal IValidationResult Validate(string queryString)
+        internal Task<IValidationResult> Validate(string queryString)
         {
             var document = _documentBuilder.Build(queryString);
-            return _documentValidator.Validate(queryString, _schema, document);
+            return _documentValidator.ValidateAsync(queryString, _schema, document);
         }
 
         private object CreateInstance(System.Type type)

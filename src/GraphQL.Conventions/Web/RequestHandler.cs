@@ -281,8 +281,12 @@ namespace GraphQL.Conventions.Web
 
             public Response Validate(Request request)
             {
-                var result = _engine.Validate(request.QueryString);
-                return new Response(request, result);
+                return ValidateAsync(request).Result;
+            }
+            public async Task<Response> ValidateAsync(Request request)
+            {
+                var result = await _engine.Validate(request.QueryString);
+                return  new Response(request, result);
             }
 
             public string DescribeSchema(

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Types.Descriptors;
@@ -65,7 +66,7 @@ namespace GraphQL.Conventions.Adapters
 
         public CancellationToken CancellationToken => FieldContext.CancellationToken;
 
-        public IEnumerable<string> Path => FieldContext.Path;
+        public IEnumerable<string> Path => FieldContext.Path.Select(o=> o?.ToString());
 
         public ResolveFieldContext<object> FieldContext { get; private set; }
     }
