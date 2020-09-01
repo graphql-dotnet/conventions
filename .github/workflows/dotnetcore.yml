@@ -4,18 +4,26 @@ on: [push]
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 2.2.108
-    - name: Build with dotnet
-      run: |
-        git submodule update --init --recursive
-        dotnet restore Conventions.sln
-        msbuild "Conventions.sln" /p:Configuration=Release /verbosity:minimal
-        dotnet test test/GraphQL.Conventions.Tests/GraphQL.Conventions.Tests.csproj
+      - uses: actions/checkout@v1
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 2.2.103
+
+      - name: Build solution
+        run: |
+          git submodule update --init --recursive
+          dotnet restore Conventions.sln
+          dotnet build -c Release src/GraphQL.Conventions/GraphQL.Conventions.csproj
+
+      - name: Run unit tests
+        run: |
+          dotnet test test/GraphQL.Conventions.Tests/GraphQL.Conventions.Tests.csproj
+
+      - name: Generate NuGet package
+        run: |
+          dotnet pack -c Release
+

@@ -99,7 +99,9 @@ namespace GraphQL.Conventions.Tests.Execution
 
         private class Holder
         {
-            public async Task<IEnumerable<ICommonInterface>> InterfaceConnection() => await Task.FromResult(new[] { new Broken() });
+            #pragma warning disable 1998
+            public async Task<IEnumerable<ICommonInterface>> InterfaceConnection() => new[] { new Broken() };
+            #pragma warning restore 1998
         }
 
         private interface ICommonInterface

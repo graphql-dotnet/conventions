@@ -1,26 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<Description>GraphQL Conventions for .NET</Description>
-		<VersionPrefix>3.0.0</VersionPrefix>
-		<Authors>Tommy Lillehagen</Authors>
-		<TargetFrameworks>netstandard2.0</TargetFrameworks>
-		<AssemblyName>GraphQL.Conventions</AssemblyName>
-		<PackageId>GraphQL.Conventions</PackageId>
-		<PackageTags>GraphQL;json;api</PackageTags>
-		<PackageProjectUrl>https://github.com/graphql-dotnet/conventions</PackageProjectUrl>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<RepositoryType>git</RepositoryType>
-		<RepositoryUrl>https://github.com/graphql-dotnet/conventions</RepositoryUrl>
-		<GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
-		<GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-		<GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-		<GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
-		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-	</PropertyGroup>
+  <PropertyGroup>
+    <Description>GraphQL Conventions for .NET</Description>
+    <VersionPrefix>2.5.4</VersionPrefix>
+    <Authors>Tommy Lillehagen</Authors>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <DepsFileGenerationMode>old</DepsFileGenerationMode>
+    <DebugType>portable</DebugType>
+    <AssemblyName>GraphQL.Conventions</AssemblyName>
+    <PackageId>GraphQL.Conventions</PackageId>
+    <PackageTags>GraphQL;json;api</PackageTags>
+    <PackageProjectUrl>https://github.com/graphql-dotnet/conventions</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/graphql-dotnet/conventions</RepositoryUrl>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.5' ">$(PackageTargetFallback);dnxcore50;portable-net45+win8</PackageTargetFallback>
+    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.6.1' ">1.6.1</NetStandardImplicitPackageVersion>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
 
 	<PropertyGroup>
 		<LangVersion>7.3</LangVersion>
