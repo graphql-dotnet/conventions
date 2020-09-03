@@ -51,8 +51,6 @@ namespace GraphQL.Conventions
 
         private bool _includeFieldDeprecationReasons;
 
-        private bool _exposeExceptions;
-
         private class NoopValidationRule : IValidationRule
         {
             public INodeVisitor Validate(ValidationContext context)
@@ -190,17 +188,6 @@ namespace GraphQL.Conventions
             return this;
         }
 
-        /// <summary>
-        /// Enables <see cref="ExecutionOptions.ExposeExceptions"/> which leads to exception stack trace
-        /// be appended to the error message when serializing response.
-        /// </summary>
-        /// <param name="expose">Indicates whether to expose exceptions.</param>
-        public GraphQLEngine WithExposedExceptions(bool expose = true)
-        {
-            _exposeExceptions = expose;
-            return this;
-        }
-
         public GraphQLEngine WithQueryExtensions(System.Type typeExtensions)
         {
             _typeResolver.AddExtensions(typeExtensions);
@@ -304,7 +291,6 @@ namespace GraphQL.Conventions
                 ValidationRules = rules != null && rules.Any() ? rules : null,
                 ComplexityConfiguration = complexityConfiguration,
                 CancellationToken = cancellationToken,
-                ExposeExceptions = _exposeExceptions
             };
 
             if (listeners != null && listeners.Any())

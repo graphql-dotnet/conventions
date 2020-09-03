@@ -77,7 +77,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         [Test]
         public async Task Will_Provide_Path_And_Code_For_Errors_In_Array_Fields()
         {
-            var engine = GraphQLEngine.New<Query>().WithExposedExceptions();
+            var engine = GraphQLEngine.New<Query>();
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("query Blah { getObject { arrayField { test } } }")
@@ -114,8 +114,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         [Test]
         public async Task Will_Provide_Exception_Data()
         {
-            var engine = GraphQLEngine.New<Query>()
-                .WithExposedExceptions();
+            var engine = GraphQLEngine.New<Query>();
 
             var result = await engine
                 .NewExecutor()
