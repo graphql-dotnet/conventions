@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>GraphQL Conventions for .NET</Description>
-    <VersionPrefix>2.5.4</VersionPrefix>
+    <VersionPrefix>3.0.0-alpha</VersionPrefix>
     <Authors>Tommy Lillehagen</Authors>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <DepsFileGenerationMode>old</DepsFileGenerationMode>
