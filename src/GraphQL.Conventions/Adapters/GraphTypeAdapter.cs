@@ -113,20 +113,12 @@ namespace GraphQL.Conventions.Adapters
 
         private IDictionary<string, object> DeriveFieldTypeMetaData(object[] attributes)
         {
-            var result = new Dictionary<string, object>();
-            if (attributes != null && attributes.Any())
-            {
-                foreach (var attribute in attributes)
-                {
-                    if (attribute as FieldTypeMetaDataAttribute != null)
-                    {
-                        var metaDataAttr = (FieldTypeMetaDataAttribute)attribute;
-                        result.Add(metaDataAttr.Key(), metaDataAttr.Value());
-                    }
-                }
-            }
+            if (attributes == null)
+                return default;
 
-            return result;
+            return attributes
+               .OfType<FieldTypeMetaDataAttribute>()
+               .ToDictionary(x => x.Key(), x => x.Value());
         }
 
         private QueryArgument DeriveArgument(GraphArgumentInfo argumentInfo)
