@@ -61,7 +61,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
         [Test]
         public async Task When_UserHas_Requested_ValidationFieldTypeMetaData_ThereAreNoErrors()
         {
-            var result = await Resolve_Query(selectedFileds: "noAttribute name", accessPermissions: nameof(SomeTopLevelValidation));
+            var result = await Resolve_Query(selectedFields: "noAttribute name", accessPermissions: nameof(SomeTopLevelValidation));
             result.ShouldHaveNoErrors();
         }
 
@@ -72,7 +72,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
             result.ShouldHaveNoErrors();
         }
 
-        private async Task<ExecutionResult> Resolve_Query(string selectedFileds = "testMethod noAttribute name", params string[] accessPermissions)
+        private async Task<ExecutionResult> Resolve_Query(string selectedFields = "testMethod noAttribute name", params string[] accessPermissions)
         {
             var engine = GraphQLEngine
                 .New<CustomAttribute_Query>();
@@ -81,7 +81,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
 
             var result = await engine
                 .NewExecutor()
-                .WithQueryString("query { node { " + selectedFileds + " } }")
+                .WithQueryString("query { node { " + selectedFields + " } }")
                 .WithUserContext(user)
                 .WithValidationRules(new[] { new TestValidation() })
                 .Execute();
