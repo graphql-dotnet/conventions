@@ -90,6 +90,7 @@ namespace GraphQL.Conventions.Adapters
                     Name = fieldInfo.Name,
                     Description = fieldInfo.Description,
                     DeprecationReason = fieldInfo.DeprecationReason,
+                    Metadata = DeriveFieldTypeMetaData(fieldInfo.AttributeProvider.GetCustomAttributes(false)),
                     DefaultValue = fieldInfo.DefaultValue,
                     Type = GetType(fieldInfo.Type),
                     Arguments = new QueryArguments(fieldInfo.Arguments.Where(arg => !arg.IsInjected).Select(DeriveArgument)),
@@ -103,10 +104,21 @@ namespace GraphQL.Conventions.Adapters
                 Description = fieldInfo.Description,
                 DeprecationReason = fieldInfo.DeprecationReason,
                 DefaultValue = fieldInfo.DefaultValue,
+                Metadata = DeriveFieldTypeMetaData(fieldInfo.AttributeProvider.GetCustomAttributes(false)),
                 Type = GetType(fieldInfo.Type),
                 Arguments = new QueryArguments(fieldInfo.Arguments.Where(arg => !arg.IsInjected).Select(DeriveArgument)),
                 Resolver = FieldResolverFactory(fieldInfo),
             };
+        }
+
+        private IDictionary<string, object> DeriveFieldTypeMetaData(object[] attributes)
+        {
+            if (attributes == null)
+                return default;
+
+            return attributes
+               .OfType<FieldTypeMetaDataAttribute>()
+               .ToDictionary(x => x.Key(), x => x.Value());
         }
 
         private QueryArgument DeriveArgument(GraphArgumentInfo argumentInfo)
