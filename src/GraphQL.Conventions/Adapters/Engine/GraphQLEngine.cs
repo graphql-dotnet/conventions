@@ -41,9 +41,11 @@ namespace GraphQL.Conventions
 
         private ISchema _schema;
 
-        private List<System.Type> _schemaTypes = new List<System.Type>();
+        private readonly object _schemaLock = new object();
 
-        private List<System.Type> _middleware = new List<System.Type>();
+        private readonly List<System.Type> _schemaTypes = new List<System.Type>();
+
+        private readonly List<System.Type> _middleware = new List<System.Type>();
 
         private IErrorTransformation _errorTransformation = new DefaultErrorTransformation();
 
@@ -76,14 +78,16 @@ namespace GraphQL.Conventions
             }
         }
 
-        public GraphQLEngine(Func<System.Type, object> typeResolutionDelegate = null, ITypeResolver typeResolver = null, IDocumentExecuter documentExecuter = null)
+        public GraphQLEngine(Func<System.Type, object> typeResolutionDelegate = null, ITypeResolver typeResolver = null, IDocumentExecuter documentExecutor = null)
         {
-            _documentExecutor = documentExecuter ?? new GraphQL.DocumentExecuter();
+            _documentExecutor = documentExecutor ?? new GraphQL.DocumentExecuter();
             _typeResolver = typeResolver ?? _typeResolver;
-            _constructor = new SchemaConstructor<ISchema, IGraphType>(_graphTypeAdapter, _typeResolver);
-            _constructor.TypeResolutionDelegate = typeResolutionDelegate != null
-                ? (Func<System.Type, object>)(type => typeResolutionDelegate(type) ?? CreateInstance(type))
-                : (Func<System.Type, object>)CreateInstance;
+            _constructor = new SchemaConstructor<ISchema, IGraphType>(_graphTypeAdapter, _typeResolver)
+            {
+                TypeResolutionDelegate = typeResolutionDelegate != null
+                    ? type => typeResolutionDelegate(type) ?? CreateInstance(type)
+                    : (Func<System.Type, object>) CreateInstance
+            };
         }
 
         public static GraphQLEngine New(Func<System.Type, object> typeResolutionDelegate = null)
@@ -110,15 +114,15 @@ namespace GraphQL.Conventions
             switch (strategy)
             {
                 default:
-                    _graphTypeAdapter.FieldResolverFactory = (FieldInfo) => new FieldResolver(FieldInfo);
+                    _graphTypeAdapter.FieldResolverFactory = fieldInfo => new FieldResolver(fieldInfo);
                     break;
 
                 case FieldResolutionStrategy.WrappedAsynchronous:
-                    _graphTypeAdapter.FieldResolverFactory = (FieldInfo) => new WrappedAsyncFieldResolver(FieldInfo);
+                    _graphTypeAdapter.FieldResolverFactory = fieldInfo => new WrappedAsyncFieldResolver(fieldInfo);
                     break;
 
                 case FieldResolutionStrategy.WrappedSynchronous:
-                    _graphTypeAdapter.FieldResolverFactory = (FieldInfo) => new WrappedSyncFieldResolver(FieldInfo);
+                    _graphTypeAdapter.FieldResolverFactory = fieldInfo => new WrappedSyncFieldResolver(fieldInfo);
                     break;
             }
             return this;
@@ -216,8 +220,7 @@ namespace GraphQL.Conventions
 
         public GraphQLEngine BuildSchema(params System.Type[] types)
         {
-            BuildSchema(null, types);
-            return this;
+            return BuildSchema(null, types);
         }
 
         public GraphQLEngine BuildSchema(SchemaPrinterOptions options, params System.Type[] types)
@@ -227,7 +230,8 @@ namespace GraphQL.Conventions
             {
                 _schemaTypes.AddRange(types);
             }
-            _schema = _constructor.Build(_schemaTypes.ToArray());
+            lock (_schemaLock)
+                _schema = _constructor.Build(_schemaTypes.ToArray());
             _schemaPrinter = new SchemaPrinter(_schema, options ?? new SchemaPrinterOptions
             {
                 CustomScalars = new List<string>
@@ -291,6 +295,8 @@ namespace GraphQL.Conventions
             {
                 rules = new[] { new NoopValidationRule() };
             }
+
+            var validationRules = rules?.ToArray() ?? new IValidationRule[0];
             var configuration = new ExecutionOptions
             {
                 Schema = _schema,
@@ -298,14 +304,15 @@ namespace GraphQL.Conventions
                 Query = query,
                 OperationName = operationName,
                 Inputs = inputs,
-                UserContext = UserContextWrapper.Create(userContext, dependencyInjector ?? new WrappedDependencyInjector(_constructor.TypeResolutionDelegate)),
-                ValidationRules = rules != null && rules.Any() ? rules : null,
+                UserContext = UserContextWrapper.Create(userContext, dependencyInjector
+                    ?? new WrappedDependencyInjector(_constructor.TypeResolutionDelegate)),
+                ValidationRules = validationRules.Any() ? validationRules : null,
                 ComplexityConfiguration = complexityConfiguration,
                 CancellationToken = cancellationToken,
                 ExposeExceptions = _exposeExceptions
             };
 
-            if (listeners != null && listeners.Any())
+            if (listeners != null)
             {
                 foreach (var listener in listeners)
                     configuration.Listeners.Add(listener);
