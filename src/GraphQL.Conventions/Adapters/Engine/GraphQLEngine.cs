@@ -216,29 +216,36 @@ namespace GraphQL.Conventions
 
         public GraphQLEngine BuildSchema(params System.Type[] types)
         {
-            if (_schema == null)
-            {
-                if (types.Length > 0)
-                {
-                    _schemaTypes.AddRange(types);
-                }
-                _schema = _constructor.Build(_schemaTypes.ToArray());
-                _schemaPrinter = new SchemaPrinter(
-                    _schema,
-                    new SchemaPrinterOptions
-                    {
-                        CustomScalars = new List<string> { TypeNames.Url, TypeNames.Uri, TypeNames.TimeSpan, TypeNames.Guid },
-                        IncludeDescriptions = _includeFieldDescriptions,
-                        IncludeDeprecationReasons = _includeFieldDeprecationReasons,
-                    }
-                );
-            }
+            BuildSchema(null, types);
             return this;
         }
 
-        public string Describe()
+        public GraphQLEngine BuildSchema(SchemaPrinterOptions options, params System.Type[] types)
+        {
+            if (_schema != null) return this;
+            if (types.Length > 0)
+            {
+                _schemaTypes.AddRange(types);
+            }
+            _schema = _constructor.Build(_schemaTypes.ToArray());
+            _schemaPrinter = new SchemaPrinter(_schema, options ?? new SchemaPrinterOptions
+            {
+                CustomScalars = new List<string>
+                {
+                    TypeNames.Url, TypeNames.Uri, TypeNames.TimeSpan,
+                    TypeNames.Guid
+                },
+                IncludeDescriptions = _includeFieldDescriptions,
+                IncludeDeprecationReasons = _includeFieldDeprecationReasons,
+            });
+            return this;
+        }
+
+        public string Describe(Func<ISchema, SchemaPrinter> ctor = null)
         {
             BuildSchema(); // Ensure that the schema has been constructed
+            if (ctor != null)
+                _schemaPrinter = ctor(_schema);
             return _schemaPrinter.Print();
         }
 
