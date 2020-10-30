@@ -12,20 +12,19 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         public async Task Will_not_expose_exceptions_when_not_enabled()
         {
             var engine = GraphQLEngine.New<Query>();
+
             GraphQL.ExecutionResult result = await engine
                 .NewExecutor()
                 .WithQueryString("query { queryData }")
                 .ExecuteAsync();
 
-            result.ExposeExceptions.ShouldBeFalse("By default exposing exceptions should be disabled.");
-
-            var message = JObject.FromObject(result)["errors"].First.Value<string>("message");
+            var message = JObject.FromObject(result)["Errors"].First.Value<string>("Message");
 
             bool anyStackTracePart = message.Contains("at Tests.Adapters.Engine.ExposingExceptionsTests.Query.QueryData() in") ||
                 message.Contains("stack trace") ||
                 message.Contains("at");
 
-            anyStackTracePart.ShouldBeFalse($"There should be no stack trace in error messages when {nameof(result.ExposeExceptions)} is disabled.");
+            anyStackTracePart.ShouldBeFalse($"There should be no stack trace in error messages when is disabled.");
         }
 
         [Test]
@@ -33,15 +32,13 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         {
             var engine = GraphQLEngine.New<Query>();
             var result = await engine
-                .WithExposedExceptions()
                 .NewExecutor()
                 .WithQueryString("query { queryData }")
                 .ExecuteAsync();
 
-            result.ExposeExceptions.ShouldBeTrue($"{nameof(result.ExposeExceptions)} should be enabled when {nameof(GraphQLEngine.WithExposedExceptions)} is called.");
-            JObject.FromObject(result)["errors"].First.Value<string>("message")
-                .Contains("at GraphQL.Conventions.Tests.Adapters.Engine.ExposingExceptionsTests.Query.QueryData() in")
-                .ShouldBeTrue($"There should be stack trace in error messages when {nameof(result.ExposeExceptions)} is enabled.");
+            JObject.FromObject(result)["Errors"].First.Value<string>("Message")
+                .Contains(typeof(CustomException).FullName)
+                .ShouldBeTrue($"There should be stack trace in error messages when is enabled.");
         }
         
         class Query

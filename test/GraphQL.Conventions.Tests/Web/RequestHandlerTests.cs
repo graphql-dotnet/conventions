@@ -57,7 +57,7 @@ namespace GraphQL.Conventions.Tests.Web
                 .ProcessRequestAsync(request, null, null);
 
             response.Errors.Count.ShouldEqual(1);
-            response.Errors[0].Message.ShouldEqual("Query is too nested to execute. Depth is 2 levels, maximum allowed on this endpoint is 1.");
+            response.Errors[0].Message.ShouldEqual("Error executing document. Query is too nested to execute. Depth is 2 levels, maximum allowed on this endpoint is 1.");
         }
 
         [Test]
@@ -101,7 +101,7 @@ namespace GraphQL.Conventions.Tests.Web
             response.Errors[0].Message.ShouldContain("Cannot query field \"hello\" on type \"TestQuery2\".");
 
             body = await response.GetBodyAsync();
-            body.ShouldContain("VALIDATION_ERROR");
+            body.ShouldContain("FIELD_RESOLUTION");
         }
 
         [Test]

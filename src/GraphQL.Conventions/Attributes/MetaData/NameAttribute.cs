@@ -66,6 +66,11 @@ namespace GraphQL.Conventions
                 typeInfo = typeInfo.TypeParameter();
             }
 
+            if (typeInfo.IsGenericType(typeof(IObservable<>)))
+            {
+                typeInfo = typeInfo.TypeParameter();
+            }
+
             var typeName = _nameNormalizer.AsTypeName(typeInfo.Name);
             if (typeInfo.IsGenericType)
             {
