@@ -65,7 +65,11 @@ namespace GraphQL.Conventions
 
         public IGraphQLExecutor<ExecutionResult> WithInputs(Dictionary<string, object> inputs)
         {
-            _inputs = inputs != null ? new Inputs(inputs) : new Inputs();
+            return WithInputs(new Inputs(inputs ?? new Dictionary<string, object>()));
+        }
+        public IGraphQLExecutor<ExecutionResult> WithInputs(Inputs inputs)
+        {
+            _inputs = inputs;
             return this;
         }
 
@@ -74,7 +78,6 @@ namespace GraphQL.Conventions
             _rootObject = rootValue;
             return this;
         }
-
         public IGraphQLExecutor<ExecutionResult> WithUserContext(IUserContext userContext)
         {
             _userContext = userContext;
@@ -145,6 +148,7 @@ namespace GraphQL.Conventions
                     listeners: _documentExecutionListeners)
                 .ConfigureAwait(false);
 
-        public IValidationResult Validate() => _engine.Validate(_queryString);
+        public IValidationResult Validate() => ValidateAsync().Result;
+        public Task<IValidationResult> ValidateAsync() => _engine.Validate(_queryString);
     }
 }

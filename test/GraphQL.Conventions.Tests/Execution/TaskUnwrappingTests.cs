@@ -2,13 +2,14 @@
 using GraphQL.Conventions.Tests.Templates;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GraphQL.NewtonsoftJson;
 
 namespace GraphQL.Conventions.Tests.Execution
 {
     public class TaskUnwrappingTests : ConstructionTestBase
     {
         [Test]
-        public void Schema_Will_Execute_With_No_Errors_When_A_Type_Is_In_A_Task()
+        public async Task Schema_Will_Execute_With_No_Errors_When_A_Type_Is_In_A_Task()
         {
             const string query = @"{
                 holders {
@@ -21,11 +22,12 @@ namespace GraphQL.Conventions.Tests.Execution
             }";
 
             var schema = Schema<BugReproSchemaTaskFirst>();
-            var result = schema.Execute((e) => e.Query = query);
+            
+            var result = await schema.ExecuteAsync((e) => e.Query = query);
             ResultHelpers.AssertNoErrorsInResult(result);
 
             schema = Schema<BugReproSchemaTaskSecond>();
-            result = schema.Execute((e) => e.Query = query);
+            result = await schema.ExecuteAsync((e) => e.Query = query);
             ResultHelpers.AssertNoErrorsInResult(result);
         }
 
@@ -97,7 +99,9 @@ namespace GraphQL.Conventions.Tests.Execution
 
         private class Holder
         {
-            public async Task<IEnumerable<ICommonInterface>> InterfaceConnection() => await Task.FromResult(new[] { new Broken() });
+            #pragma warning disable 1998
+            public async Task<IEnumerable<ICommonInterface>> InterfaceConnection() => new[] { new Broken() };
+            #pragma warning restore 1998
         }
 
         private interface ICommonInterface

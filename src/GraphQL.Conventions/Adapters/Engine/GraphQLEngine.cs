@@ -12,8 +12,8 @@ using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Execution;
-using GraphQL.Http;
 using GraphQL.Instrumentation;
+using GraphQL.NewtonsoftJson;
 using GraphQL.Types;
 using GraphQL.Utilities;
 using GraphQL.Validation;
@@ -51,13 +51,16 @@ namespace GraphQL.Conventions
 
         private bool _includeFieldDeprecationReasons;
 
-        private bool _exposeExceptions;
-
         private class NoopValidationRule : IValidationRule
         {
             public INodeVisitor Validate(ValidationContext context)
             {
                 return new EnterLeaveListener(_ => { });
+            }
+
+            public Task<INodeVisitor> ValidateAsync(ValidationContext context)
+            {
+                return Task.FromResult(Validate(context));
             }
         }
 
@@ -185,17 +188,6 @@ namespace GraphQL.Conventions
             return this;
         }
 
-        /// <summary>
-        /// Enables <see cref="ExecutionOptions.ExposeExceptions"/> which leads to exception stack trace
-        /// be appended to the error message when serializing response.
-        /// </summary>
-        /// <param name="expose">Indicates whether to expose exceptions.</param>
-        public GraphQLEngine WithExposedExceptions(bool expose = true)
-        {
-            _exposeExceptions = expose;
-            return this;
-        }
-
         public GraphQLEngine WithQueryExtensions(System.Type typeExtensions)
         {
             _typeResolver.AddExtensions(typeExtensions);
@@ -299,7 +291,6 @@ namespace GraphQL.Conventions
                 ValidationRules = rules != null && rules.Any() ? rules : null,
                 ComplexityConfiguration = complexityConfiguration,
                 CancellationToken = cancellationToken,
-                ExposeExceptions = _exposeExceptions
             };
 
             if (listeners != null && listeners.Any())
@@ -333,10 +324,10 @@ namespace GraphQL.Conventions
             return result;
         }
 
-        internal IValidationResult Validate(string queryString)
+        internal Task<IValidationResult> Validate(string queryString)
         {
             var document = _documentBuilder.Build(queryString);
-            return _documentValidator.Validate(queryString, _schema, document);
+            return _documentValidator.ValidateAsync(queryString, _schema, document);
         }
 
         private object CreateInstance(System.Type type)
