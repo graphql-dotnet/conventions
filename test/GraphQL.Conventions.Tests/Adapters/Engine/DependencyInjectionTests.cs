@@ -63,7 +63,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         [Test]
         public async Task Executor_Should_Use_UserContext_Injector()
         {
-            var engine = new GraphQLEngine(documentExecuter: new ScopedDocumentExecuter())
+            var engine = new GraphQLEngine(documentExecutor: new ScopedDocumentExecuter())
                 .WithQuery<Query>()
                 .BuildSchema();
 
