@@ -4,13 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Execution;
 
 namespace GraphQL.Conventions.Tests.Adapters.Engine
 {
     public class ErrorTests : TestBase
     {
-        private const bool CanExposeExceptionData = false; // is currently not possible. 
-
         [Test]
         public async Task Will_Provide_Path_And_Code_For_Errors_On_Fields_With_Operation_Name()
         {
@@ -66,12 +65,9 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             error.Message.ShouldEqual("Test error.");
             error.Code.ShouldEqual("FIELD_RESOLUTION");
             error.Path.Count().ShouldEqual(3);
-            if (CanExposeExceptionData)
-            {
-                error.Path.ElementAt(0).ShouldEqual("getObject");
-                error.Path.ElementAt(1).ShouldEqual("field");
-                error.Path.ElementAt(2).ShouldEqual("test");
-            }
+            error.Path.ElementAt(0).ShouldEqual("yo");
+            error.Path.ElementAt(1).ShouldEqual("foo");
+            error.Path.ElementAt(2).ShouldEqual("bar");
         }
 
         [Test]
@@ -82,13 +78,12 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .NewExecutor()
                 .WithQueryString("query Blah { getObject { arrayField { test } } }")
                 .ExecuteAsync();
-            if (CanExposeExceptionData)
-            {
-                result.Data.ShouldHaveFieldWithValue("getObject", "arrayField", 0, "test", "some value");
-                result.Data.ShouldHaveFieldWithValue("getObject", "arrayField", 1, "test", null);
-                result.Data.ShouldHaveFieldWithValue("getObject", "arrayField", 2, "test", "some value");
-                result.Data.ShouldHaveFieldWithValue("getObject", "arrayField", 3, "test", null);
-            }
+            
+            result.Data.ShouldHaveFieldWithValue("getObject", "arrayField", 0, "test", "some value");
+            result.Data.ShouldHaveFieldWithValue("getObject", "arrayField", 1, "test", null);
+            result.Data.ShouldHaveFieldWithValue("getObject", "arrayField", 2, "test", "some value");
+            result.Data.ShouldHaveFieldWithValue("getObject", "arrayField", 3, "test", null);
+            
             result.Errors.ShouldNotBeNull();
             result.Errors.Count.ShouldEqual(2);
 
@@ -112,22 +107,24 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         }
 
         [Test]
-        public async Task Will_Provide_Exception_Data()
+        public void Will_Provide_Exception_Data()
         {
             var engine = GraphQLEngine.New<Query>();
 
-            var result = await engine
+            var result = engine
                 .NewExecutor()
                 .WithQueryString("query Blah { errorWithData }")
                 .ExecuteAsync();
-            if (CanExposeExceptionData)
-                result.Data.ShouldHaveFieldWithValue("errorWithData", null);
+                .Result;
+
+            result.Data.ShouldHaveFieldWithValue("errorWithData", null);
             result.Errors.ShouldNotBeNull();
             result.Errors.Count.ShouldEqual(1);
 
-            result.Errors.First().Message.ShouldEqual("Test error.");
-            if (CanExposeExceptionData)
-                result.Errors.First().Data["someKey"].ShouldEqual("someValue");
+            var error = result.Errors.First().InnerException.InnerException;
+
+            error.Message.ShouldEqual("Test error.");
+            error.Data["someKey"].ShouldEqual("someValue");
         }
 
         class Query
