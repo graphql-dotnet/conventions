@@ -107,24 +107,26 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         }
 
         [Test]
-        public void Will_Provide_Exception_Data()
+        public async Task Will_Provide_Exception_Data()
         {
             var engine = GraphQLEngine.New<Query>();
 
-            var result = engine
+            var result = await engine
                 .NewExecutor()
                 .WithQueryString("query Blah { errorWithData }")
                 .ExecuteAsync();
-                .Result;
 
             result.Data.ShouldHaveFieldWithValue("errorWithData", null);
             result.Errors.ShouldNotBeNull();
             result.Errors.Count.ShouldEqual(1);
 
-            var error = result.Errors.First().InnerException.InnerException;
+            var error = result.Errors.First();
+            error.InnerException.ShouldBeNull();
+            error.InnerException.InnerException.ShouldBeNull();
 
-            error.Message.ShouldEqual("Test error.");
-            error.Data["someKey"].ShouldEqual("someValue");
+            var innerError = error.InnerException.InnerException;
+            innerError.Message.ShouldEqual("Test error.");
+            innerError.Data["someKey"].ShouldEqual("someValue");
         }
 
         class Query

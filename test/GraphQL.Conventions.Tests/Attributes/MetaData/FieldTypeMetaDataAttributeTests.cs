@@ -1,6 +1,6 @@
-﻿using GraphQL.Conventions.Execution;
-using GraphQL.Conventions.Tests.Templates;
+﻿using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions.Execution;
 using GraphQL.Language.AST;
 using GraphQL.Validation;
 using System;
@@ -84,7 +84,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
                 .WithQueryString("query { node { " + selectedFields + " } }")
                 .WithUserContext(user)
                 .WithValidationRules(new[] { new TestValidation() })
-                .Execute();
+                .ExecuteAsync();
 
             return result;
         }
@@ -137,12 +137,11 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
 
     public class TestValidation : IValidationRule
     {
-        public INodeVisitor Validate(ValidationContext context)
+        public async Task<INodeVisitor> ValidateAsync(ValidationContext context)
         {
-            var userContext = context.UserContext as UserContextWrapper;
-            var user = userContext.UserContext as TestUserContext;
+            var user = context.GetUserContext() as TestUserContext;
 
-            return new EnterLeaveListener(_ =>
+            return await Task.FromResult(new EnterLeaveListener(_ =>
             {
                 _.Match<Field>(node =>
                 {
@@ -161,7 +160,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
                                 node));
                     }
                 });
-            });
+            }));
         }
     }
 }

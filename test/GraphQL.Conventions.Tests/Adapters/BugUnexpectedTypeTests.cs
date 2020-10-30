@@ -24,7 +24,8 @@ namespace Tests.Adapters.Engine.Bugs
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("query { node { ... on ParentNode {  id, nested { id } } } }")
-                .Execute();
+                .ExecuteAsync();
+
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("node", "id", "UGFyZW50Tm9kZTox");
             result.Data.ShouldHaveFieldWithValue("node", "nested", "id", "Q2hpbGROb2RlOjE=");
