@@ -290,6 +290,7 @@ namespace GraphQL.Conventions
                     { typeof(IUserContext).FullName, userContext},
                     { typeof(IDependencyInjector).FullName, dependencyInjector ?? new WrappedDependencyInjector(_constructor.TypeResolutionDelegate)},
                 },
+                ValidationRules = validationRules.Any() ? validationRules : null,
                 ComplexityConfiguration = complexityConfiguration,
                 CancellationToken = cancellationToken,
             };

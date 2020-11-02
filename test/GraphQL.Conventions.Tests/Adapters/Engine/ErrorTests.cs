@@ -121,8 +121,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             result.Errors.Count.ShouldEqual(1);
 
             var error = result.Errors.First();
-            error.InnerException.ShouldBeNull();
-            error.InnerException.InnerException.ShouldBeNull();
+            error.InnerException.ShouldNotBeNull();
+            error.InnerException.InnerException.ShouldNotBeNull();
 
             var innerError = error.InnerException.InnerException;
             innerError.Message.ShouldEqual("Test error.");
