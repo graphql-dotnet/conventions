@@ -33,7 +33,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
             
             shouldReturnValue |= isPrimitive;
             
-            if(shouldReturnValue)
+            if (shouldReturnValue)
             {
                 return value;
             }
