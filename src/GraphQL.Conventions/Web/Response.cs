@@ -39,7 +39,9 @@ namespace GraphQL.Conventions.Web
         public async Task<string> GetBodyAsync()
         {
             if (string.IsNullOrWhiteSpace(_body) && ExecutionResult != null)
-                _body = await _writer.WriteToStringAsync(ExecutionResult);
+                _body = await _writer
+                    .WriteToStringAsync(ExecutionResult)
+                    .ConfigureAwait(false);
 
             return _body;
         }

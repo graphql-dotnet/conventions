@@ -67,6 +67,7 @@ namespace GraphQL.Conventions
         {
             return WithInputs(new Inputs(inputs ?? new Dictionary<string, object>()));
         }
+
         public IGraphQLExecutor<ExecutionResult> WithInputs(Inputs inputs)
         {
             _inputs = inputs;
@@ -78,6 +79,7 @@ namespace GraphQL.Conventions
             _rootObject = rootValue;
             return this;
         }
+
         public IGraphQLExecutor<ExecutionResult> WithUserContext(IUserContext userContext)
         {
             _userContext = userContext;
@@ -136,17 +138,15 @@ namespace GraphQL.Conventions
             return this.EnableProfiling(false);
         }
 
-        public async Task<ExecutionResult> ExecuteAsync() =>
-            await _engine
-                .ExecuteAsync(
-                    _rootObject, _queryString, _operationName, _inputs, _userContext, _dependencyInjector,
-                    enableValidation: _enableValidation,
-                    enableProfiling: _enableProfiling,
-                    rules: _validationRules,
-                    complexityConfiguration: _complexityConfiguration,
-                    cancellationToken: _cancellationToken,
-                    listeners: _documentExecutionListeners)
-                .ConfigureAwait(false);
+        public Task<ExecutionResult> ExecuteAsync()
+            => _engine.ExecuteAsync(
+                _rootObject, _queryString, _operationName, _inputs, _userContext, _dependencyInjector,
+                enableValidation: _enableValidation,
+                enableProfiling: _enableProfiling,
+                rules: _validationRules,
+                complexityConfiguration: _complexityConfiguration,
+                cancellationToken: _cancellationToken,
+                listeners: _documentExecutionListeners);
 
         public Task<IValidationResult> ValidateAsync() => _engine.ValidateAsync(_queryString);
     }

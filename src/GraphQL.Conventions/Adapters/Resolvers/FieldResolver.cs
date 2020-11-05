@@ -84,7 +84,5 @@ namespace GraphQL.Conventions.Adapters
             source = Unwrapper.Unwrap(source);
             return source;
         }
-
-   
     }
 }

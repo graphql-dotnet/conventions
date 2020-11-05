@@ -137,11 +137,11 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
 
     public class TestValidation : IValidationRule
     {
-        public async Task<INodeVisitor> ValidateAsync(ValidationContext context)
+        public Task<INodeVisitor> ValidateAsync(ValidationContext context)
         {
             var user = context.GetUserContext() as TestUserContext;
 
-            return await Task.FromResult(new EnterLeaveListener(_ =>
+            return Task.FromResult<INodeVisitor>(new EnterLeaveListener(_ =>
             {
                 _.Match<Field>(node =>
                 {
