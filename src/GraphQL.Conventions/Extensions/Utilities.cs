@@ -55,7 +55,7 @@ namespace GraphQL.Conventions.Extensions
                 throw new ArgumentNullException(nameof(methodInfo));
             //the following check is more descriptive than the NullReferenceException that would otherwise occur
             if (!methodInfo.IsStatic && instance == null)
-                throw new ArgumentNullException(nameof(instance), "Instance is required for static methods");
+                throw new ArgumentNullException(nameof(instance), "Instance is required for non static methods");
             //the lambda ignores extra arguments so the following check is necessary
             if (methodInfo.GetParameters().Length != (arguments?.Length ?? 0))
                 throw new ArgumentException("Invalid number of arguments for this method", "arguments");
