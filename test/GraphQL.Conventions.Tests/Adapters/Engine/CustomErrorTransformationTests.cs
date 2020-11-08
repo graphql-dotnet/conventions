@@ -42,8 +42,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             result.Errors.Count.ShouldEqual(1);
             var error = result.Errors.First();
             error.ShouldBeOfType<ExecutionError>();
-            error.InnerException.ShouldBeOfType<TargetInvocationException>();
-            error.InnerException.InnerException.ShouldBeOfType<CustomException>();
+            error.InnerException.ShouldBeOfType<CustomException>();
         }
 
         class Query
