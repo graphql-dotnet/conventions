@@ -98,7 +98,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             result.Data.ShouldHaveFieldWithValue("nullableIdField", id.IdentifierForType<Dependency>());
 
             result = await ExecuteQuery(
-                @"query Test($arg: Identity) { nullableIdField(idArg: $arg) }",
+                @"query Test($arg: ID) { nullableIdField(idArg: $arg) }",
                 new Dictionary<string, object> { { "arg", id.ToString() } });
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("nullableIdField", id.IdentifierForType<Dependency>());
@@ -114,7 +114,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             result.Data.ShouldHaveFieldWithValue("nonNullableIdField", id.IdentifierForType<Dependency>());
 
             result = await ExecuteQuery(
-                @"query Test($arg: Identity!) { nonNullableIdField(idArg: $arg) }",
+                @"query Test($arg: ID!) { nonNullableIdField(idArg: $arg) }",
                 new Dictionary<string, object> { { "arg", id.ToString() } });
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("nonNullableIdField", id.IdentifierForType<Dependency>());

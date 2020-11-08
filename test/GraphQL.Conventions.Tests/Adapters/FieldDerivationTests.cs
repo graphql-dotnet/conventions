@@ -122,7 +122,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             type.Name.ShouldEqual("Fooz");
             type.Description.ShouldEqual("Foo bar baz");
             type.ShouldHaveFields(3);
-            type.ShouldHaveFieldWithName("id").OfType<NonNullGraphType<Extended.IdGraphType>>();
+            type.ShouldHaveFieldWithName("id").OfType<NonNullGraphType<IdGraphType>>();
             type.ShouldHaveFieldWithName("a").OfType<IntGraphType>();
             type.ShouldHaveFieldWithName("b").OfType<NonNullGraphType<IntGraphType>>();
         }

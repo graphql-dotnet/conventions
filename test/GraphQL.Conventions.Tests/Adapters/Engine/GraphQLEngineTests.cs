@@ -43,7 +43,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 urlField2: URL!
             }
             type Foo {
-                id: Identity!
+                id: ID!
             }
             ");
         }

@@ -1,10 +1,11 @@
 using System;
+using System.ComponentModel;
 using GraphQL.Conventions.Attributes.MetaData.Utilities;
 
 namespace GraphQL.Conventions
 {
-    public struct Id
-        : IComparable, IComparable<Id>, IEquatable<Id>
+    [TypeConverter(typeof(IdConverter))]
+    public struct Id : IComparable, IComparable<Id>, IEquatable<Id>
     {
         public static bool SerializeUsingColon { get; set; } = true;
 
@@ -134,5 +135,28 @@ namespace GraphQL.Conventions
 
         internal static string GetTypeName(Type type) =>
             _normalizer.AsTypeName(type.Name);
+    }
+    
+    public class IdConverter : TypeConverter
+    {
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            return sourceType == typeof(string);
+        }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+        {
+            switch (value)
+            {
+                case string s:
+                    return new Id(s);
+
+                case null:
+                    return null;
+
+                default:
+                    throw new NotSupportedException($"Invalid conversion from {value.GetType().FullName} to {typeof(Id).FullName}.");
+            }
+        }
     }
 }

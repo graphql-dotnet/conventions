@@ -162,8 +162,8 @@ namespace GraphQL.Conventions.Adapters
                 case TypeNames.DateTimeOffset:
                     return typeof(DateTimeOffsetGraphType);
 
-                case TypeNames.Identity:
-                    return typeof(Types.IdGraphType);
+                case TypeNames.Id:
+                    return typeof(IdGraphType);
 
                 case TypeNames.Cursor:
                     return typeof(Types.Relay.CursorGraphType);
