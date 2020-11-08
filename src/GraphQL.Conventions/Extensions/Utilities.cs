@@ -97,7 +97,7 @@ namespace GraphQL.Conventions.Extensions
         /// the specified parameters.
         /// </summary>
         /// <param name="constructorInfo">
-        /// The constructor representation.
+        /// The constructor representation. Must not be a static constructor.
         /// </param>
         /// <param name="arguments">
         /// An argument list for the invoked constructor. This is an array of objects
