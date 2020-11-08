@@ -10,14 +10,14 @@ namespace Tests.Extensions
         [Test]
         public void Static_Method_Returns_ValueType()
         {
-            Assert.AreEqual(2, GetMethodInfo(nameof(StaticTest1)).InvokeEnhanced(null));
+            Assert.AreEqual(2, GetMethodInfo(nameof(StaticTest1)).InvokeEnhanced(null, null));
         }
         private static int StaticTest1() => 2;
 
         [Test]
         public void Static_Method_Returns_ObjectType()
         {
-            Assert.AreEqual("hello", GetMethodInfo(nameof(StaticTest2)).InvokeEnhanced(null));
+            Assert.AreEqual("hello", GetMethodInfo(nameof(StaticTest2)).InvokeEnhanced(null, null));
         }
         private static string StaticTest2() => "hello";
 
@@ -25,7 +25,7 @@ namespace Tests.Extensions
         public void Static_Method_Returns_Void()
         {
             StaticTest3Ran = false;
-            Assert.IsNull(GetMethodInfo(nameof(StaticTest3)).InvokeEnhanced(null));
+            Assert.IsNull(GetMethodInfo(nameof(StaticTest3)).InvokeEnhanced(null, null));
             Assert.IsTrue(StaticTest3Ran);
         }
         private static void StaticTest3() => StaticTest3Ran = true;
@@ -34,14 +34,14 @@ namespace Tests.Extensions
         [Test]
         public void Instance_Method_Returns_ValueType()
         {
-            Assert.AreEqual(2, GetMethodInfo(nameof(InstanceTest1)).InvokeEnhanced(this));
+            Assert.AreEqual(2, GetMethodInfo(nameof(InstanceTest1)).InvokeEnhanced(this, null));
         }
         private int InstanceTest1() => 2;
 
         [Test]
         public void Instance_Method_Returns_ObjectType()
         {
-            Assert.AreEqual("hello", GetMethodInfo(nameof(InstanceTest2)).InvokeEnhanced(this));
+            Assert.AreEqual("hello", GetMethodInfo(nameof(InstanceTest2)).InvokeEnhanced(this, null));
         }
         private string InstanceTest2() => "hello";
 
@@ -49,7 +49,7 @@ namespace Tests.Extensions
         public void Instance_Method_Returns_Void()
         {
             InstanceTest3Ran = false;
-            Assert.IsNull(GetMethodInfo(nameof(InstanceTest3)).InvokeEnhanced(this));
+            Assert.IsNull(GetMethodInfo(nameof(InstanceTest3)).InvokeEnhanced(this, null));
             Assert.IsTrue(InstanceTest3Ran);
         }
         private void InstanceTest3() => InstanceTest3Ran = true;
@@ -58,14 +58,14 @@ namespace Tests.Extensions
         [Test]
         public void Static_Method_WithParams()
         {
-            Assert.AreEqual("Static Received 00000000-0000-0000-0000-000000000000 98 55", GetMethodInfo(nameof(StaticWithParams)).InvokeEnhanced(null, Guid.Empty, new MyObject(98), 55));
+            Assert.AreEqual("Static Received 00000000-0000-0000-0000-000000000000 98 55", GetMethodInfo(nameof(StaticWithParams)).InvokeEnhanced(null, new object[] { Guid.Empty, new MyObject(98), 55 }));
         }
         private static string StaticWithParams(Guid guid, MyObject stream, int? value) => $"Static Received {guid} {stream} {value}";
 
         [Test]
         public void Instance_Method_WithParams()
         {
-            Assert.AreEqual("Instance Received 00000000-0000-0000-0000-000000000000 99 56", GetMethodInfo(nameof(InstanceWithParams)).InvokeEnhanced(this, Guid.Empty, new MyObject(99), 56));
+            Assert.AreEqual("Instance Received 00000000-0000-0000-0000-000000000000 99 56", GetMethodInfo(nameof(InstanceWithParams)).InvokeEnhanced(this, new object[] { Guid.Empty, new MyObject(99), 56 }));
         }
         private string InstanceWithParams(Guid guid, MyObject stream, int? value) => $"Instance Received {guid} {stream} {value}";
 
@@ -74,7 +74,7 @@ namespace Tests.Extensions
         {
             try
             {
-                GetMethodInfo(nameof(StaticThrows)).InvokeEnhanced(null);
+                GetMethodInfo(nameof(StaticThrows)).InvokeEnhanced(null, null);
             }
             catch (Exception e)
             {
@@ -88,7 +88,7 @@ namespace Tests.Extensions
         {
             try
             {
-                GetMethodInfo(nameof(InstanceThrows)).InvokeEnhanced(this);
+                GetMethodInfo(nameof(InstanceThrows)).InvokeEnhanced(this, null);
             }
             catch (Exception e)
             {
@@ -100,25 +100,25 @@ namespace Tests.Extensions
         [Test]
         public void Requires_MethodInfo()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => Utilities.InvokeEnhanced((MethodInfo)null, null));
+            Assert.ThrowsException<ArgumentNullException>(() => Utilities.InvokeEnhanced((MethodInfo)null, null, null));
         }
 
         [Test]
         public void Requires_Instance_For_Instance_Methods()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => Utilities.InvokeEnhanced(GetMethodInfo(nameof(InstanceTest1)), null));
+            Assert.ThrowsException<ArgumentNullException>(() => GetMethodInfo(nameof(InstanceTest1)).InvokeEnhanced(null, null));
         }
 
         [Test]
         public void Ignores_Instance_For_Static_Methods()
         {
-            Assert.AreEqual(2, GetMethodInfo(nameof(StaticTest1)).InvokeEnhanced(this));
+            Assert.AreEqual(2, GetMethodInfo(nameof(StaticTest1)).InvokeEnhanced(this, null));
         }
 
         [Test]
         public void Wrong_Arguments_Throws()
         {
-            Assert.ThrowsException<ArgumentException>(() => GetMethodInfo(nameof(StaticTest1)).InvokeEnhanced(null, 1));
+            Assert.ThrowsException<ArgumentException>(() => GetMethodInfo(nameof(StaticTest1)).InvokeEnhanced(null, new object[] { 1 }));
         }
 
         [Test]
@@ -127,6 +127,20 @@ namespace Tests.Extensions
             Assert.ThrowsException<ArgumentException>(() => GetMethodInfo(nameof(StaticRefTest1)).InvokeEnhanced(null, new object[] { 1 }));
         }
         private static void StaticRefTest1(ref int value) => value = 2;
+
+        [Test]
+        public void Constructor_Exceptions_Are_Unwrapped()
+        {
+            var constructor = typeof(MyThrowingObject).GetConstructor(new Type[] { });
+            try
+            {
+                constructor.InvokeEnhanced(null);
+                throw new Exception("This code should not execute");
+            }
+            catch (InvalidTimeZoneException)
+            {
+            }
+        }
 
         private MethodInfo GetMethodInfo(string name) => typeof(Utilities_InvokeTests).GetMethod(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
@@ -140,5 +154,9 @@ namespace Tests.Extensions
             }
         }
 
+        private class MyThrowingObject
+        {
+            public MyThrowingObject() => throw new InvalidTimeZoneException();
+        }
     }
 }

@@ -48,7 +48,7 @@ namespace GraphQL.Conventions.Extensions
         /// <returns>
         /// The return value from the method, or null for methods that return void.
         /// </returns>
-        public static object InvokeEnhanced(this MethodInfo methodInfo, object instance, params object[] arguments)
+        public static object InvokeEnhanced(this MethodInfo methodInfo, object instance, object[] arguments)
         {
             //just good practice
             if (methodInfo == null)
@@ -92,7 +92,7 @@ namespace GraphQL.Conventions.Extensions
             return lambda.Compile();
         }
 
-        public static object InvokeEnhanced(this ConstructorInfo constructorInfo, params object[] parameters)
+        public static object InvokeEnhanced(this ConstructorInfo constructorInfo, object[] parameters)
         {
             try
             {
