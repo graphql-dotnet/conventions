@@ -61,12 +61,12 @@ namespace GraphQL.Conventions.Extensions
                 throw new ArgumentException("Invalid number of arguments for this method", "arguments");
             //type errors will be thrown as InvalidCastException inside the lambda
 
-            var lambda = _methodDictionary.GetOrAdd(methodInfo, InvokeEnhancedUncached);
+            var lambda = _methodDictionary.GetOrAdd(methodInfo, InvokeEnhancedUncachedMethod);
 
             return lambda(instance, arguments);
         }
         private static ConcurrentDictionary<MethodInfo, Func<object, object[], object>> _methodDictionary = new ConcurrentDictionary<MethodInfo, Func<object, object[], object>>();
-        private static Func<object, object[], object> InvokeEnhancedUncached(MethodInfo methodInfo)
+        private static Func<object, object[], object> InvokeEnhancedUncachedMethod(MethodInfo methodInfo)
         {
             var instanceParameter = Expression.Parameter(typeof(object));
             var argumentsParameter = Expression.Parameter(typeof(object[]));
@@ -92,17 +92,50 @@ namespace GraphQL.Conventions.Extensions
             return lambda.Compile();
         }
 
-        public static object InvokeEnhanced(this ConstructorInfo constructorInfo, object[] parameters)
+        /// <summary>
+        /// Invokes a constructor represented by a specified <see cref="ConstructorInfo"/>, using
+        /// the specified parameters.
+        /// </summary>
+        /// <param name="constructorInfo">
+        /// The constructor representation.
+        /// </param>
+        /// <param name="arguments">
+        /// An argument list for the invoked constructor. This is an array of objects
+        /// with the same number, order, and type as the parameters of the constructor
+        /// to be invoked. If there are no parameters, parameters should be null.
+        /// Ref/out parameters are not supported.
+        /// </param>
+        /// <returns>
+        /// The constructed object.
+        /// </returns>
+        public static object InvokeEnhanced(this ConstructorInfo constructorInfo, object[] arguments)
         {
-            try
-            {
-                return constructorInfo.Invoke(parameters);
-            }
-            catch (TargetInvocationException ex)
-            {
-                ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
-                throw ex.InnerException; //required for intellisense
-            }
+            //just good practice
+            if (constructorInfo == null)
+                throw new ArgumentNullException(nameof(constructorInfo));
+            //the lambda ignores extra arguments so the following check is necessary
+            if (constructorInfo.GetParameters().Length != (arguments?.Length ?? 0))
+                throw new ArgumentException("Invalid number of arguments for this constructor", "arguments");
+            //type errors will be thrown as InvalidCastException inside the lambda
+
+            var lambda = _constructorDictionary.GetOrAdd(constructorInfo, InvokeEnhancedUncachedConstructor);
+
+            return lambda(arguments);
+        }
+        private static ConcurrentDictionary<ConstructorInfo, Func<object[], object>> _constructorDictionary = new ConcurrentDictionary<ConstructorInfo, Func<object[], object>>();
+        private static Func<object[], object> InvokeEnhancedUncachedConstructor(ConstructorInfo constructorInfo)
+        {
+            if (constructorInfo.IsStatic) 
+                throw new ArgumentException("Constructor must not be static", nameof(constructorInfo));
+            var argumentsParameter = Expression.Parameter(typeof(object[]));
+            var constructorParameters = constructorInfo.GetParameters();
+            var parameters = constructorParameters.Select((param, index) => {
+                return Expression.Convert(Expression.ArrayAccess(argumentsParameter, Expression.Constant(index)), param.ParameterType);
+            });
+            var call = Expression.New(constructorInfo, parameters);
+            var body = Expression.Convert(call, typeof(object));
+            var lambda = Expression.Lambda<Func<object[], object>>(body, argumentsParameter);
+            return lambda.Compile();
         }
     }
 }

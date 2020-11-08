@@ -2,6 +2,7 @@
 using GraphQL.Conventions.Tests;
 using System;
 using System.Reflection;
+using System.Threading;
 
 namespace Tests.Extensions
 {
@@ -142,16 +143,77 @@ namespace Tests.Extensions
             }
         }
 
+        [Test]
+        public void Constructor_Basic()
+        {
+            var obj = typeof(MyObject).GetConstructor(new Type[] { }).InvokeEnhanced(null);
+            Assert.AreEqual("unknown", obj.ToString());
+        }
+
+        [Test]
+        public void Constructor_ValueType()
+        {
+            var obj = typeof(MyObject).GetConstructor(new Type[] { typeof(int) }).InvokeEnhanced(new object[] { 1 });
+            Assert.AreEqual("1", obj.ToString());
+        }
+
+        [Test]
+        public void Constructor_ObjectType()
+        {
+            var obj = typeof(MyObject).GetConstructor(new Type[] { typeof(string) }).InvokeEnhanced(new object[] { "hello3" });
+            Assert.AreEqual("hello3", obj.ToString());
+        }
+
+        [Test]
+        public void Constructor_Multiple_Args()
+        {
+            var obj = typeof(MyObject).GetConstructor(new Type[] { typeof(Guid), typeof(MyObject) }).InvokeEnhanced(new object[] { Guid.Empty, new MyObject("hello5") });
+            Assert.AreEqual("00000000-0000-0000-0000-000000000000 hello5", obj.ToString());
+        }
+
+        [Test]
+        public void Constructor_ArgumentNull_Throws()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => Utilities.InvokeEnhanced(null, null));
+        }
+
+        [Test]
+        public void Constructor_Incorrect_Number_Of_Args_Throws()
+        {
+            Assert.ThrowsException<ArgumentException>(() => typeof(MyObject).GetConstructor(new Type[] { }).InvokeEnhanced(new object[] { 1 }));
+        }
+
+        [Test]
+        public void Constructor_Wrong_Type_Of_Args_Throws()
+        {
+            Assert.ThrowsException<InvalidCastException>(() => typeof(MyObject).GetConstructor(new Type[] { typeof(int) }).InvokeEnhanced(new object[] { "test" }));
+        }
+
+        [Test]
+        public void Constructor_Ref_Arg_Throws()
+        {
+            Assert.ThrowsException<ArgumentException>(() => typeof(MyObject).GetConstructors()[0].InvokeEnhanced(new object[] { 5 }));
+        }
+
         private MethodInfo GetMethodInfo(string name) => typeof(Utilities_InvokeTests).GetMethod(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
         private class MyObject
         {
-            private int _int;
-            public MyObject(int value) => _int = value;
+            private string ret;
+            public MyObject() => ret = "unknown";
+            public MyObject(int value) => ret = value.ToString();
+            public MyObject(string value) => ret = value;
+            public MyObject(Guid value, MyObject obj) => ret = $"{value} {obj}";
+            public MyObject(out double value) => value = 5.0;
             public override string ToString()
             {
-                return _int.ToString();
+                return ret;
             }
+        }
+
+        private class MyObjectRefC
+        {
+            public MyObjectRefC(out int value) => throw new InvalidTimeZoneException();
         }
 
         private class MyThrowingObject
