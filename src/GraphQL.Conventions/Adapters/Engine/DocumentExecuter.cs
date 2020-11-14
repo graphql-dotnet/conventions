@@ -29,7 +29,7 @@ namespace GraphQL.Conventions
                 .WithInputs(inputs)
                 .WithCancellationToken(cancellationToken)
                 .WithValidationRules(rules)
-                .Execute();
+                .ExecuteAsync();
         }
 
         public async Task<ExecutionResult> ExecuteAsync(ExecutionOptions options)
@@ -43,7 +43,7 @@ namespace GraphQL.Conventions
                 .WithInputs(options.Inputs)
                 .WithCancellationToken(options.CancellationToken)
                 .WithValidationRules(options.ValidationRules)
-                .Execute();
+                .ExecuteAsync();
         }
 
         public Task<ExecutionResult> ExecuteAsync(Action<ExecutionOptions> configure)

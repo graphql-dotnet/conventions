@@ -31,7 +31,7 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(query)
-                .Execute();
+                .ExecuteAsync();
 
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("foo", "clientMutationId", "some-mutation-id-1");

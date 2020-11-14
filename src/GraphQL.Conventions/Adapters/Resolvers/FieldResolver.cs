@@ -8,7 +8,6 @@ using GraphQL.Conventions.Handlers;
 using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Resolvers;
-using GraphQL.Types;
 
 namespace GraphQL.Conventions.Adapters
 {
@@ -28,7 +27,7 @@ namespace GraphQL.Conventions.Adapters
             _fieldInfo = fieldInfo;
         }
 
-        public virtual object Resolve(ResolveFieldContext context)
+        public virtual object Resolve(IResolveFieldContext context)
         {
             return Resolve(new ResolveFieldContext<object>(context));
         }

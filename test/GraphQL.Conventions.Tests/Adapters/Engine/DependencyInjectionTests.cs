@@ -29,7 +29,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .NewExecutor()
                 .WithQueryString("{ field }")
                 .WithDependencyInjector(new DependencyInjector())
-                .Execute();
+                .ExecuteAsync();
 
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("field", "Some Value");
@@ -50,8 +50,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .WithQueryString("{ field }")
                 .WithDependencyInjector(new DependencyInjector("Injector2"));
 
-            var result1 = await executor1.Execute();
-            var result2 = await executor2.Execute();
+            var result1 = await executor1.ExecuteAsync();
+            var result2 = await executor2.ExecuteAsync();
 
             result1.ShouldHaveNoErrors();
             result1.Data.ShouldHaveFieldWithValue("field", "Injector1");
@@ -72,7 +72,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .WithQueryString("{ field }")
                 .WithDependencyInjector(new DependencyInjector("Injector"));
 
-            var result1 = await executor1.Execute();
+            var result1 = await executor1.ExecuteAsync();
 
             result1.ShouldHaveNoErrors();
             result1.Data.ShouldHaveFieldWithValue("field", "Injector->ChildScope");
@@ -101,7 +101,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .NewExecutor()
                 .WithQueryString("{ withDependency }")
                 .WithDependencyInjector(new DependencyInjector())
-                .Execute();
+                .ExecuteAsync();
 
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("withDependency", 3);
@@ -187,12 +187,12 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         {
             protected override IExecutionStrategy SelectExecutionStrategy(ExecutionContext context)
             {
-                var injector = GetChildInjector(context.UserContext as IDependencyInjectorAccessor);
+                var injector = GetChildInjector(context.GetDependencyInjector());
                 return new ScopedExecutionStrategy(injector, base.SelectExecutionStrategy(context));
             }
 
-            private IDependencyInjector GetChildInjector(IDependencyInjectorAccessor dependencyInjectorAccessor)
-                => dependencyInjectorAccessor?.DependencyInjector.Resolve<ChildDependencyInjector>() ?? dependencyInjectorAccessor?.DependencyInjector;
+            private IDependencyInjector GetChildInjector(IDependencyInjector dependencyInjector)
+                => dependencyInjector.Resolve<ChildDependencyInjector>() ?? dependencyInjector;
 
             private class ScopedExecutionStrategy : IExecutionStrategy
             {
@@ -207,17 +207,17 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
 
                 public async Task<ExecutionResult> ExecuteAsync(ExecutionContext context)
                 {
-                    var outerUserContextWrapper = context.UserContext;
-                    var userContext = (context.UserContext as IUserContextAccessor)?.UserContext;
-
+                    var key = typeof(IDependencyInjector).FullName;
+                    var outerInjector = context.UserContext[key];
+                    
                     try
                     {
-                        context.UserContext = UserContextWrapper.Create(userContext, _injector);
+                        context.UserContext[key] = _injector;
                         return await _innerStrategy.ExecuteAsync(context);
                     }
                     finally
                     {
-                        context.UserContext = outerUserContextWrapper;
+                        context.UserContext[key] = outerInjector;
                     }
                 }
             }

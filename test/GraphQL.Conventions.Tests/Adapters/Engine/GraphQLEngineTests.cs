@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Tests.Adapters.Engine.Types;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Validation.Complexity;
-using Newtonsoft.Json.Linq;
 
 namespace GraphQL.Conventions.Tests.Adapters.Engine
 {
@@ -33,6 +31,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 floatField2: Float!
                 fooField1: Foo
                 fooField2: Foo!
+                guidField1: GUID
+                guidField2: GUID!
                 intField1: Int
                 intField2: Int!
                 stringField1: String
@@ -134,7 +134,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                     field4(input: { yetAnotherField: SOME_VALUE1 })
                     field5
                 }")
-                .Execute();
+                .ExecuteAsync();
 
             result.Data.ShouldHaveFieldWithValue("field3", "SOME_VALUE2");
             result.Data.ShouldHaveFieldWithValue("field4", "SOME_VALUE2");
@@ -159,7 +159,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             type QueryWithInterfaces {
                 field: TypeFromTwoInterfaces
             }
-            type TypeFromTwoInterfaces implements Interface1, Interface2 {
+            type TypeFromTwoInterfaces implements Interface1 & Interface2 {
                 field1: String
                 field2: String
             }
@@ -176,7 +176,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(@"{ customScalarType(arg:""CUSTOM:Test"") }")
-                .Execute();
+                .ExecuteAsync();
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("customScalarType", "CUSTOM:WRAPPED:Test");
         }
@@ -191,7 +191,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(@"{ customJsonScalarType }")
-                .Execute();
+                .ExecuteAsync();
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("customJsonScalarType", new Dictionary<string, object> { { "test", true } });
         }
@@ -210,7 +210,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                         title
                         releaseDate
                     }")
-                .Execute();
+                .ExecuteAsync();
 
             result.Data.ShouldHaveFieldWithValue("title", "Movie 1");
         }
@@ -233,7 +233,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                             lastName
                         }
                     }")
-                .Execute();
+                .ExecuteAsync();
 
             result.ShouldHaveErrors(1);
             var error = result.Errors.First().InnerException.ToString();
@@ -277,6 +277,10 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             public Url UrlField1 { get; }
 
             public NonNull<Url> UrlField2 { get; }
+
+            public Guid? GuidField1 { get; }
+
+            public Guid GuidField2 { get; }
         }
 
         class Foo

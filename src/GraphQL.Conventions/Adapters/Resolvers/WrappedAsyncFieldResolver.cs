@@ -31,7 +31,7 @@ namespace GraphQL.Conventions.Adapters
             _fieldInfo = fieldInfo;
         }
 
-        public object Resolve(ResolveFieldContext context)
+        public object Resolve(IResolveFieldContext context)
         {
             Func<IResolutionContext, object> resolver;
             if (_fieldInfo.IsMethod)
@@ -42,7 +42,7 @@ namespace GraphQL.Conventions.Adapters
             {
                 resolver = ctx => GetValue(_fieldInfo, ctx);
             }
-            var resolutionContext = new ResolutionContext(_fieldInfo, context);
+            var resolutionContext = new ResolutionContext(_fieldInfo, new ResolveFieldContext<object>(context));
             return ExecutionFilterHandler.Execute(resolutionContext, resolver);
         }
 

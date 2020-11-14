@@ -1,12 +1,14 @@
+using GraphQL.NewtonsoftJson;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using GraphQL.Http;
+using System.Threading.Tasks;
 
 namespace GraphQL.Conventions.Web
 {
     public class Response
     {
-        private static DocumentWriter _writer = new DocumentWriter();
+        private static readonly DocumentWriter _writer = new DocumentWriter();
 
         private string _body;
 
@@ -26,30 +28,26 @@ namespace GraphQL.Conventions.Web
             ValidationResult = result;
         }
 
-        public Request Request { get; private set; }
+        public Request Request { get; }
 
         public string QueryId => Request?.QueryId;
 
-        public ExecutionResult ExecutionResult { get; private set; }
+        public ExecutionResult ExecutionResult { get; }
 
-        public Validation.IValidationResult ValidationResult { get; private set; }
-
-        public string Body
+        public Validation.IValidationResult ValidationResult { get; }
+        
+        public async Task<string> GetBodyAsync()
         {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(_body) && ExecutionResult != null)
-                {
-                    _body = _writer.Write(ExecutionResult);
-                }
-                return _body;
-            }
-            internal set
-            {
-                _body = value;
-            }
+            if (string.IsNullOrWhiteSpace(_body) && ExecutionResult != null)
+                _body = await _writer
+                    .WriteToStringAsync(ExecutionResult)
+                    .ConfigureAwait(false);
+
+            return _body;
         }
 
+        internal void SetBody(string value) => _body = value;
+        
         public void AddExtra(string key, object value)
         {
             if (ExecutionResult.Extensions == null)

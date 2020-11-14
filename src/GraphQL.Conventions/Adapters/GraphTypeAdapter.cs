@@ -41,13 +41,14 @@ namespace GraphQL.Conventions.Adapters
                 .GroupBy(t => t.Name)
                 .Select(g => g.First())
                 .ToArray();
-            var schema = new Schema(new FuncDependencyResolver(DeriveTypeFromTypeInfo))
+            var schema = new Schema(new FuncServiceProvider(DeriveTypeFromTypeInfo))
             {
                 Query = DeriveOperationType(schemaInfo.Query),
                 Mutation = DeriveOperationType(schemaInfo.Mutation),
                 Subscription = DeriveOperationType(schemaInfo.Subscription),
-            };            
+            };
             schema.RegisterTypes(possibleTypes);
+
             return schema;
         }
 
@@ -162,7 +163,7 @@ namespace GraphQL.Conventions.Adapters
                     return typeof(DateTimeOffsetGraphType);
 
                 case TypeNames.Id:
-                    return typeof(Types.IdGraphType);
+                    return typeof(IdGraphType);
 
                 case TypeNames.Cursor:
                     return typeof(Types.Relay.CursorGraphType);
@@ -329,9 +330,9 @@ namespace GraphQL.Conventions.Adapters
 
         private static object UnwrapObject(object obj)
         {
-            if (obj is INonNull @null)
+            if (obj is INonNull nonnull)
             {
-                obj = @null.ObjectValue;
+                obj = nonnull.ObjectValue;
             }
             if (obj is Union union)
             {

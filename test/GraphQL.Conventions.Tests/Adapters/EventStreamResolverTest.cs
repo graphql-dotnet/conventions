@@ -26,7 +26,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("subscription { test }")
-                .Execute();
+                .ExecuteAsync();
 
             Assert.AreEqual(1, ((SubscriptionExecutionResult)result).Streams.Count);
         }

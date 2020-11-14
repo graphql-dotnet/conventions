@@ -16,12 +16,14 @@ namespace GraphQL.Conventions.Tests.Web
                 .New()
                 .WithQuery<TestQuery>()
                 .Generate()
-                .ProcessRequest(request, null, null);
+                .ProcessRequestAsync(request, null, null);
 
             response.ExecutionResult.Data.ShouldHaveFieldWithValue("hello", "World");
-            response.Body.ShouldEqual("{\"data\":{\"hello\":\"World\"}}");
             response.Errors.Count.ShouldEqual(0);
             response.Warnings.Count.ShouldEqual(0);
+
+            var body = await response.GetBodyAsync();
+            body.ShouldEqual("{\"data\":{\"hello\":\"World\"}}");
         }
 
         [Test]
@@ -33,12 +35,14 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithQuery<TestQuery>()
                 .WithComplexityConfiguration(new ComplexityConfiguration { MaxDepth = 2 })
                 .Generate()
-                .ProcessRequest(request, null, null);
+                .ProcessRequestAsync(request, null, null);
 
             response.ExecutionResult.Data.ShouldHaveFieldWithValue("hello", "World");
-            response.Body.ShouldEqual("{\"data\":{\"hello\":\"World\"}}");
             response.Errors.Count.ShouldEqual(0);
             response.Warnings.Count.ShouldEqual(0);
+
+            var body = await response.GetBodyAsync();
+            body.ShouldEqual("{\"data\":{\"hello\":\"World\"}}");
         }
 
         [Test]
@@ -50,10 +54,10 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithQuery<TestQuery>()
                 .WithComplexityConfiguration(new ComplexityConfiguration { MaxDepth = 1 })
                 .Generate()
-                .ProcessRequest(request, null, null);
+                .ProcessRequestAsync(request, null, null);
 
             response.Errors.Count.ShouldEqual(1);
-            response.Errors[0].Message.ShouldEqual("Query is too nested to execute. Depth is 2 levels, maximum allowed on this endpoint is 1.");
+            response.Errors[0].Message.ShouldEqual("Error executing document. Query is too nested to execute. Depth is 2 levels, maximum allowed on this endpoint is 1.");
         }
 
         [Test]
@@ -65,8 +69,10 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithQuery<ProfiledQuery>()
                 .WithProfiling()
                 .Generate()
-                .ProcessRequest(request, null, null);
-            response.Body.ShouldContain("\"extensions\":{\"tracing\":");
+                .ProcessRequestAsync(request, null, null);
+
+            var body = await response.GetBodyAsync();
+            body.ShouldContain("\"extensions\":{\"tracing\":");
         }
 
         [Test]
@@ -78,8 +84,10 @@ namespace GraphQL.Conventions.Tests.Web
                 .New()
                 .WithQuery<CompositeQuery>()
                 .Generate()
-                .ProcessRequest(request, null, null);
-            response.Body.ShouldEqual("{\"data\":{\"earth\":{\"hello\":\"World\"},\"mars\":{\"hello\":\"World From Mars\"}}}");
+                .ProcessRequestAsync(request, null, null);
+
+            var body = await response.GetBodyAsync();
+            body.ShouldEqual("{\"data\":{\"earth\":{\"hello\":\"World\"},\"mars\":{\"hello\":\"World From Mars\"}}}");
 
             // Exclude types from 'Unwanted' namespace, i.e. TypeQuery2 from CompositeQuery schema
             request = Request.New("{ \"query\": \"{ earth { hello } mars { hello } } \" }");
@@ -88,10 +96,12 @@ namespace GraphQL.Conventions.Tests.Web
                 .IgnoreTypesFromNamespacesStartingWith("GraphQL.Conventions.Tests.Web.Unwanted")
                 .WithQuery<CompositeQuery>()
                 .Generate()
-                .ProcessRequest(request, null, null);
+                .ProcessRequestAsync(request, null, null);
             response.Errors.Count.ShouldEqual(1);
             response.Errors[0].Message.ShouldContain("Cannot query field \"hello\" on type \"TestQuery2\".");
-            response.Body.ShouldContain("VALIDATION_ERROR");
+
+            body = await response.GetBodyAsync();
+            body.ShouldContain("FIELD_RESOLUTION");
         }
 
         [Test]
@@ -103,12 +113,14 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithQuery<SimpleQuery>()
                 .WithQueryExtensions(typeof(QueryExtensions))
                 .Generate()
-                .ProcessRequest(request, null, null);
+                .ProcessRequestAsync(request, null, null);
 
             response.ExecutionResult.Data.ShouldHaveFieldWithValue("helloExtended", "Extended-10");
-            response.Body.ShouldEqual("{\"data\":{\"helloExtended\":\"Extended-10\"}}");
             response.Errors.Count.ShouldEqual(0);
             response.Warnings.Count.ShouldEqual(0);
+
+            var body = await response.GetBodyAsync();
+            body.ShouldEqual("{\"data\":{\"helloExtended\":\"Extended-10\"}}");
         }
 
         [Test]
@@ -120,22 +132,24 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithQuery<SimpleQuery>()
                 .WithQueryExtensions(typeof(QueryExtensions))
                 .Generate()
-                .ProcessRequest(request, null, null);
-
-            response.Body.ShouldEqual("{\"data\":{\"helloType\":{\"myName\":\"Name-1\"}}}");
+                .ProcessRequestAsync(request, null, null);
+            
             response.Errors.Count.ShouldEqual(0);
             response.Warnings.Count.ShouldEqual(0);
+
+            var body = await response.GetBodyAsync();
+            body.ShouldEqual("{\"data\":{\"helloType\":{\"myName\":\"Name-1\"}}}");
         }
 
         [Test]
-        public void Can_Construct_And_Describe_Schema_With_Extensions()
+        public async void Can_Construct_And_Describe_Schema_With_Extensions()
         {
-            var schema = RequestHandler
+            var schema = await RequestHandler
                 .New()
                 .WithQuery<SimpleQuery>()
                 .WithQueryExtensions(typeof(QueryExtensions))
                 .Generate()
-                .DescribeSchema(false, false, false);
+                .DescribeSchemaAsync(false, false, false);
 
             schema.ShouldEqualWhenReformatted(@"
                 schema {

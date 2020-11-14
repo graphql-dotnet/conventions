@@ -80,7 +80,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 _userRepository = userRepository;
             }
 
-            public object Resolve(ResolveFieldContext context) =>
+            public object Resolve(IResolveFieldContext context) =>
                 _userRepository;
         }
 

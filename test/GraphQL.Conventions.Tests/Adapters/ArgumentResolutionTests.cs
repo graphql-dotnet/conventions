@@ -654,7 +654,8 @@ namespace GraphQL.Conventions.Tests.Adapters
                 .WithInputs(inputs)
                 .WithUserContext(userContext)
                 .WithDependencyInjector(new DependencyInjector())
-                .Execute();
+                .ExecuteAsync();
+
             return result;
         }
 

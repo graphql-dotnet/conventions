@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
 
@@ -8,13 +9,18 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
     {
         public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value, bool isSpecified)
         {
-            if (typeInfo.IsPrimitive &&
-                !typeInfo.IsEnumerationType &&
-                value is IConvertible)
+            if (value != null && typeInfo.IsPrimitive && !typeInfo.IsEnumerationType)
             {
                 try
                 {
-                    return Convert.ChangeType(value, typeInfo.GetTypeRepresentation().AsType());
+                    var targetType = typeInfo.GetTypeRepresentation().AsType();
+
+                    var converter = TypeDescriptor.GetConverter(targetType);
+                    if (converter != null && converter.CanConvertFrom(value.GetType()))
+                        return converter.ConvertFrom(value);
+                     
+                    if(value is IConvertible)
+                        return Convert.ChangeType(value, targetType);
                 }
                 catch (Exception ex)
                 {

@@ -107,7 +107,8 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
                 .NewExecutor()
                 .WithQueryString(query)
                 .WithInputs(inputs)
-                .Execute();
+                .ExecuteAsync();
+
             return result;
         }
 
