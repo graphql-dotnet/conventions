@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Tests.Adapters.Engine.Types;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Validation.Complexity;
-using Newtonsoft.Json.Linq;
 
 namespace GraphQL.Conventions.Tests.Adapters.Engine
 {
@@ -193,7 +191,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(@"{ customJsonScalarType }")
-                .Execute();
+                .ExecuteAsync();
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("customJsonScalarType", new Dictionary<string, object> { { "test", true } });
         }
