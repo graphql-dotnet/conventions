@@ -1,7 +1,11 @@
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution;
+using Tests;
+using Tests.Templates;
+using Tests.Templates.Extensions;
+
+// ReSharper disable UnusedMember.Local
+// ReSharper disable CheckNamespace
 
 namespace GraphQL.Conventions.Tests.Adapters
 {

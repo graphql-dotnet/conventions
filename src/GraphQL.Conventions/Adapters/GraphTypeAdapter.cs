@@ -33,7 +33,7 @@ namespace GraphQL.Conventions.Adapters
             var possibleTypes = interfaces
                 .Where(t => !t.IsIgnored)
                 .SelectMany(t => t.PossibleTypes)
-                .Select(typeInfo => (typeInfo.IsIgnored || !typeInfo.IsNullable || typeInfo.Interfaces.Any(x => x.IsIgnored == true))
+                .Select(typeInfo => (typeInfo.IsIgnored || !typeInfo.IsNullable || typeInfo.Interfaces.Any(x => x.IsIgnored))
                     ? null
                     : DeriveType(typeInfo)
                 )

@@ -1,10 +1,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GraphQL;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Relay;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedAutoPropertyAccessor.Local
 
-namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
+namespace Tests.Attributes.Execution.Relay
 {
     public class RelayMutationAttributeTests : TestBase
     {

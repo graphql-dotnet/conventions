@@ -10,11 +10,12 @@ namespace GraphQL.Conventions.Extensions
 {
     public class ChaosAttribute : ExecutionFilterAttributeBase
     {
-        public static bool IsEnabled = false;
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        public static bool IsEnabled { get; set; }
 
         private const int DefaultSuccessRate = 50;
 
-        private static readonly Random _random = new Random();
+        private static readonly Random Random = new Random();
 
         private readonly int _successRate;
 
@@ -25,7 +26,7 @@ namespace GraphQL.Conventions.Extensions
 
         public override Task<object> Execute(IResolutionContext context, FieldResolutionDelegate next)
         {
-            if (_random.Next(0, 100) > _successRate)
+            if (Random.Next(0, 100) > _successRate)
             {
                 var path = $"{context.FieldInfo.DeclaringType.Name}.{context.FieldInfo.Name}";
                 throw new ChaosException($"Only {_successRate} % of requests will succeed.", path);

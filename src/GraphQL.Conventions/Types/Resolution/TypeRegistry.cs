@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
     public static class TypeRegistry
     {
-        private static readonly Dictionary<Type, List<Type>> _registry = new Dictionary<Type, List<Type>>();
+        private static readonly Dictionary<Type, List<Type>> Registry = new Dictionary<Type, List<Type>>();
 
         public static void Add<TInterface, TImplementation>()
         {
@@ -16,9 +17,9 @@ namespace GraphQL.Conventions
         public static void Add<TInterface>(params Type[] implementationTypes)
         {
             List<Type> typeList;
-            if (!_registry.TryGetValue(typeof(TInterface), out typeList))
+            if (!Registry.TryGetValue(typeof(TInterface), out typeList))
             {
-                typeList = _registry[typeof(TInterface)] = new List<Type>();
+                typeList = Registry[typeof(TInterface)] = new List<Type>();
             }
             typeList.AddRange(implementationTypes);
         }
@@ -31,7 +32,7 @@ namespace GraphQL.Conventions
             }
 
             List<Type> typeList;
-            if (_registry.TryGetValue(@type.AsType(), out typeList))
+            if (Registry.TryGetValue(@type.AsType(), out typeList))
             {
                 foreach (var registryType in typeList)
                 {

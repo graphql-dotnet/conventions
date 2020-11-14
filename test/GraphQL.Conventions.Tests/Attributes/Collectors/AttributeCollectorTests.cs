@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Attributes;
 using GraphQL.Conventions.Attributes.Collectors;
 using GraphQL.Conventions.Attributes.MetaData;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Attributes.Collectors
+namespace Tests.Attributes.Collectors
 {
     public class AttributeCollectorTests : TestBase
     {

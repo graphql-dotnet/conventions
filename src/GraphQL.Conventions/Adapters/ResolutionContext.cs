@@ -4,13 +4,12 @@ using System.Linq;
 using System.Threading;
 using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Types.Descriptors;
-using GraphQL.Types;
 
 namespace GraphQL.Conventions.Adapters
 {
     public class ResolutionContext : IResolutionContext
     {
-        private static object _lock = new object();
+        private static readonly object Lock = new object();
 
         public ResolutionContext(GraphFieldInfo fieldInfo, ResolveFieldContext<object> fieldContext)
         {
@@ -22,11 +21,10 @@ namespace GraphQL.Conventions.Adapters
 
         public object GetArgument(string name, object defaultValue = null)
         {
-            lock (_lock)
+            lock (Lock)
             {
-                object value;
                 if (FieldContext.Arguments != null &&
-                    FieldContext.Arguments.TryGetValue(name, out value))
+                    FieldContext.Arguments.TryGetValue(name, out var value))
                 {
                     return value;
                 }
@@ -46,7 +44,7 @@ namespace GraphQL.Conventions.Adapters
 
         public void SetArgument(string name, object value)
         {
-            lock (_lock)
+            lock (Lock)
             {
                 if (FieldContext.Arguments == null)
                 {
@@ -62,12 +60,12 @@ namespace GraphQL.Conventions.Adapters
 
         public IDependencyInjector DependencyInjector => FieldContext.GetDependencyInjector();
 
-        public GraphFieldInfo FieldInfo { get; private set; }
+        public GraphFieldInfo FieldInfo { get; }
 
         public CancellationToken CancellationToken => FieldContext.CancellationToken;
 
         public IEnumerable<string> Path => FieldContext.Path.Select(o => o?.ToString());
 
-        public ResolveFieldContext<object> FieldContext { get; private set; }
+        public ResolveFieldContext<object> FieldContext { get; }
     }
 }

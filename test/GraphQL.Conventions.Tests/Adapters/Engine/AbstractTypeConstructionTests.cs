@@ -1,9 +1,12 @@
 using System;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters.Engine
+// ReSharper disable UnusedMember.Local
+
+namespace Tests.Adapters.Engine
 {
     public class AbstractTypeConstructionTests : TestBase
     {

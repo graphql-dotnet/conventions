@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions.Relay
 {
     [Description("Cursor used in pagination.")]
@@ -38,6 +39,7 @@ namespace GraphQL.Conventions.Relay
             _id.ToString();
 
         public bool IsCursorForType(Type type) =>
+            // ReSharper disable once PossiblyImpureMethodCallOnReadonlyVariable
             _id.IsIdentifierForType(type);
 
         public bool IsCursorForType<TType>() =>
@@ -46,11 +48,13 @@ namespace GraphQL.Conventions.Relay
         public string CursorForType(Type type)
         {
             var typeName = Id.GetTypeName(type);
+            // ReSharper disable once PossiblyImpureMethodCallOnReadonlyVariable
             if (!_id.IsIdentifierForType(type))
             {
                 throw new ArgumentException(
                     $"Expected cursor of type '{typeName}' (unencoded identifier '{_id._unencodedIdentifier}').");
             }
+            // ReSharper disable once PossiblyImpureMethodCallOnReadonlyVariable
             return _id.IdentifierForType(type);
         }
 

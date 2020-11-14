@@ -37,9 +37,7 @@ namespace GraphQL.Conventions.Web
 
             bool _useValidation = true;
 
-            bool _useProfiling = false;
-
-            bool _outputViolationsAsWarnings;
+            bool _useProfiling;
 
             FieldResolutionStrategy _fieldResolutionStrategy = FieldResolutionStrategy.Normal;
 
@@ -136,7 +134,6 @@ namespace GraphQL.Conventions.Web
             public RequestHandlerBuilder WithoutValidation(bool outputViolationsAsWarnings = false)
             {
                 _useValidation = false;
-                _outputViolationsAsWarnings = outputViolationsAsWarnings;
                 return this;
             }
 
@@ -179,7 +176,6 @@ namespace GraphQL.Conventions.Web
                     _exceptionsTreatedAsWarnings,
                     _useValidation,
                     _useProfiling,
-                    _outputViolationsAsWarnings,
                     _fieldResolutionStrategy,
                     _complexityConfiguration,
                     _middleware,
@@ -204,8 +200,6 @@ namespace GraphQL.Conventions.Web
 
             readonly bool _useProfiling;
 
-            readonly bool _outputViolationsAsWarnings;
-
             readonly ComplexityConfiguration _complexityConfiguration;
 
             internal RequestHandlerImpl(
@@ -215,7 +209,6 @@ namespace GraphQL.Conventions.Web
                 IEnumerable<Type> exceptionsTreatedAsWarning,
                 bool useValidation,
                 bool useProfiling,
-                bool outputViolationsAsWarnings,
                 FieldResolutionStrategy fieldResolutionStrategy,
                 ComplexityConfiguration complexityConfiguration,
                 IEnumerable<Type> middleware,
@@ -227,7 +220,6 @@ namespace GraphQL.Conventions.Web
                 _exceptionsTreatedAsWarnings.AddRange(exceptionsTreatedAsWarning);
                 _useValidation = useValidation;
                 _useProfiling = useProfiling;
-                _outputViolationsAsWarnings = outputViolationsAsWarnings;
                 _engine.WithFieldResolutionStrategy(fieldResolutionStrategy);
                 _engine.BuildSchema(schemaTypes.ToArray());
                 _complexityConfiguration = complexityConfiguration;
@@ -264,7 +256,7 @@ namespace GraphQL.Conventions.Web
                 var errors = result?.Errors?.Where(e => !string.IsNullOrWhiteSpace(e?.Message));
                 foreach (var error in errors ?? new List<ExecutionError>())
                 {
-                    if (_exceptionsTreatedAsWarnings.Contains(error.InnerException.GetType()))
+                    if (_exceptionsTreatedAsWarnings.Contains(error.InnerException?.GetType()))
                     {
                         response.Warnings.Add(error);
                     }
@@ -273,9 +265,12 @@ namespace GraphQL.Conventions.Web
                         response.Errors.Add(error);
                     }
                 }
+
+                if (result == null) return response;
                 result.Errors = new ExecutionErrors();
                 result.Errors.AddRange(response.Errors);
                 response.SetBody(await _engine.SerializeResultAsync(result));
+
                 return response;
             }
 

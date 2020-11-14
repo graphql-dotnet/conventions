@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions.Relay
 {
     public static class ConnectionExtensions
@@ -74,7 +75,9 @@ namespace GraphQL.Conventions.Relay
             };
         }
 
+        // ReSharper disable ParameterOnlyUsedForPreconditionCheck.Local
         private static void ValidateParameters(int? first, Cursor? after, int? last, Cursor? before)
+        // ReSharper restore ParameterOnlyUsedForPreconditionCheck.Local
         {
             if (first.HasValue && last.HasValue)
             {
@@ -99,6 +102,7 @@ namespace GraphQL.Conventions.Relay
 
         private class ConnectionImpl<TNode> : Connection<TNode>
         {
+            // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
             private readonly IEnumerable<Tuple<string, TNode>> _collection;
 
             public ConnectionImpl(IEnumerable<Tuple<string, TNode>> collection, int? first, Cursor? after, int? last, Cursor? before)
@@ -116,6 +120,7 @@ namespace GraphQL.Conventions.Relay
 
                 if (after.HasValue)
                 {
+                    // ReSharper disable PossibleMultipleEnumeration
                     var lastEntryBefore = edges
                         .TakeWhile(edge => edge.Cursor <= after.Value)
                         .LastOrDefault();
@@ -126,6 +131,7 @@ namespace GraphQL.Conventions.Relay
                     }
 
                     edges = edges.SkipWhile(edge => edge.Cursor <= after.Value);
+                    // ReSharper restore PossibleMultipleEnumeration
                 }
 
                 if (before.HasValue)
@@ -192,11 +198,10 @@ namespace GraphQL.Conventions.Relay
                 }
                 else
                 {
-                    var zeroCursor = Cursor.New<TNode>(0);
                     PageInfo = new PageInfo
                     {
-                        StartCursor = after ?? before ?? minCursor ?? zeroCursor,
-                        EndCursor = before ?? after ?? maxCursor ?? zeroCursor,
+                        StartCursor = after ?? before ?? (Cursor) minCursor,
+                        EndCursor = before ?? after ?? (Cursor) maxCursor,
                     };
 
                     var startValue = PageInfo.Value.StartCursor.IntegerForCursor<TNode>() ?? 0;

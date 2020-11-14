@@ -8,9 +8,10 @@ using GraphQL.Conventions.Attributes.MetaData.Utilities;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
-    [AttributeUsage(Everywhere, AllowMultiple = true, Inherited = true)]
+    [AttributeUsage(Everywhere, AllowMultiple = true)]
     public class NameAttribute : MetaDataAttributeBase, IDefaultAttribute
     {
         private static INameNormalizer _nameNormalizer = new NameNormalizer();

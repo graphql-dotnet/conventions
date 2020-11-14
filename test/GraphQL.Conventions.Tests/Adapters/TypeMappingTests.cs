@@ -1,16 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ConventionsTypes = GraphQL.Conventions.Adapters.Types;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Relay;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Types;
+using Tests.Templates;
+using Tests.Templates.Extensions;
+using ConventionsTypes = GraphQL.Conventions.Adapters.Types;
 using Extended = GraphQL.Conventions.Adapters.Types;
 using UriGraphType = GraphQL.Conventions.Adapters.Types.UriGraphType;
 using GuidGraphType = GraphQL.Conventions.Adapters.Types.GuidGraphType;
+// ReSharper disable UnusedMember.Local
 
-namespace GraphQL.Conventions.Tests.Adapters
+namespace Tests.Adapters
 {
     public class TypeMappingTests : ConstructionTestBase
     {

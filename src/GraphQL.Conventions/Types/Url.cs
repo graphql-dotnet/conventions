@@ -1,5 +1,6 @@
 using System;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
     public class Url : Uri

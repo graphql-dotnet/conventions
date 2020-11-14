@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GraphQL.Conventions.Relay;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Types.Relay
+namespace Tests.Types.Relay
 {
     public class ConnectionTests : TestBase
     {
@@ -365,7 +365,7 @@ namespace GraphQL.Conventions.Tests.Types.Relay
         [Test]
         public void Can_Create_Connection_From_First_3O_In_Infinite_Collection()
         {
-            var connection = GenerateInfiniteConnection(5, 6, first: 3);
+            var connection = GenerateInfiniteConnection(6, first: 3);
 
             connection.PageInfo.Value.HasNextPage.ShouldEqual(true);
             connection.PageInfo.Value.HasPreviousPage.ShouldEqual(false);
@@ -384,7 +384,7 @@ namespace GraphQL.Conventions.Tests.Types.Relay
         [Test]
         public void Can_Create_Connection_From_First_3_After_2O_In_Infinite_Collection()
         {
-            var connection = GenerateInfiniteConnection(5, 6, first: 3, after: Cursor<int>(2));
+            var connection = GenerateInfiniteConnection(6, first: 3, after: Cursor<int>(2));
 
             connection.PageInfo.Value.HasNextPage.ShouldEqual(true);
             connection.PageInfo.Value.HasPreviousPage.ShouldEqual(true);
@@ -405,7 +405,7 @@ namespace GraphQL.Conventions.Tests.Types.Relay
         {
             try
             {
-                GenerateInfiniteConnection(5, 6, last: 3);
+                GenerateInfiniteConnection(6, last: 3);
                 true.ShouldBeFalse("Getting the last entries of an infinite collection should fail.");
             }
             catch (Exception ex)
@@ -417,7 +417,7 @@ namespace GraphQL.Conventions.Tests.Types.Relay
         [Test]
         public void Cannot_Retrieve_Total_Count_Of_Infinite_Collection()
         {
-            var connection = GenerateInfiniteConnection(5, 6, first: 3);
+            var connection = GenerateInfiniteConnection(6, first: 3);
             connection.TotalCount.ShouldBeNull();
         }
 
@@ -490,8 +490,9 @@ namespace GraphQL.Conventions.Tests.Types.Relay
             var enumerable = Sequence(10)
                 .Where(edge => (edge.Node / 2) % 2 == 1);
 
-            var connection = enumerable
-                .ToConnection(false, totalCount: enumerable.Count());
+            var edges = enumerable.ToList();
+            var connection = edges
+                .ToConnection(false, totalCount: edges.Count());
 
             connection.TotalCount.ShouldEqual(5);
 
@@ -631,6 +632,7 @@ namespace GraphQL.Conventions.Tests.Types.Relay
             return items.ToConnection(first, after, last, before, count);
         }
 
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         private static IEnumerable<int> InfiniteCollection(int throwAboveThisNumber = -1)
         {
             for (var i = 1; ; i++)
@@ -643,8 +645,7 @@ namespace GraphQL.Conventions.Tests.Types.Relay
             }
         }
 
-        private Connection<int> GenerateInfiniteConnection(
-            int count, int throwExceptionAboveThisNumber,
+        private Connection<int> GenerateInfiniteConnection(int throwExceptionAboveThisNumber,
             int? first = null, int? last = null, Cursor? after = null, Cursor? before = null)
         {
             return InfiniteCollection(throwExceptionAboveThisNumber)

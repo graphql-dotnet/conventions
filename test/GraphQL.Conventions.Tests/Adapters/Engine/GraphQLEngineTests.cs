@@ -2,12 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Tests.Adapters.Engine.Types;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions;
 using GraphQL.Validation.Complexity;
+using Tests.Adapters.Engine.Types;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters.Engine
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnassignedGetOnlyAutoProperty
+// ReSharper disable UnusedParameter.Local
+// ReSharper disable UnusedAutoPropertyAccessor.Local
+// ReSharper disable InconsistentNaming
+
+namespace Tests.Adapters.Engine
 {
     public class GraphQLEngineTests : TestBase
     {
@@ -236,7 +243,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .ExecuteAsync();
 
             result.ShouldHaveErrors(1);
-            var error = result.Errors.First().InnerException.ToString();
+            var error = result.Errors.First().InnerException?.ToString();
             error.ShouldContainWhenReformatted("Query is too nested to execute. Depth is 1 levels, maximum allowed on this endpoint is 0.");
         }
 

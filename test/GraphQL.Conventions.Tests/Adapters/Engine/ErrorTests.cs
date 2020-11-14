@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
-using GraphQL.Execution;
+using Tests;
+using Tests.Templates;
+using Tests.Templates.Extensions;
+
+// ReSharper disable CheckNamespace
+// ReSharper disable UnusedMember.Local
 
 namespace GraphQL.Conventions.Tests.Adapters.Engine
 {
@@ -78,12 +81,12 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .NewExecutor()
                 .WithQueryString("query Blah { getObject { arrayField { test } } }")
                 .ExecuteAsync();
-            
+
             result.Data.ShouldHaveFieldWithValue("getObject", "arrayField", 0, "test", "some value");
             result.Data.ShouldHaveFieldWithValue("getObject", "arrayField", 1, "test", null);
             result.Data.ShouldHaveFieldWithValue("getObject", "arrayField", 2, "test", "some value");
             result.Data.ShouldHaveFieldWithValue("getObject", "arrayField", 3, "test", null);
-            
+
             result.Errors.ShouldNotBeNull();
             result.Errors.Count.ShouldEqual(2);
 
@@ -122,11 +125,12 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
 
             var error = result.Errors.First();
             error.InnerException.ShouldNotBeNull();
-            error.InnerException.InnerException.ShouldNotBeNull();
+            error.InnerException?.InnerException.ShouldNotBeNull();
 
-            var innerError = error.InnerException.InnerException;
-            innerError.Message.ShouldEqual("Test error.");
-            innerError.Data["someKey"].ShouldEqual("someValue");
+            var innerError = error.InnerException?.InnerException;
+            innerError.ShouldNotBeNull();
+            innerError?.Message.ShouldEqual("Test error.");
+            innerError?.Data["someKey"].ShouldEqual("someValue");
         }
 
         class Query
@@ -148,9 +152,9 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             public List<Object2> ArrayField => new List<Object2>
             {
                 new Object2(false),
-                new Object2(true),
+                new Object2(),
                 new Object2(false),
-                new Object2(true),
+                new Object2(),
             };
         }
 

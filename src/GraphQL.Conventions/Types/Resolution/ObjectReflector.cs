@@ -396,7 +396,7 @@ namespace GraphQL.Conventions.Types.Resolution
                    memberInfo.DeclaringType.Namespace != nameof(System) &&
                    !IgnoredNamespaces.Any(n => memberInfo.DeclaringType.Namespace?.StartsWith(n) ?? false) &&
                    !(memberInfo.DeclaringType.GetTypeInfo()?.IsValueType ?? false) &&
-                   memberInfo.Name != nameof(object.ToString) &&
+                   memberInfo.Name != nameof(ToString) &&
                    HasValidReturnType(memberInfo) &&
                    (IgnoreTypeCallback == null || !IgnoreTypeCallback(memberInfo.DeclaringType, memberInfo));
         }

@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GraphQL;
 using GraphQL.Types;
 
-namespace GraphQL.Conventions.Tests.Templates.Extensions
+namespace Tests.Templates.Extensions
 {
     static class ConstructionTestExtensions
     {
@@ -140,7 +141,7 @@ namespace GraphQL.Conventions.Tests.Templates.Extensions
                     ? string.Join("\n---\n", result.Errors.Select(ExceptionToString))
                     : "(none)";
                 throw new Exception(
-                    $"Expected {count} errors, but got {result?.Errors.Count}:\n\n{messages}\n");
+                    $"Expected {count} errors, but got {result?.Errors?.Count}:\n\n{messages}\n");
             }
         }
 

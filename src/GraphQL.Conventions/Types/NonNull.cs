@@ -2,6 +2,7 @@ using System;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
     public struct NonNull<T> : IEquatable<NonNull<T>>, INonNull

@@ -3,23 +3,20 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using GraphQL.Conventions.Attributes.Execution.Unwrappers;
-using GraphQL.Conventions.Attributes.Execution.Wrappers;
 using GraphQL.Conventions.Extensions;
 using GraphQL.Conventions.Handlers;
 using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
 using GraphQL.Resolvers;
-using GraphQL.Types;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions.Adapters
 {
     class WrappedSyncFieldResolver : IFieldResolver
     {
         private static readonly ExecutionFilterAttributeHandler ExecutionFilterHandler =
             new ExecutionFilterAttributeHandler();
-
-        private static readonly IWrapper Wrapper = new ValueWrapper();
 
         private static readonly IUnwrapper Unwrapper = new ValueUnwrapper();
 
@@ -61,7 +58,7 @@ namespace GraphQL.Conventions.Adapters
                 .Arguments
                 .Select(context.GetArgument);
 
-            if (fieldInfo.Type.IsTask)
+            if (fieldInfo.Type.IsTask && methodInfo != null)
             {
                 var argumentTypes = methodInfo.GetParameters().Select(p => p.ParameterType).ToList();
                 var argumentConstants = arguments.Select((arg, i) => Expression.Constant(arg, argumentTypes[i]));

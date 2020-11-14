@@ -1,10 +1,13 @@
 using System.Threading.Tasks;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Web;
 using GraphQL.Validation.Complexity;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Web
+// ReSharper disable UnusedMember.Local
+
+namespace Tests.Web
 {
     public class RequestHandlerTests : TestBase
     {
@@ -16,7 +19,7 @@ namespace GraphQL.Conventions.Tests.Web
                 .New()
                 .WithQuery<TestQuery>()
                 .Generate()
-                .ProcessRequestAsync(request, null, null);
+                .ProcessRequestAsync(request, null);
 
             response.ExecutionResult.Data.ShouldHaveFieldWithValue("hello", "World");
             response.Errors.Count.ShouldEqual(0);
@@ -35,7 +38,7 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithQuery<TestQuery>()
                 .WithComplexityConfiguration(new ComplexityConfiguration { MaxDepth = 2 })
                 .Generate()
-                .ProcessRequestAsync(request, null, null);
+                .ProcessRequestAsync(request, null);
 
             response.ExecutionResult.Data.ShouldHaveFieldWithValue("hello", "World");
             response.Errors.Count.ShouldEqual(0);
@@ -54,7 +57,7 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithQuery<TestQuery>()
                 .WithComplexityConfiguration(new ComplexityConfiguration { MaxDepth = 1 })
                 .Generate()
-                .ProcessRequestAsync(request, null, null);
+                .ProcessRequestAsync(request, null);
 
             response.Errors.Count.ShouldEqual(1);
             response.Errors[0].Message.ShouldEqual("Error executing document. Query is too nested to execute. Depth is 2 levels, maximum allowed on this endpoint is 1.");
@@ -69,7 +72,7 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithQuery<ProfiledQuery>()
                 .WithProfiling()
                 .Generate()
-                .ProcessRequestAsync(request, null, null);
+                .ProcessRequestAsync(request, null);
 
             var body = await response.GetBodyAsync();
             body.ShouldContain("\"extensions\":{\"tracing\":");
@@ -84,7 +87,7 @@ namespace GraphQL.Conventions.Tests.Web
                 .New()
                 .WithQuery<CompositeQuery>()
                 .Generate()
-                .ProcessRequestAsync(request, null, null);
+                .ProcessRequestAsync(request, null);
 
             var body = await response.GetBodyAsync();
             body.ShouldEqual("{\"data\":{\"earth\":{\"hello\":\"World\"},\"mars\":{\"hello\":\"World From Mars\"}}}");
@@ -93,10 +96,10 @@ namespace GraphQL.Conventions.Tests.Web
             request = Request.New("{ \"query\": \"{ earth { hello } mars { hello } } \" }");
             response = await RequestHandler
                 .New()
-                .IgnoreTypesFromNamespacesStartingWith("GraphQL.Conventions.Tests.Web.Unwanted")
+                .IgnoreTypesFromNamespacesStartingWith("Tests.Web.Unwanted")
                 .WithQuery<CompositeQuery>()
                 .Generate()
-                .ProcessRequestAsync(request, null, null);
+                .ProcessRequestAsync(request, null);
             response.Errors.Count.ShouldEqual(1);
             response.Errors[0].Message.ShouldContain("Cannot query field \"hello\" on type \"TestQuery2\".");
 
@@ -113,7 +116,7 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithQuery<SimpleQuery>()
                 .WithQueryExtensions(typeof(QueryExtensions))
                 .Generate()
-                .ProcessRequestAsync(request, null, null);
+                .ProcessRequestAsync(request, null);
 
             response.ExecutionResult.Data.ShouldHaveFieldWithValue("helloExtended", "Extended-10");
             response.Errors.Count.ShouldEqual(0);
@@ -132,8 +135,8 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithQuery<SimpleQuery>()
                 .WithQueryExtensions(typeof(QueryExtensions))
                 .Generate()
-                .ProcessRequestAsync(request, null, null);
-            
+                .ProcessRequestAsync(request, null);
+
             response.Errors.Count.ShouldEqual(0);
             response.Warnings.Count.ShouldEqual(0);
 

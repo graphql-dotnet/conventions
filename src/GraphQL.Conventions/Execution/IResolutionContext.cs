@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using GraphQL.Conventions.Types.Descriptors;
-using GraphQL.Types;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
     public interface IResolutionContext

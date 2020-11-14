@@ -1,8 +1,9 @@
 using System;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Adapters.Types;
 using GraphQL.Language.AST;
 
-namespace GraphQL.Conventions.Tests.Adapters.Types
+namespace Tests.Adapters.Types
 {
     public class UrlGraphTypeTests : ScalarTypeTestBase<UrlGraphType, string, Url>
     {

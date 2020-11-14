@@ -4,6 +4,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
     public class RequestDeserializer : IRequestDeserializer
@@ -21,27 +22,24 @@ namespace GraphQL.Conventions
                 throw new ArgumentException($"Unable to deserialize JSON '{requestBody}'.");
             }
 
-            object data;
-            object queryString;
-
-            if (!request.TryGetValue("query", out queryString) && request.TryGetValue("data", out data))
+            if (!request.TryGetValue("query", out var queryString) && request.TryGetValue("data", out var data))
             {
                 request = data as Dictionary<string, object>;
             }
 
-            if (request.TryGetValue("query", out queryString))
+            if (request?.TryGetValue("query", out queryString) ?? false)
             {
                 query.QueryString = queryString as string ?? string.Empty;
             }
 
-            object operationName;
-            if (request.TryGetValue("operationName", out operationName))
+            object operationName = null;
+            if (request?.TryGetValue("operationName", out operationName) ?? false)
             {
                 query.OperationName = operationName as string;
             }
 
-            object variables;
-            if (request.TryGetValue("variables", out variables))
+            object variables = null;
+            if (request?.TryGetValue("variables", out variables) ?? false)
             {
                 var variablesString = variables as string;
                 if (!string.IsNullOrWhiteSpace(variablesString))

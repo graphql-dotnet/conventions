@@ -2,7 +2,7 @@ using System;
 using GraphQL.Conventions.Adapters.Types;
 using GraphQL.Language.AST;
 
-namespace GraphQL.Conventions.Tests.Adapters.Types
+namespace Tests.Adapters.Types
 {
     public class UriGraphTypeTests : ScalarTypeTestBase<UriGraphType, string, Uri>
     {

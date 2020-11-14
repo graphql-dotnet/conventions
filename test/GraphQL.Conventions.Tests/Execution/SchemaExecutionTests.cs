@@ -1,9 +1,11 @@
-﻿using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using GraphQL.NewtonsoftJson;
+using Tests.Templates;
+using Tests.Templates.Extensions;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnassignedGetOnlyAutoProperty
 
-namespace GraphQL.Conventions.Tests.Execution
+namespace Tests.Execution
 {
     public class SchemaExecutionTests : ConstructionTestBase
     {

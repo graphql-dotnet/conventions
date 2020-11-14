@@ -1,7 +1,7 @@
 using GraphQL.Conventions.Attributes.MetaData.Utilities;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Attributes.MetaData.Utilities
+namespace Tests.Attributes.MetaData.Utilities
 {
     public class NameNormalizerTests
     {

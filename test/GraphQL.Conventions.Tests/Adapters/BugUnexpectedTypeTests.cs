@@ -1,11 +1,13 @@
-﻿using GraphQL.Conventions;
+﻿using System.Threading.Tasks;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Relay;
-using GraphQL.Conventions.Tests;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
-using System.Threading.Tasks;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace Tests.Adapters.Engine.Bugs
+// ReSharper disable ClassNeverInstantiated.Global
+// ReSharper disable InconsistentNaming
+
+namespace Tests.Adapters
 {
     public class BugUnexpectedTypeTests : TestBase
     {

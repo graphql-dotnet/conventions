@@ -1,14 +1,17 @@
 using System.Reflection;
 using System.Threading.Tasks;
+using GraphQL;
 using GraphQL.Conventions.Adapters;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Resolvers;
 using GraphQL.Types;
 using GraphQL.Utilities;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters.Engine
+// ReSharper disable UnusedAutoPropertyAccessor.Local
+
+namespace Tests.Adapters.Engine
 {
     public class DynamicConstructionTests : TestBase
     {
@@ -53,7 +56,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             }
             ");
 
-            var executer = new GraphQL.DocumentExecuter();
+            var executer = new DocumentExecuter();
             var result = await executer.ExecuteAsync(new ExecutionOptions
             {
                 Schema = schema,

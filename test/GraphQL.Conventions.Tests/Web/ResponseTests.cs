@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL;
 using GraphQL.Conventions.Web;
 using GraphQL.Validation;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Web
+namespace Tests.Web
 {
     public class ResponseTests : TestBase
     {
@@ -13,8 +14,7 @@ namespace GraphQL.Conventions.Tests.Web
         public void Can_Instantiate_Response_Object_From_Execution_Result()
         {
             var request = Request.New("{\"query\":\"{}\"}");
-            var result = new ExecutionResult();
-            result.Data = new Dictionary<string, object>();
+            var result = new ExecutionResult { Data = new Dictionary<string, object>() };
             var response = new Response(request, result);
             response.HasData.ShouldEqual(true);
             response.HasErrors.ShouldEqual(false);
@@ -53,7 +53,7 @@ namespace GraphQL.Conventions.Tests.Web
             var response = new Response(request, result);
             response.HasData.ShouldEqual(true);
             response.HasErrors.ShouldEqual(false);
-            
+
             var body = await response.GetBodyAsync();
             body.ShouldEqual("{\"data\":{},\"extensions\":{\"trace\":{\"foo\":1,\"bar\":{\"baz\":\"hello\"}}}}");
         }

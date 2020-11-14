@@ -1,12 +1,14 @@
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
-using GraphQL.Conventions.Types.Resolution;
-using GraphQL.Types;
 using System;
 using System.Linq;
-using Extended = GraphQL.Conventions.Adapters.Types;
+using GraphQL.Conventions;
+using GraphQL.Conventions.Types.Resolution;
+using GraphQL.Types;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters
+// ReSharper disable UnusedMember.Local
+
+namespace Tests.Adapters
 {
     public class FieldDerivationTests : ConstructionTestBase
     {
@@ -212,6 +214,7 @@ namespace GraphQL.Conventions.Tests.Adapters
 
         class FooSub
         {
+            // ReSharper disable once UnassignedGetOnlyAutoProperty
             public IObservable<Foo> Foos { get; }
         }
     }

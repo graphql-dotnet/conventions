@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
     public class QueryInput

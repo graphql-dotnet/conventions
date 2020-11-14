@@ -13,15 +13,15 @@ namespace GraphQL.Conventions.Execution
 
         private static T GetValue<T>(IDictionary<string, object> dictionary)
         {
-            var key = typeof(T).FullName;
-            return dictionary != null && dictionary.TryGetValue(key, out var value) 
+            var key = typeof(T).FullName ?? nameof(T);
+            return dictionary != null && dictionary.TryGetValue(key, out var value)
                 ? (T)value
                 : default;
         }
 
         private static void SetValue<T>(IDictionary<string, object> dictionary, T value)
         {
-            var key = typeof(T).FullName;
+            var key = typeof(T).FullName ?? nameof(T);
             if (dictionary != null)
             {
                 if (dictionary.ContainsKey(key))

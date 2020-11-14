@@ -1,11 +1,12 @@
-﻿using GraphQL.Conventions.Adapters.Resolvers;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Subscription;
-using GraphQL.Types;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using GraphQL;
+using GraphQL.Conventions;
+using GraphQL.Conventions.Adapters.Resolvers;
+using GraphQL.Subscription;
+using Tests.Templates;
 
-namespace GraphQL.Conventions.Tests.Adapters
+namespace Tests.Adapters
 {
     public class EventStreamResolverTest : TestBase
     {
@@ -34,6 +35,8 @@ namespace GraphQL.Conventions.Tests.Adapters
 
     class Subscription
     {
+        // ReSharper disable once UnusedMember.Global
+        // ReSharper disable once UnassignedGetOnlyAutoProperty
         public IObservable<string> Test { get; }
     }
 }

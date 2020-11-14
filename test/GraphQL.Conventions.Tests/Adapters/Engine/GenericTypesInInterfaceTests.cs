@@ -1,8 +1,9 @@
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
 using System.Threading.Tasks;
+using GraphQL.Conventions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters.Engine
+namespace Tests.Adapters.Engine
 {
     public class GenericTypesInInterfaceTests : TestBase
     {
@@ -52,6 +53,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
 
         class Query
         {
+            // ReSharper disable once UnusedMember.Local
+            // ReSharper disable once MemberHidesStaticFromOuterClass
             public IAccount Account { get; } = new Account();
         }
     }

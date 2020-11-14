@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using GraphQL.Language.AST;
 using GraphQL.Types;
-using System.Collections.Generic;
 
-namespace GraphQL.Conventions.Tests.Adapters.Engine.Types
+// ReSharper disable InconsistentNaming
+
+namespace Tests.Adapters.Engine.Types
 {
     #region GraphTypeConverter
     public class JsonGraphTypeConverter : IAstFromValueConverter

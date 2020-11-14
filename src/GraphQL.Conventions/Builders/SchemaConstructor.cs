@@ -119,9 +119,10 @@ namespace GraphQL.Conventions.Builders
                 typeof(ImplementViewerAttribute.SubscriptionViewerReferrer),
             };
 
+            var graphFieldInfos = existingFields.ToList();
             foreach (var field in fields ?? new List<GraphFieldInfo>())
             {
-                if (existingFields.Any(existingField => existingField.Name == "viewer") &&
+                if (graphFieldInfos.Any(existingField => existingField.Name == "viewer") &&
                     field.Name == "viewer" &&
                     registeredViewerClasses.Contains(field.DeclaringType.TypeRepresentation.AsType()))
                 {

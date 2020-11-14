@@ -1,10 +1,13 @@
-﻿using GraphQL.Conventions.Relay;
-using GraphQL.Conventions.Tests.Templates;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using GraphQL.Conventions.Relay;
 using GraphQL.NewtonsoftJson;
+using Tests.Templates;
 
-namespace GraphQL.Conventions.Tests.Execution
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnassignedGetOnlyAutoProperty
+
+namespace Tests.Execution
 {
     public class TaskUnwrappingTests : ConstructionTestBase
     {
@@ -22,7 +25,7 @@ namespace GraphQL.Conventions.Tests.Execution
             }";
 
             var schema = Schema<BugReproSchemaTaskFirst>();
-            
+
             var result = await schema.ExecuteAsync((e) => e.Query = query);
             ResultHelpers.AssertNoErrorsInResult(result);
 
@@ -53,9 +56,7 @@ namespace GraphQL.Conventions.Tests.Execution
                         new Edge<Holder>
                         {
                             Cursor = Cursor.New<Holder>(0),
-                            Node = new Holder
-                            {
-                            }
+                            Node = new Holder()
                         }
                     },
                     PageInfo = new PageInfo
@@ -81,9 +82,7 @@ namespace GraphQL.Conventions.Tests.Execution
                         new Edge<Holder>
                         {
                             Cursor = Cursor.New<Holder>(0),
-                            Node = new Holder
-                            {
-                            }
+                            Node = new Holder()
                         }
                     },
                     PageInfo = new PageInfo

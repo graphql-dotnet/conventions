@@ -1,11 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Relay;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters
+// ReSharper disable UnusedMember.Local
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedAutoPropertyAccessor.Local
+
+namespace Tests.Adapters
 {
     public class FieldResolutionTests : TestBase
     {
@@ -237,8 +243,10 @@ namespace GraphQL.Conventions.Tests.Adapters
             var result = await ExecuteQuery("{ errorField }");
             result.ShouldHaveErrors(1);
             var error = result.Errors.First();
-            error.InnerException.ToString().ShouldContainWhenReformatted("System.NotImplementedException: The method or operation is not implemented");
-            error.InnerException.ToString().ShouldContainWhenReformatted("at GraphQL.Conventions.Tests.Adapters.FieldResolutionTests.Query.ErrorField()");
+            var inner = error.InnerException;
+            inner.ShouldNotBeNull();
+            inner?.ToString().ShouldContainWhenReformatted("System.NotImplementedException: The method or operation is not implemented");
+            inner?.ToString().ShouldContainWhenReformatted("at Tests.Adapters.FieldResolutionTests.Query.ErrorField()");
         }
 
         [Test]
@@ -247,8 +255,10 @@ namespace GraphQL.Conventions.Tests.Adapters
             var result = await ExecuteQuery("{ errorTaskField }");
             result.ShouldHaveErrors(1);
             var error = result.Errors.First();
-            error.InnerException.ToString().ShouldContainWhenReformatted("System.NotImplementedException: The method or operation is not implemented");
-            error.InnerException.ToString().ShouldContainWhenReformatted("at GraphQL.Conventions.Tests.Adapters.FieldResolutionTests.Query.ErrorTaskField()");
+            var inner = error.InnerException;
+            inner.ShouldNotBeNull();
+            inner?.ToString().ShouldContainWhenReformatted("System.NotImplementedException: The method or operation is not implemented");
+            inner?.ToString().ShouldContainWhenReformatted("at Tests.Adapters.FieldResolutionTests.Query.ErrorTaskField()");
         }
 
         [Test]

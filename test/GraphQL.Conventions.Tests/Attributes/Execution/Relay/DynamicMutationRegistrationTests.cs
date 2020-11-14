@@ -1,9 +1,12 @@
 using System.Threading.Tasks;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Relay;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
+// ReSharper disable UnusedType.Local
+// ReSharper disable UnusedAutoPropertyAccessor.Local
 
-namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
+namespace Tests.Attributes.Execution.Relay
 {
     public class DynamicMutationRegistrationTests : TestBase
     {

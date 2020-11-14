@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters.Engine
+namespace Tests.Adapters.Engine
 {
     public class GraphQLExecutorTests : TestBase
     {
@@ -19,8 +20,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .ExecuteAsync();
 
             result.Data.ShouldNotBeNull();
-            var dict = result.Data as Dictionary<string, object>;
-            dict.Count.ShouldEqual(0);
+            var count = (result.Data as Dictionary<string, object>)?.Count;
+            count.ShouldEqual(0);
 
             result.Errors.ShouldBeNull();
         }

@@ -1,12 +1,14 @@
-﻿using GraphQL.Conventions.Tests.Templates;
-using Newtonsoft.Json.Linq;
-using GraphQL.NewtonsoftJson;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Xunit;
 using System.Threading.Tasks;
+using GraphQL.Conventions;
+using GraphQL.NewtonsoftJson;
+using Newtonsoft.Json.Linq;
+using Tests.Templates;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnassignedGetOnlyAutoProperty
 
-namespace GraphQL.Conventions.Tests.Execution
+namespace Tests.Execution
 {
     public class LinqIteratorUnwrappingTests : ConstructionTestBase
     {
@@ -19,11 +21,11 @@ namespace GraphQL.Conventions.Tests.Execution
             }";
 
             var schema = Schema<BugReproSchemaTaskFirst>();
-            
+
             var result = await schema.ExecuteAsync((e) => e.Query = query);
             ResultHelpers.AssertNoErrorsInResult(result);
-            string testSelectIterator = (string)JObject.Parse(result)["data"]["testSelectIterator"][0];
-            string testWhereIterator = (string)JObject.Parse(result)["data"]["testWhereIterator"][0];
+            string testSelectIterator = (string)JObject.Parse(result)["data"]?["testSelectIterator"]?[0];
+            string testWhereIterator = (string)JObject.Parse(result)["data"]?["testWhereIterator"]?[0];
 
             Assert.AreEqual("Test", testSelectIterator);
             Assert.AreEqual("Test", testWhereIterator);
@@ -40,7 +42,7 @@ namespace GraphQL.Conventions.Tests.Execution
                 new NonNull<IEnumerable<NonNull<string>>>(new[] { "Test" }.Select(x => new NonNull<string>(x)));
 
             public NonNull<IEnumerable<NonNull<string>>> TestWhereIterator() =>
-                new NonNull<IEnumerable<NonNull<string>>>(new[] { new NonNull<string>("Test") }.Where(x => 1 == 1));
+                new NonNull<IEnumerable<NonNull<string>>>(new[] { new NonNull<string>("Test") }.Where(x => x.Value != null));
         }
     }
 }

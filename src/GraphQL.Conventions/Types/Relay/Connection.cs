@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions.Relay
 {
     [Description("Connection to related objects with relevant pagination information.")]

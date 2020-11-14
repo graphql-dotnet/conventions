@@ -4,7 +4,9 @@ using System.Text.RegularExpressions;
 using GraphQL.Conventions.Attributes;
 using GraphQL.Conventions.Types.Descriptors;
 
-namespace GraphQL.Conventions.Tests.Templates.Extensions
+// ReSharper disable PossibleNullReferenceException
+
+namespace Tests.Templates.Extensions
 {
     static class TestExtensions
     {

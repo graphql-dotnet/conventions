@@ -1,7 +1,6 @@
 ﻿using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Resolvers;
 using GraphQL.Subscription;
-using GraphQL.Types;
 using System;
 using System.Threading.Tasks;
 

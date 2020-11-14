@@ -1,5 +1,4 @@
 using GraphQL.NewtonsoftJson;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +7,7 @@ namespace GraphQL.Conventions.Web
 {
     public class Response
     {
-        private static readonly DocumentWriter _writer = new DocumentWriter();
+        private static readonly DocumentWriter Writer = new DocumentWriter();
 
         private string _body;
 
@@ -35,11 +34,11 @@ namespace GraphQL.Conventions.Web
         public ExecutionResult ExecutionResult { get; }
 
         public Validation.IValidationResult ValidationResult { get; }
-        
+
         public async Task<string> GetBodyAsync()
         {
             if (string.IsNullOrWhiteSpace(_body) && ExecutionResult != null)
-                _body = await _writer
+                _body = await Writer
                     .WriteToStringAsync(ExecutionResult)
                     .ConfigureAwait(false);
 
@@ -47,7 +46,7 @@ namespace GraphQL.Conventions.Web
         }
 
         internal void SetBody(string value) => _body = value;
-        
+
         public void AddExtra(string key, object value)
         {
             if (ExecutionResult.Extensions == null)

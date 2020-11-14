@@ -8,7 +8,6 @@ using GraphQL.Conventions.Adapters;
 using GraphQL.Conventions.Adapters.Engine.ErrorTransformations;
 using GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader;
 using GraphQL.Conventions.Builders;
-using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Extensions;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution;
@@ -20,6 +19,7 @@ using GraphQL.Utilities;
 using GraphQL.Validation;
 using GraphQL.Validation.Complexity;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
     public class GraphQLEngine
@@ -289,8 +289,8 @@ namespace GraphQL.Conventions
                 Inputs = inputs,
                 UserContext = new Dictionary<string, object>()
                 {
-                    { typeof(IUserContext).FullName, userContext},
-                    { typeof(IDependencyInjector).FullName, dependencyInjector ?? new WrappedDependencyInjector(_constructor.TypeResolutionDelegate)},
+                    { typeof(IUserContext).FullName ?? nameof(IUserContext), userContext},
+                    { typeof(IDependencyInjector).FullName ?? nameof(IDependencyInjector), dependencyInjector ?? new WrappedDependencyInjector(_constructor.TypeResolutionDelegate)},
                 },
                 ValidationRules = validationRules.Any() ? validationRules : null,
                 ComplexityConfiguration = complexityConfiguration,

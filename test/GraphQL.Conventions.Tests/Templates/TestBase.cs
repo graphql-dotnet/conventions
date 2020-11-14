@@ -2,7 +2,7 @@ using System;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution;
 
-namespace GraphQL.Conventions.Tests.Templates
+namespace Tests.Templates
 {
     public abstract class TestBase
     {

@@ -1,9 +1,9 @@
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Language.AST;
 using GraphQL.Types;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters.Types
+namespace Tests.Adapters.Types
 {
     public abstract class ScalarTypeTestBase<TType, TSerializedRepresentation, TNativeRepresentation> : TestBase
         where TType : ScalarGraphType, new()

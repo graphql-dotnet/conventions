@@ -1,6 +1,6 @@
 using System;
 
-namespace GraphQL.Conventions.Tests
+namespace Tests
 {
     public static class Assert
     {

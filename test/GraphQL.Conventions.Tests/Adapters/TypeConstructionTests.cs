@@ -1,13 +1,16 @@
 using System;
 using System.Linq;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Relay;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Types;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 using Extended = GraphQL.Conventions.Adapters.Types;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnassignedGetOnlyAutoProperty
 
-namespace GraphQL.Conventions.Tests.Adapters
+namespace Tests.Adapters
 {
     public class TypeConstructionTests : ConstructionTestBase
     {

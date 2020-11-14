@@ -6,7 +6,7 @@ namespace GraphQL.Conventions.Types.Utilities
 {
     public static class Identifier
     {
-        private static readonly Regex _regex = new Regex(@"^(.*?)([0-9]*)$", RegexOptions.Compiled);
+        private static readonly Regex Regex = new Regex(@"^(.*?)([0-9]*)$", RegexOptions.Compiled);
 
         public static string Encode(string unencodedIdentifier)
         {
@@ -73,7 +73,7 @@ namespace GraphQL.Conventions.Types.Utilities
 
         private static Tuple<string, long?> GetComponents(string unencodedIdentifier)
         {
-            var parts = _regex.Match(unencodedIdentifier);
+            var parts = Regex.Match(unencodedIdentifier);
             if (parts.Success && parts.Groups.Count == 3)
             {
                 long intValue;

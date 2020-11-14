@@ -5,6 +5,7 @@ using GraphQL.Execution;
 using GraphQL.Validation;
 using GraphQL.Validation.Complexity;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
     public interface IGraphQLExecutor<TResult>
@@ -40,9 +41,9 @@ namespace GraphQL.Conventions
         IGraphQLExecutor<TResult> EnableProfiling(bool enableProfiling = true);
 
         IGraphQLExecutor<TResult> DisableProfiling();
-        
+
         Task<TResult> ExecuteAsync();
-        
+
         Task<IValidationResult> ValidateAsync();
     }
 }

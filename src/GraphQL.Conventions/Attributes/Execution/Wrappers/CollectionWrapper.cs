@@ -15,24 +15,21 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
 
         public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value, bool isSpecified)
         {
-            if (typeInfo.IsListType)
+            if (!typeInfo.IsListType) return value;
+            if (!(value is IEnumerable input))
             {
-                if (!(value is IEnumerable input))
-                {
-                    return null;
-                }
-                var elementType = typeInfo.TypeParameter.TypeRepresentation.AsType();
-                var listType = typeof(List<>).MakeGenericType(elementType);
-                var list = Activator.CreateInstance(listType) as IList;
-                foreach (var obj in input)
-                {
-                    list.Add(_parent.Wrap(entityInfo, typeInfo.TypeParameter, obj, true));
-                }
-                return typeInfo.IsArrayType
-                    ? list.ConvertToArrayRuntime(elementType)
-                    : list;
+                return null;
             }
-            return value;
+            var elementType = typeInfo.TypeParameter.TypeRepresentation.AsType();
+            var listType = typeof(List<>).MakeGenericType(elementType);
+            var list = Activator.CreateInstance(listType) as IList ?? new List<object>();
+            foreach (var obj in input)
+            {
+                list.Add(_parent.Wrap(entityInfo, typeInfo.TypeParameter, obj, true));
+            }
+            return typeInfo.IsArrayType
+                ? list.ConvertToArrayRuntime(elementType)
+                : list;
         }
     }
 }

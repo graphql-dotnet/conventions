@@ -3,8 +3,6 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.ExceptionServices;
-using System.Security.Cryptography.X509Certificates;
 
 namespace GraphQL.Conventions.Extensions
 {
@@ -52,29 +50,40 @@ namespace GraphQL.Conventions.Extensions
         {
             //just good practice
             if (methodInfo == null)
-                throw new ArgumentNullException(nameof(methodInfo));
+                ThrowArgumentNull(nameof(methodInfo));
             //the following check is more descriptive than the NullReferenceException that would otherwise occur
+            // ReSharper disable once PossibleNullReferenceException
             if (!methodInfo.IsStatic && instance == null)
-                throw new ArgumentNullException(nameof(instance), "Instance is required for non static methods");
+                ThrowArgumentNull(nameof(instance), "Instance is required for non static methods");
             //the lambda ignores extra arguments so the following check is necessary
             if (methodInfo.GetParameters().Length != (arguments?.Length ?? 0))
-                throw new ArgumentException("Invalid number of arguments for this method", "arguments");
+                ThrowArgument("Invalid number of arguments for this method", nameof(arguments));
             //type errors will be thrown as InvalidCastException inside the lambda
 
-            var lambda = _methodDictionary.GetOrAdd(methodInfo, InvokeEnhancedUncachedMethod);
-
+            var lambda = MethodDictionary.GetOrAdd(methodInfo, InvokeEnhancedUncachedMethod);
             return lambda(instance, arguments);
         }
-        private static ConcurrentDictionary<MethodInfo, Func<object, object[], object>> _methodDictionary = new ConcurrentDictionary<MethodInfo, Func<object, object[], object>>();
+
+        private static void ThrowArgumentNull(string name, string description = null)
+        {
+            if (description == null)
+                throw new ArgumentNullException(name);
+            throw new ArgumentNullException(name, description);
+        }
+
+        private static void ThrowArgument(string message, string name) =>
+            throw new ArgumentException(message, name);
+
+        private static readonly ConcurrentDictionary<MethodInfo, Func<object, object[], object>> MethodDictionary = new ConcurrentDictionary<MethodInfo, Func<object, object[], object>>();
+
         private static Func<object, object[], object> InvokeEnhancedUncachedMethod(MethodInfo methodInfo)
         {
             var instanceParameter = Expression.Parameter(typeof(object));
             var argumentsParameter = Expression.Parameter(typeof(object[]));
+            // ReSharper disable once AssignNullToNotNullAttribute
             var instanceExpression = methodInfo.IsStatic ? null : Expression.Convert(instanceParameter, methodInfo.DeclaringType);
             var methodParameters = methodInfo.GetParameters();
-            var parameters = methodParameters.Select((param, index) => {
-                return Expression.Convert(Expression.ArrayAccess(argumentsParameter, Expression.Constant(index)), param.ParameterType);
-            });
+            var parameters = methodParameters.Select((param, index) => Expression.Convert(Expression.ArrayAccess(argumentsParameter, Expression.Constant(index)), param.ParameterType));
             var call = Expression.Call(instanceExpression, methodInfo, parameters);
             Expression body;
             if (methodInfo.ReturnType == typeof(void))
@@ -125,7 +134,7 @@ namespace GraphQL.Conventions.Extensions
         private static ConcurrentDictionary<ConstructorInfo, Func<object[], object>> _constructorDictionary = new ConcurrentDictionary<ConstructorInfo, Func<object[], object>>();
         private static Func<object[], object> InvokeEnhancedUncachedConstructor(ConstructorInfo constructorInfo)
         {
-            if (constructorInfo.IsStatic) 
+            if (constructorInfo.IsStatic)
                 throw new ArgumentException("Constructor must not be static", nameof(constructorInfo));
             var argumentsParameter = Expression.Parameter(typeof(object[]));
             var constructorParameters = constructorInfo.GetParameters();

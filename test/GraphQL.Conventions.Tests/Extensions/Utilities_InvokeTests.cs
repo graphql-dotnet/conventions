@@ -1,12 +1,13 @@
 ﻿using GraphQL.Conventions.Extensions;
-using GraphQL.Conventions.Tests;
 using System;
 using System.Reflection;
-using System.Threading;
+
+// ReSharper disable UnusedType.Local
+// ReSharper disable UnusedMember.Local
 
 namespace Tests.Extensions
 {
-    public class Utilities_InvokeTests
+    public class UtilitiesInvokeTests
     {
         [Test]
         public void Static_Method_Returns_ValueType()
@@ -25,12 +26,12 @@ namespace Tests.Extensions
         [Test]
         public void Static_Method_Returns_Void()
         {
-            StaticTest3Ran = false;
+            _staticTest3Ran = false;
             Assert.IsNull(GetMethodInfo(nameof(StaticTest3)).InvokeEnhanced(null, null));
-            Assert.IsTrue(StaticTest3Ran);
+            Assert.IsTrue(_staticTest3Ran);
         }
-        private static void StaticTest3() => StaticTest3Ran = true;
-        private static bool StaticTest3Ran;
+        private static void StaticTest3() => _staticTest3Ran = true;
+        private static bool _staticTest3Ran;
 
         [Test]
         public void Instance_Method_Returns_ValueType()
@@ -49,12 +50,12 @@ namespace Tests.Extensions
         [Test]
         public void Instance_Method_Returns_Void()
         {
-            InstanceTest3Ran = false;
+            _instanceTest3Ran = false;
             Assert.IsNull(GetMethodInfo(nameof(InstanceTest3)).InvokeEnhanced(this, null));
-            Assert.IsTrue(InstanceTest3Ran);
+            Assert.IsTrue(_instanceTest3Ran);
         }
-        private void InstanceTest3() => InstanceTest3Ran = true;
-        private bool InstanceTest3Ran;
+        private void InstanceTest3() => _instanceTest3Ran = true;
+        private bool _instanceTest3Ran;
 
         [Test]
         public void Static_Method_WithParams()
@@ -101,7 +102,7 @@ namespace Tests.Extensions
         [Test]
         public void Requires_MethodInfo()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => Utilities.InvokeEnhanced((MethodInfo)null, null, null));
+            Assert.ThrowsException<ArgumentNullException>(() => Utilities.InvokeEnhanced(null, null, null));
         }
 
         [Test]
@@ -127,6 +128,7 @@ namespace Tests.Extensions
         {
             Assert.ThrowsException<ArgumentException>(() => GetMethodInfo(nameof(StaticRefTest1)).InvokeEnhanced(null, new object[] { 1 }));
         }
+        // ReSharper disable once RedundantAssignment
         private static void StaticRefTest1(ref int value) => value = 2;
 
         [Test]
@@ -153,21 +155,21 @@ namespace Tests.Extensions
         [Test]
         public void Constructor_ValueType()
         {
-            var obj = typeof(MyObject).GetConstructor(new Type[] { typeof(int) }).InvokeEnhanced(new object[] { 1 });
+            var obj = typeof(MyObject).GetConstructor(new[] { typeof(int) }).InvokeEnhanced(new object[] { 1 });
             Assert.AreEqual("1", obj.ToString());
         }
 
         [Test]
         public void Constructor_ObjectType()
         {
-            var obj = typeof(MyObject).GetConstructor(new Type[] { typeof(string) }).InvokeEnhanced(new object[] { "hello3" });
+            var obj = typeof(MyObject).GetConstructor(new[] { typeof(string) }).InvokeEnhanced(new object[] { "hello3" });
             Assert.AreEqual("hello3", obj.ToString());
         }
 
         [Test]
         public void Constructor_Multiple_Args()
         {
-            var obj = typeof(MyObject).GetConstructor(new Type[] { typeof(Guid), typeof(MyObject) }).InvokeEnhanced(new object[] { Guid.Empty, new MyObject("hello5") });
+            var obj = typeof(MyObject).GetConstructor(new[] { typeof(Guid), typeof(MyObject) }).InvokeEnhanced(new object[] { Guid.Empty, new MyObject("hello5") });
             Assert.AreEqual("00000000-0000-0000-0000-000000000000 hello5", obj.ToString());
         }
 
@@ -186,7 +188,7 @@ namespace Tests.Extensions
         [Test]
         public void Constructor_Wrong_Type_Of_Args_Throws()
         {
-            Assert.ThrowsException<InvalidCastException>(() => typeof(MyObject).GetConstructor(new Type[] { typeof(int) }).InvokeEnhanced(new object[] { "test" }));
+            Assert.ThrowsException<InvalidCastException>(() => typeof(MyObject).GetConstructor(new[] { typeof(int) }).InvokeEnhanced(new object[] { "test" }));
         }
 
         [Test]
@@ -195,7 +197,7 @@ namespace Tests.Extensions
             Assert.ThrowsException<ArgumentException>(() => typeof(MyObject).GetConstructors()[0].InvokeEnhanced(new object[] { 5 }));
         }
 
-        private MethodInfo GetMethodInfo(string name) => typeof(Utilities_InvokeTests).GetMethod(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+        private MethodInfo GetMethodInfo(string name) => typeof(UtilitiesInvokeTests).GetMethod(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
         private class MyObject
         {

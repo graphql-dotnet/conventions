@@ -8,7 +8,7 @@ namespace GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader
     {
         public override async Task AfterValidationAsync(IExecutionContext context, IValidationResult validationResult)
         {
-            var key = typeof(IUserContext).FullName;
+            var key = typeof(IUserContext).FullName ?? nameof(IUserContext);
             if (context.UserContext.ContainsKey(key) && context.UserContext[key] is IDataLoaderContextProvider provider)
                 await provider.FetchData(context.CancellationToken).ConfigureAwait(false);
         }

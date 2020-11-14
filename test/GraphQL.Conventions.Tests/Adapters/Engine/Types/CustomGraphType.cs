@@ -1,7 +1,7 @@
 using GraphQL.Language.AST;
 using GraphQL.Types;
 
-namespace GraphQL.Conventions.Tests.Adapters.Engine.Types
+namespace Tests.Adapters.Engine.Types
 {
     public class CustomGraphType : ScalarGraphType
     {

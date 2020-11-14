@@ -1,10 +1,11 @@
 using System;
 using System.Reflection;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Types.Resolution;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Types.Descriptors;
+using GraphQL.Conventions.Types.Resolution;
+using Tests.Templates;
 
-namespace GraphQL.Conventions.Tests.Types
+namespace Tests.Types
 {
     public class OptionalTests : TestBase
     {

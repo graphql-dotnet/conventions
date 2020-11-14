@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
     public class DocumentExecuter : IDocumentExecuter

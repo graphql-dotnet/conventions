@@ -1,10 +1,12 @@
 using System;
 using GraphQL.Conventions.Relay;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Types.Utilities;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Types.Relay
+// ReSharper disable ObjectCreationAsStatement
+
+namespace Tests.Types.Relay
 {
     public class CursorTests : TestBase
     {

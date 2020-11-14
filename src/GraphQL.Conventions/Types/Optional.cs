@@ -3,6 +3,7 @@ using System.Reflection;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
     public struct Optional<T> : IOptional
@@ -34,7 +35,7 @@ namespace GraphQL.Conventions
         }
 
         public static void ValidateType()
-        { 
+        {
             var typeInfo = typeof(T).GetTypeInfo();
             if ((typeInfo.IsValueType && !typeInfo.IsGenericType(typeof(Nullable<>))) || typeInfo.IsGenericType(typeof(NonNull<>)))
             {

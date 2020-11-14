@@ -1,8 +1,13 @@
 using System.Linq;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedTypeParameter
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedParameter.Local
 
-namespace GraphQL.Conventions.Tests.Attributes.MetaData
+namespace Tests.Attributes.MetaData
 {
     public class DeprecatedAttributeTests : TestBase
     {

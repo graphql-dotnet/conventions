@@ -51,15 +51,17 @@ namespace GraphQL.Conventions.Types.Descriptors
 
         public List<GraphFieldInfo> Fields { get; internal set; } = new List<GraphFieldInfo>();
 
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
         public TypeInfo TypeRepresentation { get; set; }
 
-        private Lazy<GraphTypeInfo> derivedTypeParameter;
+        private Lazy<GraphTypeInfo> _derivedTypeParameter;
 
         internal void EnsureTypeParameterInitialized()
         {
-            if (derivedTypeParameter == null)
+            if (_derivedTypeParameter == null)
                 return;
-            var _ = derivedTypeParameter.IsValueCreated ? null : derivedTypeParameter.Value;
+            var _ = _derivedTypeParameter.IsValueCreated ? null : _derivedTypeParameter.Value;
         }
 
         /// <summary>
@@ -68,8 +70,8 @@ namespace GraphQL.Conventions.Types.Descriptors
         /// </summary>
         public GraphTypeInfo TypeParameter
         {
-            get => derivedTypeParameter?.Value;
-            set => derivedTypeParameter = new Lazy<GraphTypeInfo>(() => value, isThreadSafe: true);
+            get => _derivedTypeParameter?.Value;
+            set => _derivedTypeParameter = new Lazy<GraphTypeInfo>(() => value, isThreadSafe: true);
         }
 
         public object DefaultValue =>
@@ -112,7 +114,7 @@ namespace GraphQL.Conventions.Types.Descriptors
                 type = type.TypeParameter();
             }
 
-            if (type.IsGenericType(typeof(IObservable<>))) 
+            if (type.IsGenericType(typeof(IObservable<>)))
             {
                 IsObservable = true;
                 type = type.TypeParameter();
@@ -151,7 +153,7 @@ namespace GraphQL.Conventions.Types.Descriptors
                 IsListType = true;
                 IsArrayType = type.IsArray;
                 IsPrimitive = true;
-                derivedTypeParameter = new Lazy<GraphTypeInfo>(() => TypeResolver.DeriveType(type.TypeParameter()), LazyThreadSafetyMode.ExecutionAndPublication);
+                _derivedTypeParameter = new Lazy<GraphTypeInfo>(() => TypeResolver.DeriveType(type.TypeParameter()), LazyThreadSafetyMode.ExecutionAndPublication);
             }
             else
             {

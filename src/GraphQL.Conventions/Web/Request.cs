@@ -11,9 +11,9 @@ namespace GraphQL.Conventions.Web
     /// </summary>
     public class Request
     {
-        static readonly IRequestDeserializer _requestDeserializer = new RequestDeserializer();
+        static readonly IRequestDeserializer RequestDeserializer = new RequestDeserializer();
 
-        static readonly Regex _regexSuperfluousWhitespace =
+        static readonly Regex RegexSuperfluousWhitespace =
             new Regex(@"[ \t\r\n]{1,}", RegexOptions.Multiline | RegexOptions.Compiled);
 
         readonly string _queryId;
@@ -33,7 +33,7 @@ namespace GraphQL.Conventions.Web
         {
             try
             {
-                var queryInput = _requestDeserializer.GetQueryFromRequestBody(requestBody);
+                var queryInput = RequestDeserializer.GetQueryFromRequestBody(requestBody);
                 return New(queryInput);
             }
             catch (Exception ex)
@@ -105,7 +105,7 @@ namespace GraphQL.Conventions.Web
             {
                 return string.Empty;
             }
-            return _regexSuperfluousWhitespace.Replace(input, @" ").Trim();
+            return RegexSuperfluousWhitespace.Replace(input, @" ").Trim();
         }
     }
 }

@@ -2,21 +2,19 @@ using System;
 using System.Linq;
 using System.Reflection;
 using GraphQL.Conventions.Attributes.Execution.Unwrappers;
-using GraphQL.Conventions.Attributes.Execution.Wrappers;
 using GraphQL.Conventions.Extensions;
 using GraphQL.Conventions.Handlers;
 using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Resolvers;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions.Adapters
 {
     public class FieldResolver : IFieldResolver<object>
     {
         protected static readonly ExecutionFilterAttributeHandler ExecutionFilterHandler =
             new ExecutionFilterAttributeHandler();
-
-        private static readonly IWrapper Wrapper = new ValueWrapper();
 
         protected static readonly IUnwrapper Unwrapper = new ValueUnwrapper();
 

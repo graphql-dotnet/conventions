@@ -1,11 +1,15 @@
 using System.Reflection;
 using System.Threading.Tasks;
+using GraphQL;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Execution;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Execution;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters.Engine
+// ReSharper disable UnusedMember.Local
+
+namespace Tests.Adapters.Engine
 {
     public class DependencyInjectionTests : TestBase
     {
@@ -207,9 +211,9 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
 
                 public async Task<ExecutionResult> ExecuteAsync(ExecutionContext context)
                 {
-                    var key = typeof(IDependencyInjector).FullName;
+                    var key = typeof(IDependencyInjector).FullName ?? nameof(IDependencyInjector);
                     var outerInjector = context.UserContext[key];
-                    
+
                     try
                     {
                         context.UserContext[key] = _injector;

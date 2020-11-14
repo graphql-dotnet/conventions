@@ -1,25 +1,27 @@
-﻿using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using GraphQL;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Execution;
 using GraphQL.Language.AST;
 using GraphQL.Validation;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Attributes.MetaData
+namespace Tests.Attributes.MetaData
 {
     public class FieldTypeMetaDataAttributeTests : TestBase
     {
         [Test]
         public void TopLevelQuery_Should_Have_Correct_CustomAttributeValue()
         {
-            var type = TypeInfo<CustomAttribute_Query>();
+            var type = TypeInfo<CustomAttributeQuery>();
             var field = type.ShouldHaveFieldWithName("node");
             var customAttributes = field.AttributeProvider.GetCustomAttributes(false);
             var result = customAttributes.FirstOrDefault(x => x.GetType() == typeof(TestCustomAttribute)) as TestCustomAttribute;
             Assert.IsTrue(result != null);
-            Assert.IsTrue(result.Permission == nameof(SomeTopLevelValidation));
+            Assert.IsTrue(result?.Permission == nameof(SomeTopLevelValidation));
         }
 
         [Test]
@@ -30,7 +32,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
             var customAttributes = field.AttributeProvider.GetCustomAttributes(false);
             var result = customAttributes.FirstOrDefault(x => x.GetType() == typeof(TestCustomAttribute)) as TestCustomAttribute;
             Assert.IsTrue(result != null);
-            Assert.IsTrue(result.Permission == nameof(SomeMethodValidation));
+            Assert.IsTrue(result?.Permission == nameof(SomeMethodValidation));
         }
 
         [Test]
@@ -48,11 +50,11 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
         {
             var result = await Resolve_Query();
             result.ShouldHaveErrors(2);
-            var expectedMessages = new[] 
-            { 
-                $"Required validation '{nameof(SomeTopLevelValidation)}' is not present. Query will not be executed.", 
-                $"Required validation '{nameof(SomeMethodValidation)}' is not present. Query will not be executed." 
-            }; 
+            var expectedMessages = new[]
+            {
+                $"Required validation '{nameof(SomeTopLevelValidation)}' is not present. Query will not be executed.",
+                $"Required validation '{nameof(SomeMethodValidation)}' is not present. Query will not be executed."
+            };
 
             var messages = result.Errors.Select(e => e.Message);
             Assert.IsTrue(messages.All(x => expectedMessages.Contains(x)));
@@ -75,7 +77,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
         private async Task<ExecutionResult> Resolve_Query(string selectedFields = "testMethod noAttribute name", params string[] accessPermissions)
         {
             var engine = GraphQLEngine
-                .New<CustomAttribute_Query>();
+                .New<CustomAttributeQuery>();
 
             var user = new TestUserContext(accessPermissions);
 
@@ -90,7 +92,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
         }
     }
 
-    public class TestUserContext : IUserContext 
+    public class TestUserContext : IUserContext
     {
         public TestUserContext(params string[] accessPermissions)
         {
@@ -100,13 +102,13 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
         public string[] AccessPermissions { get; }
     }
 
-    public class CustomAttribute_Query
+    public class CustomAttributeQuery
     {
         [TestCustom(nameof(SomeTopLevelValidation))]
         public TestType Node() => new TestType();
     }
 
-    public class TestType 
+    public class TestType
     {
         [TestCustom(nameof(SomeMethodValidation))]
         public string TestMethod() => "TestMethod";
@@ -120,7 +122,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
 
     public class SomeMethodValidation { }
 
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)] 
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class TestCustomAttribute : FieldTypeMetaDataAttribute
     {
         public TestCustomAttribute(string permission)
@@ -152,7 +154,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
                         var permissionMetaData = fieldDef.Metadata.First(x => x.Key == nameof(TestCustomAttribute));
                         var requiredValidation = permissionMetaData.Value as string;
 
-                        if(!user.AccessPermissions.Any(p => p == requiredValidation))
+                        if(user == null || user.AccessPermissions.All(p => p != requiredValidation))
                             context.ReportError(new ValidationError( /* When reporting such errors no data would be returned use with cautious */
                                 context.OriginalQuery,
                                 "Authorization",

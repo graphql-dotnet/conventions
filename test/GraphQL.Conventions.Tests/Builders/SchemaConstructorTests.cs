@@ -1,12 +1,13 @@
 using GraphQL.Conventions.Adapters;
 using GraphQL.Conventions.Builders;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Types;
-using System;
-using System.Reflection;
+using Tests.Templates;
+using Tests.Templates.Extensions;
+// ReSharper disable UnassignedGetOnlyAutoProperty
 
-namespace GraphQL.Conventions.Tests.Builders
+// ReSharper disable UnusedMember.Local
+
+namespace Tests.Builders
 {
     public class SchemaConstructorTests : ConstructionTestBase
     {
@@ -56,13 +57,13 @@ namespace GraphQL.Conventions.Tests.Builders
             // Ignore all types from the 'Unwanted' namespace.
 
             var unwantedNamespaces = new[] {
-                "GraphQL.Conventions.Tests.Builders.U",
-                "GraphQL.Conventions.Tests.Builders.Un",
-                "GraphQL.Conventions.Tests.Builders.Unw",
-                "GraphQL.Conventions.Tests.Builders.Unwan",
-                "GraphQL.Conventions.Tests.Builders.Unwant",
-                "GraphQL.Conventions.Tests.Builders.Unwante",
-                "GraphQL.Conventions.Tests.Builders.Unwanted"
+                "Tests.Builders.U",
+                "Tests.Builders.Un",
+                "Tests.Builders.Unw",
+                "Tests.Builders.Unwan",
+                "Tests.Builders.Unwant",
+                "Tests.Builders.Unwante",
+                "Tests.Builders.Unwanted"
             };
 
             foreach (var namespaceStartFragment in unwantedNamespaces)
@@ -92,7 +93,7 @@ namespace GraphQL.Conventions.Tests.Builders
             // Ignore specific types from the 'Unwanted' namespace.
 
             var schema = new SchemaConstructor<ISchema, IGraphType>(new GraphTypeAdapter())
-                    .IgnoreTypes((Type t, MemberInfo m) => {
+                    .IgnoreTypes((t, m) => {
                         // Ignore based on the type:
                         if (t == typeof(Unwanted.QueryType3)) { return true; }
                         // Ignore based on name of the method:
