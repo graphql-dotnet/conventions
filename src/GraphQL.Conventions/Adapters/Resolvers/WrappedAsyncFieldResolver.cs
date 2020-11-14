@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Attributes.Execution.Unwrappers;
 using GraphQL.Conventions.Attributes.Execution.Wrappers;
+using GraphQL.Conventions.Extensions;
 using GraphQL.Conventions.Handlers;
 using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Types.Descriptors;
@@ -70,7 +71,7 @@ namespace GraphQL.Conventions.Adapters
                 return Task.Run(() => AsyncHelpers.RunTask(resolutionTask, fieldInfo.Type.TypeParameter()));
             }
 
-            return methodInfo?.Invoke(source, arguments.ToArray());
+            return methodInfo?.InvokeEnhanced(source, arguments.ToArray());
         }
 
         private object GetSource(GraphFieldInfo fieldInfo, IResolutionContext context)

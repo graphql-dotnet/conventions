@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GraphQL.Conventions.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
@@ -49,7 +50,7 @@ namespace GraphQL.Conventions
                 var asyncMethod = typeof(AsyncHelpers)
                     .GetMethod(nameof(RunSync))
                     .MakeGenericMethod(typeInfo.AsType());
-                return asyncMethod.Invoke(null, new object[] { task });
+                return asyncMethod.InvokeEnhanced(null, new object[] { task });
             }
             catch (Exception ex)
             {

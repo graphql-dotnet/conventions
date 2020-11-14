@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
+using GraphQL.Language.AST;
 
 namespace GraphQL.Conventions.Attributes.Execution.Wrappers
 {
@@ -16,7 +17,43 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
 
         public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value, bool isSpecified)
         {
-            if (typeInfo.IsInputType && value is Dictionary<string, object> input)
+            bool isNull = value == null;
+            bool shouldReturnValue = isNull;
+            
+            if (shouldReturnValue)
+            {
+                return value;
+            }
+            
+            Type valueType = value.GetType();
+            
+            bool isPrimitive = typeInfo.IsPrimitive;
+            isPrimitive |= valueType.GetTypeInfo().IsPrimitive;
+            isPrimitive |= value is string;
+            
+            shouldReturnValue |= isPrimitive;
+            
+            if (shouldReturnValue)
+            {
+                return value;
+            }
+            
+            bool isNonNull = typeof(NonNull<string>).Name == typeInfo.TypeRepresentation.Name;
+            shouldReturnValue |= isNonNull
+                ? typeInfo.TypeRepresentation.GenericTypeArguments.First() == valueType
+                : typeInfo.TypeRepresentation.AsType() == valueType;
+            shouldReturnValue |= isPrimitive || isNull;
+
+            if (shouldReturnValue)
+            {
+                return value;
+            }
+
+            if (typeInfo.IsScalarType)
+            {
+                return Activator.CreateInstance(typeInfo.GetTypeRepresentation().AsType(), value);
+            }
+            else if (typeInfo.IsInputType && value is Dictionary<string, object> input)
             {
                 var obj = Activator.CreateInstance(typeInfo.GetTypeRepresentation().AsType());
                 foreach (var field in typeInfo.Fields.Where(field => !field.IsIgnored))

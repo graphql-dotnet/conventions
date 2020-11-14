@@ -8,6 +8,8 @@ using GraphQL.Conventions.Adapters;
 using GraphQL.Conventions.Adapters.Engine.ErrorTransformations;
 using GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader;
 using GraphQL.Conventions.Builders;
+using GraphQL.Conventions.Execution;
+using GraphQL.Conventions.Extensions;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Execution;
@@ -349,7 +351,7 @@ namespace GraphQL.Conventions
                     var parameterValues = parameters
                         .Select(parameter => _constructor.TypeResolutionDelegate(parameter.ParameterType))
                         .ToArray();
-                    return ctor.Invoke(parameterValues);
+                    return ctor.InvokeEnhanced(parameterValues);
                 }
             }
 

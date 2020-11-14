@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using GraphQL.Conventions.Attributes.Execution.Unwrappers;
 using GraphQL.Conventions.Attributes.Execution.Wrappers;
+using GraphQL.Conventions.Extensions;
 using GraphQL.Conventions.Handlers;
 using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Types.Descriptors;
@@ -66,7 +67,7 @@ namespace GraphQL.Conventions.Adapters
             {
                 arguments = new[] { source }.Concat(arguments);
             }
-            var result = methodInfo?.Invoke(source, arguments.ToArray());
+            var result = methodInfo?.InvokeEnhanced(source, arguments.ToArray());
             return result;
         }
 

@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Tests.Adapters.Engine.Types;
 using GraphQL.Conventions.Tests.Templates;
 using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Validation.Complexity;
+using Newtonsoft.Json.Linq;
 
 namespace GraphQL.Conventions.Tests.Adapters.Engine
 {
@@ -182,6 +184,21 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         }
 
         [Test]
+        public async Task Can_Register_And_Use_Custom_Json_Scalar_Types()
+        {
+            var engine = GraphQLEngine
+                .New()
+                .RegisterScalarType<JSON, JSONScalarGraphType>()
+                .WithQuery<CustomJsonTypeQuery>();
+            var result = await engine
+                .NewExecutor()
+                .WithQueryString(@"{ customJsonScalarType }")
+                .Execute();
+            result.ShouldHaveNoErrors();
+            result.Data.ShouldHaveFieldWithValue("customJsonScalarType", new Dictionary<string, object> { { "test", true } });
+        }
+
+        [Test]
         public async Task Can_Run_Simple_Query_Using_ComplexityConfiguration()
         {
             var executor = GraphQLEngine
@@ -348,6 +365,14 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             public double Score { get; set; }
 
             public SearchResultItem Node { get; set; }
+        }
+
+        class CustomJsonTypeQuery
+        {
+            public JSON CustomJsonScalarType()
+            {
+                return new JSON(new Dictionary<string, object> { { "test", true } });
+            }
         }
 
         class CustomTypesQuery
