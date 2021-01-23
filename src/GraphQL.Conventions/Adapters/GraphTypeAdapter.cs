@@ -66,14 +66,14 @@ namespace GraphQL.Conventions.Adapters
             _registeredScalarTypes.Add(name, typeof(TType));
         }
 
-        private IGraphType DeriveTypeFromTypeInfo(Type type)
+        private object DeriveTypeFromTypeInfo(Type type)
         {
             var graphType = _typeDescriptors.GetEntity(type);
             if (graphType != null)
             {
                 return graphType;
             }
-            return (IGraphType)Activator.CreateInstance(type);
+            return Activator.CreateInstance(type);
         }
 
         private IObjectGraphType DeriveOperationType(GraphTypeInfo typeInfo) =>
