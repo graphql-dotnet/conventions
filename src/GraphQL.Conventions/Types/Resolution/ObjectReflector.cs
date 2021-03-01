@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GraphQL.Conventions.Handlers;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
+using GraphQL.DataLoader;
 
 namespace GraphQL.Conventions.Types.Resolution
 {
@@ -80,6 +81,11 @@ namespace GraphQL.Conventions.Types.Resolution
 
         public GraphTypeInfo GetType(TypeInfo typeInfo, bool isInjected = false)
         {
+            while (typeInfo.IsGenericType(typeof(IDataLoaderResult<>)))
+            {
+                typeInfo = typeInfo.TypeParameter();
+            }
+
             if (typeInfo.IsGenericType(typeof(Task<>)))
             {
                 typeInfo = typeInfo.TypeParameter();

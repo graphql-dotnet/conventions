@@ -7,6 +7,7 @@ using GraphQL.Conventions.Attributes.Collectors;
 using GraphQL.Conventions.Attributes.MetaData.Utilities;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
+using GraphQL.DataLoader;
 
 // ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
@@ -60,6 +61,11 @@ namespace GraphQL.Conventions
             if (type.IsRegisteredType)
             {
                 return;
+            }
+
+            while (typeInfo.IsGenericType(typeof(IDataLoaderResult<>)))
+            {
+                typeInfo = typeInfo.TypeParameter();
             }
 
             if (typeInfo.IsGenericType(typeof(Task<>)))

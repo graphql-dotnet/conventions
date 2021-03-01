@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Conventions.Types.Resolution.Extensions;
+using GraphQL.DataLoader;
 
 namespace GraphQL.Conventions.Types.Descriptors
 {
@@ -107,6 +108,11 @@ namespace GraphQL.Conventions.Types.Descriptors
         private void DeriveMetaData()
         {
             var type = TypeRepresentation;
+
+            while (type.IsGenericType(typeof(IDataLoaderResult<>)))
+            {
+                type = type.TypeParameter();
+            }
 
             if (type.IsGenericType(typeof(Task<>)))
             {
