@@ -149,7 +149,7 @@ namespace Tests.Adapters
                 @"query Test($arg: Int) { defaultNullableArgumentValueField(arg: $arg) }",
                 new Dictionary<string, object> { { "arg", null } });
             result.ShouldHaveNoErrors();
-            result.Data.ShouldHaveFieldWithValue("defaultNullableArgumentValueField", 999);
+            result.Data.ShouldHaveFieldWithValue("defaultNullableArgumentValueField", null);
         }
 
         [Test]
