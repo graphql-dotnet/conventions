@@ -9,6 +9,9 @@ In short, this project builds on top of the following components:
  * The [GraphQL](https://github.com/graphql-dotnet/graphql-dotnet) library written by [Joe McBride](https://github.com/joemcbride) (MIT licence)
  * The GraphQL [lexer/parser](http://github.com/graphql-dotnet/parser) originally written by [Marek Magdziak](https://github.com/mkmarek) (MIT licence)
 
+>**Disclaimer:**
+>I am providing code in this repository to you under an open source licence ([MIT](LICENSE.md)). Because this is my personal repository, the licence you receive to my code is from me and not my employer (Facebook).
+
 ## Installation
 
 Download and install the package from [NuGet](https://www.nuget.org/packages/GraphQL.Conventions):
