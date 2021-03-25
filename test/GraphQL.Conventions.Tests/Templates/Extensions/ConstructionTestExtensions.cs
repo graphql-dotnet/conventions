@@ -97,13 +97,13 @@ namespace Tests.Templates.Extensions
             Assert.AreEqual(typeof(NonNullGraphType<ListGraphType<TType>>), type.GetType());
         }
 
-        public static void OfType<TType>(this IFieldType field)
+        public static void OfType<TType>(this FieldType field)
             where TType : GraphType
         {
             field.Type.ShouldBeOfType<TType>();
         }
 
-        public static void OfNonNullableType<TType>(this IFieldType field)
+        public static void OfNonNullableType<TType>(this FieldType field)
             where TType : GraphType
         {
             field.Type.ShouldBeOfNonNullableType<TType>();

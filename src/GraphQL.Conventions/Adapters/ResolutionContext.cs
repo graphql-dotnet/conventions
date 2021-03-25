@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using GraphQL.Conventions.Execution;
 using GraphQL.Conventions.Types.Descriptors;
+using GraphQL.Execution;
 
 namespace GraphQL.Conventions.Adapters
 {
@@ -26,7 +27,7 @@ namespace GraphQL.Conventions.Adapters
                 if (FieldContext.Arguments != null &&
                     FieldContext.Arguments.TryGetValue(name, out var value))
                 {
-                    return value;
+                    return value.Value;
                 }
                 return defaultValue;
             }
@@ -48,9 +49,9 @@ namespace GraphQL.Conventions.Adapters
             {
                 if (FieldContext.Arguments == null)
                 {
-                    FieldContext.Arguments = new Dictionary<string, object>();
+                    FieldContext.Arguments = new Dictionary<string, ArgumentValue>();
                 }
-                FieldContext.Arguments[name] = value;
+                FieldContext.Arguments[name] = new ArgumentValue(value, ArgumentSource.Variable);
             }
         }
 

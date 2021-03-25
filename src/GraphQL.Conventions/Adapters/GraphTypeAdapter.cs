@@ -91,7 +91,6 @@ namespace GraphQL.Conventions.Adapters
                     Name = fieldInfo.Name,
                     Description = fieldInfo.Description,
                     DeprecationReason = fieldInfo.DeprecationReason,
-                    Metadata = DeriveFieldTypeMetaData(fieldInfo.AttributeProvider.GetCustomAttributes(false)),
                     DefaultValue = fieldInfo.DefaultValue,
                     Type = GetType(fieldInfo.Type),
                     Arguments = new QueryArguments(fieldInfo.Arguments.Where(arg => !arg.IsInjected).Select(DeriveArgument)),
@@ -105,7 +104,6 @@ namespace GraphQL.Conventions.Adapters
                 Description = fieldInfo.Description,
                 DeprecationReason = fieldInfo.DeprecationReason,
                 DefaultValue = fieldInfo.DefaultValue,
-                Metadata = DeriveFieldTypeMetaData(fieldInfo.AttributeProvider.GetCustomAttributes(false)),
                 Type = GetType(fieldInfo.Type),
                 Arguments = new QueryArguments(fieldInfo.Arguments.Where(arg => !arg.IsInjected).Select(DeriveArgument)),
                 Resolver = FieldResolverFactory(fieldInfo),
@@ -163,7 +161,7 @@ namespace GraphQL.Conventions.Adapters
                     return typeof(DateTimeOffsetGraphType);
 
                 case TypeNames.Id:
-                    return typeof(IdGraphType);
+                    return typeof(Types.IdGraphType);
 
                 case TypeNames.Cursor:
                     return typeof(Types.Relay.CursorGraphType);
@@ -343,9 +341,15 @@ namespace GraphQL.Conventions.Adapters
 
         private void DeriveFields(GraphTypeInfo typeInfo, IComplexGraphType graphType)
         {
-            foreach (var field in typeInfo.Fields.Select(DeriveField))
+            foreach (var field in typeInfo.Fields)
             {
-                graphType.AddField(field);
+                var derivedField = DeriveField(field);
+                var derivedMetadata = DeriveFieldTypeMetaData(field.AttributeProvider.GetCustomAttributes(false));
+
+                foreach (var item in derivedMetadata)
+                    derivedField.Metadata[item.Key] = item.Value;
+
+                graphType.AddField(derivedField);
             }
         }
     }

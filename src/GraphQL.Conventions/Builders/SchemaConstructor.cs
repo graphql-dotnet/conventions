@@ -44,6 +44,11 @@ namespace GraphQL.Conventions.Builders
                 .Select(_typeResolver.DeriveSchema)
                 .ToList() ?? new List<GraphSchemaInfo>();
 
+            if (schemaInfos.All(s => s.Query == null))
+            {
+                throw new ArgumentException("Schema has no query type.");
+            }
+
             var schemaInfo = schemaInfos.FirstOrDefault();
             if (schemaInfo == null)
             {

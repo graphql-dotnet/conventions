@@ -49,14 +49,14 @@ namespace Tests.Attributes.MetaData
         public async Task When_UserIsMissingAll_ValidationFieldTypeMetaData_ErrorsAreReturned()
         {
             var result = await Resolve_Query();
-            result.ShouldHaveErrors(2);
+            result.ShouldHaveErrors(4);
             var expectedMessages = new[]
             {
                 $"Required validation '{nameof(SomeTopLevelValidation)}' is not present. Query will not be executed.",
                 $"Required validation '{nameof(SomeMethodValidation)}' is not present. Query will not be executed."
             };
 
-            var messages = result.Errors.Select(e => e.Message);
+            var messages = result.Errors.Select(e => e.Message).Distinct();
             Assert.IsTrue(messages.All(x => expectedMessages.Contains(x)));
         }
 
@@ -141,28 +141,37 @@ namespace Tests.Attributes.MetaData
     {
         public Task<INodeVisitor> ValidateAsync(ValidationContext context)
         {
-            var user = context.GetUserContext() as TestUserContext;
-
-            return Task.FromResult<INodeVisitor>(new EnterLeaveListener(_ =>
-            {
-                _.Match<Field>(node =>
-                {
-                    var fieldDef = context.TypeInfo.GetFieldDef();
-                    if (fieldDef == null) return;
-                    if (fieldDef.Metadata != null && fieldDef.HasMetadata(nameof(TestCustomAttribute)))
-                    {
-                        var permissionMetaData = fieldDef.Metadata.First(x => x.Key == nameof(TestCustomAttribute));
-                        var requiredValidation = permissionMetaData.Value as string;
-
-                        if(user == null || user.AccessPermissions.All(p => p != requiredValidation))
-                            context.ReportError(new ValidationError( /* When reporting such errors no data would be returned use with cautious */
-                                context.OriginalQuery,
-                                "Authorization",
-                                $"Required validation '{requiredValidation}' is not present. Query will not be executed.",
-                                node));
-                    }
-                });
-            }));
+            return Task.FromResult<INodeVisitor>(new TestValidationNodeVisitor(context.GetUserContext() as TestUserContext));
         }
+    }
+
+    public class TestValidationNodeVisitor : INodeVisitor
+    {
+        private readonly TestUserContext _user;
+
+        public TestValidationNodeVisitor(TestUserContext user)
+        {
+            _user = user;
+        }
+
+        public void Enter(INode node, ValidationContext context)
+        {
+            var fieldDef = context.TypeInfo.GetFieldDef();
+            if (fieldDef == null) return;
+            if (fieldDef.Metadata != null && fieldDef.HasMetadata(nameof(TestCustomAttribute)))
+            {
+                var permissionMetaData = fieldDef.Metadata.First(x => x.Key == nameof(TestCustomAttribute));
+                var requiredValidation = permissionMetaData.Value as string;
+
+                if (_user == null || _user.AccessPermissions.All(p => p != requiredValidation))
+                    context.ReportError( new ValidationError( /* When reporting such errors no data would be returned use with cautious */
+                        context.Document.OriginalQuery,
+                        "Authorization",
+                        $"Required validation '{requiredValidation}' is not present. Query will not be executed.",
+                        node));
+            }
+        }
+
+        public void Leave(INode node, ValidationContext context) { /* Noop */ }
     }
 }

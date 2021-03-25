@@ -1,3 +1,5 @@
+using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using GraphQL.Conventions;
 using GraphQL.Conventions.Web;
@@ -69,6 +71,7 @@ namespace Tests.Web
             var request = Request.New("{ \"query\": \"{ a: foo(ms: 10) b: foo(ms: 20) }\" }");
             var response = await RequestHandler
                 .New()
+                .WithDependencyInjector(new DependencyInjector())
                 .WithQuery<ProfiledQuery>()
                 .WithProfiling()
                 .Generate()
@@ -85,6 +88,7 @@ namespace Tests.Web
             var request = Request.New("{ \"query\": \"{ earth { hello } mars { hello } } \" }");
             var response = await RequestHandler
                 .New()
+                .WithDependencyInjector(new DependencyInjector())
                 .WithQuery<CompositeQuery>()
                 .Generate()
                 .ProcessRequestAsync(request, null);
@@ -101,7 +105,7 @@ namespace Tests.Web
                 .Generate()
                 .ProcessRequestAsync(request, null);
             response.Errors.Count.ShouldEqual(1);
-            response.Errors[0].Message.ShouldContain("Cannot query field \"hello\" on type \"TestQuery2\".");
+            response.Errors[0].Message.ShouldContain("Cannot query field 'mars' on type 'CompositeQuery'.");
 
             body = await response.GetBodyAsync();
             body.ShouldContain("FIELD_RESOLUTION");
@@ -169,6 +173,18 @@ namespace Tests.Web
             ");
         }
 
+        class DependencyInjector : IDependencyInjector
+        {
+            public object Resolve(TypeInfo typeInfo)
+            {
+                if (typeInfo.GetConstructor(Type.EmptyTypes) != null)
+                {
+                    return Activator.CreateInstance(typeInfo.AsType());
+                }
+                return null;
+            }
+        }
+
         class TestQuery
         {
             public string Hello => "World";
@@ -198,7 +214,7 @@ namespace Tests.Web
             public Unwanted.TestQuery2 Mars => new Unwanted.TestQuery2();
         }
     }
-
+    
     class SimpleQuery
     {
         public string Hello => "World";

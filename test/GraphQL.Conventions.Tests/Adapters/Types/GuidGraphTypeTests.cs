@@ -25,7 +25,7 @@ namespace Tests.Adapters.Types
         [Test]
         public override void Can_Parse_Literal()
         {
-            ShouldParseLiteral(new StringValue(null), null);
+            ShouldParseLiteral(new NullValue(), null);
             ShouldParseLiteral(new StringValue("ad9da688-1fd4-4e00-ad89-b4d3fef08280"), new Guid("ad9da688-1fd4-4e00-ad89-b4d3fef08280"));
             ShouldParseLiteral(new IntValue(0), null);
         }

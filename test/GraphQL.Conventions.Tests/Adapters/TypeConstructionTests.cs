@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using GraphQL;
 using GraphQL.Conventions;
 using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Types.Resolution;
@@ -133,7 +134,7 @@ namespace Tests.Adapters
         public void Bug190_Discover_Possible_Types_From_Lists()
         {
             var schema = GraphQLEngine.New<Bug190Query_2>().GetSchema();
-            var type = schema.FindType(nameof(Bug190Query_2.TestImpl));
+            var type = new SchemaTypes(schema, new DefaultServiceProvider())[nameof(Bug190Query_2.TestImpl)];
             type.ShouldNotBeNull();
         }
 

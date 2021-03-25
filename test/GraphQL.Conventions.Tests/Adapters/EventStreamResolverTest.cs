@@ -5,6 +5,7 @@ using GraphQL.Conventions;
 using GraphQL.Conventions.Adapters.Resolvers;
 using GraphQL.Subscription;
 using Tests.Templates;
+using Tests.Types;
 
 namespace Tests.Adapters
 {
@@ -23,7 +24,9 @@ namespace Tests.Adapters
         [Test]
         public async Task Can_Subscribe()
         {
-            var engine = GraphQLEngine.New().WithSubscription<Subscription>();
+            var engine = GraphQLEngine.New(new SubscriptionDocumentExecuter())
+                .WithQuery<TestQuery>()
+                .WithSubscription<Subscription>();
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("subscription { test }")

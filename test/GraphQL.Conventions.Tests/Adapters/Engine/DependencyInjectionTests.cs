@@ -1,9 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.Conventions;
 using GraphQL.Conventions.Execution;
 using GraphQL.Execution;
+using GraphQL.Language.AST;
 using Tests.Templates;
 using Tests.Templates.Extensions;
 
@@ -178,6 +181,10 @@ namespace Tests.Adapters.Engine
                 {
                     return new ChildDependencyInjector($"{_value}->ChildScope");
                 }
+                if (typeInfo.GetConstructor(Type.EmptyTypes) != null)
+                {
+                    return Activator.CreateInstance(typeInfo.AsType());
+                }
                 return null;
             }
         }
@@ -208,7 +215,7 @@ namespace Tests.Adapters.Engine
                     _injector = injector;
                     _innerStrategy = innerStrategy;
                 }
-
+                
                 public async Task<ExecutionResult> ExecuteAsync(ExecutionContext context)
                 {
                     var key = typeof(IDependencyInjector).FullName ?? nameof(IDependencyInjector);
@@ -223,6 +230,11 @@ namespace Tests.Adapters.Engine
                     {
                         context.UserContext[key] = outerInjector;
                     }
+                }
+
+                public Dictionary<string, Field> GetSubFields(ExecutionContext executionContext, ExecutionNode executionNode)
+                {
+                    return _innerStrategy.GetSubFields(executionContext, executionNode);
                 }
             }
         }

@@ -32,7 +32,7 @@ namespace GraphQL.Conventions.Types.Resolution
 
         private readonly Dictionary<Type, List<MethodInfo>> _typeExtensionMethods = new Dictionary<Type, List<MethodInfo>>();
 
-        public HashSet<string> IgnoredNamespaces { get; } = new HashSet<string>() { nameof(System) + "." };
+        public HashSet<string> IgnoredNamespaces { get; } = new HashSet<string>();
 
         public Func<Type, MemberInfo, bool> IgnoreTypeCallback { get; set; }
 
@@ -59,15 +59,12 @@ namespace GraphQL.Conventions.Types.Resolution
             var queryField = typeInfo.GetProperty("Query");
             var mutationField = typeInfo.GetProperty("Mutation");
             var subscriptionField = typeInfo.GetProperty("Subscription");
-
-            if (queryField == null)
-            {
-                throw new ArgumentException("Schema has no query type.");
-            }
-
+            
             var schemaInfo = new GraphSchemaInfo();
             _typeResolver.ActiveSchema = schemaInfo;
-            schemaInfo.Query = GetType(queryField.PropertyType.GetTypeInfo());
+            schemaInfo.Query = queryField != null
+                ? GetType(queryField.PropertyType.GetTypeInfo())
+                : null; 
             schemaInfo.Mutation = mutationField != null
                 ? GetType(mutationField.PropertyType.GetTypeInfo())
                 : null;
@@ -305,16 +302,19 @@ namespace GraphQL.Conventions.Types.Resolution
                 if (memberInfo is PropertyInfo propertyInfo)
                 {
                     field.Type = GetType(propertyInfo.PropertyType.GetTypeInfo());
+                    field.IsIgnored |= IsIgnoredType(propertyInfo.PropertyType.GetTypeInfo(), memberInfo);
                 }
 
                 if (memberInfo is FieldInfo fieldInfo)
                 {
                     field.Type = GetType(fieldInfo.FieldType.GetTypeInfo());
+                    field.IsIgnored |= IsIgnoredType(fieldInfo.FieldType.GetTypeInfo(), memberInfo);
                 }
 
                 if (memberInfo is MethodInfo methodInfo)
                 {
                     field.Type = GetType(methodInfo.ReturnType.GetTypeInfo());
+                    field.IsIgnored |= IsIgnoredType(methodInfo.ReturnType.GetTypeInfo(), memberInfo);
                     field.Arguments.AddRange(GetArguments(methodInfo));
                 }
             }
@@ -386,43 +386,51 @@ namespace GraphQL.Conventions.Types.Resolution
             return enumValue;
         }
 
+        private bool IsSystemType(TypeInfo type)
+        {
+            return type != null && type.Namespace != null &&
+                   (type.Namespace == nameof(System) || type.Namespace.StartsWith(nameof(System) + "."));
+        }
+
+        private bool IsIgnoredType(TypeInfo typeInfo, MemberInfo memberInfo = null)
+        {
+            return IgnoredNamespaces.Any(n => typeInfo.Namespace?.StartsWith(n) ?? false) ||
+                   (IgnoreTypeCallback != null && IgnoreTypeCallback(typeInfo.AsType(), memberInfo));
+        }
+
         private bool IsValidType(TypeInfo typeInfo)
         {
-            return typeInfo.Namespace != nameof(System) &&
-                   !IgnoredNamespaces.Any(n => typeInfo.Namespace?.StartsWith(n) ?? false) &&
+            return !IsSystemType(typeInfo) && 
+                   !IsIgnoredType(typeInfo) &&
                    !typeInfo.ContainsGenericParameters &&
-                   !typeInfo.IsGenericType &&
-                   (IgnoreTypeCallback == null || !IgnoreTypeCallback(typeInfo.AsType(), null));
+                   !typeInfo.IsGenericType;
         }
 
         private bool IsValidMember(MemberInfo memberInfo)
         {
             return memberInfo != null &&
                    memberInfo.DeclaringType != null &&
-                   memberInfo.DeclaringType.Namespace != nameof(System) &&
-                   !IgnoredNamespaces.Any(n => memberInfo.DeclaringType.Namespace?.StartsWith(n) ?? false) &&
+                   !IsSystemType(memberInfo.DeclaringType.GetTypeInfo()) &&
+                   !IsIgnoredType(memberInfo.DeclaringType.GetTypeInfo(), memberInfo) &&
                    !(memberInfo.DeclaringType.GetTypeInfo()?.IsValueType ?? false) &&
                    memberInfo.Name != nameof(ToString) &&
-                   HasValidReturnType(memberInfo) &&
-                   (IgnoreTypeCallback == null || !IgnoreTypeCallback(memberInfo.DeclaringType, memberInfo));
+                   HasValidReturnType(memberInfo);
         }
 
         private static bool HasValidReturnType(MemberInfo memberInfo)
         {
-            Type returnType;
-            if (memberInfo is PropertyInfo)
+            switch (memberInfo)
             {
-                returnType = ((PropertyInfo)memberInfo).PropertyType;
+                case PropertyInfo propertyInfo:
+                    return IsValidReturnType(propertyInfo.PropertyType);
+                case MethodInfo methodInfo:
+                    return IsValidReturnType(methodInfo.ReturnType);
+                default:
+                    return true;
             }
-            else if (memberInfo is MethodInfo)
-            {
-                returnType = ((MethodInfo)memberInfo).ReturnType;
-            }
-            else
-            {
-                return true;
-            }
-            return returnType != typeof(object) && returnType != typeof(void);
         }
+
+        private static bool IsValidReturnType(Type type)
+            => type != typeof(object) && type != typeof(void);
     }
 }

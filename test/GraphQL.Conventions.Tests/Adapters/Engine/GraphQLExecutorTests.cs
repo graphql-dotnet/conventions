@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GraphQL.Conventions;
 using Tests.Templates;
 using Tests.Templates.Extensions;
+using Tests.Web;
 
 namespace Tests.Adapters.Engine
 {
@@ -15,15 +16,14 @@ namespace Tests.Adapters.Engine
             var engine = GraphQLEngine.New<Query>();
             var result = await engine
                 .NewExecutor()
-                .WithQueryString("{ test }")
+                .WithQueryString("query Test($arg: Int!, $arg: Int!) { hello(var: $arg) }")
+                .WithInputs(new Dictionary<string, object> { { "arg", 1 } })
                 .DisableValidation()
                 .ExecuteAsync();
 
-            result.Data.ShouldNotBeNull();
-            var count = (result.Data as Dictionary<string, object>)?.Count;
-            count.ShouldEqual(0);
-
             result.Errors.ShouldBeNull();
+            result.Data.ShouldNotBeNull();
+            result.Data.ShouldHaveFieldWithValue("hello", "World");
         }
 
         [Test]
@@ -32,13 +32,19 @@ namespace Tests.Adapters.Engine
             var engine = GraphQLEngine.New<Query>();
             var result = await engine
                 .NewExecutor()
-                .WithQueryString("{ test }")
+                .WithQueryString("query Test($arg: Int!, $arg: Int!) { hello(var: $arg) }")
+                .WithInputs(new Dictionary<string, object> { { "arg", 1 } })
                 .EnableValidation()
                 .ExecuteAsync();
 
             result.Errors.ShouldNotBeNull();
             result.Errors.Count.ShouldEqual(1);
-            result.Errors.First().Message.ShouldEqual("Cannot query field \"test\" on type \"Query\".");
+            result.Errors.First().Message.ShouldEqual("There can be only one variable named 'arg'");
+        }
+
+        public class Query
+        {
+            public string Hello(int var) => "World";
         }
     }
 }

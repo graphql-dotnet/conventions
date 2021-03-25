@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using GraphQL.Conventions.Attributes;
 using GraphQL.Conventions.Types.Descriptors;
+using GraphQL.Execution;
 
 // ReSharper disable PossibleNullReferenceException
 
@@ -198,35 +199,42 @@ namespace Tests.Templates.Extensions
             {
                 if (k is int)
                 {
-                    var array = obj as List<object>;
-                    array.ShouldNotBeNull();
-                    array.Count.ShouldBeGreaterThan((int)k);
-                    obj = array[(int)k];
+                    var node = obj as ArrayExecutionNode;
+                    node.Items.ShouldNotBeNull();
+                    node.Items.Count.ShouldBeGreaterThan((int)k);
+                    obj = node.Items[(int)k];
                     obj.ShouldNotBeNull();
                 }
                 else
                 {
-                    var dict = obj as Dictionary<string, object>;
-                    dict.ShouldNotBeNull();
-                    dict.Keys.ShouldContain(k);
-                    obj = dict[k.ToString()];
+                    var node = obj as IParentExecutionNode;
+                    node.ShouldNotBeNull();
+
+                    var children = node.GetChildNodes();
+                    obj = children.FirstOrDefault(x => x.Name == k.ToString()) as IParentExecutionNode;
                     obj.ShouldNotBeNull();
                 }
             }
             var key = path.Last();
             if (key is int)
             {
-                var array = obj as List<object>;
-                array.ShouldNotBeNull();
-                var output = array[(int)key];
-                output.ShouldEqual(value);
+                var node = obj as ArrayExecutionNode;
+                node.Items.ShouldNotBeNull();
+                node.Items.Count.ShouldBeGreaterThan((int)key);
+
+                var output = node.Items[(int)key];
+                output.ShouldNotBeNull();
+                output.Result.ShouldEqual(value);
             }
             else
             {
-                var dict = obj as Dictionary<string, object>;
-                dict.ShouldNotBeNull();
-                var output = dict[key.ToString()];
-                output.ShouldEqual(value);
+                var node = obj as IParentExecutionNode;
+                node.ShouldNotBeNull();
+
+                var children = node.GetChildNodes();
+                var output = children.FirstOrDefault(x => x.Name == key.ToString());
+                output.ShouldNotBeNull();
+                output.Result.ShouldEqual(value);
             }
         }
 
@@ -235,17 +243,20 @@ namespace Tests.Templates.Extensions
             var value = pathAndValue.Last() as int?;
             var path = pathAndValue.Take(pathAndValue.Length - 1).Select(p => p.ToString()).ToList();
             result.ShouldNotBeNull();
-            var obj = result as Dictionary<string, object>;
+
+            var obj = result as IParentExecutionNode;
             obj.ShouldNotBeNull();
             foreach (var key in path.Take(path.Count - 1))
             {
-                obj.Keys.ShouldContain(key);
-                obj = obj[key] as Dictionary<string, object>;
+                var children = obj.GetChildNodes();
+                obj = children.FirstOrDefault(x => x.Name == key.ToString()) as IParentExecutionNode;
                 obj.ShouldNotBeNull();
             }
-            var array = obj[path.Last()] as List<object>;
+            
+            var child = obj.GetChildNodes().FirstOrDefault(x => x.Name == path.Last());
+            var array = child as ArrayExecutionNode;
             array.ShouldNotBeNull();
-            array.Count.ShouldEqual(value ?? -1);
+            array.Items.Count.ShouldEqual(value ?? -1);
         }
 
         private static string CleanMultilineText(string value)
