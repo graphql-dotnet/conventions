@@ -285,7 +285,7 @@ namespace GraphQL.Conventions
             {
                 rules = new[] { new NoopValidationRule() };
             }
-            
+
             var validationRules = rules?.ToArray() ?? new IValidationRule[0];
             var configuration = new ExecutionOptions
             {
@@ -316,7 +316,6 @@ namespace GraphQL.Conventions
                 configuration.Listeners.Add(new DataLoaderListener());
             }
 
-            //TODO : refactor todo in schemabuilder
             if (enableProfiling)
             {
                 _schema.FieldMiddleware.Use(dependencyInjector.Resolve<InstrumentFieldsMiddleware>());

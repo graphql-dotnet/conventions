@@ -214,7 +214,7 @@ namespace Tests.Web
             public Unwanted.TestQuery2 Mars => new Unwanted.TestQuery2();
         }
     }
-    
+ 
     class SimpleQuery
     {
         public string Hello => "World";

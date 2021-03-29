@@ -215,7 +215,7 @@ namespace Tests.Adapters.Engine
                     _injector = injector;
                     _innerStrategy = innerStrategy;
                 }
-                
+
                 public async Task<ExecutionResult> ExecuteAsync(ExecutionContext context)
                 {
                     var key = typeof(IDependencyInjector).FullName ?? nameof(IDependencyInjector);
