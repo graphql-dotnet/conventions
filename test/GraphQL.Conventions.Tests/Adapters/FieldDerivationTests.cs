@@ -6,6 +6,7 @@ using GraphQL.Types;
 using Tests.Templates;
 using Tests.Templates.Extensions;
 
+using Extended = GraphQL.Conventions.Adapters.Types;
 // ReSharper disable UnusedMember.Local
 
 namespace Tests.Adapters
@@ -124,7 +125,7 @@ namespace Tests.Adapters
             type.Name.ShouldEqual("Fooz");
             type.Description.ShouldEqual("Foo bar baz");
             type.ShouldHaveFields(3);
-            type.ShouldHaveFieldWithName("id").OfType<NonNullGraphType<IdGraphType>>();
+            type.ShouldHaveFieldWithName("id").OfType<NonNullGraphType<Extended.IdGraphType>>();
             type.ShouldHaveFieldWithName("a").OfType<IntGraphType>();
             type.ShouldHaveFieldWithName("b").OfType<NonNullGraphType<IntGraphType>>();
         }

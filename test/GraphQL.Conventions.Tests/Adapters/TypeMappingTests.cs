@@ -35,7 +35,7 @@ namespace Tests.Adapters
             Type<DateTime?>().ShouldBeOfType<DateTimeGraphType>();
             Type<DateTimeOffset?>().ShouldBeOfType<DateTimeOffsetGraphType>();
             Type<TimeSpan?>().ShouldBeOfType<Extended.TimeSpanGraphType>();
-            Type<Id?>().ShouldBeOfType<IdGraphType>();
+            Type<Id?>().ShouldBeOfType<Extended.IdGraphType>();
             Type<Url>().ShouldBeOfType<Extended.UrlGraphType>();
             Type<Uri>().ShouldBeOfType<UriGraphType>();
             Type<Cursor?>().ShouldBeOfType<Extended.Relay.CursorGraphType>();
@@ -61,7 +61,7 @@ namespace Tests.Adapters
             Type<DateTime>().ShouldBeOfNonNullableType<DateTimeGraphType>();
             Type<DateTimeOffset>().ShouldBeOfNonNullableType<DateTimeOffsetGraphType>();
             Type<TimeSpan>().ShouldBeOfNonNullableType<Extended.TimeSpanGraphType>();
-            Type<Id>().ShouldBeOfNonNullableType<IdGraphType>();
+            Type<Id>().ShouldBeOfNonNullableType<Extended.IdGraphType>();
             Type<NonNull<Url>>().ShouldBeOfNonNullableType<Extended.UrlGraphType>();
             Type<NonNull<Uri>>().ShouldBeOfNonNullableType<UriGraphType>();
             Type<Cursor>().ShouldBeOfNonNullableType<Extended.Relay.CursorGraphType>();
@@ -137,7 +137,7 @@ namespace Tests.Adapters
             Type<List<DateTime?>>().ShouldBeOfListType<DateTimeGraphType>();
             Type<List<DateTimeOffset?>>().ShouldBeOfListType<DateTimeOffsetGraphType>();
             Type<List<TimeSpan?>>().ShouldBeOfListType<Extended.TimeSpanGraphType>();
-            Type<List<Id?>>().ShouldBeOfListType<IdGraphType>();
+            Type<List<Id?>>().ShouldBeOfListType<Extended.IdGraphType>();
             Type<List<Url>>().ShouldBeOfListType<Extended.UrlGraphType>();
             Type<List<Uri>>().ShouldBeOfListType<UriGraphType>();
             Type<List<Cursor?>>().ShouldBeOfListType<Extended.Relay.CursorGraphType>();
@@ -163,7 +163,7 @@ namespace Tests.Adapters
             Type<List<DateTime>>().ShouldBeOfListType<NonNullGraphType<DateTimeGraphType>>();
             Type<List<DateTimeOffset>>().ShouldBeOfListType<NonNullGraphType<DateTimeOffsetGraphType>>();
             Type<List<TimeSpan>>().ShouldBeOfListType<NonNullGraphType<Extended.TimeSpanGraphType>>();
-            Type<List<Id>>().ShouldBeOfListType<NonNullGraphType<IdGraphType>>();
+            Type<List<Id>>().ShouldBeOfListType<NonNullGraphType<Extended.IdGraphType>>();
             Type<List<NonNull<Url>>>().ShouldBeOfListType<NonNullGraphType<Extended.UrlGraphType>>();
             Type<List<NonNull<Uri>>>().ShouldBeOfListType<NonNullGraphType<UriGraphType>>();
             Type<List<Cursor>>().ShouldBeOfListType<NonNullGraphType<Extended.Relay.CursorGraphType>>();
@@ -239,7 +239,7 @@ namespace Tests.Adapters
             Type<NonNull<List<DateTime?>>>().ShouldBeOfNonNullableListType<DateTimeGraphType>();
             Type<NonNull<List<DateTimeOffset?>>>().ShouldBeOfNonNullableListType<DateTimeOffsetGraphType>();
             Type<NonNull<List<TimeSpan?>>>().ShouldBeOfNonNullableListType<Extended.TimeSpanGraphType>();
-            Type<NonNull<List<Id?>>>().ShouldBeOfNonNullableListType<IdGraphType>();
+            Type<NonNull<List<Id?>>>().ShouldBeOfNonNullableListType<Extended.IdGraphType>();
             Type<NonNull<List<Url>>>().ShouldBeOfNonNullableListType<Extended.UrlGraphType>();
             Type<NonNull<List<Uri>>>().ShouldBeOfNonNullableListType<UriGraphType>();
             Type<NonNull<List<Cursor?>>>().ShouldBeOfNonNullableListType<Extended.Relay.CursorGraphType>();
@@ -265,7 +265,7 @@ namespace Tests.Adapters
             Type<NonNull<List<DateTime>>>().ShouldBeOfNonNullableListType<NonNullGraphType<DateTimeGraphType>>();
             Type<NonNull<List<DateTimeOffset>>>().ShouldBeOfNonNullableListType<NonNullGraphType<DateTimeOffsetGraphType>>();
             Type<NonNull<List<TimeSpan>>>().ShouldBeOfNonNullableListType<NonNullGraphType<Extended.TimeSpanGraphType>>();
-            Type<NonNull<List<Id>>>().ShouldBeOfNonNullableListType<NonNullGraphType<IdGraphType>>();
+            Type<NonNull<List<Id>>>().ShouldBeOfNonNullableListType<NonNullGraphType<Extended.IdGraphType>>();
             Type<NonNull<List<NonNull<Url>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<Extended.UrlGraphType>>();
             Type<NonNull<List<NonNull<Uri>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<UriGraphType>>();
             Type<NonNull<List<Cursor>>>().ShouldBeOfNonNullableListType<NonNullGraphType<Extended.Relay.CursorGraphType>>();
@@ -341,7 +341,7 @@ namespace Tests.Adapters
             Type<Task<DateTime?>>().ShouldBeOfType<DateTimeGraphType>();
             Type<Task<DateTimeOffset?>>().ShouldBeOfType<DateTimeOffsetGraphType>();
             Type<Task<TimeSpan?>>().ShouldBeOfType<Extended.TimeSpanGraphType>();
-            Type<Task<Id?>>().ShouldBeOfType<IdGraphType>();
+            Type<Task<Id?>>().ShouldBeOfType<Extended.IdGraphType>();
             Type<Task<Url>>().ShouldBeOfType<Extended.UrlGraphType>();
             Type<Task<Uri>>().ShouldBeOfType<UriGraphType>();
             Type<Task<Cursor?>>().ShouldBeOfType<Extended.Relay.CursorGraphType>();
@@ -367,7 +367,7 @@ namespace Tests.Adapters
             Type<Task<DateTime>>().ShouldBeOfNonNullableType<DateTimeGraphType>();
             Type<Task<DateTimeOffset>>().ShouldBeOfNonNullableType<DateTimeOffsetGraphType>();
             Type<Task<TimeSpan>>().ShouldBeOfNonNullableType<Extended.TimeSpanGraphType>();
-            Type<Task<Id>>().ShouldBeOfNonNullableType<IdGraphType>();
+            Type<Task<Id>>().ShouldBeOfNonNullableType<Extended.IdGraphType>();
             Type<Task<NonNull<Url>>>().ShouldBeOfNonNullableType<Extended.UrlGraphType>();
             Type<Task<NonNull<Uri>>>().ShouldBeOfNonNullableType<UriGraphType>();
             Type<Task<Cursor>>().ShouldBeOfNonNullableType<Extended.Relay.CursorGraphType>();
@@ -443,7 +443,7 @@ namespace Tests.Adapters
             Type<Task<List<DateTime?>>>().ShouldBeOfListType<DateTimeGraphType>();
             Type<Task<List<DateTimeOffset?>>>().ShouldBeOfListType<DateTimeOffsetGraphType>();
             Type<Task<List<TimeSpan?>>>().ShouldBeOfListType<Extended.TimeSpanGraphType>();
-            Type<Task<List<Id?>>>().ShouldBeOfListType<IdGraphType>();
+            Type<Task<List<Id?>>>().ShouldBeOfListType<Extended.IdGraphType>();
             Type<Task<List<Url>>>().ShouldBeOfListType<Extended.UrlGraphType>();
             Type<Task<List<Uri>>>().ShouldBeOfListType<UriGraphType>();
             Type<Task<List<Cursor?>>>().ShouldBeOfListType<Extended.Relay.CursorGraphType>();
@@ -469,7 +469,7 @@ namespace Tests.Adapters
             Type<Task<List<DateTime>>>().ShouldBeOfListType<NonNullGraphType<DateTimeGraphType>>();
             Type<Task<List<DateTimeOffset>>>().ShouldBeOfListType<NonNullGraphType<DateTimeOffsetGraphType>>();
             Type<Task<List<TimeSpan>>>().ShouldBeOfListType<NonNullGraphType<Extended.TimeSpanGraphType>>();
-            Type<Task<List<Id>>>().ShouldBeOfListType<NonNullGraphType<IdGraphType>>();
+            Type<Task<List<Id>>>().ShouldBeOfListType<NonNullGraphType<Extended.IdGraphType>>();
             Type<Task<List<NonNull<Url>>>>().ShouldBeOfListType<NonNullGraphType<Extended.UrlGraphType>>();
             Type<Task<List<NonNull<Uri>>>>().ShouldBeOfListType<NonNullGraphType<UriGraphType>>();
             Type<Task<List<Cursor>>>().ShouldBeOfListType<NonNullGraphType<Extended.Relay.CursorGraphType>>();
@@ -545,7 +545,7 @@ namespace Tests.Adapters
             Type<Task<NonNull<List<DateTime?>>>>().ShouldBeOfNonNullableListType<DateTimeGraphType>();
             Type<Task<NonNull<List<DateTimeOffset?>>>>().ShouldBeOfNonNullableListType<DateTimeOffsetGraphType>();
             Type<Task<NonNull<List<TimeSpan?>>>>().ShouldBeOfNonNullableListType<Extended.TimeSpanGraphType>();
-            Type<Task<NonNull<List<Id?>>>>().ShouldBeOfNonNullableListType<IdGraphType>();
+            Type<Task<NonNull<List<Id?>>>>().ShouldBeOfNonNullableListType<Extended.IdGraphType>();
             Type<Task<NonNull<List<Url>>>>().ShouldBeOfNonNullableListType<Extended.UrlGraphType>();
             Type<Task<NonNull<List<Uri>>>>().ShouldBeOfNonNullableListType<UriGraphType>();
             Type<Task<NonNull<List<Cursor?>>>>().ShouldBeOfNonNullableListType<Extended.Relay.CursorGraphType>();
@@ -571,7 +571,7 @@ namespace Tests.Adapters
             Type<Task<NonNull<List<DateTime>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<DateTimeGraphType>>();
             Type<Task<NonNull<List<DateTimeOffset>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<DateTimeOffsetGraphType>>();
             Type<Task<NonNull<List<TimeSpan>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<Extended.TimeSpanGraphType>>();
-            Type<Task<NonNull<List<Id>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<IdGraphType>>();
+            Type<Task<NonNull<List<Id>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<Extended.IdGraphType>>();
             Type<Task<NonNull<List<NonNull<Url>>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<Extended.UrlGraphType>>();
             Type<Task<NonNull<List<NonNull<Uri>>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<UriGraphType>>();
             Type<Task<NonNull<List<Cursor>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<Extended.Relay.CursorGraphType>>();

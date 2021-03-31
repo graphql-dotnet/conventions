@@ -3,6 +3,8 @@ using GraphQL.Conventions;
 using GraphQL.Conventions.Relay;
 using Tests.Templates;
 using Tests.Templates.Extensions;
+using Tests.Types;
+
 // ReSharper disable UnusedType.Local
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 
@@ -30,7 +32,10 @@ namespace Tests.Attributes.Execution.Relay
                 typeof(SchemaDefinitionWithMutation<FooMutation>),
                 typeof(SchemaDefinitionWithMutation<BarMutation>),
             };
-            var engine = GraphQLEngine.New().BuildSchema(mutations);
+            var engine = GraphQLEngine.New()
+                .WithQuery<TestQuery>()
+                .BuildSchema(mutations);
+
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(query)
@@ -103,6 +108,11 @@ namespace Tests.Attributes.Execution.Relay
         class BarOutput : RelayOutput
         {
             public int Result { get; set; }
+        }
+
+        class Query
+        {
+            public string Hello => "World";
         }
     }
 }

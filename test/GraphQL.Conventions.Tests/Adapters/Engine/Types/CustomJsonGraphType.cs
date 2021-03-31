@@ -6,21 +6,6 @@ using GraphQL.Types;
 
 namespace Tests.Adapters.Engine.Types
 {
-    #region GraphTypeConverter
-    public class JsonGraphTypeConverter : IAstFromValueConverter
-    {
-        public bool Matches(object value, IGraphType type)
-        {
-            return type.Name == nameof(JSON);
-        }
-
-        public IValue Convert(object value, IGraphType type)
-        {
-            return new JSON(value as IDictionary<string, object>);
-        }
-    }
-    #endregion
-
     #region .NET Class
     public class JSON : ValueNode<IDictionary<string, object>>
     {
@@ -32,11 +17,6 @@ namespace Tests.Adapters.Engine.Types
         public JSON(IDictionary<string, object> value)
         {
             Value = value;
-        }
-
-        protected override bool Equals(ValueNode<IDictionary<string, object>> node)
-        {
-            return Value == node.Value;
         }
     }
     #endregion
@@ -73,6 +53,11 @@ namespace Tests.Adapters.Engine.Types
         {
             var jsonValue = value as JSON;
             return jsonValue?.Value;
+        }
+
+        public override IValue ToAST(object value)
+        {
+            return new JSON(value as IDictionary<string, object>);
         }
     }
     #endregion

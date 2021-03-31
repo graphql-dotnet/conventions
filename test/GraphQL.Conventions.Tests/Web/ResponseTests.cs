@@ -31,12 +31,11 @@ namespace Tests.Web
         }
 
         [Test]
-        public async void Can_Instantiate_Response_Object_With_Extra_Data()
+        public async void Can_Instantiate_Response_Object_With_No_Data()
         {
-            var request = Request.New("{\"query\":\"{}\"}");
+            var request = Request.New("{\"query\":\"{ }\"}");
             var result = new ExecutionResult
             {
-                Data = new Dictionary<string, object>(),
                 Extensions = new Dictionary<string, object>
                 {
                     { "trace", new
@@ -51,11 +50,11 @@ namespace Tests.Web
                 }
             };
             var response = new Response(request, result);
-            response.HasData.ShouldEqual(true);
+            response.HasData.ShouldEqual(false);
             response.HasErrors.ShouldEqual(false);
 
             var body = await response.GetBodyAsync();
-            body.ShouldEqual("{\"data\":{},\"extensions\":{\"trace\":{\"foo\":1,\"bar\":{\"baz\":\"hello\"}}}}");
+            body.ShouldEqual("{\"extensions\":{\"trace\":{\"foo\":1,\"bar\":{\"baz\":\"hello\"}}}}");
         }
     }
 }

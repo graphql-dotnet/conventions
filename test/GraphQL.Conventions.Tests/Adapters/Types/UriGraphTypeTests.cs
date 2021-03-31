@@ -30,7 +30,7 @@ namespace Tests.Adapters.Types
         [Test]
         public override void Can_Parse_Literal()
         {
-            ShouldParseLiteral(new StringValue(null), null);
+            ShouldParseLiteral(new NullValue(), null);
             ShouldParseLiteral(new StringValue("http://www.google.com/"), new Uri("http://www.google.com/"));
             ShouldParseLiteral(new StringValue("mailto:someone@somewhere.com"), new Uri("mailto:someone@somewhere.com"));
             ShouldParseLiteral(new StringValue("\"http://www.google.com/\""), new Uri("http://www.google.com/"));
