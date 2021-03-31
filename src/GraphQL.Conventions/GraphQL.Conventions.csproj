@@ -6,6 +6,7 @@
     <PackageVersion>4.0.0</PackageVersion>
     <Authors>Tommy Lillehagen</Authors>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <LangVersion>7.1</LangVersion>
     <DepsFileGenerationMode>old</DepsFileGenerationMode>
     <DebugType>portable</DebugType>
     <AssemblyName>GraphQL.Conventions</AssemblyName>

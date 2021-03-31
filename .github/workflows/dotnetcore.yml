@@ -11,7 +11,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 2.2.103
+          dotnet-version: 5.0.201
 
       - name: Build solution
         run: |
@@ -26,15 +26,3 @@ jobs:
       - name: Generate NuGet package
         run: |
           dotnet pack -c Release
-
-#      - name: Install NuGet client
-#        uses: warrenbuckley/Setup-Nuget@v1
-#
-#      - name: Add private GitHub registry to NuGet
-#        run: |
-#          nuget sources add -name "GPR" -Source https://nuget.pkg.github.com/graphql-dotnet/index.json -Username tlil -Password ${{ secrets.GITHUB_TOKEN }}
-#
-#      - name: Push generated package to GitHub registry
-#        run: |
-#          dir src\GraphQL.Conventions\bin\Release\*.nupkg
-#          nuget push src\GraphQL.Conventions\bin\Release\*.nupkg -Source "GPR" -SkipDuplicate
