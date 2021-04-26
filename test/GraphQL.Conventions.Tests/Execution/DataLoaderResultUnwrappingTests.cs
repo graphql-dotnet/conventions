@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using GraphQL.Conventions;
 using GraphQL.DataLoader;
 using GraphQL.NewtonsoftJson;
@@ -13,7 +14,10 @@ namespace Tests.Execution
         {
             const string query = @"{
                 dataLoaderResult
+                nonNullDataLoaderResult
+                nonNullListDataLoaderResult
                 nestedDataLoaderResult
+                nestedNonNullDataLoaderResult
                 anEnum
                 nestedEnum
                 namedResult
@@ -41,7 +45,13 @@ namespace Tests.Execution
         {
             public IDataLoaderResult<string> DataLoaderResult() => new DataLoaderResult<string>("Test");
 
+            public IDataLoaderResult<NonNull<string>> NonNullDataLoaderResult() => new DataLoaderResult<NonNull<string>>("Test");
+
+            public IDataLoaderResult<NonNull<List<NonNull<string>>>> NonNullListDataLoaderResult() => new DataLoaderResult<NonNull<List<NonNull<string>>>>(new List<NonNull<string>>() { "Test" });
+
             public IDataLoaderResult<IDataLoaderResult<string>> NestedDataLoaderResult() => new DataLoaderResult<IDataLoaderResult<string>>(new DataLoaderResult<string>("Test"));
+
+            public IDataLoaderResult<IDataLoaderResult<NonNull<string>>> NestedNonNullDataLoaderResult() => new DataLoaderResult<IDataLoaderResult<NonNull<string>>>(new DataLoaderResult<NonNull<string>>("Test"));
 
             public IDataLoaderResult<BugReproQueryDataLoaderResultEnum> AnEnum() => new DataLoaderResult<BugReproQueryDataLoaderResultEnum>(BugReproQueryDataLoaderResultEnum.One);
 
