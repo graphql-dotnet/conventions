@@ -4,7 +4,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Unwrappers
 {
     public class DataLoaderUnwrapper : UnwrapperBase
     {
-        private static readonly ValueUnwrapper _valueUnwrapper = new ValueUnwrapper();
+        private static readonly ValueUnwrapper Unwrapper = new ValueUnwrapper();
 
         public override object UnwrapValue(object value)
         {
@@ -13,7 +13,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Unwrappers
                 return new SimpleDataLoader<object>(async cancellationToken =>
                 {
                     var result = await dataLoaderResult.GetResultAsync(cancellationToken).ConfigureAwait(false);
-                    return _valueUnwrapper.Unwrap(result);
+                    return Unwrapper.Unwrap(result);
                 });
             }
             else
