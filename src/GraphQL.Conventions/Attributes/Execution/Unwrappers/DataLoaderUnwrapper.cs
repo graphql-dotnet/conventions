@@ -17,7 +17,9 @@ namespace GraphQL.Conventions.Attributes.Execution.Unwrappers
                 });
             }
             else
+            {
                 return value;
+            }
         }
     }
 }
