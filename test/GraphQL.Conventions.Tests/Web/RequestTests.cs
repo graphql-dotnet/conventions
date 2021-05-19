@@ -13,6 +13,7 @@ namespace Tests.Web
             request.IsValid.ShouldEqual(true);
             request.QueryString.ShouldEqual("{}");
             request.Variables.ShouldEqual(null);
+            request.Extensions.ShouldEqual(null);
         }
 
         [Test]
@@ -22,6 +23,7 @@ namespace Tests.Web
             request.IsValid.ShouldEqual(true);
             request.QueryString.ShouldEqual("{}");
             request.Variables.ShouldEqual(null);
+            request.Extensions.ShouldEqual(null);
         }
 
         [Test]
@@ -32,6 +34,19 @@ namespace Tests.Web
             request.QueryString.ShouldEqual("{ foo(baz: 1) { bar } }");
             request.Variables.ShouldNotEqual(null);
             request.Variables["arg"].ShouldEqual(10);
+            request.Extensions.ShouldEqual(null);
+        }
+
+        [Test]
+        public void Can_Instantiate_Request_Object_From_Data_String_With_Extensions()
+        {
+            var request = Request.New("{\"data\":{\"query\":\"{ foo(baz: 1) { bar } }\",\"variables\":{\"arg\":10}}}, \"extensions\": {\"traceId\": 100}");
+            request.IsValid.ShouldEqual(true);
+            request.QueryString.ShouldEqual("{ foo(baz: 1) { bar } }");
+            request.Variables.ShouldNotEqual(null);
+            request.Variables["arg"].ShouldEqual(10);
+            request.Extensions.ShouldNotEqual(null);
+            request.Extensions["traceId"].ShouldEqual(100);
         }
 
         [Test]

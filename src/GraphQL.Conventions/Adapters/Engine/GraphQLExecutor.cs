@@ -23,6 +23,7 @@ namespace GraphQL.Conventions
         private string _operationName;
 
         private Inputs _inputs;
+        private Inputs _extensions;
 
         private CancellationToken _cancellationToken;
 
@@ -74,6 +75,18 @@ namespace GraphQL.Conventions
             _inputs = inputs;
             return this;
         }
+
+        public IGraphQLExecutor<ExecutionResult> WithExtensions(Dictionary<string, object> extensions)
+        {
+            return WithExtensions(new Inputs(extensions ?? new Dictionary<string, object>()));
+        }
+
+        public IGraphQLExecutor<ExecutionResult> WithExtensions(Inputs extensions)
+        {
+            _extensions = extensions;
+            return this;
+        }
+
 
         public IGraphQLExecutor<ExecutionResult> WithRootObject(object rootValue)
         {
@@ -141,7 +154,7 @@ namespace GraphQL.Conventions
 
         public Task<ExecutionResult> ExecuteAsync()
             => _engine.ExecuteAsync(
-                _rootObject, _queryString, _operationName, _inputs, _userContext, _dependencyInjector,
+                _rootObject, _queryString, _operationName, _inputs, extensions, _userContext, _dependencyInjector,
                 enableValidation: _enableValidation,
                 enableProfiling: _enableProfiling,
                 rules: _validationRules,

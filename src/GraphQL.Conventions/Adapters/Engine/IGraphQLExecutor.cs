@@ -20,6 +20,8 @@ namespace GraphQL.Conventions
 
         IGraphQLExecutor<TResult> WithInputs(Dictionary<string, object> inputs);
 
+        IGraphQLExecutor<TResult> WithExtensions(Dictionary<string, object> inputs);
+
         IGraphQLExecutor<TResult> WithRootObject(object rootValue);
 
         IGraphQLExecutor<TResult> WithUserContext(IUserContext userContext);

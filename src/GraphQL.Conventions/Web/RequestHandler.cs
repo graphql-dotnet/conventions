@@ -238,6 +238,7 @@ namespace GraphQL.Conventions.Web
                     .NewExecutor()
                     .WithQueryString(request.QueryString)
                     .WithInputs(request.Variables)
+                    .WithExtensions(request.Extensions)
                     .WithOperationName(request.OperationName)
                     .WithDependencyInjector(dependencyInjector ?? _dependencyInjector)
                     .WithUserContext(userContext)
