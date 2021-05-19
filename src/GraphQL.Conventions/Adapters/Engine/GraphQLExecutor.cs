@@ -154,7 +154,7 @@ namespace GraphQL.Conventions
 
         public Task<ExecutionResult> ExecuteAsync()
             => _engine.ExecuteAsync(
-                _rootObject, _queryString, _operationName, _inputs, extensions, _userContext, _dependencyInjector,
+                _rootObject, _queryString, _operationName, _inputs, _extensions, _userContext, _dependencyInjector,
                 enableValidation: _enableValidation,
                 enableProfiling: _enableProfiling,
                 rules: _validationRules,
