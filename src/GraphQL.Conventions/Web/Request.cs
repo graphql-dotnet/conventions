@@ -87,6 +87,11 @@ namespace GraphQL.Conventions.Web
         public Dictionary<string, object> Variables => _queryInput?.Variables;
 
         /// <summary>
+        /// The extensions passed in context.
+        /// </summary>
+        public Dictionary<string, object> Extensions => _queryInput?.Extensions;
+
+        /// <summary>
         /// An optional operation name, determining which operation of the GraphQL query to run.
         /// </summary>
         public string OperationName => _queryInput?.OperationName;
@@ -98,6 +103,7 @@ namespace GraphQL.Conventions.Web
         public string MinifiedQueryString => MinifyString(QueryString);
 
         public string MinifiedVariablesString => MinifyString(JsonConvert.SerializeObject(Variables));
+        public string MinifiedExtensionsString => MinifyString(JsonConvert.SerializeObject(Extensions));
 
         static string MinifyString(string input)
         {

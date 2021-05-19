@@ -52,6 +52,20 @@ namespace GraphQL.Conventions
                     query.Variables = variablesDictionary;
                 }
             }
+            object extensions = null;
+            if (request?.TryGetValue("extensions", out extensions) ?? false)
+            {
+                var extensionsString = extensions as string;
+                if (!string.IsNullOrWhiteSpace(extensionsString))
+                {
+                    extensions = ConvertJsonToDictionary(extensionsString);
+                }
+
+                if (extensions is Dictionary<string, object> extensionsDictionary)
+                {
+                    query.Extensions = extensionsDictionary;
+                }
+            }
 
             return query;
         }

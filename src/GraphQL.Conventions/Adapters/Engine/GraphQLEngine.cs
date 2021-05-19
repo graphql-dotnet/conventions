@@ -270,6 +270,7 @@ namespace GraphQL.Conventions
             string query,
             string operationName,
             Inputs inputs,
+            Inputs extensions,
             IUserContext userContext,
             IDependencyInjector dependencyInjector,
             ComplexityConfiguration complexityConfiguration,
@@ -294,6 +295,7 @@ namespace GraphQL.Conventions
                 Query = query,
                 OperationName = operationName,
                 Inputs = inputs,
+                Extensions = extensions,
                 EnableMetrics = enableProfiling,
                 UserContext = new Dictionary<string, object>()
                 {
