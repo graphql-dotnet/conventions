@@ -20,10 +20,9 @@ Download and install the package from [NuGet](https://www.nuget.org/packages/Gra
 PS> Install-Package GraphQL.Conventions
 ```
 
-The following targets are available:
+This project targets [.NET Standard] 2.0.
 
- * .NET Framework 4.5
- * .NET Platform Standard 1.5
+[.NET Standard]: https://docs.microsoft.com/en-us/dotnet/standard/net-standard
 
 ## Getting Started
 
