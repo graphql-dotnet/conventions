@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.Conventions;
 using GraphQL.Conventions.Relay;
-using Tests.Adapters.Engine;
 using Tests.Templates;
 using Tests.Templates.Extensions;
 using Tests.Types;

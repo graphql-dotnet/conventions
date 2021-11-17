@@ -59,12 +59,12 @@ namespace GraphQL.Conventions.Types.Resolution
             var queryField = typeInfo.GetProperty("Query");
             var mutationField = typeInfo.GetProperty("Mutation");
             var subscriptionField = typeInfo.GetProperty("Subscription");
-            
+
             var schemaInfo = new GraphSchemaInfo();
             _typeResolver.ActiveSchema = schemaInfo;
             schemaInfo.Query = queryField != null
                 ? GetType(queryField.PropertyType.GetTypeInfo())
-                : null; 
+                : null;
             schemaInfo.Mutation = mutationField != null
                 ? GetType(mutationField.PropertyType.GetTypeInfo())
                 : null;
@@ -400,7 +400,7 @@ namespace GraphQL.Conventions.Types.Resolution
 
         private bool IsValidType(TypeInfo typeInfo)
         {
-            return !IsSystemType(typeInfo) && 
+            return !IsSystemType(typeInfo) &&
                    !IsIgnoredType(typeInfo) &&
                    !typeInfo.ContainsGenericParameters &&
                    !typeInfo.IsGenericType;
@@ -412,7 +412,7 @@ namespace GraphQL.Conventions.Types.Resolution
                    memberInfo.DeclaringType != null &&
                    !IsSystemType(memberInfo.DeclaringType.GetTypeInfo()) &&
                    !IsIgnoredType(memberInfo.DeclaringType.GetTypeInfo(), memberInfo) &&
-                   !(memberInfo.DeclaringType.GetTypeInfo()?.IsValueType ?? false) &&
+                   !memberInfo.DeclaringType.GetTypeInfo().IsValueType &&
                    memberInfo.Name != nameof(ToString) &&
                    HasValidReturnType(memberInfo);
         }

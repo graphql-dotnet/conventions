@@ -249,10 +249,10 @@ namespace Tests.Templates.Extensions
             foreach (var key in path.Take(path.Count - 1))
             {
                 var children = obj.GetChildNodes();
-                obj = children.FirstOrDefault(x => x.Name == key.ToString()) as IParentExecutionNode;
+                obj = children.FirstOrDefault(x => x.Name == key) as IParentExecutionNode;
                 obj.ShouldNotBeNull();
             }
-            
+
             var child = obj.GetChildNodes().FirstOrDefault(x => x.Name == path.Last());
             var array = child as ArrayExecutionNode;
             array.ShouldNotBeNull();

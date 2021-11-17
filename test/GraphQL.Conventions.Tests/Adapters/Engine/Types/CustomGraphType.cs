@@ -20,7 +20,7 @@ namespace Tests.Adapters.Engine.Types
         {
             return new Custom
             {
-                Value = value?.ToString().Replace("\"", "").Replace("CUSTOM:", ""),
+                Value = value?.ToString()?.Replace("\"", "").Replace("CUSTOM:", ""),
             };
         }
 

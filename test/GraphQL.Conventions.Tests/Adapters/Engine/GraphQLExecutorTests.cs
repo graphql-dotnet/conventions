@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using GraphQL.Conventions;
 using Tests.Templates;
 using Tests.Templates.Extensions;
-using Tests.Web;
 
 namespace Tests.Adapters.Engine
 {
