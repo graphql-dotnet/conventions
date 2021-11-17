@@ -51,6 +51,7 @@ namespace GraphQL.Conventions
         private IErrorTransformation _errorTransformation = new DefaultErrorTransformation();
 
         private bool _includeFieldDescriptions;
+        private bool _throwUnhandledExceptions; 
 
         private bool _includeFieldDeprecationReasons;
 
@@ -208,6 +209,12 @@ namespace GraphQL.Conventions
             return this;
         }
 
+        public GraphQLEngine ThrowUnhandledExceptions(bool throwUnhandledExceptions = true)
+        {
+            _throwUnhandledExceptions = throwUnhandledExceptions;
+            return this;
+        }
+
         public GraphQLEngine PrintFieldDeprecationReasons(bool include = true)
         {
             _includeFieldDeprecationReasons = include;
@@ -297,12 +304,13 @@ namespace GraphQL.Conventions
                 EnableMetrics = enableProfiling,
                 UserContext = new Dictionary<string, object>()
                 {
-                    { typeof(IUserContext).FullName ?? nameof(IUserContext), userContext},
-                    { typeof(IDependencyInjector).FullName ?? nameof(IDependencyInjector), dependencyInjector},
+                    { typeof(IUserContext).FullName ?? nameof(IUserContext), userContext },
+                    { typeof(IDependencyInjector).FullName ?? nameof(IDependencyInjector), dependencyInjector },
                 },
                 ValidationRules = validationRules.Any() ? validationRules : null,
                 ComplexityConfiguration = complexityConfiguration,
                 CancellationToken = cancellationToken,
+                ThrowOnUnhandledException = _throwUnhandledExceptions,
             };
 
             if (listeners != null)
