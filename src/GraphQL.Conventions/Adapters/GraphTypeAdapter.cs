@@ -41,7 +41,7 @@ namespace GraphQL.Conventions.Adapters
                 .GroupBy(t => t.Name)
                 .Select(g => g.First())
                 .ToArray();
-            var schema = new Schema(new FuncServiceProvider(DeriveTypeFromTypeInfo))
+            var schema = new Schema(new FuncServiceProvider(DeriveTypeFromTypeInfo), false)
             {
                 Query = DeriveOperationType(schemaInfo.Query),
                 Mutation = DeriveOperationType(schemaInfo.Mutation),
