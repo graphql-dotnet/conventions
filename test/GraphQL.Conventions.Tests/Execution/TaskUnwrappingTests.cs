@@ -14,7 +14,7 @@ namespace Tests.Execution
         [Test]
         public async Task Schema_Will_Execute_With_No_Errors_When_A_Type_Is_In_A_Task()
         {
-            const string query = @"{
+            const string Query = @"{
                 holders {
                     items {
                         interfaceConnection {
@@ -26,11 +26,11 @@ namespace Tests.Execution
 
             var schema = Schema<BugReproSchemaTaskFirst>();
 
-            var result = await schema.ExecuteAsync((e) => e.Query = query);
+            var result = await schema.ExecuteAsync((e) => e.Query = Query);
             ResultHelpers.AssertNoErrorsInResult(result);
 
             schema = Schema<BugReproSchemaTaskSecond>();
-            result = await schema.ExecuteAsync((e) => e.Query = query);
+            result = await schema.ExecuteAsync((e) => e.Query = Query);
             ResultHelpers.AssertNoErrorsInResult(result);
         }
 

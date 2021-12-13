@@ -15,14 +15,14 @@ namespace Tests.Execution
         [Test]
         public async Task Schema_Will_Execute_With_No_Errors_When_A_Type_Is_In_A_Linq_Iterator()
         {
-            const string query = @"{
+            const string Query = @"{
                 testSelectIterator
                 testWhereIterator
             }";
 
             var schema = Schema<BugReproSchemaTaskFirst>();
 
-            var result = await schema.ExecuteAsync((e) => e.Query = query);
+            var result = await schema.ExecuteAsync((e) => e.Query = Query);
             ResultHelpers.AssertNoErrorsInResult(result);
             string testSelectIterator = (string)JObject.Parse(result)["data"]?["testSelectIterator"]?[0];
             string testWhereIterator = (string)JObject.Parse(result)["data"]?["testWhereIterator"]?[0];

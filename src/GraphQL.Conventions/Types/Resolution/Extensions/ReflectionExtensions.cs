@@ -41,7 +41,7 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
         {
             if (type.IsArray)
             {
-                return type.GetElementType().GetTypeInfo();
+                return type.GetElementType()?.GetTypeInfo();
             }
             return type.IsGenericType
                 ? type.GenericTypeArguments.First().GetTypeInfo()

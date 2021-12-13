@@ -1,7 +1,4 @@
-﻿using System;
-using GraphQL.Language.AST;
-
-namespace GraphQL.Conventions.Adapters.Types
+﻿namespace GraphQL.Conventions.Adapters.Types
 {
     public class IdGraphType : GraphQL.Types.IdGraphType
     {

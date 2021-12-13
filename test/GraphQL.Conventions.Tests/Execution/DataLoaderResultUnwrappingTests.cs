@@ -12,7 +12,7 @@ namespace Tests.Execution
         [Test]
         public async Task Schema_Will_Execute_With_No_Errors_When_A_Type_Is_In_A_IDataLoaderResult()
         {
-            const string query = @"{
+            const string Query = @"{
                 dataLoaderResult
                 nonNullDataLoaderResult
                 nonNullListDataLoaderResult
@@ -26,7 +26,7 @@ namespace Tests.Execution
 
             var schema = Schema<BugReproSchemaDataLoaderResult>();
 
-            var result = await schema.ExecuteAsync((e) => e.Query = query);
+            var result = await schema.ExecuteAsync((e) => e.Query = Query);
             ResultHelpers.AssertNoErrorsInResult(result);
         }
 
