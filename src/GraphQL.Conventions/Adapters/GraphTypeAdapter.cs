@@ -73,7 +73,7 @@ namespace GraphQL.Conventions.Adapters
             {
                 return graphType;
             }
-            return Activator.CreateInstance(type);
+            return type.IsInterface ? null : Activator.CreateInstance(type);
         }
 
         private IObjectGraphType DeriveOperationType(GraphTypeInfo typeInfo) =>
