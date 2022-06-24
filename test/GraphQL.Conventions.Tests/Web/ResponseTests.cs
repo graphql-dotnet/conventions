@@ -53,7 +53,7 @@ namespace Tests.Web
             response.HasData.ShouldEqual(false);
             response.HasErrors.ShouldEqual(false);
 
-            var body = await response.GetBodyAsync();
+            var body = response.GetBody();
             body.ShouldEqual("{\"extensions\":{\"trace\":{\"foo\":1,\"bar\":{\"baz\":\"hello\"}}}}");
         }
     }

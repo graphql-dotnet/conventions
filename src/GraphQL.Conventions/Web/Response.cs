@@ -7,7 +7,7 @@ namespace GraphQL.Conventions.Web
 {
     public class Response
     {
-        private static readonly DocumentWriter Writer = new DocumentWriter();
+        private static readonly GraphQLSerializer Serializer = new GraphQLSerializer();
 
         private string _body;
 
@@ -35,12 +35,11 @@ namespace GraphQL.Conventions.Web
 
         public Validation.IValidationResult ValidationResult { get; }
 
-        public async Task<string> GetBodyAsync()
+        public string GetBody()
         {
             if (string.IsNullOrWhiteSpace(_body) && ExecutionResult != null)
-                _body = await Writer
-                    .WriteToStringAsync(ExecutionResult)
-                    .ConfigureAwait(false);
+                _body = Serializer
+                    .Serialize(ExecutionResult);
 
             return _body;
         }

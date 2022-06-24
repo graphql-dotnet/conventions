@@ -173,7 +173,7 @@ namespace Tests.Adapters
         {
         }
 
-        [InputType]
+        [GraphQL.Conventions.InputType]
         class InputType
         {
         }
@@ -187,7 +187,7 @@ namespace Tests.Adapters
         {
         }
 
-        [Name("Foo")]
+        [GraphQL.Conventions.Name("Foo")]
         class TypeWithOverriddenName
         {
         }

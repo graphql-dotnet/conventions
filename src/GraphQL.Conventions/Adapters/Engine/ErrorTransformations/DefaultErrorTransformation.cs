@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using GraphQL.Conventions.Execution;
+using GraphQLParser;
 
 namespace GraphQL.Conventions.Adapters.Engine.ErrorTransformations
 {
@@ -10,9 +11,9 @@ namespace GraphQL.Conventions.Adapters.Engine.ErrorTransformations
             {
                 var exception = new FieldResolutionException(executionError);
                 var error = new ExecutionError(exception.Message, exception);
-                foreach (var location in executionError.Locations ?? Enumerable.Empty<ErrorLocation>())
+                foreach (var location in executionError.Locations ?? Enumerable.Empty<Location>())
                 {
-                    error.AddLocation(location.Line, location.Column);
+                    error.AddLocation(location);
                 }
                 error.Path = executionError.Path;
                 result.Add(error);

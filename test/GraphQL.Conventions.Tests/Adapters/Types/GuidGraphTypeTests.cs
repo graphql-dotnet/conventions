@@ -1,6 +1,6 @@
 ﻿using System;
 using GraphQL.Conventions.Adapters.Types;
-using GraphQL.Language.AST;
+using GraphQLParser.AST;
 
 namespace Tests.Adapters.Types
 {
@@ -25,9 +25,9 @@ namespace Tests.Adapters.Types
         [Test]
         public override void Can_Parse_Literal()
         {
-            ShouldParseLiteral(new NullValue(), null);
-            ShouldParseLiteral(new StringValue("ad9da688-1fd4-4e00-ad89-b4d3fef08280"), new Guid("ad9da688-1fd4-4e00-ad89-b4d3fef08280"));
-            ShouldParseLiteral(new IntValue(0), null);
+            ShouldParseLiteral(new GraphQLNullValue(), null);
+            ShouldParseLiteral(new GraphQLStringValue("ad9da688-1fd4-4e00-ad89-b4d3fef08280"), new Guid("ad9da688-1fd4-4e00-ad89-b4d3fef08280"));
+            ShouldParseLiteral(new GraphQLIntValue(0), null);
         }
     }
 }

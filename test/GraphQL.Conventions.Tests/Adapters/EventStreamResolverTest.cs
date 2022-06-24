@@ -1,9 +1,7 @@
 ﻿using System;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using GraphQL;
 using GraphQL.Conventions;
-using GraphQL.Conventions.Adapters.Resolvers;
-using GraphQL.Subscription;
 using Tests.Templates;
 using Tests.Types;
 
@@ -12,19 +10,9 @@ namespace Tests.Adapters
     public class EventStreamResolverTest : TestBase
     {
         [Test]
-        public void Can_Resolve_Value()
-        {
-            var result = "testring";
-            var context = new ResolveFieldContext { Source = result };
-            var resolver = new EventStreamResolver(null);
-
-            Assert.AreEqual(result, resolver.Resolve(context));
-        }
-
-        [Test]
         public async Task Can_Subscribe()
         {
-            var engine = GraphQLEngine.New(new SubscriptionDocumentExecuter())
+            var engine = GraphQLEngine.New(new GraphQL.DocumentExecuter())
                 .WithQuery<TestQuery>()
                 .WithSubscription<Subscription>();
             var result = await engine
@@ -32,14 +20,21 @@ namespace Tests.Adapters
                 .WithQueryString("subscription { test }")
                 .ExecuteAsync();
 
-            Assert.AreEqual(1, ((SubscriptionExecutionResult)result).Streams.Count);
+            Assert.AreEqual(1, result.Streams.Count);
         }
     }
 
     class Subscription
     {
+        private readonly Subject<string> _subject;
+
+        public Subscription()
+        {
+            _subject = new Subject<string>();
+        }
+
         // ReSharper disable once UnusedMember.Global
         // ReSharper disable once UnassignedGetOnlyAutoProperty
-        public IObservable<string> Test { get; }
+        public IObservable<string> Test => _subject;
     }
 }

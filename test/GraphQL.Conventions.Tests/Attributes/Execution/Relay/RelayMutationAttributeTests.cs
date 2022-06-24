@@ -114,7 +114,7 @@ namespace Tests.Attributes.Execution.Relay
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(query)
-                .WithInputs(inputs)
+                .WithVariables(inputs)
                 .ExecuteAsync();
 
             return result;

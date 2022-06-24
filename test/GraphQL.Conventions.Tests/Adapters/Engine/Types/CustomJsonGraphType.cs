@@ -1,14 +1,18 @@
 using System.Collections.Generic;
-using GraphQL.Language.AST;
 using GraphQL.Types;
+using GraphQLParser.AST;
 
 // ReSharper disable InconsistentNaming
 
 namespace Tests.Adapters.Engine.Types
 {
     #region .NET Class
-    public class JSON : ValueNode<IDictionary<string, object>>
+    public class JSON : GraphQLValue
     {
+        public IDictionary<string, object> Value { get; protected set; }
+
+        public override string ToString() => $"{GetType().Name}{{value={Value}}}";
+
         public JSON()
         {
 
@@ -18,6 +22,8 @@ namespace Tests.Adapters.Engine.Types
         {
             Value = value;
         }
+
+        public override ASTNodeKind Kind { get => ASTNodeKind.Field; }
     }
     #endregion
 
@@ -30,7 +36,7 @@ namespace Tests.Adapters.Engine.Types
             Description = "Untyped JSON Structure";
         }
 
-
+        /*
         public override object Serialize(object value)
         {
             return ParseValue(value);
@@ -49,7 +55,7 @@ namespace Tests.Adapters.Engine.Types
 
             return value;
         }
-        public override object ParseLiteral(IValue value)
+        public override object ParseLiteral(GraphQLValue value)
         {
             var jsonValue = value as JSON;
             return jsonValue?.Value;
@@ -58,6 +64,26 @@ namespace Tests.Adapters.Engine.Types
         public override IValue ToAST(object value)
         {
             return new JSON(value as IDictionary<string, object>);
+        }
+        */
+        public override object ParseValue(object value)
+        {
+            if (value == null)
+            {
+                return null;
+            }
+            if (value is JSON json)
+            {
+                return json.Value;
+            }
+
+            return value;
+        }
+
+        public override object ParseLiteral(GraphQLValue value)
+        {
+            var jsonValue = value as JSON;
+            return jsonValue?.Value;
         }
     }
     #endregion

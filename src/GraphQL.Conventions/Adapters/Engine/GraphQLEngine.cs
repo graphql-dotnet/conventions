@@ -9,15 +9,16 @@ using GraphQL.Conventions.Adapters.Engine.ErrorTransformations;
 using GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader;
 using GraphQL.Conventions.Builders;
 using GraphQL.Conventions.Extensions;
+using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Execution;
 using GraphQL.Instrumentation;
-using GraphQL.Language.AST;
 using GraphQL.NewtonsoftJson;
 using GraphQL.Types;
 using GraphQL.Utilities;
 using GraphQL.Validation;
 using GraphQL.Validation.Complexity;
+using GraphQLParser.AST;
 
 // ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
@@ -36,7 +37,7 @@ namespace GraphQL.Conventions
 
         private readonly DocumentValidator _documentValidator = new DocumentValidator();
 
-        private readonly DocumentWriter _documentWriter = new DocumentWriter();
+        private readonly GraphQLSerializer _documentSerializer = new GraphQLSerializer();
 
         private SchemaPrinter _schemaPrinter;
 
@@ -57,15 +58,14 @@ namespace GraphQL.Conventions
 
         private class NoopValidationRule : IValidationRule
         {
-            public Task<INodeVisitor> ValidateAsync(ValidationContext context)
-                => Task.FromResult<INodeVisitor>(new NoopNodeVisitor());
+            public ValueTask<INodeVisitor> ValidateAsync(ValidationContext context) => new(new NoopNodeVisitor());
         }
 
         private class NoopNodeVisitor : INodeVisitor
         {
-            public void Enter(INode node, ValidationContext context) { /* Noop */ }
+            public void Enter(ASTNode node, ValidationContext context) { /* Noop */ }
 
-            public void Leave(INode node, ValidationContext context) { /* Noop */ }
+            public void Leave(ASTNode node, ValidationContext context) { /* Noop */ }
         }
 
         private class WrappedDependencyInjector : IDependencyInjector
@@ -270,13 +270,13 @@ namespace GraphQL.Conventions
             return this;
         }
 
-        public Task<string> SerializeResultAsync(ExecutionResult result) => _documentWriter.WriteToStringAsync(result);
+        public string SerializeResult(ExecutionResult result) => _documentSerializer.Serialize(result);
 
         internal async Task<ExecutionResult> ExecuteAsync(
             object rootObject,
             string query,
             string operationName,
-            Inputs inputs,
+            Inputs variables,
             IUserContext userContext,
             IDependencyInjector dependencyInjector,
             ComplexityConfiguration complexityConfiguration,
@@ -300,7 +300,7 @@ namespace GraphQL.Conventions
                 Root = rootObject,
                 Query = query,
                 OperationName = operationName,
-                Inputs = inputs,
+                Variables = variables,
                 EnableMetrics = enableProfiling,
                 UserContext = new Dictionary<string, object>()
                 {
@@ -347,7 +347,11 @@ namespace GraphQL.Conventions
         internal async Task<IValidationResult> ValidateAsync(string queryString)
         {
             var document = _documentBuilder.Build(queryString);
-            var result = await _documentValidator.ValidateAsync(_schema, document, new VariableDefinitions());
+            var result = await _documentValidator.ValidateAsync(new ValidationOptions()
+            {
+                Schema = _schema,
+                Document = document
+            });
 
             return result.validationResult;
         }

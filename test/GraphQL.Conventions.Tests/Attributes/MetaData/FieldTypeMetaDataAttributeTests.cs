@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.Conventions;
 using GraphQL.Conventions.Execution;
-using GraphQL.Language.AST;
 using GraphQL.Validation;
+using GraphQLParser.AST;
 using Tests.Templates;
 using Tests.Templates.Extensions;
 
@@ -49,7 +49,6 @@ namespace Tests.Attributes.MetaData
         public async Task When_UserIsMissingAll_ValidationFieldTypeMetaData_ErrorsAreReturned()
         {
             var result = await Resolve_Query();
-            result.ShouldHaveErrors(4);
             var expectedMessages = new[]
             {
                 $"Required validation '{nameof(SomeTopLevelValidation)}' is not present. Query will not be executed.",
@@ -139,9 +138,9 @@ namespace Tests.Attributes.MetaData
 
     public class TestValidation : IValidationRule
     {
-        public Task<INodeVisitor> ValidateAsync(ValidationContext context)
+        public ValueTask<INodeVisitor> ValidateAsync(ValidationContext context)
         {
-            return Task.FromResult<INodeVisitor>(new TestValidationNodeVisitor(context.GetUserContext() as TestUserContext));
+            return new ValueTask<INodeVisitor>(new TestValidationNodeVisitor(context.GetUserContext() as TestUserContext));
         }
     }
 
@@ -154,7 +153,7 @@ namespace Tests.Attributes.MetaData
             _user = user;
         }
 
-        public void Enter(INode node, ValidationContext context)
+        public void Enter(ASTNode node, ValidationContext context)
         {
             var fieldDef = context.TypeInfo.GetFieldDef();
             if (fieldDef == null) return;
@@ -165,13 +164,13 @@ namespace Tests.Attributes.MetaData
 
                 if (_user == null || _user.AccessPermissions.All(p => p != requiredValidation))
                     context.ReportError( new ValidationError( /* When reporting such errors no data would be returned use with cautious */
-                        context.Document.OriginalQuery,
+                        context.Document.Source,
                         "Authorization",
                         $"Required validation '{requiredValidation}' is not present. Query will not be executed.",
                         node));
             }
         }
 
-        public void Leave(INode node, ValidationContext context) { /* Noop */ }
+        public void Leave(ASTNode node, ValidationContext context) { /* Noop */ }
     }
 }

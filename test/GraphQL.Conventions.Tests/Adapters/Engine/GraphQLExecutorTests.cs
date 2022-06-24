@@ -16,7 +16,7 @@ namespace Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("query Test($arg: Int!, $arg: Int!) { hello(var: $arg) }")
-                .WithInputs(new Dictionary<string, object> { { "arg", 1 } })
+                .WithVariables(new Dictionary<string, object> { { "arg", 1 } })
                 .DisableValidation()
                 .ExecuteAsync();
 
@@ -32,7 +32,7 @@ namespace Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("query Test($arg: Int!, $arg: Int!) { hello(var: $arg) }")
-                .WithInputs(new Dictionary<string, object> { { "arg", 1 } })
+                .WithVariables(new Dictionary<string, object> { { "arg", 1 } })
                 .EnableValidation()
                 .ExecuteAsync();
 

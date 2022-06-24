@@ -1,8 +1,8 @@
 ﻿using System;
 using GraphQL.Conventions.Adapters.Types.Extensions;
 using GraphQL.Conventions.Types.Descriptors;
-using GraphQL.Language.AST;
 using GraphQL.Types;
+using GraphQLParser.AST;
 
 namespace GraphQL.Conventions.Adapters.Types
 {
@@ -27,9 +27,9 @@ namespace GraphQL.Conventions.Adapters.Types
                 : (Guid?)Guid.Parse(guid);
         }
 
-        public override object ParseLiteral(IValue value)
+        public override object ParseLiteral(GraphQLValue value)
         {
-            if (value is StringValue str)
+            if (value is GraphQLStringValue str)
             {
                 return ParseValue(str.Value);
             }

@@ -49,7 +49,7 @@ namespace GraphQL.Conventions
             var query = _requestDeserializer.GetQueryFromRequestBody(requestBody);
             _queryString = query.QueryString;
             _operationName = query.OperationName;
-            return this.WithInputs(query.Variables);
+            return this.WithVariables(query.Variables);
         }
 
         public IGraphQLExecutor<ExecutionResult> WithQueryString(string queryString)
@@ -64,12 +64,12 @@ namespace GraphQL.Conventions
             return this;
         }
 
-        public IGraphQLExecutor<ExecutionResult> WithInputs(Dictionary<string, object> inputs)
+        public IGraphQLExecutor<ExecutionResult> WithVariables(Dictionary<string, object> inputs)
         {
-            return WithInputs(new Inputs(inputs ?? new Dictionary<string, object>()));
+            return WithVariables(new Inputs(inputs ?? new Dictionary<string, object>()));
         }
 
-        public IGraphQLExecutor<ExecutionResult> WithInputs(Inputs inputs)
+        public IGraphQLExecutor<ExecutionResult> WithVariables(Inputs inputs)
         {
             _inputs = inputs;
             return this;
