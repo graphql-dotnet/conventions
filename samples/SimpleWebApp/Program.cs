@@ -1,6 +1,6 @@
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace GraphQL.Conventions.Tests.Server
 {
@@ -13,6 +13,7 @@ namespace GraphQL.Conventions.Tests.Server
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
                 .UseStartup<Startup>()
+                .ConfigureLogging(l => l.AddConsole())
                 .Build();
 
             host.Run();

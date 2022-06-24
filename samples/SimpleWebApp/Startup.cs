@@ -21,8 +21,6 @@ namespace GraphQL.Conventions.Tests.Server
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole();
-
             var dependencyInjector = new DependencyInjector();
             dependencyInjector.Register<IBookRepository>(new BookRepository());
             dependencyInjector.Register<IAuthorRepository>(new AuthorRepository());
@@ -54,10 +52,10 @@ namespace GraphQL.Conventions.Tests.Server
             var body = streamReader.ReadToEnd();
             var userContext = new UserContext();
             var result = await _requestHandler
-                .ProcessRequest(Request.New(body), userContext);
+                .ProcessRequestAsync(Request.New(body), userContext);
             context.Response.Headers.Add("Content-Type", "application/json; charset=utf-8");
             context.Response.StatusCode = result.Errors?.Count > 0 ? 400 : 200;
-            await context.Response.WriteAsync(result.Body);
+            await context.Response.WriteAsync(result.GetBody());
         }
     }
 }
