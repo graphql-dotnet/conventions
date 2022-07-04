@@ -28,7 +28,7 @@ namespace GraphQL.Conventions.Adapters
             _fieldInfo = fieldInfo;
         }
 
-        public object Resolve(IResolveFieldContext context)
+        public async ValueTask<object> ResolveAsync(IResolveFieldContext context)
         {
             Func<IResolutionContext, object> resolver;
             if (_fieldInfo.IsMethod)
@@ -40,7 +40,7 @@ namespace GraphQL.Conventions.Adapters
                 resolver = ctx => GetValue(_fieldInfo, ctx);
             }
             var resolutionContext = new ResolutionContext(_fieldInfo, new ResolveFieldContext<object>(context));
-            return ExecutionFilterHandler.Execute(resolutionContext, resolver);
+            return await ExecutionFilterHandler.Execute(resolutionContext, resolver);
         }
 
         private object GetValue(GraphFieldInfo fieldInfo, IResolutionContext context)

@@ -27,7 +27,7 @@ namespace Tests.Web
             response.Errors.Count.ShouldEqual(0);
             response.Warnings.Count.ShouldEqual(0);
 
-            var body = await response.GetBodyAsync();
+            var body = response.GetBody();
             body.ShouldEqual("{\"data\":{\"hello\":\"World\"}}");
         }
 
@@ -46,7 +46,7 @@ namespace Tests.Web
             response.Errors.Count.ShouldEqual(0);
             response.Warnings.Count.ShouldEqual(0);
 
-            var body = await response.GetBodyAsync();
+            var body = response.GetBody();
             body.ShouldEqual("{\"data\":{\"hello\":\"World\"}}");
         }
 
@@ -77,7 +77,7 @@ namespace Tests.Web
                 .Generate()
                 .ProcessRequestAsync(request, null);
 
-            var body = await response.GetBodyAsync();
+            var body = response.GetBody();
             body.ShouldContain("\"extensions\":{\"tracing\":");
         }
 
@@ -93,7 +93,7 @@ namespace Tests.Web
                 .Generate()
                 .ProcessRequestAsync(request, null);
 
-            var body = await response.GetBodyAsync();
+            var body = response.GetBody();
             body.ShouldEqual("{\"data\":{\"earth\":{\"hello\":\"World\"},\"mars\":{\"hello\":\"World From Mars\"}}}");
 
             // Exclude types from 'Unwanted' namespace, i.e. TypeQuery2 from CompositeQuery schema
@@ -107,7 +107,7 @@ namespace Tests.Web
             response.Errors.Count.ShouldEqual(1);
             response.Errors[0].Message.ShouldContain("Cannot query field 'mars' on type 'CompositeQuery'.");
 
-            body = await response.GetBodyAsync();
+            body = response.GetBody();
             body.ShouldContain("FIELD_RESOLUTION");
         }
 
@@ -126,7 +126,7 @@ namespace Tests.Web
             response.Errors.Count.ShouldEqual(0);
             response.Warnings.Count.ShouldEqual(0);
 
-            var body = await response.GetBodyAsync();
+            var body = response.GetBody();
             body.ShouldEqual("{\"data\":{\"helloExtended\":\"Extended-10\"}}");
         }
 
@@ -144,7 +144,7 @@ namespace Tests.Web
             response.Errors.Count.ShouldEqual(0);
             response.Warnings.Count.ShouldEqual(0);
 
-            var body = await response.GetBodyAsync();
+            var body = response.GetBody();
             body.ShouldEqual("{\"data\":{\"helloType\":{\"myName\":\"Name-1\"}}}");
         }
 

@@ -27,7 +27,7 @@ namespace GraphQL.Conventions
                 .WithRootObject(root)
                 .WithQueryString(query)
                 .WithOperationName(operationName)
-                .WithInputs(inputs)
+                .WithVariables(inputs)
                 .WithCancellationToken(cancellationToken)
                 .WithValidationRules(rules)
                 .ExecuteAsync();
@@ -41,7 +41,7 @@ namespace GraphQL.Conventions
                 .WithRootObject(options.Root)
                 .WithQueryString(options.Query)
                 .WithOperationName(options.OperationName)
-                .WithInputs(options.Inputs)
+                .WithVariables(options.Variables)
                 .WithCancellationToken(options.CancellationToken)
                 .WithValidationRules(options.ValidationRules)
                 .ExecuteAsync();

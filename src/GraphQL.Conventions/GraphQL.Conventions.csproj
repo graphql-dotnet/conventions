@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <Description>GraphQL Conventions for .NET</Description>
-    <VersionPrefix>4.3.0</VersionPrefix>
-    <PackageVersion>4.3.0</PackageVersion>
+    <VersionPrefix>5.3.0</VersionPrefix>
+    <PackageVersion>5.3.0</PackageVersion>
     <Authors>Tommy Lillehagen</Authors>
     <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
-    <LangVersion>7.1</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <DepsFileGenerationMode>old</DepsFileGenerationMode>
     <DebugType>portable</DebugType>
     <AssemblyName>GraphQL.Conventions</AssemblyName>
@@ -29,10 +29,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphQL" Version="4.1.0" />
-    <PackageReference Include="GraphQL.DataLoader" Version="4.1.0" />
-    <PackageReference Include="GraphQL.NewtonsoftJson" Version="4.1.0" />
-    <PackageReference Include="GraphQL.SystemReactive" Version="4.1.0" />
+    <PackageReference Include="GraphQL" Version="5.3.0" />
+    <PackageReference Include="GraphQL.DataLoader" Version="5.3.0" />
+    <PackageReference Include="GraphQL.NewtonsoftJson" Version="5.3.0" />
+    <PackageReference Include="GraphQL.SystemReactive" Version="4.8.0" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
     <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />

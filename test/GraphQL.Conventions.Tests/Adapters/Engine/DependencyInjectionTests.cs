@@ -6,7 +6,8 @@ using GraphQL;
 using GraphQL.Conventions;
 using GraphQL.Conventions.Execution;
 using GraphQL.Execution;
-using GraphQL.Language.AST;
+using GraphQL.Types;
+using GraphQLParser.AST;
 using Tests.Templates;
 using Tests.Templates.Extensions;
 
@@ -216,6 +217,7 @@ namespace Tests.Adapters.Engine
                     _innerStrategy = innerStrategy;
                 }
 
+
                 public async Task<ExecutionResult> ExecuteAsync(ExecutionContext context)
                 {
                     var key = typeof(IDependencyInjector).FullName ?? nameof(IDependencyInjector);
@@ -232,7 +234,12 @@ namespace Tests.Adapters.Engine
                     }
                 }
 
-                public Dictionary<string, Field> GetSubFields(ExecutionContext executionContext, ExecutionNode executionNode)
+                public async Task ExecuteNodeTreeAsync(ExecutionContext context, ExecutionNode rootNode)
+                {
+                    throw new NotImplementedException();
+                }
+
+                Dictionary<string, (GraphQLField field, FieldType fieldType)> IExecutionStrategy.GetSubFields(ExecutionContext executionContext, ExecutionNode executionNode)
                 {
                     return _innerStrategy.GetSubFields(executionContext, executionNode);
                 }

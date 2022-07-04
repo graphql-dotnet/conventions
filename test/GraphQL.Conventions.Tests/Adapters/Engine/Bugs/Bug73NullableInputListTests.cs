@@ -31,7 +31,7 @@ namespace Tests.Adapters.Engine.Bugs
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(@"query _($inputs:[TestInput]) { example(testInputs:$inputs) }")
-                .WithInputs(new Dictionary<string, object>
+                .WithVariables(new Dictionary<string, object>
                 {
                     { "inputs", null} ,
                 })

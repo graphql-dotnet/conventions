@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GraphQL.Conventions.Adapters.Resolvers;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
 using GraphQL.Resolvers;
@@ -85,8 +86,9 @@ namespace GraphQL.Conventions.Adapters
         {
             if (fieldInfo.Type.IsObservable)
             {
-                var resolver = new Resolvers.EventStreamResolver(fieldInfo);
-                return new EventStreamFieldType
+                var resolver = FieldResolverFactory(fieldInfo);
+                var streamResolver = new EventStreamResolver(resolver);
+                return new FieldType
                 {
                     Name = fieldInfo.Name,
                     Description = fieldInfo.Description,
@@ -94,8 +96,8 @@ namespace GraphQL.Conventions.Adapters
                     DefaultValue = fieldInfo.DefaultValue,
                     Type = GetType(fieldInfo.Type),
                     Arguments = new QueryArguments(fieldInfo.Arguments.Where(arg => !arg.IsInjected).Select(DeriveArgument)),
-                    Resolver = resolver,
-                    Subscriber = resolver
+                    Resolver = streamResolver,
+                    StreamResolver = streamResolver
                 };
             }
             return new FieldType
@@ -259,7 +261,7 @@ namespace GraphQL.Conventions.Adapters
             var graphType = ConstructType<EnumerationGraphType>(typeof(Types.EnumerationGraphType<>), typeInfo);
             foreach (var value in typeInfo.Fields)
             {
-                graphType.AddValue(value.Name, value.Description, value.Value, value.DeprecationReason);
+                graphType.Add(value.Name, value.Value, value.Description, value.DeprecationReason);
             }
             return WrapNonNullableType(typeInfo, graphType);
         }

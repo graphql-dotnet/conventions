@@ -142,7 +142,7 @@ namespace Tests.Adapters
         {
             var type = OutputType<FooSub>();
             type.ShouldHaveFields(1);
-            type.Fields.ToList()[0].ShouldBeOfType<EventStreamFieldType>();
+            type.Fields.ToList()[0].ShouldBeOfType<FieldType>();
         }
 
         class OutputTypeWithNoFields

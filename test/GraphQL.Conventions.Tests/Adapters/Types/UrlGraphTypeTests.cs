@@ -1,7 +1,7 @@
 using System;
 using GraphQL.Conventions;
 using GraphQL.Conventions.Adapters.Types;
-using GraphQL.Language.AST;
+using GraphQLParser.AST;
 
 namespace Tests.Adapters.Types
 {
@@ -30,14 +30,14 @@ namespace Tests.Adapters.Types
         [Test]
         public override void Can_Parse_Literal()
         {
-            ShouldParseLiteral(new NullValue(), null);
-            ShouldParseLiteral(new StringValue("http://www.google.com/"), new Url("http://www.google.com/"));
-            ShouldParseLiteral(new StringValue("mailto:someone@somewhere.com"), new Url("mailto:someone@somewhere.com"));
-            ShouldParseLiteral(new StringValue("\"http://www.google.com/\""), new Url("http://www.google.com/"));
-            ShouldThrow<UriFormatException>(() => ShouldParseLiteral(new StringValue("www.google.com"), null));
-            ShouldThrow<ArgumentException>(() => ShouldParseLiteral(new StringValue("mp4:af93420c0dff"), null));
-            ShouldThrow<UriFormatException>(() => ShouldParseLiteral(new StringValue("\"\"http://www.google.com/\"\""), null));
-            ShouldParseLiteral(new IntValue(0), null);
+            ShouldParseLiteral(new GraphQLNullValue(), null);
+            ShouldParseLiteral(new GraphQLStringValue("http://www.google.com/"), new Url("http://www.google.com/"));
+            ShouldParseLiteral(new GraphQLStringValue("mailto:someone@somewhere.com"), new Url("mailto:someone@somewhere.com"));
+            ShouldParseLiteral(new GraphQLStringValue("\"http://www.google.com/\""), new Url("http://www.google.com/"));
+            ShouldThrow<UriFormatException>(() => ShouldParseLiteral(new GraphQLStringValue("www.google.com"), null));
+            ShouldThrow<ArgumentException>(() => ShouldParseLiteral(new GraphQLStringValue("mp4:af93420c0dff"), null));
+            ShouldThrow<UriFormatException>(() => ShouldParseLiteral(new GraphQLStringValue("\"\"http://www.google.com/\"\""), null));
+            ShouldParseLiteral(new GraphQLIntValue(0), null);
         }
     }
 }

@@ -1,20 +1,21 @@
-﻿using GraphQL.Conventions.Types.Descriptors;
-using GraphQL.Resolvers;
-using GraphQL.Subscription;
+﻿using GraphQL.Resolvers;
 using System;
 using System.Threading.Tasks;
 
 namespace GraphQL.Conventions.Adapters.Resolvers
 {
-    public class EventStreamResolver : FieldResolver, IEventStreamResolver
+    public class EventStreamResolver : ISourceStreamResolver, IFieldResolver
     {
-        public EventStreamResolver(GraphFieldInfo fieldInfo) : base(fieldInfo)
+        private readonly IFieldResolver _fieldResolver;
+
+        public EventStreamResolver(IFieldResolver fieldResolver)
         {
+            _fieldResolver = fieldResolver;
         }
 
-        public IObservable<object> Subscribe(IResolveEventStreamContext context)
+        public async ValueTask<IObservable<object>> ResolveAsync(IResolveFieldContext context)
         {
-            var result = base.Resolve(context);
+            var result = await _fieldResolver.ResolveAsync(context);
             if (result is Task<object>)
             {
                 result = (result as Task<object>).Result;
@@ -22,9 +23,9 @@ namespace GraphQL.Conventions.Adapters.Resolvers
             return (IObservable<object>)result;
         }
 
-        public override object Resolve(IResolveFieldContext context)
+        ValueTask<object> IFieldResolver.ResolveAsync(IResolveFieldContext context)
         {
-            return context.Source;
+            return new(context.Source);
         }
     }
 }

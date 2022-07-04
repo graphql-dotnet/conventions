@@ -1,5 +1,5 @@
-using GraphQL.Language.AST;
 using GraphQL.Types;
+using GraphQLParser.AST;
 
 namespace Tests.Adapters.Engine.Types
 {
@@ -24,9 +24,9 @@ namespace Tests.Adapters.Engine.Types
             };
         }
 
-        public override object ParseLiteral(IValue value)
+        public override object ParseLiteral(GraphQLValue value)
         {
-            if (value is StringValue str)
+            if (value is GraphQLStringValue str)
             {
                 return ParseValue(str.Value);
             }

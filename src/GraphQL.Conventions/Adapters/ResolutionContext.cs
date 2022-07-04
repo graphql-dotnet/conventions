@@ -12,7 +12,7 @@ namespace GraphQL.Conventions.Adapters
     {
         private static readonly object Lock = new object();
 
-        public ResolutionContext(GraphFieldInfo fieldInfo, ResolveFieldContext<object> fieldContext)
+        public ResolutionContext(GraphFieldInfo fieldInfo, IResolveFieldContext fieldContext)
         {
             FieldContext = fieldContext;
             FieldInfo = fieldInfo;
@@ -47,11 +47,16 @@ namespace GraphQL.Conventions.Adapters
         {
             lock (Lock)
             {
-                if (FieldContext.Arguments == null)
+                var fieldContext = FieldContext is ResolveFieldContext
+                    ? (ResolveFieldContext) FieldContext
+                    : new ResolveFieldContext(FieldContext);
+
+                if (fieldContext.Arguments == null)
                 {
-                    FieldContext.Arguments = new Dictionary<string, ArgumentValue>();
+                    fieldContext.Arguments = new Dictionary<string, ArgumentValue>();
                 }
-                FieldContext.Arguments[name] = new ArgumentValue(value, ArgumentSource.Variable);
+                fieldContext.Arguments[name] = new ArgumentValue(value, ArgumentSource.Variable);
+                FieldContext = fieldContext;
             }
         }
 
@@ -67,6 +72,6 @@ namespace GraphQL.Conventions.Adapters
 
         public IEnumerable<string> Path => FieldContext.Path.Select(o => o?.ToString());
 
-        public ResolveFieldContext<object> FieldContext { get; }
+        public IResolveFieldContext FieldContext { get; private set; }
     }
 }

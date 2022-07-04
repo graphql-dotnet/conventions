@@ -1,20 +1,25 @@
-﻿using GraphQL;
+﻿using System.Threading.Tasks;
+using GraphQL;
 using GraphQL.Conventions;
 using GraphQL.Conventions.Adapters;
 using GraphQL.Conventions.Builders;
-using GraphQL.Http;
+using GraphQL.Conventions.Types.Resolution;
+using GraphQL.DataLoader;
+using GraphQL.MicrosoftDI;
+using GraphQL.NewtonsoftJson;
 using GraphQL.Server;
-using GraphQL.Server.Internal;
-using GraphQL.Server.Transports.Subscriptions.Abstractions;
-using GraphQL.Server.Transports.WebSockets;
-using GraphQL.Server.Ui.Playground;
+using GraphQL.Server.Transports.AspNetCore;
+using GraphQL.SystemTextJson;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using SubscriptionExample.Core;
+using SubscriptionExample.GraphQl;
+using DocumentExecuter = GraphQL.Conventions.DocumentExecuter;
 
 namespace SubscriptionExample
 {
@@ -24,49 +29,63 @@ namespace SubscriptionExample
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            var typeAdapter = new GraphTypeAdapter();
-            var constructor = new SchemaConstructor<ISchema, IGraphType>(typeAdapter);
-            var schema = constructor.Build(typeof(SchemaDefinition<GraphQl.Query, GraphQl.Mutation, GraphQl.Subscription>));
-            var graphQLEngine = new GraphQLEngine()
+            services.AddSingleton<MessageService>();
+
+            // Graph QL Server Services
+            services.AddGraphQL(builder =>
+            {
+                builder
+                    .AddHttpMiddleware<ISchema, GraphQLHttpMiddleware<ISchema>>()
+                    .AddWebSocketsHttpMiddleware<ISchema>()
+                    .AddDefaultEndpointSelectorPolicy()
+                    .AddSystemTextJson()
+                    .AddErrorInfoProvider(option =>
+                    {
+                        option.ExposeExceptionStackTrace = true;
+                    })
+                    .AddDataLoader()
+                    .AddWebSockets()
+                    .ConfigureExecutionOptions(options =>
+                    {
+                        options.EnableMetrics = true;
+                        var logger = options.RequestServices.GetRequiredService<ILogger<Startup>>();
+                        options.UnhandledExceptionDelegate = ctx =>
+                        {
+                            logger.LogError($"GraphQL Unhandled Exception: {ctx.ErrorMessage}.", ctx.OriginalException);
+                            return Task.CompletedTask;
+                        };
+                    });
+            });
+
+            // Graph QL Convention: Engine and Schema
+            var engine = new GraphQLEngine()
                 .WithFieldResolutionStrategy(FieldResolutionStrategy.Normal)
-                .WithQuery<GraphQl.Query>()
-                .WithMutation<GraphQl.Mutation>()
-                .WithSubscription<GraphQl.Subscription>()
+                .WithQuery<Query>()
+                .WithMutation<Mutation>()
+                .WithSubscription<Subscription>()
                 .BuildSchema();
 
-            services.AddSingleton<MessageService>();
+            var schema = engine.GetSchema();
+            
+            // Add Graph QL Convention Services
+            services.AddSingleton(engine);
             services.AddSingleton(schema);
-            services.AddMvc();
             services.AddTransient<IDependencyInjector, Injector>();
-            services.AddSingleton(provider => graphQLEngine);
-            services.AddSingleton<IDocumentExecuter, GraphQL.Conventions.DocumentExecuter>();
-            services.AddSingleton<IDocumentWriter>(x =>
-            {
-                var jsonSerializerSettings = x.GetRequiredService<IOptions<JsonSerializerSettings>>();
-                return new DocumentWriter(Formatting.None, jsonSerializerSettings.Value);
-            });
-            services.AddTransient(typeof(IGraphQLExecuter<>), typeof(DefaultGraphQLExecuter<>));
-            services.AddTransient<IWebSocketConnectionFactory<ISchema>, WebSocketConnectionFactory<ISchema>>();
-            services.AddTransient<IOperationMessageListener, LogMessagesListener>();
-            services.AddTransient<IOperationMessageListener, ProtocolMessageListener>();
+
+            // Replace GraphQL Server with GraphQL Convention Document Executer
+            services.Replace(new ServiceDescriptor(typeof(IDocumentExecuter), typeof(DocumentExecuter), ServiceLifetime.Singleton));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseMvc();
             app.UseWebSockets();
-            app.UseGraphQLWebSockets<ISchema>();
-
-            app.UseGraphQLPlayground(new GraphQLPlaygroundOptions()
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
             {
-                Path = "/ui/playground",
-                GraphQLEndPoint = "/graphql"
+                endpoints.MapGraphQLWebSockets<ISchema>();
+                endpoints.MapGraphQL<ISchema>();
+                endpoints.MapGraphQLPlayground();
             });
         }
     }

@@ -18,10 +18,10 @@ namespace DataLoaderWithEFCore.GraphApi.Schema
 
         public DateTime ReleaseDateUtc { get; set; }
 
-        public async Task<Actor[]> Actors([Inject] IActorRepository repository, [Inject] DataLoaderContext dataLoaderContext)
+        public async Task<Actor[]> Actors([Inject] IMapper mapper, [Inject] IActorRepository repository, [Inject] DataLoaderContext dataLoaderContext)
         {
             var loader = dataLoaderContext.GetOrAddCollectionBatchLoader<Guid, Models.Actor>("Movie_Actors", repository.GetActorsPerMovie);
-            return Mapper.Map<Actor[]>(await loader.LoadAsync(Id));
+            return mapper.Map<Actor[]>(await loader.LoadAsync(Id).GetResultAsync());
         }
     }
 }

@@ -27,6 +27,6 @@ namespace GraphQL.Conventions
 
         IEnumerable<string> Path { get; }
 
-        ResolveFieldContext<object> FieldContext { get; }
+        IResolveFieldContext FieldContext { get; }
     }
 }

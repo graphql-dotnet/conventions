@@ -237,7 +237,7 @@ namespace GraphQL.Conventions.Web
                 var result = await _engine
                     .NewExecutor()
                     .WithQueryString(request.QueryString)
-                    .WithInputs(request.Variables)
+                    .WithVariables(request.Variables)
                     .WithOperationName(request.OperationName)
                     .WithDependencyInjector(dependencyInjector ?? _dependencyInjector)
                     .WithUserContext(userContext)
@@ -269,7 +269,7 @@ namespace GraphQL.Conventions.Web
                 if (result == null) return response;
                 result.Errors = new ExecutionErrors();
                 result.Errors.AddRange(response.Errors);
-                response.SetBody(await _engine.SerializeResultAsync(result));
+                response.SetBody(_engine.SerializeResult(result));
 
                 return response;
             }
@@ -292,7 +292,7 @@ namespace GraphQL.Conventions.Web
                         .WithQueryString(IntrospectionQuery)
                         .ExecuteAsync();
 
-                    return await _engine.SerializeResultAsync(result);
+                    return _engine.SerializeResult(result);
                 }
 
                 _engine.PrintFieldDescriptions(includeFieldDescriptions);

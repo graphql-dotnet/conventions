@@ -657,7 +657,7 @@ namespace Tests.Adapters
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(query)
-                .WithInputs(inputs)
+                .WithVariables(inputs)
                 .WithUserContext(userContext)
                 .WithDependencyInjector(new DependencyInjector())
                 .ExecuteAsync();
@@ -769,11 +769,11 @@ namespace Tests.Adapters
         {
             Foo,
 
-            [Name("BAZ")]
+            [GraphQL.Conventions.Name("BAZ")]
             Bar,
         }
 
-        [InputType]
+        [GraphQL.Conventions.InputType]
         class InputObject
         {
             public string Field1 { get; set; }
@@ -788,7 +788,7 @@ namespace Tests.Adapters
                 $"{Field1}-{Field2}-{Field3}-{Field4}";
         }
 
-        [InputType]
+        [GraphQL.Conventions.InputType]
         class ComplexInputObject
         {
             public Id Identifier { get; set; }

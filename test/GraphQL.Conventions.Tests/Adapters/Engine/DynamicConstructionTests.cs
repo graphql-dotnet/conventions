@@ -83,8 +83,10 @@ namespace Tests.Adapters.Engine
                 _userRepository = userRepository;
             }
 
-            public object Resolve(IResolveFieldContext context) =>
-                _userRepository;
+            public ValueTask<object> ResolveAsync(IResolveFieldContext context)
+            {
+                return new ValueTask<object>(_userRepository);
+            }
         }
 
         class User

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using GraphQL;
 using GraphQL.Conventions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,13 +12,11 @@ namespace DataLoaderWithEFCore.GraphApi
     public class GraphController : ControllerBase
     {
         private readonly GraphQLEngine _engine;
-        private readonly IUserContext _userContext;
         private readonly IDependencyInjector _injector;
 
-        public GraphController(GraphQLEngine engine, IUserContext userContext, IDependencyInjector injector)
+        public GraphController(GraphQLEngine engine, IDependencyInjector injector)
         {
             _engine = engine;
-            _userContext = userContext;
             _injector = injector;
         }
 
@@ -30,12 +27,11 @@ namespace DataLoaderWithEFCore.GraphApi
             using (var reader = new StreamReader(Request.Body))
                 requestBody = await reader.ReadToEndAsync();
 
-            ExecutionResult result = await _engine
+            var result = await _engine
                 .NewExecutor()
-                .WithUserContext(_userContext)
                 .WithDependencyInjector(_injector)
                 .WithRequest(requestBody)
-                .Execute();
+                .ExecuteAsync();
 
             var responseBody = _engine.SerializeResult(result);
 

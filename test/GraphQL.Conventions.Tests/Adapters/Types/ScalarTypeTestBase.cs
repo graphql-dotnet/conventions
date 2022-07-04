@@ -1,5 +1,5 @@
-using GraphQL.Language.AST;
 using GraphQL.Types;
+using GraphQLParser.AST;
 using Tests.Templates;
 using Tests.Templates.Extensions;
 
@@ -20,7 +20,7 @@ namespace Tests.Adapters.Types
             _graphType.ParseValue(data).ShouldEqual(expected);
         }
 
-        protected void ShouldParseLiteral(IValue data, TNativeRepresentation expected)
+        protected void ShouldParseLiteral(GraphQLValue data, TNativeRepresentation expected)
         {
             _graphType.ParseLiteral(data).ShouldEqual(expected);
         }
