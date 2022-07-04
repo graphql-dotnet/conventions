@@ -96,7 +96,7 @@ namespace GraphQL.Conventions.Adapters
                     DefaultValue = fieldInfo.DefaultValue,
                     Type = GetType(fieldInfo.Type),
                     Arguments = new QueryArguments(fieldInfo.Arguments.Where(arg => !arg.IsInjected).Select(DeriveArgument)),
-                    Resolver = resolver,
+                    Resolver = streamResolver,
                     StreamResolver = streamResolver
                 };
             }

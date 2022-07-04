@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace GraphQL.Conventions.Adapters.Resolvers
 {
-    public class EventStreamResolver : ISourceStreamResolver
+    public class EventStreamResolver : ISourceStreamResolver, IFieldResolver
     {
         private readonly IFieldResolver _fieldResolver;
 
@@ -21,6 +21,11 @@ namespace GraphQL.Conventions.Adapters.Resolvers
                 result = (result as Task<object>).Result;
             }
             return (IObservable<object>)result;
+        }
+
+        ValueTask<object> IFieldResolver.ResolveAsync(IResolveFieldContext context)
+        {
+            return new(context.Source);
         }
     }
 }
