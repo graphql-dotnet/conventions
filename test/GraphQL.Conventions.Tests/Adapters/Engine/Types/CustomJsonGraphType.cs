@@ -36,36 +36,6 @@ namespace Tests.Adapters.Engine.Types
             Description = "Untyped JSON Structure";
         }
 
-        /*
-        public override object Serialize(object value)
-        {
-            return ParseValue(value);
-        }
-
-        public override object ParseValue(object value)
-        {
-            if (value == null)
-            {
-                return null;
-            }
-            if (value is JSON json)
-            {
-                return json.Value;
-            }
-
-            return value;
-        }
-        public override object ParseLiteral(GraphQLValue value)
-        {
-            var jsonValue = value as JSON;
-            return jsonValue?.Value;
-        }
-
-        public override IValue ToAST(object value)
-        {
-            return new JSON(value as IDictionary<string, object>);
-        }
-        */
         public override object ParseValue(object value)
         {
             if (value == null)
