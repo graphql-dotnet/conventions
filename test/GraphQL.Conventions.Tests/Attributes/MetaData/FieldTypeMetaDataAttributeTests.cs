@@ -153,11 +153,11 @@ namespace Tests.Attributes.MetaData
             _user = user;
         }
 
-        public void Enter(ASTNode node, ValidationContext context)
+        public ValueTask EnterAsync(ASTNode node, ValidationContext context)
         {
             var fieldDef = context.TypeInfo.GetFieldDef();
-            if (fieldDef == null) return;
-            if (fieldDef.Metadata != null && fieldDef.HasMetadata(nameof(TestCustomAttribute)))
+            if (fieldDef?.Metadata != null &&
+                fieldDef.HasMetadata(nameof(TestCustomAttribute)))
             {
                 var permissionMetaData = fieldDef.Metadata.First(x => x.Key == nameof(TestCustomAttribute));
                 var requiredValidation = permissionMetaData.Value as string;
@@ -169,8 +169,14 @@ namespace Tests.Attributes.MetaData
                         $"Required validation '{requiredValidation}' is not present. Query will not be executed.",
                         node));
             }
+
+            return default;
         }
 
-        public void Leave(ASTNode node, ValidationContext context) { /* Noop */ }
+        public ValueTask LeaveAsync(ASTNode node, ValidationContext context)
+        {
+            /* Noop */
+            return default;
+        }
     }
 }

@@ -63,9 +63,17 @@ namespace GraphQL.Conventions
 
         private class NoopNodeVisitor : INodeVisitor
         {
-            public void Enter(ASTNode node, ValidationContext context) { /* Noop */ }
+            public ValueTask EnterAsync(ASTNode node, ValidationContext context)
+            {
+                /* Noop */
+                return default;
+            }
 
-            public void Leave(ASTNode node, ValidationContext context) { /* Noop */ }
+            public ValueTask LeaveAsync(ASTNode node, ValidationContext context)
+            {
+                 /* Noop */
+                 return default;
+            }
         }
 
         private class WrappedDependencyInjector : IDependencyInjector
@@ -308,7 +316,8 @@ namespace GraphQL.Conventions
                     { typeof(IDependencyInjector).FullName ?? nameof(IDependencyInjector), dependencyInjector },
                 },
                 ValidationRules = validationRules.Any() ? validationRules : null,
-                ComplexityConfiguration = complexityConfiguration,
+                //TODO: how to pass through complexityConfiguration
+                // ComplexityConfiguration = complexityConfiguration,
                 CancellationToken = cancellationToken,
                 ThrowOnUnhandledException = _throwUnhandledExceptions,
             };
