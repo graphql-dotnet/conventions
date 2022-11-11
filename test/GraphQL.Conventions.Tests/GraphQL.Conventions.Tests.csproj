@@ -12,8 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphQL" Version="5.3.0" />
-    <PackageReference Include="GraphQL.DataLoader" Version="5.3.0" />
+    <PackageReference Include="GraphQL" Version="7.0.0" />
+    <PackageReference Include="GraphQL.DataLoader" Version="7.0.0" />
     <PackageReference Include="GraphQL.SystemReactive" Version="4.8.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
     <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="17.2.0" />

@@ -62,7 +62,7 @@ namespace Tests.Web
                 .ProcessRequestAsync(request, null);
 
             response.Errors.Count.ShouldEqual(1);
-            response.Errors[0].Message.ShouldEqual("Error executing document. Query is too nested to execute. Depth is 2 levels, maximum allowed on this endpoint is 1.");
+            response.Errors[0].Message.ShouldEqual("Query is too nested to execute. Depth is 2 levels, maximum allowed on this endpoint is 1.");
         }
 
         [Test]

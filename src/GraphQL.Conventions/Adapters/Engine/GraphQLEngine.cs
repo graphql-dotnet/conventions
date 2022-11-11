@@ -18,6 +18,7 @@ using GraphQL.Types;
 using GraphQL.Utilities;
 using GraphQL.Validation;
 using GraphQL.Validation.Complexity;
+using GraphQL.Validation.Rules.Custom;
 using GraphQLParser.AST;
 
 // ReSharper disable once CheckNamespace
@@ -63,9 +64,17 @@ namespace GraphQL.Conventions
 
         private class NoopNodeVisitor : INodeVisitor
         {
-            public void Enter(ASTNode node, ValidationContext context) { /* Noop */ }
+            public ValueTask EnterAsync(ASTNode node, ValidationContext context)
+            {
+                /* Noop */
+                return default;
+            }
 
-            public void Leave(ASTNode node, ValidationContext context) { /* Noop */ }
+            public ValueTask LeaveAsync(ASTNode node, ValidationContext context)
+            {
+                 /* Noop */
+                 return default;
+            }
         }
 
         private class WrappedDependencyInjector : IDependencyInjector
@@ -293,7 +302,16 @@ namespace GraphQL.Conventions
                 rules = new[] { new NoopValidationRule() };
             }
 
-            var validationRules = rules?.ToArray() ?? new IValidationRule[0];
+            if (rules == null || rules.Count() == 0)
+            {
+                rules = DocumentValidator.CoreRules;
+            }
+
+            if (complexityConfiguration != null)
+            {
+                rules = rules.Append(new ComplexityValidationRule(complexityConfiguration));
+            }
+
             var configuration = new ExecutionOptions
             {
                 Schema = _schema,
@@ -307,8 +325,7 @@ namespace GraphQL.Conventions
                     { typeof(IUserContext).FullName ?? nameof(IUserContext), userContext },
                     { typeof(IDependencyInjector).FullName ?? nameof(IDependencyInjector), dependencyInjector },
                 },
-                ValidationRules = validationRules.Any() ? validationRules : null,
-                ComplexityConfiguration = complexityConfiguration,
+                ValidationRules = rules,
                 CancellationToken = cancellationToken,
                 ThrowOnUnhandledException = _throwUnhandledExceptions,
             };
