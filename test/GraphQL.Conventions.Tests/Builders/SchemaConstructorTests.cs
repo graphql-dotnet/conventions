@@ -26,6 +26,7 @@ namespace Tests.Builders
         public void Can_Combine_Schemas()
         {
             var schema = Schema<SchemaType1, SchemaType2>();
+            schema.Initialize();
             schema.ShouldHaveQueries(3);
             schema.ShouldHaveMutations(1);
             schema.Query.ShouldHaveFieldWithName("foo");
@@ -43,6 +44,7 @@ namespace Tests.Builders
                 typeof(Unwanted.SchemaType3)
             );
 
+            schema.Initialize();
             schema.ShouldHaveQueries(4);
             schema.ShouldHaveMutations(2);
             schema.Query.ShouldHaveFieldWithName("foo");
@@ -76,6 +78,7 @@ namespace Tests.Builders
                         typeof(Unwanted.SchemaType3)
                     );
 
+                schema.Initialize();
                 schema.ShouldHaveQueries(3);
                 schema.ShouldHaveMutations(1);
                 schema.Query.ShouldHaveFieldWithName("foo");
