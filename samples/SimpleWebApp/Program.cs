@@ -9,7 +9,7 @@ namespace GraphQL.Conventions.Tests.Server
         public static void Main(string[] args)
         {
             var host = new WebHostBuilder()
-                .UseKestrel(options => options.AllowSynchronousIO = true)
+                .UseKestrel(options => options.AllowSynchronousIO = true) // for Newtonsoft.Json support
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
                 .UseStartup<Startup>()
