@@ -122,7 +122,7 @@ public class EndToEndTests
               }
             }"
         };
-        
+
         using var webApp = new WebApplicationFactory<Program>();
         var server = webApp.Server;
         var websocketTask = VerifyGraphQLWebSocketsAsync(server, querySubscription, expectedSubscription);
