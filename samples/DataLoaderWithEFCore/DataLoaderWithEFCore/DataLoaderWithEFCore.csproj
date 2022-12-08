@@ -15,7 +15,6 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="GraphQL" Version="7.2.0" />
     <PackageReference Include="GraphQL.DataLoader" Version="7.2.0" />
     <PackageReference Include="GraphQL.Server.Ui.Playground" Version="7.1.1" />
     <ProjectReference Include="../../../src/GraphQL.Conventions/GraphQL.Conventions.csproj" />
