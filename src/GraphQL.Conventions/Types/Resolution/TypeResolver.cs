@@ -98,7 +98,8 @@ namespace GraphQL.Conventions.Types.Resolution
                 _reflector.IgnoredNamespaces.Add(@namespace);
         }
 
-        public void IgnoreTypes(Func<Type, MemberInfo, bool> ignoreTypeCallback) {
+        public void IgnoreTypes(Func<Type, MemberInfo, bool> ignoreTypeCallback)
+        {
             _reflector.IgnoreTypeCallback = ignoreTypeCallback;
         }
 

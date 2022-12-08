@@ -138,7 +138,8 @@ namespace GraphQL.Conventions.Extensions
                 throw new ArgumentException("Constructor must not be static", nameof(constructorInfo));
             var argumentsParameter = Expression.Parameter(typeof(object[]));
             var constructorParameters = constructorInfo.GetParameters();
-            var parameters = constructorParameters.Select((param, index) => {
+            var parameters = constructorParameters.Select((param, index) =>
+            {
                 return Expression.Convert(Expression.ArrayAccess(argumentsParameter, Expression.Constant(index)), param.ParameterType);
             });
             var call = Expression.New(constructorInfo, parameters);

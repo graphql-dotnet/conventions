@@ -249,7 +249,7 @@ namespace GraphQL.Conventions.Web
 
                 if (_useProfiling)
                 {
-                  result.EnrichWithApolloTracing(start);
+                    result.EnrichWithApolloTracing(start);
                 }
 
                 var response = new Response(request, result);

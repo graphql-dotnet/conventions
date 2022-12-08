@@ -200,8 +200,8 @@ namespace GraphQL.Conventions.Relay
                 {
                     PageInfo = new PageInfo
                     {
-                        StartCursor = after ?? before ?? (Cursor) minCursor,
-                        EndCursor = before ?? after ?? (Cursor) maxCursor,
+                        StartCursor = after ?? before ?? (Cursor)minCursor,
+                        EndCursor = before ?? after ?? (Cursor)maxCursor,
                     };
 
                     var startValue = PageInfo.Value.StartCursor.IntegerForCursor<TNode>() ?? 0;

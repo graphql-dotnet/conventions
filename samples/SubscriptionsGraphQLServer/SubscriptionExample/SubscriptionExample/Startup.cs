@@ -52,7 +52,7 @@ namespace SubscriptionExample
                 .BuildSchema();
 
             var schema = engine.GetSchema();
-            
+
             // Add Graph QL Convention Services
             services.AddSingleton(engine);
             services.AddSingleton(schema);

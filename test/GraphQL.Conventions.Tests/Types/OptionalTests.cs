@@ -21,13 +21,13 @@ namespace Tests.Types
             Assert.ThrowsException<TypeInitializationException>(() => Optional<int>.ValidateType());
         }
 
-         [Test]
+        [Test]
         public void Can_Define_Nullable_Int()
         {
             Optional<int?>.ValidateType();
         }
 
-       [Test]
+        [Test]
         public void Cannot_Define_NonNullable_DateTime()
         {
             Assert.ThrowsException<TypeInitializationException>(() => Optional<DateTime>.ValidateType());
@@ -117,7 +117,7 @@ namespace Tests.Types
             var typeResolver = new TypeResolver();
             var typeInfo = typeof(Optional<int?>).GetTypeInfo();
             var graphTypeInfo = new GraphTypeInfo(typeResolver, typeInfo);
-            var optional = (Optional<int?>) Optional.Construct(graphTypeInfo, null, true);
+            var optional = (Optional<int?>)Optional.Construct(graphTypeInfo, null, true);
             Assert.IsNotNull(optional);
             Assert.IsNull(optional.Value);
         }

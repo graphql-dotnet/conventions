@@ -53,7 +53,7 @@ namespace GraphQL.Conventions
         private IErrorTransformation _errorTransformation = new DefaultErrorTransformation();
 
         private bool _includeFieldDescriptions;
-        private bool _throwUnhandledExceptions; 
+        private bool _throwUnhandledExceptions;
 
         private bool _includeFieldDeprecationReasons;
 
@@ -72,8 +72,8 @@ namespace GraphQL.Conventions
 
             public ValueTask LeaveAsync(ASTNode node, ValidationContext context)
             {
-                 /* Noop */
-                 return default;
+                /* Noop */
+                return default;
             }
         }
 
@@ -100,11 +100,11 @@ namespace GraphQL.Conventions
             {
                 TypeResolutionDelegate = typeResolutionDelegate != null
                     ? type => typeResolutionDelegate(type) ?? CreateInstance(type)
-                    : (Func<Type, object>) CreateInstance
+                    : (Func<Type, object>)CreateInstance
             };
         }
-        
-        public static GraphQLEngine New(IDocumentExecuter documentExecutor) 
+
+        public static GraphQLEngine New(IDocumentExecuter documentExecutor)
             => new GraphQLEngine(null, null, documentExecutor);
 
         public static GraphQLEngine New(Func<Type, object> typeResolutionDelegate = null)

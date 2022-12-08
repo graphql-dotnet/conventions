@@ -93,7 +93,8 @@ namespace Tests.Builders
             // Ignore specific types from the 'Unwanted' namespace.
 
             var schema = new SchemaConstructor<ISchema, IGraphType>(new GraphTypeAdapter())
-                    .IgnoreTypes((t, m) => {
+                    .IgnoreTypes((t, m) =>
+                    {
                         // Ignore based on the type:
                         if (t == typeof(Unwanted.QueryType3)) { return true; }
                         // Ignore based on name of the method:
