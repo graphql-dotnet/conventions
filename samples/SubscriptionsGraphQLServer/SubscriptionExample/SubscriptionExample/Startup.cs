@@ -1,24 +1,14 @@
-﻿using System.Threading.Tasks;
-using GraphQL;
+﻿using GraphQL;
 using GraphQL.Conventions;
-using GraphQL.Conventions.Adapters;
-using GraphQL.Conventions.Builders;
-using GraphQL.Conventions.Types.Resolution;
-using GraphQL.DataLoader;
-using GraphQL.MicrosoftDI;
-using GraphQL.NewtonsoftJson;
-using GraphQL.Server;
-using GraphQL.Server.Transports.AspNetCore;
-using GraphQL.SystemTextJson;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SubscriptionExample.Core;
 using SubscriptionExample.GraphQl;
+using System.Threading.Tasks;
 using DocumentExecuter = GraphQL.Conventions.DocumentExecuter;
 
 namespace SubscriptionExample
@@ -35,19 +25,15 @@ namespace SubscriptionExample
             services.AddGraphQL(builder =>
             {
                 builder
-                    .AddHttpMiddleware<ISchema, GraphQLHttpMiddleware<ISchema>>()
-                    .AddWebSocketsHttpMiddleware<ISchema>()
-                    .AddDefaultEndpointSelectorPolicy()
                     .AddSystemTextJson()
                     .AddErrorInfoProvider(option =>
                     {
-                        option.ExposeExceptionStackTrace = true;
+                        option.ExposeExceptionDetails = true;
                     })
                     .AddDataLoader()
-                    .AddWebSockets()
+                    .UseApolloTracing()
                     .ConfigureExecutionOptions(options =>
                     {
-                        options.EnableMetrics = true;
                         var logger = options.RequestServices.GetRequiredService<ILogger<Startup>>();
                         options.UnhandledExceptionDelegate = ctx =>
                         {
@@ -83,7 +69,6 @@ namespace SubscriptionExample
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGraphQLWebSockets<ISchema>();
                 endpoints.MapGraphQL<ISchema>();
                 endpoints.MapGraphQLPlayground();
             });
