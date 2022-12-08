@@ -8,7 +8,6 @@ env:
 
 jobs:
   test:
-    name: Test build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
