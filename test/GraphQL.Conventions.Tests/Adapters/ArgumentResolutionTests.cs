@@ -99,7 +99,7 @@ namespace Tests.Adapters
         {
             var id = Id.New<Dependency>("12345");
             var result = await ExecuteQuery(
-                @"{ nullableIdField(idArg: """ + id +  @""") }");
+                @"{ nullableIdField(idArg: """ + id + @""") }");
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("nullableIdField", id.IdentifierForType<Dependency>());
 
@@ -115,7 +115,7 @@ namespace Tests.Adapters
         {
             var id = Id.New<Dependency>("12345");
             var result = await ExecuteQuery(
-                @"{ nonNullableIdField(idArg: """ + id +  @""") }");
+                @"{ nonNullableIdField(idArg: """ + id + @""") }");
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("nonNullableIdField", id.IdentifierForType<Dependency>());
 
@@ -493,7 +493,7 @@ namespace Tests.Adapters
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("result", 0, "A-B-1-2");
             result.Data.ShouldHaveFieldWithValue("result", 1, "X-Y-9-0");
-       }
+        }
 
         [Test]
         public async Task Can_Resolve_Enumerable_Of_Nullable_InputObject_Argument()

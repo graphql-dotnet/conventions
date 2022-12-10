@@ -31,6 +31,7 @@ namespace GraphQL.Conventions.Tests.Server
                 .WithQueryAndMutation<Schema.Query, Schema.Mutation>()
                 .Generate();
 
+            app.UseGraphQLPlayground("/");
             app.Run(HandleRequest);
         }
 

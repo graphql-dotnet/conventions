@@ -10,7 +10,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
         public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value, bool isSpecified)
         {
             if (value == null || !typeInfo.IsPrimitive || typeInfo.IsEnumerationType) return value;
-            
+
             try
             {
                 var targetType = typeInfo.GetTypeRepresentation().AsType();
@@ -19,7 +19,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
                 if (converter.CanConvertFrom(value.GetType()))
                     return converter.ConvertFrom(value);
 
-                if(value is IConvertible)
+                if (value is IConvertible)
                     return Convert.ChangeType(value, targetType);
             }
             catch (Exception ex)

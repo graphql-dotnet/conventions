@@ -163,7 +163,7 @@ namespace Tests.Attributes.MetaData
                 var requiredValidation = permissionMetaData.Value as string;
 
                 if (_user == null || _user.AccessPermissions.All(p => p != requiredValidation))
-                    context.ReportError( new ValidationError( /* When reporting such errors no data would be returned use with cautious */
+                    context.ReportError(new ValidationError( /* When reporting such errors no data would be returned use with cautious */
                         context.Document.Source,
                         "Authorization",
                         $"Required validation '{requiredValidation}' is not present. Query will not be executed.",

@@ -163,7 +163,7 @@ namespace Tests.Adapters
             {
                 int Test { get; }
             }
-            public class TestImpl: ITest
+            public class TestImpl : ITest
             {
                 public int Test { get; }
             }

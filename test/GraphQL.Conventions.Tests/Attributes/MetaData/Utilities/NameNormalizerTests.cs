@@ -77,10 +77,10 @@ namespace Tests.Attributes.MetaData.Utilities
 
         private string AsTypeName(string name) => _normalizer.AsTypeName(name);
 
-        private string AsFieldName(string name) =>  _normalizer.AsFieldName(name);
+        private string AsFieldName(string name) => _normalizer.AsFieldName(name);
 
-        private string AsArgumentName(string name) =>  _normalizer.AsArgumentName(name);
+        private string AsArgumentName(string name) => _normalizer.AsArgumentName(name);
 
-        private string AsEnumMemberName(string name) =>  _normalizer.AsEnumMemberName(name);
+        private string AsEnumMemberName(string name) => _normalizer.AsEnumMemberName(name);
     }
 }

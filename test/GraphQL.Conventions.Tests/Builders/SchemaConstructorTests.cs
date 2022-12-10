@@ -26,6 +26,7 @@ namespace Tests.Builders
         public void Can_Combine_Schemas()
         {
             var schema = Schema<SchemaType1, SchemaType2>();
+            schema.Initialize();
             schema.ShouldHaveQueries(3);
             schema.ShouldHaveMutations(1);
             schema.Query.ShouldHaveFieldWithName("foo");
@@ -43,6 +44,7 @@ namespace Tests.Builders
                 typeof(Unwanted.SchemaType3)
             );
 
+            schema.Initialize();
             schema.ShouldHaveQueries(4);
             schema.ShouldHaveMutations(2);
             schema.Query.ShouldHaveFieldWithName("foo");
@@ -76,6 +78,7 @@ namespace Tests.Builders
                         typeof(Unwanted.SchemaType3)
                     );
 
+                schema.Initialize();
                 schema.ShouldHaveQueries(3);
                 schema.ShouldHaveMutations(1);
                 schema.Query.ShouldHaveFieldWithName("foo");
@@ -93,7 +96,8 @@ namespace Tests.Builders
             // Ignore specific types from the 'Unwanted' namespace.
 
             var schema = new SchemaConstructor<ISchema, IGraphType>(new GraphTypeAdapter())
-                    .IgnoreTypes((t, m) => {
+                    .IgnoreTypes((t, m) =>
+                    {
                         // Ignore based on the type:
                         if (t == typeof(Unwanted.QueryType3)) { return true; }
                         // Ignore based on name of the method:

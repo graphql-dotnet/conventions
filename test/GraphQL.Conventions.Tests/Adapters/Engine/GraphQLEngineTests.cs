@@ -416,15 +416,15 @@ namespace Tests.Adapters.Engine
         [InputType]
         class InputObject
         {
-              [DefaultValue(Enum2.SomeValue1)]
-              public Enum2? SomeField { get; set; }
+            [DefaultValue(Enum2.SomeValue1)]
+            public Enum2? SomeField { get; set; }
 
-              public Enum2? AnotherField { get; set; }
+            public Enum2? AnotherField { get; set; }
 
-              public Enum2 YetAnotherField { get; set; }
+            public Enum2 YetAnotherField { get; set; }
 
-              [DefaultValue(Enum2.SomeValue2)]
-              public Enum2? YetAnotherDummyField { get; set; }
+            [DefaultValue(Enum2.SomeValue2)]
+            public Enum2? YetAnotherDummyField { get; set; }
         }
 
         class QueryWithInterfaces

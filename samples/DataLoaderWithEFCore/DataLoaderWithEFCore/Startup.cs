@@ -61,6 +61,7 @@ namespace DataLoaderWithEFCore
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseGraphQLPlayground(options: new GraphQL.Server.Ui.Playground.PlaygroundOptions { GraphQLEndPoint = "/api/graph" });
             app.UseEndpoints(configure =>
             {
                 configure.MapControllers();
