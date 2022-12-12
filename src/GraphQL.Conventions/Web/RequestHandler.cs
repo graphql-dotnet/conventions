@@ -21,27 +21,17 @@ namespace GraphQL.Conventions.Web
 
         public class RequestHandlerBuilder : IDependencyInjector
         {
-            readonly List<Type> _schemaTypes = new List<Type>();
-
-            readonly List<Type> _assemblyTypes = new List<Type>();
-
-            readonly List<Type> _exceptionsTreatedAsWarnings = new List<Type>();
-
-            readonly List<Type> _middleware = new List<Type>();
-
-            readonly ITypeResolver _typeResolver = new TypeResolver();
-
-            IDependencyInjector _dependencyInjector;
-
-            ResolveTypeDelegate _resolveTypeDelegate;
-
-            bool _useValidation = true;
-
-            bool _useProfiling;
-
-            FieldResolutionStrategy _fieldResolutionStrategy = FieldResolutionStrategy.Normal;
-
-            ComplexityConfiguration _complexityConfiguration;
+            private readonly List<Type> _schemaTypes = new List<Type>();
+            private readonly List<Type> _assemblyTypes = new List<Type>();
+            private readonly List<Type> _exceptionsTreatedAsWarnings = new List<Type>();
+            private readonly List<Type> _middleware = new List<Type>();
+            private readonly ITypeResolver _typeResolver = new TypeResolver();
+            private IDependencyInjector _dependencyInjector;
+            private ResolveTypeDelegate _resolveTypeDelegate;
+            private bool _useValidation = true;
+            private bool _useProfiling;
+            private FieldResolutionStrategy _fieldResolutionStrategy = FieldResolutionStrategy.Normal;
+            private ComplexityConfiguration _complexityConfiguration;
 
             internal RequestHandlerBuilder()
             {
@@ -190,17 +180,12 @@ namespace GraphQL.Conventions.Web
 
         private class RequestHandlerImpl : IRequestHandler
         {
-            readonly GraphQLEngine _engine;
-
-            readonly IDependencyInjector _dependencyInjector;
-
-            readonly List<Type> _exceptionsTreatedAsWarnings = new List<Type>();
-
-            readonly bool _useValidation;
-
-            readonly bool _useProfiling;
-
-            readonly ComplexityConfiguration _complexityConfiguration;
+            private readonly GraphQLEngine _engine;
+            private readonly IDependencyInjector _dependencyInjector;
+            private readonly List<Type> _exceptionsTreatedAsWarnings = new List<Type>();
+            private readonly bool _useValidation;
+            private readonly bool _useProfiling;
+            private readonly ComplexityConfiguration _complexityConfiguration;
 
             internal RequestHandlerImpl(
                 IDependencyInjector dependencyInjector,
