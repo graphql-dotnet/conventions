@@ -267,3 +267,8 @@ dotnet_diagnostic.IDE0005.severity = error
 # Enforce formatting https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#rule-id-ide0055-fix-formatting
 dotnet_diagnostic.IDE0055.severity = error
 
+# Disable IDE0057: substring can be simplified (not compatible with .NET Standard 2.0)
+dotnet_diagnostic.IDE0057.severity = none
+
+# Disable IDE0060: Remove unused parameter
+dotnet_diagnostic.IDE0060.severity = suggestion
