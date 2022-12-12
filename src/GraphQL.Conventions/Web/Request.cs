@@ -11,12 +11,10 @@ namespace GraphQL.Conventions.Web
     /// </summary>
     public class Request
     {
-        static readonly IRequestDeserializer RequestDeserializer = new RequestDeserializer();
-
-        static readonly Regex RegexSuperfluousWhitespace =
+        private static readonly IRequestDeserializer RequestDeserializer = new RequestDeserializer();
+        private static readonly Regex RegexSuperfluousWhitespace =
             new Regex(@"[ \t\r\n]{1,}", RegexOptions.Multiline | RegexOptions.Compiled);
-
-        readonly QueryInput _queryInput;
+        private readonly QueryInput _queryInput;
 
         public static Request New(Stream stream)
         {
