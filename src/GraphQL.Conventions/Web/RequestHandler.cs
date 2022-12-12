@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Instrumentation;
 using GraphQL.Validation.Complexity;
-using GraphQL.Conventions.Types.Resolution;
 using Type = System.Type;
 
 namespace GraphQL.Conventions.Web
@@ -188,7 +188,7 @@ namespace GraphQL.Conventions.Web
             }
         }
 
-        class RequestHandlerImpl : IRequestHandler
+        private class RequestHandlerImpl : IRequestHandler
         {
             readonly GraphQLEngine _engine;
 
@@ -266,7 +266,8 @@ namespace GraphQL.Conventions.Web
                     }
                 }
 
-                if (result == null) return response;
+                if (result == null)
+                    return response;
                 result.Errors = new ExecutionErrors();
                 result.Errors.AddRange(response.Errors);
                 response.SetBody(_engine.SerializeResult(result));
@@ -302,7 +303,7 @@ namespace GraphQL.Conventions.Web
 
             #region Queries
             // Source: https://github.com/graphql/graphql-js/blob/master/src/utilities/introspectionQuery.js
-            const string IntrospectionQuery = @"
+            private const string IntrospectionQuery = @"
             query IntrospectionQuery {
                 __schema {
                     queryType { name }
