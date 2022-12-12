@@ -47,8 +47,8 @@ namespace GraphQL.Conventions.Adapters
         {
             lock (Lock)
             {
-                var fieldContext = FieldContext is ResolveFieldContext
-                    ? (ResolveFieldContext)FieldContext
+                var fieldContext = FieldContext is ResolveFieldContext context
+                    ? context
                     : new ResolveFieldContext(FieldContext);
 
                 fieldContext.Arguments ??= new Dictionary<string, ArgumentValue>();

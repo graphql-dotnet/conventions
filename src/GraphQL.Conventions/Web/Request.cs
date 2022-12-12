@@ -16,11 +16,7 @@ namespace GraphQL.Conventions.Web
         static readonly Regex RegexSuperfluousWhitespace =
             new Regex(@"[ \t\r\n]{1,}", RegexOptions.Multiline | RegexOptions.Compiled);
 
-        readonly string _queryId;
-
         readonly QueryInput _queryInput;
-
-        readonly Exception _exception;
 
         public static Request New(Stream stream)
         {
@@ -74,7 +70,7 @@ namespace GraphQL.Conventions.Web
             Error = exception;
         }
 
-        public string QueryId => _queryId;
+        public string QueryId { get; private set; }
 
         /// <summary>
         /// The GraphQL query part of the request.

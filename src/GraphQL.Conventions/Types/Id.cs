@@ -48,13 +48,13 @@ namespace GraphQL.Conventions
         }
 
         public override bool Equals(object obj) =>
-            obj is Id ? Equals((Id)obj) : false;
+            obj is Id id ? Equals(id) : false;
 
         public bool Equals(Id other) =>
             _encodedIdentifier.Equals(other._encodedIdentifier);
 
         public int CompareTo(object other) =>
-            other is Id ? CompareTo((Id)other) : -1;
+            other is Id id ? CompareTo(id) : -1;
 
         public int CompareTo(Id other) =>
             Types.Utilities.Identifier.Compare(_unencodedIdentifier, other._unencodedIdentifier);

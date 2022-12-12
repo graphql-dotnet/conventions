@@ -33,7 +33,7 @@ namespace GraphQL.Conventions.Types.Descriptors
         {
             if (_attributes.TryGetValue(key, out object value))
             {
-                return value is T ? (T)value : defaultValue;
+                return value is T t ? t : defaultValue;
             }
             return defaultValue;
         }
