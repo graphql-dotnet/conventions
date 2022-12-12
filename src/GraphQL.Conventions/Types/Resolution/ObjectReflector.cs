@@ -269,7 +269,7 @@ namespace GraphQL.Conventions.Types.Resolution
                 .GetParameters()
                 .Skip(methodInfo.IsExtensionMethod() ? 1 : 0)
                 .Select(DeriveArgument)
-                ?? new GraphArgumentInfo[0])
+                ?? Array.Empty<GraphArgumentInfo>())
             {
                 if (argument.IsInjected)
                 {

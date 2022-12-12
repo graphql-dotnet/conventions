@@ -21,13 +21,13 @@ namespace GraphQL.Conventions.Relay
         }
 
         public override bool Equals(object obj) =>
-            obj is Cursor ? Equals((Cursor)obj) : false;
+            obj is Cursor cursor ? Equals(cursor) : false;
 
         public bool Equals(Cursor other) =>
             _id.Equals(other._id);
 
         public int CompareTo(object other) =>
-            other is Cursor ? CompareTo((Cursor)other) : -1;
+            other is Cursor cursor ? CompareTo(cursor) : -1;
 
         public int CompareTo(Cursor other) =>
             _id.CompareTo(other._id);

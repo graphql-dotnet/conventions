@@ -26,7 +26,6 @@
     <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">True</ContinuousIntegrationBuild>
     <DebugType>embedded</DebugType>
     <AnalysisMode>Recommended</AnalysisMode>
-    <NoWarn>$(NoWarn);IDE0057</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
