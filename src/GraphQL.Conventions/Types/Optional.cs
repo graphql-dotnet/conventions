@@ -8,17 +8,15 @@ namespace GraphQL.Conventions
 {
     public struct Optional<T> : IOptional
     {
-        private readonly bool _isSpecified;
-
         public Optional(T value, bool isSpecified)
         {
             Value = value;
-            _isSpecified = isSpecified;
+            IsSpecified = isSpecified;
         }
 
         public T Value { get; private set; }
 
-        public bool IsSpecified => _isSpecified;
+        public bool IsSpecified { get; private set; }
 
         public object ObjectValue => Value;
 
