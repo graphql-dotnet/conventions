@@ -19,7 +19,8 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
             var isNull = value == null;
             var shouldReturnValue = isNull;
 
-            if (shouldReturnValue) return null;
+            if (shouldReturnValue)
+                return null;
 
             var valueType = value.GetType();
 
@@ -49,7 +50,8 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
                 return Activator.CreateInstance(typeInfo.GetTypeRepresentation().AsType(), value);
             }
 
-            if (!typeInfo.IsInputType || !(value is Dictionary<string, object> input)) return value;
+            if (!typeInfo.IsInputType || !(value is Dictionary<string, object> input))
+                return value;
 
             var obj = Activator.CreateInstance(typeInfo.GetTypeRepresentation().AsType());
             foreach (var field in typeInfo.Fields.Where(field => !field.IsIgnored))

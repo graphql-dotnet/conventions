@@ -1,9 +1,9 @@
-﻿using GraphQL.Types;
-using GraphQL.Validation;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using GraphQL.Types;
+using GraphQL.Validation;
 
 // ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions

@@ -665,12 +665,12 @@ namespace Tests.Adapters
             return result;
         }
 
-        class UserContext : IUserContext
+        private class UserContext : IUserContext
         {
             public int SomeValue { get; set; }
         }
 
-        class DependencyInjector : IDependencyInjector
+        private class DependencyInjector : IDependencyInjector
         {
             public object Resolve(TypeInfo typeInfo)
             {
@@ -682,17 +682,17 @@ namespace Tests.Adapters
             }
         }
 
-        interface IDependency
+        private interface IDependency
         {
             string GetValue();
         }
 
-        class Dependency : IDependency
+        private class Dependency : IDependency
         {
             public string GetValue() => "Injection";
         }
 
-        class Query
+        private class Query
         {
             public string DependencyInjectionField([Inject] IDependency dependency) =>
                 dependency.GetValue();
@@ -765,7 +765,7 @@ namespace Tests.Adapters
                 context.SomeValue.ToString();
         }
 
-        enum TestEnum
+        private enum TestEnum
         {
             Foo,
 
@@ -774,7 +774,7 @@ namespace Tests.Adapters
         }
 
         [GraphQL.Conventions.InputType]
-        class InputObject
+        private class InputObject
         {
             public string Field1 { get; set; }
 
@@ -789,7 +789,7 @@ namespace Tests.Adapters
         }
 
         [GraphQL.Conventions.InputType]
-        class ComplexInputObject
+        private class ComplexInputObject
         {
             public Id Identifier { get; set; }
 

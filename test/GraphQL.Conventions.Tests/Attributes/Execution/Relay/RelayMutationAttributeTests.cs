@@ -125,7 +125,7 @@ namespace Tests.Attributes.Execution.Relay
             return await ExecuteMutation<Mutation>(query, inputs);
         }
 
-        class Mutation
+        private class Mutation
         {
             [RelayMutation]
             public DoSomethingOutput DoSomething(DoSomethingInput input) =>
@@ -148,7 +148,7 @@ namespace Tests.Attributes.Execution.Relay
         }
 
         [RelayMutationType]
-        class MutationType
+        private class MutationType
         {
             public DoSomethingOutput DoSomething(DoSomethingInput input) =>
                 new DoSomethingOutput
@@ -167,21 +167,21 @@ namespace Tests.Attributes.Execution.Relay
             }
         }
 
-        class DoSomethingInput : IRelayMutationInputObject
+        private class DoSomethingInput : IRelayMutationInputObject
         {
             public string ClientMutationId { get; set; }
 
             public ActionType Action { get; set; }
         }
 
-        class DoSomethingOutput : IRelayMutationOutputObject
+        private class DoSomethingOutput : IRelayMutationOutputObject
         {
             public string ClientMutationId { get; set; }
 
             public bool WasSuccessful { get; set; }
         }
 
-        enum ActionType
+        private enum ActionType
         {
             Add,
             Update,

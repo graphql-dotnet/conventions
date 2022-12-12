@@ -131,17 +131,14 @@ namespace GraphQL.Conventions.Extensions
 
             return lambda(arguments);
         }
-        private static ConcurrentDictionary<ConstructorInfo, Func<object[], object>> _constructorDictionary = new ConcurrentDictionary<ConstructorInfo, Func<object[], object>>();
+        private static readonly ConcurrentDictionary<ConstructorInfo, Func<object[], object>> _constructorDictionary = new ConcurrentDictionary<ConstructorInfo, Func<object[], object>>();
         private static Func<object[], object> InvokeEnhancedUncachedConstructor(ConstructorInfo constructorInfo)
         {
             if (constructorInfo.IsStatic)
                 throw new ArgumentException("Constructor must not be static", nameof(constructorInfo));
             var argumentsParameter = Expression.Parameter(typeof(object[]));
             var constructorParameters = constructorInfo.GetParameters();
-            var parameters = constructorParameters.Select((param, index) =>
-            {
-                return Expression.Convert(Expression.ArrayAccess(argumentsParameter, Expression.Constant(index)), param.ParameterType);
-            });
+            var parameters = constructorParameters.Select((param, index) => Expression.Convert(Expression.ArrayAccess(argumentsParameter, Expression.Constant(index)), param.ParameterType));
             var call = Expression.New(constructorInfo, parameters);
             var body = Expression.Convert(call, typeof(object));
             var lambda = Expression.Lambda<Func<object[], object>>(body, argumentsParameter);

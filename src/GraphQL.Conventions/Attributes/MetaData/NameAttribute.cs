@@ -15,7 +15,7 @@ namespace GraphQL.Conventions
     [AttributeUsage(Everywhere, AllowMultiple = true)]
     public class NameAttribute : MetaDataAttributeBase, IDefaultAttribute
     {
-        private static INameNormalizer _nameNormalizer = new NameNormalizer();
+        private static readonly INameNormalizer _nameNormalizer = new NameNormalizer();
 
         private readonly string _name;
 

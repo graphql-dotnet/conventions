@@ -75,17 +75,17 @@ namespace GraphQL.Conventions.Tests.Adapters
             schema.Subscription.Name.ShouldEqual(nameof(SimpleSubscriptionType));
         }
 
-        class SimpleQueryType
+        private class SimpleQueryType
         {
             public string TestQuery() => string.Empty;
         }
 
-        class SimpleMutationType
+        private class SimpleMutationType
         {
             public string TestMutation() => string.Empty;
         }
 
-        class SimpleSubscriptionType
+        private class SimpleSubscriptionType
         {
             public string TestSubscription() => string.Empty;
         }

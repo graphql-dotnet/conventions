@@ -8,8 +8,8 @@ using Tests.Templates;
 using Tests.Templates.Extensions;
 using ConventionsTypes = GraphQL.Conventions.Adapters.Types;
 using Extended = GraphQL.Conventions.Adapters.Types;
-using UriGraphType = GraphQL.Conventions.Adapters.Types.UriGraphType;
 using GuidGraphType = GraphQL.Conventions.Adapters.Types.GuidGraphType;
+using UriGraphType = GraphQL.Conventions.Adapters.Types.UriGraphType;
 // ReSharper disable UnusedMember.Local
 
 namespace Tests.Adapters
@@ -628,32 +628,32 @@ namespace Tests.Adapters
             Type<Task<NonNull<List<NonNull<TestUnionType>>>>>().ShouldBeOfNonNullableListType<NonNullGraphType<Extended.UnionGraphType<TestUnionType>>>();
         }
 
-        enum TestEnum
+        private enum TestEnum
         {
             MemberA,
             MemberB,
             MemberC,
         }
 
-        class TestOutputObject
+        private class TestOutputObject
         {
             public string SomeField { get; set; }
         }
 
         [InputType]
-        class TestInputObject
+        private class TestInputObject
         {
             public string SomeField { get; set; }
         }
 
-        interface ITestInterface
+        private interface ITestInterface
         {
             string SomeField { get; }
         }
 
-        class AnotherTestOutputObject { }
+        private class AnotherTestOutputObject { }
 
-        class TestUnionType : Union<TestOutputObject, AnotherTestOutputObject>
+        private class TestUnionType : Union<TestOutputObject, AnotherTestOutputObject>
         {
         }
     }

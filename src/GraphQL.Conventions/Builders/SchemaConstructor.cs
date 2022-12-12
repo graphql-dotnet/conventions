@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -28,8 +28,8 @@ namespace GraphQL.Conventions.Builders
 
         public Func<Type, object> TypeResolutionDelegate
         {
-            get { return _typeResolutionDelegate ?? (type => Activator.CreateInstance(type)); }
-            set { _typeResolutionDelegate = value; }
+            get => _typeResolutionDelegate ?? (type => Activator.CreateInstance(type));
+            set => _typeResolutionDelegate = value;
         }
 
         public TSchemaType Build<TSchema>() =>

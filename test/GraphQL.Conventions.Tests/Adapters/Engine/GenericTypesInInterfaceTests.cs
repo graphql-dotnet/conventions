@@ -39,19 +39,19 @@ namespace Tests.Adapters.Engine
             result.Data.ShouldHaveFieldWithValue("account", "id", 123);
         }
 
-        interface IEntity<T>
+        private interface IEntity<T>
         {
             T Id { get; }
         }
 
-        interface IAccount : IEntity<int> { }
+        private interface IAccount : IEntity<int> { }
 
-        class Account : IAccount
+        private class Account : IAccount
         {
             public int Id { get; } = 123;
         }
 
-        class Query
+        private class Query
         {
             // ReSharper disable once UnusedMember.Local
             // ReSharper disable once MemberHidesStaticFromOuterClass

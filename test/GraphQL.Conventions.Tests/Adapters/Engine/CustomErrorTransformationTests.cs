@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using GraphQL;
@@ -46,18 +46,18 @@ namespace Tests.Adapters.Engine
             error.InnerException.ShouldBeOfType<CustomException>();
         }
 
-        class Query
+        private class Query
         {
             // ReSharper disable once UnusedMember.Local
             public string QueryData() => throw new CustomException();
         }
 
-        class CustomErrorTransformation : IErrorTransformation
+        private class CustomErrorTransformation : IErrorTransformation
         {
             public ExecutionErrors Transform(ExecutionErrors errors)
                 => errors;
         }
 
-        class CustomException : Exception { }
+        private class CustomException : Exception { }
     }
 }

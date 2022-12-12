@@ -56,22 +56,22 @@ namespace Tests.Attributes.MetaData
             type.ShouldHaveFieldWithName("DESCRIBED_MEMBER").AndWithDescription("Some enum member description");
         }
 
-        class UndescribedType { }
+        private class UndescribedType { }
 
         [Description("Some type description")]
-        class DescribedType { }
+        private class DescribedType { }
 
-        interface UndescribedInterface { }
+        private interface UndescribedInterface { }
 
         [Description("Some interface description")]
-        interface DescribedInterface { }
+        private interface DescribedInterface { }
 
-        class UndescribedGenericType<T> { }
+        private class UndescribedGenericType<T> { }
 
         [Description("Some generic type description")]
-        class DescribedGenericType<T> { }
+        private class DescribedGenericType<T> { }
 
-        class FieldData
+        private class FieldData
         {
             public int UndescribedField { get; set; }
 
@@ -79,12 +79,12 @@ namespace Tests.Attributes.MetaData
             public bool DescribedField { get; set; }
         }
 
-        class ArgumentData
+        private class ArgumentData
         {
             public int Field(bool arg1, [Description("Some argument description")] bool arg2) { return 0; }
         }
 
-        class EnumData
+        private class EnumData
         {
             public enum Enum
             {

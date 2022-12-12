@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);IDE0060;IDE0057;CA1848;CA2254</NoWarn>
+    <NoWarn>$(NoWarn);CA1310</NoWarn><!-- locale -->
+    <AnalysisLevel>6.0-recommended</AnalysisLevel>
+  </PropertyGroup>
+</Project>

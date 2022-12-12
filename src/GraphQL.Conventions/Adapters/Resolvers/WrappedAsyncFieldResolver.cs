@@ -14,7 +14,7 @@ using GraphQL.Resolvers;
 // ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions.Adapters
 {
-    class WrappedAsyncFieldResolver : IFieldResolver
+    internal class WrappedAsyncFieldResolver : IFieldResolver
     {
         private static readonly ExecutionFilterAttributeHandler ExecutionFilterHandler =
             new ExecutionFilterAttributeHandler();

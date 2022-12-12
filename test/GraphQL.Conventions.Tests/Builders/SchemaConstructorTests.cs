@@ -99,9 +99,13 @@ namespace Tests.Builders
                     .IgnoreTypes((t, m) =>
                     {
                         // Ignore based on the type:
-                        if (t == typeof(Unwanted.QueryType3)) { return true; }
+                        if (t == typeof(Unwanted.QueryType3))
+                            return true;
+
                         // Ignore based on name of the method:
-                        if (m != null && m.Name == "UpdateSomethingIgnored") { return true; }
+                        if (m != null && m.Name == "UpdateSomethingIgnored")
+                            return true;
+
                         return false;
                     })
                     .Build(
@@ -120,14 +124,14 @@ namespace Tests.Builders
             schema.Mutation.ShouldNotHaveFieldWithName("updateSomethingIgnored");
         }
 
-        class SchemaType1
+        private class SchemaType1
         {
             public QueryType1 Query { get; }
 
             public MutationType1 Mutation { get; }
         }
 
-        class QueryType1
+        private class QueryType1
         {
             public string Foo => "Test";
 
@@ -136,23 +140,23 @@ namespace Tests.Builders
             public void Ignored() { }
         }
 
-        class MutationType1
+        private class MutationType1
         {
         }
 
-        class SchemaType2
+        private class SchemaType2
         {
             public QueryType2 Query { get; }
 
             public MutationType2 Mutation { get; }
         }
 
-        class QueryType2
+        private class QueryType2
         {
             public bool Baz => false;
         }
 
-        class MutationType2
+        private class MutationType2
         {
             public bool UpdateSomething() => false;
         }
@@ -160,19 +164,19 @@ namespace Tests.Builders
 
     namespace Unwanted
     {
-        class SchemaType3
+        internal class SchemaType3
         {
             public QueryType3 Query { get; }
 
             public MutationType3 Mutation { get; }
         }
 
-        class QueryType3
+        internal class QueryType3
         {
             public bool BazIgnored => false;
         }
 
-        class MutationType3
+        internal class MutationType3
         {
             public bool UpdateSomethingIgnored() => false;
         }

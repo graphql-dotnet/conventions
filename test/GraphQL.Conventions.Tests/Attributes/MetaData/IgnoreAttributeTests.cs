@@ -24,7 +24,7 @@ namespace Tests.Attributes.MetaData
             type.ShouldHaveFieldWithName("DEPRECATED_MEMBER").AndWithDeprecationReason("Some enum member reason");
         }
 
-        class FieldData
+        private class FieldData
         {
             public int NormalField { get; set; }
 
@@ -32,7 +32,7 @@ namespace Tests.Attributes.MetaData
             public bool IgnoredField { get; set; }
         }
 
-        class EnumData
+        private class EnumData
         {
             public enum Enum
             {

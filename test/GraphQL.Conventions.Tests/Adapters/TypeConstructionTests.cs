@@ -138,7 +138,7 @@ namespace Tests.Adapters
             type.ShouldNotBeNull();
         }
 
-        class Bug190Query
+        private class Bug190Query
         {
             public NonNull<Node1> Test() => throw new NotImplementedException();
 
@@ -155,7 +155,7 @@ namespace Tests.Adapters
             }
         }
 
-        class Bug190Query_2
+        private class Bug190Query_2
         {
             public ITest[] Field { get; }
 
@@ -169,61 +169,61 @@ namespace Tests.Adapters
             }
         }
 
-        class OutputType
+        private class OutputType
         {
         }
 
         [GraphQL.Conventions.InputType]
-        class InputType
+        private class InputType
         {
         }
 
-        class TypeWithoutDescription
+        private class TypeWithoutDescription
         {
         }
 
         [Description("Some Description")]
-        class TypeWithDescription
+        private class TypeWithDescription
         {
         }
 
         [GraphQL.Conventions.Name("Foo")]
-        class TypeWithOverriddenName
+        private class TypeWithOverriddenName
         {
         }
 
-        class TypeWithoutDeprecationReason
+        private class TypeWithoutDeprecationReason
         {
         }
 
         [Deprecated("Some Deprecation Reason")]
-        class TypeWithDeprecationReason
+        private class TypeWithDeprecationReason
         {
         }
 
-        interface IInterface
+        private interface IInterface
         {
             int InterfaceField { get; }
         }
 
-        class TypeImplementingInterfaces : IInterface
+        private class TypeImplementingInterfaces : IInterface
         {
             public int InterfaceField => 1;
 
             public int TypeField => 2;
         }
 
-        interface IInterface1
+        private interface IInterface1
         {
             int Field1 { get; }
         }
 
-        interface IInterface2
+        private interface IInterface2
         {
             int Field2 { get; }
         }
 
-        class TypeImplementingTwoInterfaces : IInterface1, IInterface2
+        private class TypeImplementingTwoInterfaces : IInterface1, IInterface2
         {
             public int Field1 => 1;
 

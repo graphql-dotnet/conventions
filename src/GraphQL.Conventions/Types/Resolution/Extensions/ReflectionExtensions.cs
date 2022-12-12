@@ -75,7 +75,8 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
 
         public static async Task<object> GetTaskResult(this object obj)
         {
-            if (!(obj is Task task)) return null;
+            if (!(obj is Task task))
+                return null;
             await task.ConfigureAwait(false);
             var propertyInfo = task.GetType().GetTypeInfo().GetProperty("Result");
             return propertyInfo?.GetValue(task);
@@ -121,7 +122,8 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
             var convertMethod = typeof(ReflectionExtensions)
                 .GetTypeInfo()
                 .GetMethod("ConvertToArray", BindingFlags.Static | BindingFlags.Public);
-            if (convertMethod == null) return null;
+            if (convertMethod == null)
+                return null;
             var genericMethod = convertMethod.MakeGenericMethod(elementType);
             return genericMethod.InvokeEnhanced(null, new object[] { list });
         }

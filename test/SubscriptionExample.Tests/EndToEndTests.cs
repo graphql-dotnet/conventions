@@ -1,8 +1,8 @@
+using System.Net;
+using System.Text.Json;
 using GraphQL.Transport;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using System.Net;
-using System.Text.Json;
 using Xunit;
 
 namespace SubscriptionExample.Tests;
@@ -161,10 +161,7 @@ public class EndToEndTests
         string url = "/graphql")
     {
         var webSocketClient = server.CreateWebSocketClient();
-        webSocketClient.ConfigureRequest = request =>
-        {
-            request.Headers["Sec-WebSocket-Protocol"] = "graphql-transport-ws";
-        };
+        webSocketClient.ConfigureRequest = request => request.Headers["Sec-WebSocket-Protocol"] = "graphql-transport-ws";
         webSocketClient.SubProtocols.Add("graphql-transport-ws");
         using var webSocket = await webSocketClient.ConnectAsync(new Uri(server.BaseAddress, url), default).ConfigureAwait(false);
 

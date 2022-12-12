@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Models = DataLoaderWithEFCore.Data.Models;
 
 namespace DataLoaderWithEFCore.GraphApi

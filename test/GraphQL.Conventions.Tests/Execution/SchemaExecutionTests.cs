@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using GraphQL.NewtonsoftJson;
 using Tests.Templates;
 using Tests.Templates.Extensions;
@@ -20,12 +20,12 @@ namespace Tests.Execution
             ResultHelpers.AssertNoErrorsInResult(result);
         }
 
-        class SchemaTypeWithDecimal
+        private class SchemaTypeWithDecimal
         {
             public QueryTypeWithDecimal Query { get; }
         }
 
-        class QueryTypeWithDecimal
+        private class QueryTypeWithDecimal
         {
             public decimal Test => 10;
         }

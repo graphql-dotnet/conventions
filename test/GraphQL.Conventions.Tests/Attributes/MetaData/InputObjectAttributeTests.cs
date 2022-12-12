@@ -30,16 +30,16 @@ namespace Tests.Attributes.MetaData
             type.IsInputType.ShouldEqual(true);
         }
 
-        class TestOutputObject
+        private class TestOutputObject
         {
         }
 
         [InputType]
-        class TestInputObject
+        private class TestInputObject
         {
         }
 
-        struct TestStruct
+        private struct TestStruct
         {
         }
     }

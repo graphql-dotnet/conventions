@@ -1,6 +1,6 @@
-﻿using GraphQL.Conventions.Extensions;
 using System;
 using System.Reflection;
+using GraphQL.Conventions.Extensions;
 
 // ReSharper disable UnusedType.Local
 // ReSharper disable UnusedMember.Local
@@ -201,12 +201,32 @@ namespace Tests.Extensions
 
         private class MyObject
         {
-            private string ret;
-            public MyObject() => ret = "unknown";
-            public MyObject(int value) => ret = value.ToString();
-            public MyObject(string value) => ret = value;
-            public MyObject(Guid value, MyObject obj) => ret = $"{value} {obj}";
-            public MyObject(out double value) => value = 5.0;
+            private readonly string ret;
+            public MyObject()
+            {
+                ret = "unknown";
+            }
+
+            public MyObject(int value)
+            {
+                ret = value.ToString();
+            }
+
+            public MyObject(string value)
+            {
+                ret = value;
+            }
+
+            public MyObject(Guid value, MyObject obj)
+            {
+                ret = $"{value} {obj}";
+            }
+
+            public MyObject(out double value)
+            {
+                value = 5.0;
+            }
+
             public override string ToString()
             {
                 return ret;
@@ -215,12 +235,18 @@ namespace Tests.Extensions
 
         private class MyObjectRefC
         {
-            public MyObjectRefC(out int value) => throw new InvalidTimeZoneException();
+            public MyObjectRefC(out int value)
+            {
+                throw new InvalidTimeZoneException();
+            }
         }
 
         private class MyThrowingObject
         {
-            public MyThrowingObject() => throw new InvalidTimeZoneException();
+            public MyThrowingObject()
+            {
+                throw new InvalidTimeZoneException();
+            }
         }
     }
 }

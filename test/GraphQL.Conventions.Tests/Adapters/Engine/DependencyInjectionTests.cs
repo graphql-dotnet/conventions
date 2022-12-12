@@ -115,7 +115,7 @@ namespace Tests.Adapters.Engine
             result.Data.ShouldHaveFieldWithValue("withDependency", 3);
         }
 
-        class Query
+        private class Query
         {
             private readonly IRepository _repository;
 
@@ -127,12 +127,12 @@ namespace Tests.Adapters.Engine
             public string Field => _repository.GetValue();
         }
 
-        interface IRepository
+        private interface IRepository
         {
             string GetValue();
         }
 
-        class Repository : IRepository
+        private class Repository : IRepository
         {
             private readonly string _value;
 
@@ -144,22 +144,22 @@ namespace Tests.Adapters.Engine
             public string GetValue() => _value;
         }
 
-        class QueryWithDIFields
+        private class QueryWithDIFields
         {
             public int WithDependency([Inject] IDependency d) => d.Get(3);
         }
 
-        interface IDependency
+        private interface IDependency
         {
             T Get<T>(T value);
         }
 
-        class Dependency : IDependency
+        private class Dependency : IDependency
         {
             public T Get<T>(T value) => value;
         }
 
-        class DependencyInjector : IDependencyInjector
+        private class DependencyInjector : IDependencyInjector
         {
             private readonly string _value;
 
@@ -190,12 +190,12 @@ namespace Tests.Adapters.Engine
             }
         }
 
-        class ChildDependencyInjector : DependencyInjector
+        private class ChildDependencyInjector : DependencyInjector
         {
             public ChildDependencyInjector(string value) : base(value) { }
         }
 
-        class ScopedDocumentExecuter : GraphQL.DocumentExecuter
+        private class ScopedDocumentExecuter : GraphQL.DocumentExecuter
         {
             protected override IExecutionStrategy SelectExecutionStrategy(ExecutionContext context)
             {

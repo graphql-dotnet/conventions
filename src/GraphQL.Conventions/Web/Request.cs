@@ -11,16 +11,10 @@ namespace GraphQL.Conventions.Web
     /// </summary>
     public class Request
     {
-        static readonly IRequestDeserializer RequestDeserializer = new RequestDeserializer();
-
-        static readonly Regex RegexSuperfluousWhitespace =
+        private static readonly IRequestDeserializer RequestDeserializer = new RequestDeserializer();
+        private static readonly Regex RegexSuperfluousWhitespace =
             new Regex(@"[ \t\r\n]{1,}", RegexOptions.Multiline | RegexOptions.Compiled);
-
-        readonly string _queryId;
-
-        readonly QueryInput _queryInput;
-
-        readonly Exception _exception;
+        private readonly QueryInput _queryInput;
 
         public static Request New(Stream stream)
         {
@@ -52,29 +46,29 @@ namespace GraphQL.Conventions.Web
             return new Request(exception);
         }
 
-        Request()
+        private Request()
         {
-            _queryId = Guid.NewGuid().ToString();
+            QueryId = Guid.NewGuid().ToString();
         }
 
-        Request(QueryInput queryInput)
+        private Request(QueryInput queryInput)
             : this()
         {
             _queryInput = queryInput;
 
             if (string.IsNullOrWhiteSpace(_queryInput.QueryString))
             {
-                _exception = new ArgumentException($"Empty query string");
+                Error = new ArgumentException($"Empty query string");
             }
         }
 
-        Request(Exception exception)
+        private Request(Exception exception)
             : this()
         {
-            _exception = exception;
+            Error = exception;
         }
 
-        public string QueryId => _queryId;
+        public string QueryId { get; private set; }
 
         /// <summary>
         /// The GraphQL query part of the request.
@@ -91,15 +85,15 @@ namespace GraphQL.Conventions.Web
         /// </summary>
         public string OperationName => _queryInput?.OperationName;
 
-        public bool IsValid => _exception == null;
+        public bool IsValid => Error == null;
 
-        public Exception Error => _exception;
+        public Exception Error { get; private set; }
 
         public string MinifiedQueryString => MinifyString(QueryString);
 
         public string MinifiedVariablesString => MinifyString(JsonConvert.SerializeObject(Variables));
 
-        static string MinifyString(string input)
+        private static string MinifyString(string input)
         {
             if (input == null)
             {

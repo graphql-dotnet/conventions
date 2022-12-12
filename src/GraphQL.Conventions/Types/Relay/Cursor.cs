@@ -21,13 +21,13 @@ namespace GraphQL.Conventions.Relay
         }
 
         public override bool Equals(object obj) =>
-            obj is Cursor ? Equals((Cursor)obj) : false;
+            obj is Cursor cursor ? Equals(cursor) : false;
 
         public bool Equals(Cursor other) =>
             _id.Equals(other._id);
 
         public int CompareTo(object other) =>
-            other is Cursor ? CompareTo((Cursor)other) : -1;
+            other is Cursor cursor ? CompareTo(cursor) : -1;
 
         public int CompareTo(Cursor other) =>
             _id.CompareTo(other._id);
@@ -63,14 +63,12 @@ namespace GraphQL.Conventions.Relay
 
         public int? IntegerForCursor<TType>()
         {
-            int intVal;
-            return int.TryParse(CursorForType(typeof(TType)), out intVal) ? intVal : (int?)null;
+            return int.TryParse(CursorForType(typeof(TType)), out int intVal) ? intVal : (int?)null;
         }
 
         public long? LongForCursor<TType>()
         {
-            long intVal;
-            return long.TryParse(CursorForType(typeof(TType)), out intVal) ? intVal : (long?)null;
+            return long.TryParse(CursorForType(typeof(TType)), out long intVal) ? intVal : (long?)null;
         }
 
         public static Cursor New(Type type, string index, bool? serializeUsingColon = null) =>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using DataLoaderWithEFCore.Data.Models;
 using Microsoft.EntityFrameworkCore;
 

@@ -49,7 +49,7 @@ namespace GraphQL.Conventions
             var query = _requestDeserializer.GetQueryFromRequestBody(requestBody);
             _queryString = query.QueryString;
             _operationName = query.OperationName;
-            return this.WithVariables(query.Variables);
+            return WithVariables(query.Variables);
         }
 
         public IGraphQLExecutor<ExecutionResult> WithQueryString(string queryString)
@@ -125,7 +125,7 @@ namespace GraphQL.Conventions
 
         public IGraphQLExecutor<ExecutionResult> DisableValidation()
         {
-            return this.EnableValidation(false);
+            return EnableValidation(false);
         }
 
         public IGraphQLExecutor<ExecutionResult> EnableProfiling(bool enableProfiling = true)
@@ -136,7 +136,7 @@ namespace GraphQL.Conventions
 
         public IGraphQLExecutor<ExecutionResult> DisableProfiling()
         {
-            return this.EnableProfiling(false);
+            return EnableProfiling(false);
         }
 
         public Task<ExecutionResult> ExecuteAsync()

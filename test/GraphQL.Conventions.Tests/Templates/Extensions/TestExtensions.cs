@@ -9,7 +9,7 @@ using GraphQL.Execution;
 
 namespace Tests.Templates.Extensions
 {
-    static class TestExtensions
+    internal static class TestExtensions
     {
         private static readonly Regex RegexStripBlankPrefixes = new Regex(@"^[ \t]+", RegexOptions.Multiline);
 
@@ -197,12 +197,12 @@ namespace Tests.Templates.Extensions
             var obj = result;
             foreach (var k in path.Take(path.Count - 1))
             {
-                if (k is int)
+                if (k is int intValue)
                 {
                     var node = obj as ArrayExecutionNode;
                     node.Items.ShouldNotBeNull();
-                    node.Items.Count.ShouldBeGreaterThan((int)k);
-                    obj = node.Items[(int)k];
+                    node.Items.Count.ShouldBeGreaterThan(intValue);
+                    obj = node.Items[intValue];
                     obj.ShouldNotBeNull();
                 }
                 else
@@ -216,13 +216,13 @@ namespace Tests.Templates.Extensions
                 }
             }
             var key = path.Last();
-            if (key is int)
+            if (key is int intValue2)
             {
                 var node = obj as ArrayExecutionNode;
                 node.Items.ShouldNotBeNull();
-                node.Items.Count.ShouldBeGreaterThan((int)key);
+                node.Items.Count.ShouldBeGreaterThan(intValue2);
 
-                var output = node.Items[(int)key];
+                var output = node.Items[intValue2];
                 output.ShouldNotBeNull();
                 output.Result.ShouldEqual(value);
             }

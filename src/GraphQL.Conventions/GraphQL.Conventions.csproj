@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>GraphQL Conventions for .NET</Description>
@@ -8,7 +8,6 @@
     <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
     <LangVersion>9.0</LangVersion>
     <DepsFileGenerationMode>old</DepsFileGenerationMode>
-    <DebugType>portable</DebugType>
     <AssemblyName>GraphQL.Conventions</AssemblyName>
     <PackageId>GraphQL.Conventions</PackageId>
     <PackageTags>GraphQL;json;api</PackageTags>
@@ -24,11 +23,14 @@
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">True</ContinuousIntegrationBuild>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="GraphQL.DataLoader" Version="7.2.0" />
     <PackageReference Include="GraphQL.NewtonsoftJson" Version="7.2.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

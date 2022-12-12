@@ -1,9 +1,9 @@
-﻿using GraphQL.Conventions.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using GraphQL.Conventions.Extensions;
 
 // ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
@@ -55,8 +55,9 @@ namespace GraphQL.Conventions
         {
             private bool _done;
             public Exception InnerException { get; set; }
-            readonly AutoResetEvent _workItemsWaiting = new AutoResetEvent(false);
-            readonly Queue<Tuple<SendOrPostCallback, object>> _items =
+
+            private readonly AutoResetEvent _workItemsWaiting = new AutoResetEvent(false);
+            private readonly Queue<Tuple<SendOrPostCallback, object>> _items =
                 new Queue<Tuple<SendOrPostCallback, object>>();
 
             public override void Send(SendOrPostCallback d, object state)

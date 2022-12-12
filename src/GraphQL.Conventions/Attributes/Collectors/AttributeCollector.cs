@@ -9,7 +9,7 @@ namespace GraphQL.Conventions.Attributes.Collectors
     public class AttributeCollector<TAttribute>
         where TAttribute : IAttribute
     {
-        class WrappedAttribute : IComparable<WrappedAttribute>
+        private class WrappedAttribute : IComparable<WrappedAttribute>
         {
             // ReSharper disable once StaticMemberInGenericType
             private static long _currentIndex;
@@ -62,10 +62,7 @@ namespace GraphQL.Conventions.Attributes.Collectors
 
         private void AddDefaultAttributes(params TAttribute[] defaultAttributes)
         {
-            if (_defaultAttributes == null)
-            {
-                _defaultAttributes = new List<TAttribute>();
-            }
+            _defaultAttributes ??= new List<TAttribute>();
             _defaultAttributes.AddRange(defaultAttributes.Except(_defaultAttributes));
         }
 

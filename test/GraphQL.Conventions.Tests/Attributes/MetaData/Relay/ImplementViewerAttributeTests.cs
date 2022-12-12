@@ -149,25 +149,25 @@ namespace Tests.Attributes.MetaData.Relay
         }
 
         [ImplementViewer(OperationType.Query)]
-        class Query1
+        private class Query1
         {
             public string IntToString(int value) => value.ToString();
         }
 
         [ImplementViewer(OperationType.Query)]
-        class Query2
+        private class Query2
         {
             public string FloatToString(float value) => value.ToString(CultureInfo.InvariantCulture);
         }
 
         [ImplementViewer(OperationType.Mutation)]
-        class Mutation1
+        private class Mutation1
         {
             public bool? DoSomething(bool? value) => value;
         }
 
         [ImplementViewer(OperationType.Mutation)]
-        class Mutation2
+        private class Mutation2
         {
             public bool? DoSomethingElse(bool? value) => value;
         }

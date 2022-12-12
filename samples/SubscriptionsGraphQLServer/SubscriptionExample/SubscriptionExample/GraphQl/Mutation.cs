@@ -1,4 +1,4 @@
-﻿using GraphQL.Conventions;
+using GraphQL.Conventions;
 using SubscriptionExample.Core;
 
 namespace SubscriptionExample.GraphQl

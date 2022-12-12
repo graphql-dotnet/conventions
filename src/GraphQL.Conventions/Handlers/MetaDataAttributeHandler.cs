@@ -7,9 +7,9 @@ using GraphQL.Conventions.Types.Descriptors;
 
 namespace GraphQL.Conventions.Handlers
 {
-    class MetaDataAttributeHandler : MetaDataAttributeHandler<IMetaDataAttribute> { }
+    internal class MetaDataAttributeHandler : MetaDataAttributeHandler<IMetaDataAttribute> { }
 
-    class MetaDataAttributeHandler<TAttribute>
+    internal class MetaDataAttributeHandler<TAttribute>
         where TAttribute : IMetaDataAttribute
     {
         private readonly AttributeCollector<TAttribute> _collector = new AttributeCollector<TAttribute>();

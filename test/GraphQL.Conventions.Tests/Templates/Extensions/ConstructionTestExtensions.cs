@@ -6,7 +6,7 @@ using GraphQL.Types;
 
 namespace Tests.Templates.Extensions
 {
-    static class ConstructionTestExtensions
+    internal static class ConstructionTestExtensions
     {
         public static void ShouldHaveQueries(this ISchema schema, int numberOfQueries)
         {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using GraphQL.Conventions;
@@ -24,7 +24,7 @@ namespace Tests.Adapters
         }
     }
 
-    class Subscription
+    internal class Subscription
     {
         private readonly Subject<string> _subject;
 
