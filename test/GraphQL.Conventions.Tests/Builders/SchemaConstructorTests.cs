@@ -100,10 +100,12 @@ namespace Tests.Builders
                     {
                         // Ignore based on the type:
                         if (t == typeof(Unwanted.QueryType3))
-                        { return true; }
+                            return true;
+
                         // Ignore based on name of the method:
                         if (m != null && m.Name == "UpdateSomethingIgnored")
-                        { return true; }
+                            return true;
+
                         return false;
                     })
                     .Build(
