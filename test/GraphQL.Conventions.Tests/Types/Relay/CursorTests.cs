@@ -87,11 +87,11 @@ namespace Tests.Types.Relay
             Assert.IsTrue(cursor3 != cursor4);
         }
 
-        class Test
+        private class Test
         {
         }
 
-        class AnotherTest
+        private class AnotherTest
         {
         }
     }

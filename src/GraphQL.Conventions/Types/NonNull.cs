@@ -8,20 +8,14 @@ namespace GraphQL.Conventions
     public struct NonNull<T> : IEquatable<NonNull<T>>, INonNull
         where T : class
     {
-        private readonly T _value;
-
         public NonNull(T value)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-            _value = value;
+            Value = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        public T Value => _value;
+        public T Value { get; private set; }
 
-        public object ObjectValue => _value;
+        public object ObjectValue => Value;
 
         public static object ConvertToNonNull(object value) =>
             new NonNull<T>((T)value);
@@ -33,7 +27,7 @@ namespace GraphQL.Conventions
             new NonNull<T>(value);
 
         public static implicit operator T(NonNull<T> value) =>
-            value._value;
+            value.Value;
 
         public static bool operator ==(NonNull<T> v1, NonNull<T> v2) =>
             v1.Equals(v2);
@@ -43,22 +37,21 @@ namespace GraphQL.Conventions
 
         public override bool Equals(object obj)
         {
-            if (obj is NonNull<T>)
+            if (obj is NonNull<T> otherValue)
             {
-                var otherValue = (NonNull<T>)obj;
-                return _value == otherValue._value;
+                return Value == otherValue.Value;
             }
             return false;
         }
 
         public bool Equals(NonNull<T> other) =>
-            _value == other._value;
+            Value == other.Value;
 
         public override int GetHashCode() =>
-            _value.GetHashCode();
+            Value.GetHashCode();
 
         public override string ToString() =>
-            _value?.ToString();
+            Value?.ToString();
     }
 
     public static class NonNull

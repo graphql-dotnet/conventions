@@ -23,7 +23,7 @@ namespace Tests.Adapters.Engine.Types
             Value = value;
         }
 
-        public override ASTNodeKind Kind { get => ASTNodeKind.Field; }
+        public override ASTNodeKind Kind => ASTNodeKind.Field;
     }
     #endregion
 

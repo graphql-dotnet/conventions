@@ -133,7 +133,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             innerError?.Data["someKey"].ShouldEqual("someValue");
         }
 
-        class Query
+        private class Query
         {
             public Object1 GetObject() => new Object1();
 
@@ -145,7 +145,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             }
         }
 
-        class Object1
+        private class Object1
         {
             public Object2 Field => new Object2();
 
@@ -158,7 +158,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             };
         }
 
-        class Object2
+        private class Object2
         {
             private readonly bool _throwError;
 

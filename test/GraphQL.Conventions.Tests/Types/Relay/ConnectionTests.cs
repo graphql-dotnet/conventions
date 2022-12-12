@@ -652,12 +652,12 @@ namespace Tests.Types.Relay
                 .ToConnection(first, after, last, before);
         }
 
-        class Foo
+        private class Foo
         {
             public int Value { get; set; }
         }
 
-        class Bar
+        private class Bar
         {
             public string Value { get; set; }
         }

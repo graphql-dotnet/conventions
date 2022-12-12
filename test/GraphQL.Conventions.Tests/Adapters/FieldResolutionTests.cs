@@ -404,7 +404,7 @@ namespace Tests.Adapters
             return result;
         }
 
-        class Query
+        private class Query
         {
             public bool? BooleanField => true;
 
@@ -564,14 +564,14 @@ namespace Tests.Adapters
             public Connection<SimpleObject> TestConnection() => null;
         }
 
-        class SimpleObject
+        private class SimpleObject
         {
             public string Foo { get; set; }
 
             public double Bar { get; set; }
         }
 
-        enum TestEnum
+        private enum TestEnum
         {
             One,
             Two,
@@ -579,7 +579,7 @@ namespace Tests.Adapters
             Four,
         }
 
-        class Entity
+        private class Entity
         {
             private readonly string _data;
 
@@ -600,31 +600,31 @@ namespace Tests.Adapters
             string Value { get; }
         }
 
-        class InterfaceImplementation1 : TestInterface
+        private class InterfaceImplementation1 : TestInterface
         {
             public string Value => "Test 1";
 
             public int Test1 => 1;
         }
 
-        class InterfaceImplementation2 : TestInterface
+        private class InterfaceImplementation2 : TestInterface
         {
             public string Value => "Test 2";
 
             public int Test2 => 2;
         }
 
-        class UnionImplementation1
+        private class UnionImplementation1
         {
             public string Field1 => "First";
         }
 
-        class UnionImplementation2
+        private class UnionImplementation2
         {
             public string Field2 => "Second";
         }
 
-        class TestUnion : Union<UnionImplementation1, UnionImplementation2>
+        private class TestUnion : Union<UnionImplementation1, UnionImplementation2>
         {
         }
     }

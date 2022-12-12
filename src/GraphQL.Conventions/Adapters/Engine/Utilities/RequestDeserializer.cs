@@ -32,14 +32,12 @@ namespace GraphQL.Conventions
                 query.QueryString = queryString as string ?? string.Empty;
             }
 
-            object operationName = null;
-            if (request?.TryGetValue("operationName", out operationName) ?? false)
+            if (request?.TryGetValue("operationName", out object operationName) ?? false)
             {
                 query.OperationName = operationName as string;
             }
 
-            object variables = null;
-            if (request?.TryGetValue("variables", out variables) ?? false)
+            if (request?.TryGetValue("variables", out object variables) ?? false)
             {
                 var variablesString = variables as string;
                 if (!string.IsNullOrWhiteSpace(variablesString))
@@ -98,9 +96,8 @@ namespace GraphQL.Conventions
             if (value is JValue rawValue)
             {
                 var val = rawValue.Value;
-                if (val is long)
+                if (val is long l)
                 {
-                    long l = (long)val;
                     if (l >= int.MinValue && l <= int.MaxValue)
                     {
                         return (int)l;

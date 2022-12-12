@@ -19,8 +19,8 @@ namespace GraphQL.Conventions.Types.Descriptors
 
         public object DefaultValue
         {
-            get { return _defaultValue ?? Value; }
-            set { _defaultValue = value; }
+            get => _defaultValue ?? Value;
+            set => _defaultValue = value;
         }
 
         public List<GraphArgumentInfo> Arguments { get; } =

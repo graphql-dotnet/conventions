@@ -1,4 +1,3 @@
-﻿using AutoMapper;
 using DataLoaderWithEFCore.Data;
 using DataLoaderWithEFCore.Data.Repositories;
 using DataLoaderWithEFCore.GraphApi;
@@ -6,7 +5,6 @@ using GraphQL.Conventions;
 using GraphQL.DataLoader;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -62,10 +60,7 @@ namespace DataLoaderWithEFCore
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseGraphQLPlayground(options: new GraphQL.Server.Ui.Playground.PlaygroundOptions { GraphQLEndPoint = "/api/graph" });
-            app.UseEndpoints(configure =>
-            {
-                configure.MapControllers();
-            });
+            app.UseEndpoints(configure => configure.MapControllers());
         }
     }
 }

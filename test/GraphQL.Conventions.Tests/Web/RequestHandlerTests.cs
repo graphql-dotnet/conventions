@@ -173,7 +173,7 @@ namespace Tests.Web
             ");
         }
 
-        class DependencyInjector : IDependencyInjector
+        private class DependencyInjector : IDependencyInjector
         {
             public object Resolve(TypeInfo typeInfo)
             {
@@ -185,21 +185,21 @@ namespace Tests.Web
             }
         }
 
-        class TestQuery
+        private class TestQuery
         {
             public string Hello => "World";
 
             public Nested Sub => new Nested();
         }
 
-        class Nested
+        private class Nested
         {
             public Nested Sub => new Nested();
 
             public string End => string.Empty;
         }
 
-        class ProfiledQuery
+        private class ProfiledQuery
         {
             public async Task<int> Foo(int ms)
             {
@@ -208,20 +208,20 @@ namespace Tests.Web
             }
         }
 
-        class CompositeQuery
+        private class CompositeQuery
         {
             public TestQuery Earth => new TestQuery();
             public Unwanted.TestQuery2 Mars => new Unwanted.TestQuery2();
         }
     }
 
-    class SimpleQuery
+    internal class SimpleQuery
     {
         public string Hello => "World";
         public HelloType HelloType(int v) => new HelloType(v);
     }
 
-    class HelloType
+    internal class HelloType
     {
         [Ignore]
         public int HiddenVersion { get; set; }
@@ -232,7 +232,7 @@ namespace Tests.Web
         }
     }
 
-    static class QueryExtensions
+    internal static class QueryExtensions
     {
         public static string HelloExtended(this SimpleQuery query, int v) => $"Extended-{v}";
 
@@ -241,7 +241,7 @@ namespace Tests.Web
 
     namespace Unwanted
     {
-        class TestQuery2
+        internal class TestQuery2
         {
             public string Hello => "World From Mars";
         }

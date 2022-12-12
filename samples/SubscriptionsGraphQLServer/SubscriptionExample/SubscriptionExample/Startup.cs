@@ -1,4 +1,5 @@
-﻿using GraphQL;
+using System.Threading.Tasks;
+using GraphQL;
 using GraphQL.Conventions;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
@@ -8,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using SubscriptionExample.Core;
 using SubscriptionExample.GraphQl;
-using System.Threading.Tasks;
 using DocumentExecuter = GraphQL.Conventions.DocumentExecuter;
 
 namespace SubscriptionExample
@@ -26,10 +26,7 @@ namespace SubscriptionExample
             {
                 builder
                     .AddSystemTextJson()
-                    .AddErrorInfoProvider(option =>
-                    {
-                        option.ExposeExceptionDetails = true;
-                    })
+                    .AddErrorInfoProvider(option => option.ExposeExceptionDetails = true)
                     .AddDataLoader()
                     .UseApolloTracing()
                     .ConfigureExecutionOptions(options =>

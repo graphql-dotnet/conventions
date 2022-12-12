@@ -63,22 +63,22 @@ namespace Tests.Attributes.MetaData
             type.ShouldNotHaveFieldWithName("OVERRIDDEN_MEMBER");
         }
 
-        class NormalType { }
+        private class NormalType { }
 
         [Name("SomeType")]
-        class OverriddenType { }
+        private class OverriddenType { }
 
-        interface NormalInterface { }
+        private interface NormalInterface { }
 
         [Name("SomeInterface")]
-        interface OverriddenInterface { }
+        private interface OverriddenInterface { }
 
-        class GenericType<T> { }
+        private class GenericType<T> { }
 
         [Name("SomeGenericType")]
-        class OverriddenGenericType<T> { }
+        private class OverriddenGenericType<T> { }
 
-        class FieldData
+        private class FieldData
         {
             public int Field1 { get; set; }
 
@@ -91,12 +91,12 @@ namespace Tests.Attributes.MetaData
             public DateTime OverriddenField2() { return DateTime.UtcNow; }
         }
 
-        class ArgumentData
+        private class ArgumentData
         {
             public int Field(bool normalArg, [Name("someArg")] bool overriddenArg) { return 0; }
         }
 
-        class EnumData
+        private class EnumData
         {
             public enum Enum
             {

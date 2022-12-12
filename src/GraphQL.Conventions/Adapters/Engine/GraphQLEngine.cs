@@ -9,7 +9,6 @@ using GraphQL.Conventions.Adapters.Engine.ErrorTransformations;
 using GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader;
 using GraphQL.Conventions.Builders;
 using GraphQL.Conventions.Extensions;
-using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Execution;
 using GraphQL.Instrumentation;
@@ -237,7 +236,8 @@ namespace GraphQL.Conventions
 
         public GraphQLEngine BuildSchema(SchemaPrinterOptions options, params Type[] types)
         {
-            if (_schema != null) return this;
+            if (_schema != null)
+                return this;
             if (types.Length > 0)
             {
                 _schemaTypes.AddRange(types);
@@ -295,7 +295,7 @@ namespace GraphQL.Conventions
             CancellationToken cancellationToken = default,
             IEnumerable<IDocumentExecutionListener> listeners = null)
         {
-            dependencyInjector = dependencyInjector ?? new WrappedDependencyInjector(_constructor.TypeResolutionDelegate);
+            dependencyInjector ??= new WrappedDependencyInjector(_constructor.TypeResolutionDelegate);
 
             if (!enableValidation)
             {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 // ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
-    class CachedRegistry<TKey, TValue>
+    internal class CachedRegistry<TKey, TValue>
     {
         private readonly object _lock = new object();
 

@@ -379,8 +379,10 @@ namespace GraphQL.Conventions.Types.Resolution
             var memberInfo = type
                 .GetMember(name, DefaultEnumBindingFlags)
                 .First();
-            var enumValue = new GraphEnumMemberInfo(_typeResolver, memberInfo);
-            enumValue.Name = name;
+            var enumValue = new GraphEnumMemberInfo(_typeResolver, memberInfo)
+            {
+                Name = name
+            };
             enumValue.Value = Enum.Parse(type.AsType(), enumValue.Name);
             _metaDataHandler.DeriveMetaData(enumValue, memberInfo);
             return enumValue;

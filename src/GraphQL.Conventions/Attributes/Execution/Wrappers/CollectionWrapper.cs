@@ -15,7 +15,8 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
 
         public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value, bool isSpecified)
         {
-            if (!typeInfo.IsListType) return value;
+            if (!typeInfo.IsListType)
+                return value;
             if (!(value is IEnumerable input))
             {
                 return null;

@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using GraphQL.Conventions;
 using GraphQL.Conventions.Relay;
 using Tests.Templates;

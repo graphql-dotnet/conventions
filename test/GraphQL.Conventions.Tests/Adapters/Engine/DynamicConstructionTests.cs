@@ -74,7 +74,7 @@ namespace Tests.Adapters.Engine
             return typeAdapter.DeriveType(graphTypeInfo);
         }
 
-        class CustomResolver : IFieldResolver
+        private class CustomResolver : IFieldResolver
         {
             private readonly UserRepository _userRepository;
 
@@ -89,19 +89,19 @@ namespace Tests.Adapters.Engine
             }
         }
 
-        class User
+        private class User
         {
             public string Id { get; set; }
 
             public string Name { get; set; }
         }
 
-        interface IUserRepository
+        private interface IUserRepository
         {
             User GetUserById(string id);
         }
 
-        class UserRepository : IUserRepository
+        private class UserRepository : IUserRepository
         {
             public User GetUserById(string id) =>
                 new User

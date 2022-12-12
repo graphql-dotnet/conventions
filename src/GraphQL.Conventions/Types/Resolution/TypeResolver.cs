@@ -1,9 +1,9 @@
-using GraphQL.Conventions.Relay;
-using GraphQL.Conventions.Types.Descriptors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using GraphQL.Conventions.Relay;
+using GraphQL.Conventions.Types.Descriptors;
 
 namespace GraphQL.Conventions.Types.Resolution
 {
@@ -49,8 +49,7 @@ namespace GraphQL.Conventions.Types.Resolution
 
         public virtual TypeRegistration LookupType(TypeInfo typeInfo)
         {
-            TypeRegistration registration;
-            if (_typeMap.TryGetValue(typeInfo.AsType(), out registration))
+            if (_typeMap.TryGetValue(typeInfo.AsType(), out var registration))
             {
                 return registration;
             }

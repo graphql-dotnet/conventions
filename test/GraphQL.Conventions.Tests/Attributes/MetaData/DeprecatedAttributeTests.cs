@@ -56,22 +56,22 @@ namespace Tests.Attributes.MetaData
             type.ShouldHaveFieldWithName("DEPRECATED_MEMBER").AndWithDeprecationReason("Some enum member reason");
         }
 
-        class NormalType { }
+        private class NormalType { }
 
         [Deprecated("Some type reason")]
-        class DeprecatedType { }
+        private class DeprecatedType { }
 
-        interface NormalInterface { }
+        private interface NormalInterface { }
 
         [Deprecated("Some interface reason")]
-        interface DeprecatedInterface { }
+        private interface DeprecatedInterface { }
 
-        class NormalGenericType<T> { }
+        private class NormalGenericType<T> { }
 
         [Deprecated("Some generic type reason")]
-        class DeprecatedGenericType<T> { }
+        private class DeprecatedGenericType<T> { }
 
-        class FieldData
+        private class FieldData
         {
             public int NormalField { get; set; }
 
@@ -79,12 +79,12 @@ namespace Tests.Attributes.MetaData
             public bool DeprecatedField { get; set; }
         }
 
-        class ArgumentData
+        private class ArgumentData
         {
             public int Field(bool arg1, [Deprecated("Some argument reason")] bool arg2) { return 0; }
         }
 
-        class EnumData
+        private class EnumData
         {
             public enum Enum
             {

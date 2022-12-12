@@ -6,7 +6,7 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
     {
         public ValueWrapper()
         {
-            this.Next(new ObjectWrapper(this))
+            Next(new ObjectWrapper(this))
                 .Next(new CollectionWrapper(this))
                 .Next(new OptionalWrapper())
                 .Next(new NonNullWrapper())

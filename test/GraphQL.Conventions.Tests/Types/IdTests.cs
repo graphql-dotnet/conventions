@@ -112,15 +112,15 @@ namespace Tests.Types
             Assert.ThrowsException<ArgumentException>(() => Id("VGVzdA==").IdentifierForType<Test>());
         }
 
-        class Test
+        private class Test
         {
         }
 
-        class AnotherTest
+        private class AnotherTest
         {
         }
 
-        class TestItem
+        private class TestItem
         {
         }
     }

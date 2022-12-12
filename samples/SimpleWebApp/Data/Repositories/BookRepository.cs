@@ -61,8 +61,7 @@ namespace GraphQL.Conventions.Tests.Server.Data.Repositories
 
         public BookDto GetBookById(int id)
         {
-            BookDto book;
-            if (_books.TryGetValue(id, out book))
+            if (_books.TryGetValue(id, out var book))
             {
                 return book;
             }

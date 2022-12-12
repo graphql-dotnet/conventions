@@ -1,9 +1,8 @@
-﻿using GraphQL;
-using GraphQL.SystemTextJson;
-using GraphQL.Transport;
 using System.Net.WebSockets;
 using System.Text;
-using System.Text.Json;
+using GraphQL;
+using GraphQL.SystemTextJson;
+using GraphQL.Transport;
 using Xunit;
 
 namespace SubscriptionExample.Tests;

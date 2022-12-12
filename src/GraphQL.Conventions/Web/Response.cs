@@ -1,7 +1,7 @@
-using GraphQL.NewtonsoftJson;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GraphQL.NewtonsoftJson;
 
 namespace GraphQL.Conventions.Web
 {

@@ -145,16 +145,16 @@ namespace Tests.Adapters
             type.Fields.ToList()[0].ShouldBeOfType<FieldType>();
         }
 
-        class OutputTypeWithNoFields
+        private class OutputTypeWithNoFields
         {
         }
 
         [InputType]
-        class InputTypeWithNoFields
+        private class InputTypeWithNoFields
         {
         }
 
-        class OutputTypeWithFields
+        private class OutputTypeWithFields
         {
             public int Field1 => 1;
 
@@ -162,14 +162,14 @@ namespace Tests.Adapters
         }
 
         [InputType]
-        class InputTypeWithFields
+        private class InputTypeWithFields
         {
             public int Field1 { get; set; }
 
             public int Field2 { get; set; }
         }
 
-        class Fields
+        private class Fields
         {
             public int NormalField => 0;
 
@@ -193,7 +193,7 @@ namespace Tests.Adapters
         }
 
         [Name("Fooz")]
-        class FooDto
+        private class FooDto
         {
             public string Id => "A";
 
@@ -205,7 +205,7 @@ namespace Tests.Adapters
         }
 
         [Description("Foo bar baz")]
-        class Foo : FooDto
+        private class Foo : FooDto
         {
             public new Id Id => base.Id;
 
@@ -213,7 +213,7 @@ namespace Tests.Adapters
             public new string C => string.Empty;
         }
 
-        class FooSub
+        private class FooSub
         {
             // ReSharper disable once UnassignedGetOnlyAutoProperty
             public IObservable<Foo> Foos { get; }

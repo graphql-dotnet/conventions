@@ -10,7 +10,7 @@ namespace GraphQL.Conventions
     {
         public static bool SerializeUsingColon { get; set; } = true;
 
-        private readonly static INameNormalizer Normalizer = new NameNormalizer();
+        private static readonly INameNormalizer Normalizer = new NameNormalizer();
 
         internal readonly string _unencodedIdentifier;
 

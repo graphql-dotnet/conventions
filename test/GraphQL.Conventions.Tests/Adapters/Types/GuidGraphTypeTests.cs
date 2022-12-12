@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using GraphQL.Conventions.Adapters.Types;
 using GraphQLParser.AST;
 

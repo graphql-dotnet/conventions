@@ -292,7 +292,8 @@ namespace GraphQL.Conventions.Adapters
             var graphType = ConstructType<UnionGraphType>(typeof(Types.UnionGraphType<>), typeInfo);
             foreach (var possibleType in typeInfo.PossibleTypes.Select(t => DeriveType(t) as IObjectGraphType))
             {
-                if (possibleType != null) graphType.Type(possibleType.GetType());
+                if (possibleType != null)
+                    graphType.Type(possibleType.GetType());
             }
             return WrapNonNullableType(typeInfo, graphType);
         }

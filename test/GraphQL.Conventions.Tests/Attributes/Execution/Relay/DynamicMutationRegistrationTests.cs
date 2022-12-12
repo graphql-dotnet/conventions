@@ -50,9 +50,9 @@ namespace Tests.Attributes.Execution.Relay
 
         // Scaffolding
 
-        interface IMutation { }
+        private interface IMutation { }
 
-        interface IMutation<TInput, TOutput>
+        private interface IMutation<TInput, TOutput>
             where TInput : class, IRelayMutationInputObject
             where TOutput : class, IRelayMutationOutputObject
         {
@@ -60,12 +60,12 @@ namespace Tests.Attributes.Execution.Relay
             TOutput Mutate(NonNull<TInput> input);
         }
 
-        abstract class RelayInput : IRelayMutationInputObject
+        private abstract class RelayInput : IRelayMutationInputObject
         {
             public string ClientMutationId { get; set; }
         }
 
-        abstract class RelayOutput : IRelayMutationOutputObject
+        private abstract class RelayOutput : IRelayMutationOutputObject
         {
             public string ClientMutationId { get; set; }
         }
@@ -73,19 +73,19 @@ namespace Tests.Attributes.Execution.Relay
         // Foo
 
         [RelayMutationType]
-        class FooMutation : IMutation<FooInput, FooOutput>
+        private class FooMutation : IMutation<FooInput, FooOutput>
         {
             [Name("foo")]
             public FooOutput Mutate(NonNull<FooInput> input) =>
                 new FooOutput { Result = 2 * input.Value.A };
         }
 
-        class FooInput : RelayInput
+        private class FooInput : RelayInput
         {
             public int A { get; set; }
         }
 
-        class FooOutput : RelayOutput
+        private class FooOutput : RelayOutput
         {
             public int Result { get; set; }
         }
@@ -93,24 +93,24 @@ namespace Tests.Attributes.Execution.Relay
         // Bar
 
         [RelayMutationType]
-        class BarMutation : IMutation<BarInput, BarOutput>
+        private class BarMutation : IMutation<BarInput, BarOutput>
         {
             [Name("bar")]
             public BarOutput Mutate(NonNull<BarInput> input) =>
                 new BarOutput { Result = 100 + input.Value.B };
         }
 
-        class BarInput : RelayInput
+        private class BarInput : RelayInput
         {
             public int B { get; set; }
         }
 
-        class BarOutput : RelayOutput
+        private class BarOutput : RelayOutput
         {
             public int Result { get; set; }
         }
 
-        class Query
+        private class Query
         {
             public string Hello => "World";
         }

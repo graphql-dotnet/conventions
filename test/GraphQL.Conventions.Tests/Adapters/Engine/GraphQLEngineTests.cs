@@ -247,7 +247,7 @@ namespace Tests.Adapters.Engine
             error.ShouldContainWhenReformatted("Query is too nested to execute. Depth is 1 levels, maximum allowed on this endpoint is 0.");
         }
 
-        class BasicQuery
+        private class BasicQuery
         {
             public bool? BooleanField1 { get; }
 
@@ -290,12 +290,12 @@ namespace Tests.Adapters.Engine
             public Guid GuidField2 { get; }
         }
 
-        class Foo
+        private class Foo
         {
             public Id Id => Id.New<Foo>("12345");
         }
 
-        class Query
+        private class Query
         {
             public ISemanticVersion Version(string branchName) =>
                 new ExtendedVersion
@@ -311,7 +311,7 @@ namespace Tests.Adapters.Engine
                 };
         }
 
-        interface ISemanticVersion
+        private interface ISemanticVersion
         {
             int MajorVersion { get; }
 
@@ -320,7 +320,7 @@ namespace Tests.Adapters.Engine
             int Revision { get; }
         }
 
-        class ExtendedVersion : ISemanticVersion
+        private class ExtendedVersion : ISemanticVersion
         {
             public int MajorVersion { get; set; }
 
@@ -331,7 +331,7 @@ namespace Tests.Adapters.Engine
             public NonNull<string> BranchName { get; set; }
         }
 
-        class Movie
+        private class Movie
         {
             public NonNull<string> Title { get; set; } = "Movie 1";
 
@@ -340,7 +340,7 @@ namespace Tests.Adapters.Engine
             public DateTime? ReleaseDate { get; set; }
         }
 
-        class Actor
+        private class Actor
         {
             public string FirstName { get; set; }
 
@@ -349,11 +349,11 @@ namespace Tests.Adapters.Engine
             public DateTime? DateOfBirth { get; set; }
         }
 
-        class SearchResultItem : Union<Movie, Actor>
+        private class SearchResultItem : Union<Movie, Actor>
         {
         }
 
-        class SearchResult
+        private class SearchResult
         {
             public SearchResult(double score, Movie movie)
             {
@@ -372,7 +372,7 @@ namespace Tests.Adapters.Engine
             public SearchResultItem Node { get; set; }
         }
 
-        class CustomJsonTypeQuery
+        private class CustomJsonTypeQuery
         {
             public JSON CustomJsonScalarType()
             {
@@ -380,13 +380,13 @@ namespace Tests.Adapters.Engine
             }
         }
 
-        class CustomTypesQuery
+        private class CustomTypesQuery
         {
             public Custom CustomScalarType(Custom arg) =>
                 new Custom { Value = $"WRAPPED:{arg.Value}" };
         }
 
-        class QueryWithEnums
+        private class QueryWithEnums
         {
             public Enum1 Field1 => Enum1.Option1;
 
@@ -399,7 +399,7 @@ namespace Tests.Adapters.Engine
             public Enum1? Field5(Enum1? arg = null) => arg;
         }
 
-        enum Enum1
+        private enum Enum1
         {
             Option1,
             Option2,
@@ -407,14 +407,14 @@ namespace Tests.Adapters.Engine
         }
 
         [Name("RenamedEnum")]
-        enum Enum2
+        private enum Enum2
         {
             SomeValue1,
             SomeValue2,
         }
 
         [InputType]
-        class InputObject
+        private class InputObject
         {
             [DefaultValue(Enum2.SomeValue1)]
             public Enum2? SomeField { get; set; }
@@ -427,22 +427,22 @@ namespace Tests.Adapters.Engine
             public Enum2? YetAnotherDummyField { get; set; }
         }
 
-        class QueryWithInterfaces
+        private class QueryWithInterfaces
         {
             public TypeFromTwoInterfaces Field => null;
         }
 
-        interface Interface1
+        private interface Interface1
         {
             string Field1 { get; }
         }
 
-        interface Interface2
+        private interface Interface2
         {
             string Field2 { get; }
         }
 
-        class TypeFromTwoInterfaces : Interface1, Interface2
+        private class TypeFromTwoInterfaces : Interface1, Interface2
         {
             public string Field1 => string.Empty;
 

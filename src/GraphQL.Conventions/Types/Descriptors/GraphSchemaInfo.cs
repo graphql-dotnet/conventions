@@ -19,20 +19,19 @@ namespace GraphQL.Conventions.Types.Descriptors
 
         public Func<Type, object> TypeResolutionDelegate
         {
-            get { return _typeResolutionDelegate ?? (type => Activator.CreateInstance(type)); }
-            set { _typeResolutionDelegate = value; }
+            get => _typeResolutionDelegate ?? (type => Activator.CreateInstance(type));
+            set => _typeResolutionDelegate = value;
         }
 
         public object this[string key]
         {
-            get { return GetAttribute<object>(key); }
-            set { _attributes[key] = value; }
+            get => GetAttribute<object>(key);
+            set => _attributes[key] = value;
         }
 
         public T GetAttribute<T>(string key, T defaultValue = default)
         {
-            object value;
-            if (_attributes.TryGetValue(key, out value))
+            if (_attributes.TryGetValue(key, out object value))
             {
                 return value is T ? (T)value : defaultValue;
             }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DataLoaderWithEFCore.Migrations
@@ -16,10 +16,7 @@ namespace DataLoaderWithEFCore.Migrations
                     CountryCode = table.Column<string>(maxLength: 2, nullable: false),
                     MovieId = table.Column<Guid>(nullable: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Actors", x => x.Id);
-                });
+                constraints: table => table.PrimaryKey("PK_Actors", x => x.Id));
 
             migrationBuilder.CreateTable(
                 name: "Countries",
@@ -28,10 +25,7 @@ namespace DataLoaderWithEFCore.Migrations
                     Code = table.Column<string>(maxLength: 2, nullable: false),
                     Name = table.Column<string>(nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Countries", x => x.Code);
-                });
+                constraints: table => table.PrimaryKey("PK_Countries", x => x.Code));
 
             migrationBuilder.CreateTable(
                 name: "Movies",
@@ -42,10 +36,7 @@ namespace DataLoaderWithEFCore.Migrations
                     Genre = table.Column<string>(maxLength: 50, nullable: false),
                     ReleaseDateUtc = table.Column<DateTime>(nullable: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Movies", x => x.Id);
-                });
+                constraints: table => table.PrimaryKey("PK_Movies", x => x.Id));
 
             migrationBuilder.InsertData(
                 table: "Actors",

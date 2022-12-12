@@ -4,7 +4,7 @@ using GraphQL.Validation;
 
 namespace GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader
 {
-    class DataLoaderListener : DocumentExecutionListenerBase
+    internal class DataLoaderListener : DocumentExecutionListenerBase
     {
         public override async Task AfterValidationAsync(IExecutionContext context, IValidationResult validationResult)
         {

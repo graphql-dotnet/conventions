@@ -65,17 +65,17 @@ namespace Tests.Attributes.MetaData.Utilities
             target.HasMappedType.ShouldEqual(true);
         }
 
-        class TestObject
+        private class TestObject
         {
             public int Field(int argument) => argument;
         }
 
-        enum TestEnum
+        private enum TestEnum
         {
             Member,
         }
 
-        class MappableTarget : IMappableTarget
+        private class MappableTarget : IMappableTarget
         {
             public bool HasMappedArgument { get; private set; }
 

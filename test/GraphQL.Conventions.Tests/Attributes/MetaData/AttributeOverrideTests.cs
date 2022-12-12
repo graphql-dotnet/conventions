@@ -31,21 +31,21 @@ namespace Tests.Attributes.MetaData
         }
 
         [Name("First")]
-        class FirstClass
+        private class FirstClass
         {
         }
 
         [Name("Second")]
-        class SecondClass : FirstClass
+        private class SecondClass : FirstClass
         {
         }
 
         [Name("Third")]
-        class ThirdClass : SecondClass
+        private class ThirdClass : SecondClass
         {
         }
 
-        class ForthClass : ThirdClass
+        private class ForthClass : ThirdClass
         {
         }
     }

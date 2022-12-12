@@ -37,12 +37,12 @@ namespace Tests.Adapters.Engine
             result.Data.ShouldHaveFieldWithValue("someOtherField", string.Empty);
         }
 
-        abstract class EntityQuery<T>
+        private abstract class EntityQuery<T>
         {
             public T CommonField(T value) => value;
         }
 
-        class Query : EntityQuery<int>
+        private class Query : EntityQuery<int>
         {
             public string SomeOtherField => string.Empty;
         }

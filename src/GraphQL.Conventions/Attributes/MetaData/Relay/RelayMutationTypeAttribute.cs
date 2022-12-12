@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using GraphQL.Conventions.Attributes;
 using GraphQL.Conventions.Types.Descriptors;

@@ -9,7 +9,7 @@ using GraphQL.Execution;
 
 namespace Tests.Templates.Extensions
 {
-    static class TestExtensions
+    internal static class TestExtensions
     {
         private static readonly Regex RegexStripBlankPrefixes = new Regex(@"^[ \t]+", RegexOptions.Multiline);
 

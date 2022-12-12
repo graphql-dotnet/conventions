@@ -51,10 +51,7 @@ namespace GraphQL.Conventions.Adapters
                     ? (ResolveFieldContext)FieldContext
                     : new ResolveFieldContext(FieldContext);
 
-                if (fieldContext.Arguments == null)
-                {
-                    fieldContext.Arguments = new Dictionary<string, ArgumentValue>();
-                }
+                fieldContext.Arguments ??= new Dictionary<string, ArgumentValue>();
                 fieldContext.Arguments[name] = new ArgumentValue(value, ArgumentSource.Variable);
                 FieldContext = fieldContext;
             }

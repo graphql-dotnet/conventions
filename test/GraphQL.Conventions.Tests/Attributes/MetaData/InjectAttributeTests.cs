@@ -19,7 +19,7 @@ namespace Tests.Attributes.MetaData
             field.ShouldHaveArgumentWithName("arg3").AndNotFlaggedAsInjected();
         }
 
-        class ArgumentData
+        private class ArgumentData
         {
             public int Field(string arg1, [Inject] bool arg2, int arg3) { return 0; }
         }

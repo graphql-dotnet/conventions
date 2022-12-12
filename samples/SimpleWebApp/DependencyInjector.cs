@@ -15,8 +15,7 @@ namespace GraphQL.Conventions.Tests.Server
 
         public object Resolve(TypeInfo typeInfo)
         {
-            object instance;
-            if (_registrations.TryGetValue(typeInfo, out instance))
+            if (_registrations.TryGetValue(typeInfo, out object instance))
             {
                 return instance;
             }

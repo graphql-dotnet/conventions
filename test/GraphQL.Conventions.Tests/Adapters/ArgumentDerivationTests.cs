@@ -85,7 +85,7 @@ namespace Tests.Adapters
             field.Arguments.First().Type.ShouldEqual(typeof(NonNullGraphType<StringGraphType>));
         }
 
-        class Arguments
+        private class Arguments
         {
             public int FieldWithNoArguments() => 0;
 

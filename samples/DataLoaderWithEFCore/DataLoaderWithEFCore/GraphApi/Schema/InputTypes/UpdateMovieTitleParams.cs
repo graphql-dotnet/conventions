@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using GraphQL.Conventions;
 
 namespace DataLoaderWithEFCore.GraphApi.Schema

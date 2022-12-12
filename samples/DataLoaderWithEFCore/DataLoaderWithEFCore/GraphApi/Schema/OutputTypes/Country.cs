@@ -1,4 +1,4 @@
-﻿namespace DataLoaderWithEFCore.GraphApi.Schema
+namespace DataLoaderWithEFCore.GraphApi.Schema
 {
     public sealed class Country
     {

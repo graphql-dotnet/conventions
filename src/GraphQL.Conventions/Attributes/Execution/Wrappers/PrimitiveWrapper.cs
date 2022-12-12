@@ -9,7 +9,8 @@ namespace GraphQL.Conventions.Attributes.Execution.Wrappers
     {
         public override object WrapValue(GraphEntityInfo entityInfo, GraphTypeInfo typeInfo, object value, bool isSpecified)
         {
-            if (value == null || !typeInfo.IsPrimitive || typeInfo.IsEnumerationType) return value;
+            if (value == null || !typeInfo.IsPrimitive || typeInfo.IsEnumerationType)
+                return value;
 
             try
             {

@@ -56,7 +56,7 @@ namespace Tests.Attributes.Collectors
         }
 
         [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
-        class TestAttribute : Attribute, IAttribute
+        private class TestAttribute : Attribute, IAttribute
         {
             public List<IAttribute> AssociatedAttributes => new List<IAttribute>();
 
@@ -67,18 +67,18 @@ namespace Tests.Attributes.Collectors
             public int Identifier { get; set; }
         }
 
-        class TypeWithDefaultAttribute
+        private class TypeWithDefaultAttribute
         {
         }
 
         [Test(Identifier = 1)]
-        class TypeWithExplicitAttribute
+        private class TypeWithExplicitAttribute
         {
         }
 
         [Test(Identifier = 3)]
         [Test(Identifier = 2)]
-        class DerivedTypeWithExplicitAttribute : TypeWithExplicitAttribute
+        private class DerivedTypeWithExplicitAttribute : TypeWithExplicitAttribute
         {
         }
     }
