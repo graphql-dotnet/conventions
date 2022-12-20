@@ -17,7 +17,7 @@ namespace GraphQL.Conventions.Tests.Server
             .CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder => webBuilder
                 .UseStartup<Startup>()
-                .ConfigureKestrel(o => o.AllowSynchronousIO = true))
+                .ConfigureKestrel(options => options.AllowSynchronousIO = true)) // for Newtonsoft.Json support
             .ConfigureLogging(l => l.AddConsole());
     }
 }
