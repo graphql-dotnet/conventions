@@ -6,6 +6,7 @@ using GraphQL.Conventions;
 using GraphQL.Execution;
 using GraphQL.Types;
 using GraphQLParser.AST;
+using Microsoft.Extensions.DependencyInjection;
 using Tests.Templates;
 using Tests.Templates.Extensions;
 
