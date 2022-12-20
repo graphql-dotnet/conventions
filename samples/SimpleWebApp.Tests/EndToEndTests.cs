@@ -3,7 +3,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 
-namespace SubscriptionExample.Tests;
+namespace SimpleWebApp.Tests;
 
 public class EndToEndTests
 {
