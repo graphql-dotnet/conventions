@@ -53,7 +53,6 @@ namespace SubscriptionExample
             // Add Graph QL Convention Services
             services.AddSingleton(engine);
             services.AddSingleton(schema);
-            services.AddTransient<IDependencyInjector, Injector>();
 
             // Replace GraphQL Server with GraphQL Convention Document Executer
             services.Replace(new ServiceDescriptor(typeof(IDocumentExecuter), typeof(DocumentExecuter), ServiceLifetime.Singleton));

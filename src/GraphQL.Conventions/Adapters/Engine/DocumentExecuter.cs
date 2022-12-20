@@ -11,19 +11,19 @@ namespace GraphQL.Conventions
     public class DocumentExecuter : IDocumentExecuter
     {
         private readonly GraphQLEngine _engine;
-        private readonly IDependencyInjector _dependencyInjector;
+        private readonly IServiceProvider _serviceProvider;
 
-        public DocumentExecuter(GraphQLEngine engine, IDependencyInjector dependencyInjector)
+        public DocumentExecuter(GraphQLEngine engine, IServiceProvider serviceProvider)
         {
             _engine = engine;
-            _dependencyInjector = dependencyInjector;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<ExecutionResult> ExecuteAsync(ISchema schema, object root, string query, string operationName, Inputs inputs, object userContext, CancellationToken cancellationToken, IEnumerable<IValidationRule> rules)
         {
             return await _engine
                 .NewExecutor()
-                .WithDependencyInjector(_dependencyInjector)
+                .WithDependencyInjector(_serviceProvider)
                 .WithRootObject(root)
                 .WithQueryString(query)
                 .WithOperationName(operationName)
@@ -37,7 +37,7 @@ namespace GraphQL.Conventions
         {
             return await _engine
                 .NewExecutor()
-                .WithDependencyInjector(_dependencyInjector)
+                .WithDependencyInjector(_serviceProvider)
                 .WithRootObject(options.Root)
                 .WithQueryString(options.Query)
                 .WithOperationName(options.OperationName)

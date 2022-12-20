@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,6 +28,8 @@ namespace GraphQL.Conventions
         IGraphQLExecutor<TResult> WithCancellationToken(CancellationToken token);
 
         IGraphQLExecutor<TResult> WithDependencyInjector(IDependencyInjector injector);
+
+        IGraphQLExecutor<TResult> WithDependencyInjector(IServiceProvider serviceProvider);
 
         IGraphQLExecutor<TResult> WithValidationRules(IEnumerable<IValidationRule> rules);
 

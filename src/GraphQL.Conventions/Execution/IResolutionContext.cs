@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using GraphQL.Conventions.Types.Descriptors;
@@ -19,7 +20,7 @@ namespace GraphQL.Conventions
 
         IUserContext UserContext { get; }
 
-        IDependencyInjector DependencyInjector { get; }
+        IServiceProvider DependencyInjector { get; }
 
         GraphFieldInfo FieldInfo { get; }
 

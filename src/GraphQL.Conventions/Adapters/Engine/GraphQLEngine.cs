@@ -76,7 +76,7 @@ namespace GraphQL.Conventions
             }
         }
 
-        private class WrappedDependencyInjector : IDependencyInjector
+        private class WrappedDependencyInjector : IServiceProvider
         {
             private readonly Func<Type, object> _typeResolutionDelegate;
 
@@ -85,9 +85,9 @@ namespace GraphQL.Conventions
                 _typeResolutionDelegate = typeResolutionDelegate;
             }
 
-            public object Resolve(System.Reflection.TypeInfo typeInfo)
+            public object GetService(Type type)
             {
-                return _typeResolutionDelegate(typeInfo.AsType());
+                return _typeResolutionDelegate(type);
             }
         }
 
@@ -287,7 +287,7 @@ namespace GraphQL.Conventions
             string operationName,
             Inputs variables,
             IUserContext userContext,
-            IDependencyInjector dependencyInjector,
+            IServiceProvider serviceProvider,
             ComplexityConfiguration complexityConfiguration,
             bool enableValidation = true,
             bool enableProfiling = false,
@@ -295,7 +295,7 @@ namespace GraphQL.Conventions
             CancellationToken cancellationToken = default,
             IEnumerable<IDocumentExecutionListener> listeners = null)
         {
-            dependencyInjector ??= new WrappedDependencyInjector(_constructor.TypeResolutionDelegate);
+            serviceProvider ??= new WrappedDependencyInjector(_constructor.TypeResolutionDelegate);
 
             if (!enableValidation)
             {
@@ -323,8 +323,8 @@ namespace GraphQL.Conventions
                 UserContext = new Dictionary<string, object>()
                 {
                     { typeof(IUserContext).FullName ?? nameof(IUserContext), userContext },
-                    { typeof(IDependencyInjector).FullName ?? nameof(IDependencyInjector), dependencyInjector },
                 },
+                RequestServices = serviceProvider,
                 ValidationRules = rules,
                 CancellationToken = cancellationToken,
                 ThrowOnUnhandledException = _throwUnhandledExceptions,
@@ -343,12 +343,12 @@ namespace GraphQL.Conventions
 
             if (enableProfiling)
             {
-                _schema.FieldMiddleware.Use(dependencyInjector.Resolve<InstrumentFieldsMiddleware>());
+                _schema.FieldMiddleware.Use(serviceProvider.GetRequiredService<InstrumentFieldsMiddleware>());
             }
 
             foreach (var middleware in _middleware)
             {
-                _schema.FieldMiddleware.Use(dependencyInjector.Resolve(middleware.GetTypeInfo()) as IFieldMiddleware);
+                _schema.FieldMiddleware.Use(serviceProvider.GetRequiredService(middleware) as IFieldMiddleware);
             }
 
             var result = await _documentExecutor.ExecuteAsync(configuration).ConfigureAwait(false);

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Instrumentation;
@@ -19,14 +18,14 @@ namespace GraphQL.Conventions.Web
             return new RequestHandlerBuilder();
         }
 
-        public class RequestHandlerBuilder : IDependencyInjector
+        public class RequestHandlerBuilder : IServiceProvider
         {
             private readonly List<Type> _schemaTypes = new List<Type>();
             private readonly List<Type> _assemblyTypes = new List<Type>();
             private readonly List<Type> _exceptionsTreatedAsWarnings = new List<Type>();
             private readonly List<Type> _middleware = new List<Type>();
             private readonly ITypeResolver _typeResolver = new TypeResolver();
-            private IDependencyInjector _dependencyInjector;
+            private IServiceProvider _serviceProvider;
             private ResolveTypeDelegate _resolveTypeDelegate;
             private bool _useValidation = true;
             private bool _useProfiling;
@@ -35,12 +34,12 @@ namespace GraphQL.Conventions.Web
 
             internal RequestHandlerBuilder()
             {
-                _dependencyInjector = this;
+                _serviceProvider = this;
             }
 
-            public RequestHandlerBuilder WithDependencyInjector(IDependencyInjector dependencyInjector)
+            public RequestHandlerBuilder WithDependencyInjector(IServiceProvider serviceProvider)
             {
-                _dependencyInjector = dependencyInjector;
+                _serviceProvider = serviceProvider;
                 return this;
             }
 
@@ -160,7 +159,7 @@ namespace GraphQL.Conventions.Web
             public IRequestHandler Generate()
             {
                 return new RequestHandlerImpl(
-                    _dependencyInjector,
+                    _serviceProvider,
                     _schemaTypes,
                     _assemblyTypes,
                     _exceptionsTreatedAsWarnings,
@@ -172,23 +171,23 @@ namespace GraphQL.Conventions.Web
                     _typeResolver);
             }
 
-            public object Resolve(TypeInfo typeInfo)
+            public object GetService(Type type)
             {
-                return _resolveTypeDelegate?.Invoke(typeInfo.AsType());
+                return _resolveTypeDelegate?.Invoke(type);
             }
         }
 
         private class RequestHandlerImpl : IRequestHandler
         {
             private readonly GraphQLEngine _engine;
-            private readonly IDependencyInjector _dependencyInjector;
+            private readonly IServiceProvider _serviceProvider;
             private readonly List<Type> _exceptionsTreatedAsWarnings = new List<Type>();
             private readonly bool _useValidation;
             private readonly bool _useProfiling;
             private readonly ComplexityConfiguration _complexityConfiguration;
 
             internal RequestHandlerImpl(
-                IDependencyInjector dependencyInjector,
+                IServiceProvider serviceProvider,
                 IEnumerable<Type> schemaTypes,
                 IEnumerable<Type> assemblyTypes,
                 IEnumerable<Type> exceptionsTreatedAsWarning,
@@ -200,7 +199,7 @@ namespace GraphQL.Conventions.Web
                 ITypeResolver typeResolver)
             {
                 _engine = new GraphQLEngine(typeResolver: typeResolver);
-                _dependencyInjector = dependencyInjector;
+                _serviceProvider = serviceProvider;
                 _engine.WithAttributesFromAssemblies(assemblyTypes);
                 _exceptionsTreatedAsWarnings.AddRange(exceptionsTreatedAsWarning);
                 _useValidation = useValidation;
@@ -215,7 +214,7 @@ namespace GraphQL.Conventions.Web
                 }
             }
 
-            public async Task<Response> ProcessRequestAsync(Request request, IUserContext userContext, IDependencyInjector dependencyInjector = null)
+            public async Task<Response> ProcessRequestAsync(Request request, IUserContext userContext, IServiceProvider serviceProvider = null)
             {
                 var start = DateTime.UtcNow;
 
@@ -224,7 +223,7 @@ namespace GraphQL.Conventions.Web
                     .WithQueryString(request.QueryString)
                     .WithVariables(request.Variables)
                     .WithOperationName(request.OperationName)
-                    .WithDependencyInjector(dependencyInjector ?? _dependencyInjector)
+                    .WithDependencyInjector(serviceProvider ?? _serviceProvider)
                     .WithUserContext(userContext)
                     .WithComplexityConfiguration(_complexityConfiguration)
                     .EnableValidation(_useValidation)
