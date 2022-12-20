@@ -124,7 +124,7 @@ public class EndToEndTests
         };
 
         using var webApp = new WebApplicationFactory<Program>();
-        var server = webApp.Server;
+        using var server = webApp.Server;
         var websocketTask = VerifyGraphQLWebSocketsAsync(server, querySubscription, expectedSubscription);
         await VerifyGraphQLPostAsync(server, query: query1, expected: expected1).ConfigureAwait(false);
         await VerifyGraphQLPostAsync(server, query: query2, expected: expected2).ConfigureAwait(false);
