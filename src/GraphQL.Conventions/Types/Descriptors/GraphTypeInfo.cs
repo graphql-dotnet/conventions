@@ -18,6 +18,15 @@ namespace GraphQL.Conventions.Types.Descriptors
             DeriveMetaData();
         }
 
+        public string QualifiedName
+        {
+            get
+            {
+                string name = IsListType ? $"[{TypeParameter.QualifiedName}]" : Name;
+                return IsNullable ? name : $"{name}!";
+            }
+        }
+
         public bool IsRegisteredType { get; set; }
 
         public bool IsPrimitive { get; set; }
