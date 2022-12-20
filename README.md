@@ -64,7 +64,7 @@ var engine = GraphQLEngine.New<Query>();
 var result = await engine
     .NewExecutor()
     .WithUserContext(userContext)
-    .WithDependencyInjector(dependencyInjector)
+    .WithDependencyInjector(serviceProvider)
     .WithRequest(requestBody)
     .Execute();
 ```
