@@ -1,10 +1,6 @@
 name: Check formatting
 
-on:
-  pull_request:
-    branches:
-      - master
-      - develop
+on: [pull_request]
 
 env:
   DOTNET_NOLOGO: true
