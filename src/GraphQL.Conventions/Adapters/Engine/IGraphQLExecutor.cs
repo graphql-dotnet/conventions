@@ -27,6 +27,7 @@ namespace GraphQL.Conventions
 
         IGraphQLExecutor<TResult> WithCancellationToken(CancellationToken token);
 
+        [Obsolete("Please use the WithDependencyInjector overload that accepts an IServiceProvider instance.")]
         IGraphQLExecutor<TResult> WithDependencyInjector(IDependencyInjector injector);
 
         IGraphQLExecutor<TResult> WithDependencyInjector(IServiceProvider serviceProvider);
