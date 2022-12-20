@@ -32,10 +32,10 @@ namespace GraphQL.Conventions.Tests.Server
                 .Generate();
 
             app.UseGraphQLPlayground("/");
-            app.Run(HandleRequest);
+            app.Use(HandleRequest);
         }
 
-        private async Task HandleRequest(HttpContext context)
+        private async Task HandleRequest(HttpContext context, RequestDelegate next)
         {
             if (string.Compare(context.Request.Method, "OPTIONS", StringComparison.OrdinalIgnoreCase) == 0)
             {
