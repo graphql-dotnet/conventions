@@ -23,7 +23,7 @@ namespace GraphQL.Conventions
         {
             return await _engine
                 .NewExecutor()
-                .WithDependencyInjector(_serviceProvider)
+                .WithServiceProvider(_serviceProvider)
                 .WithRootObject(root)
                 .WithQueryString(query)
                 .WithOperationName(operationName)
@@ -37,7 +37,7 @@ namespace GraphQL.Conventions
         {
             return await _engine
                 .NewExecutor()
-                .WithDependencyInjector(_serviceProvider)
+                .WithServiceProvider(_serviceProvider)
                 .WithRootObject(options.Root)
                 .WithQueryString(options.Query)
                 .WithOperationName(options.OperationName)

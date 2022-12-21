@@ -659,7 +659,7 @@ namespace Tests.Adapters
                 .WithQueryString(query)
                 .WithVariables(inputs)
                 .WithUserContext(userContext)
-                .WithDependencyInjector(new DependencyInjector())
+                .WithServiceProvider(new DependencyInjector())
                 .ExecuteAsync();
 
             return result;

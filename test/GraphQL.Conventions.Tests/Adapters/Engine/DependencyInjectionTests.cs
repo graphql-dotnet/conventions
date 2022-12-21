@@ -35,7 +35,7 @@ namespace Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("{ field }")
-                .WithDependencyInjector(new DependencyInjector())
+                .WithServiceProvider(new DependencyInjector())
                 .ExecuteAsync();
 
             result.ShouldHaveNoErrors();
@@ -50,12 +50,12 @@ namespace Tests.Adapters.Engine
             var executor1 = engine
                 .NewExecutor()
                 .WithQueryString("{ field }")
-                .WithDependencyInjector(new DependencyInjector("Injector1"));
+                .WithServiceProvider(new DependencyInjector("Injector1"));
 
             var executor2 = engine
                 .NewExecutor()
                 .WithQueryString("{ field }")
-                .WithDependencyInjector(new DependencyInjector("Injector2"));
+                .WithServiceProvider(new DependencyInjector("Injector2"));
 
             var result1 = await executor1.ExecuteAsync();
             var result2 = await executor2.ExecuteAsync();
@@ -77,7 +77,7 @@ namespace Tests.Adapters.Engine
             var executor1 = engine
                 .NewExecutor()
                 .WithQueryString("{ field }")
-                .WithDependencyInjector(new DependencyInjector("Injector"));
+                .WithServiceProvider(new DependencyInjector("Injector"));
 
             var result1 = await executor1.ExecuteAsync();
 
@@ -107,7 +107,7 @@ namespace Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("{ withDependency }")
-                .WithDependencyInjector(new DependencyInjector())
+                .WithServiceProvider(new DependencyInjector())
                 .ExecuteAsync();
 
             result.ShouldHaveNoErrors();

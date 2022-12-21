@@ -30,7 +30,7 @@ namespace GraphQL.Conventions
         [Obsolete("Please use the WithDependencyInjector overload that accepts an IServiceProvider instance.")]
         IGraphQLExecutor<TResult> WithDependencyInjector(IDependencyInjector injector);
 
-        IGraphQLExecutor<TResult> WithDependencyInjector(IServiceProvider serviceProvider);
+        IGraphQLExecutor<TResult> WithServiceProvider(IServiceProvider serviceProvider);
 
         IGraphQLExecutor<TResult> WithValidationRules(IEnumerable<IValidationRule> rules);
 

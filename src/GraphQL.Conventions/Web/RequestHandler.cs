@@ -223,7 +223,7 @@ namespace GraphQL.Conventions.Web
                     .WithQueryString(request.QueryString)
                     .WithVariables(request.Variables)
                     .WithOperationName(request.OperationName)
-                    .WithDependencyInjector(serviceProvider ?? _serviceProvider)
+                    .WithServiceProvider(serviceProvider ?? _serviceProvider)
                     .WithUserContext(userContext)
                     .WithComplexityConfiguration(_complexityConfiguration)
                     .EnableValidation(_useValidation)

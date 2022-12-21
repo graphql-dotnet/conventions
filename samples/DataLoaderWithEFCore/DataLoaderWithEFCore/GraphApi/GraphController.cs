@@ -30,7 +30,7 @@ namespace DataLoaderWithEFCore.GraphApi
 
             var result = await _engine
                 .NewExecutor()
-                .WithDependencyInjector(_serviceProvider)
+                .WithServiceProvider(_serviceProvider)
                 .WithRequest(requestBody)
                 .ExecuteAsync();
 

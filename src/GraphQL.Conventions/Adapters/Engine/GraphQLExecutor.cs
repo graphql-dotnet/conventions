@@ -95,7 +95,7 @@ namespace GraphQL.Conventions
             return this;
         }
 
-        [Obsolete("Please use the WithDependencyInjector overload that accepts an IServiceProvider instance.")]
+        [Obsolete("Please use WithServiceProvider instead.")]
         public IGraphQLExecutor<ExecutionResult> WithDependencyInjector(IDependencyInjector injector)
         {
             _serviceProvider = new DependencyInjectorWrapper(injector);
@@ -114,7 +114,7 @@ namespace GraphQL.Conventions
             public object GetService(Type serviceType) => _injector.Resolve(serviceType.GetTypeInfo());
         }
 
-        public IGraphQLExecutor<ExecutionResult> WithDependencyInjector(IServiceProvider serviceProvider)
+        public IGraphQLExecutor<ExecutionResult> WithServiceProvider(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
             return this;
