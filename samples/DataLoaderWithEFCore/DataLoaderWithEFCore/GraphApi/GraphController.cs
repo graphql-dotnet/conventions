@@ -18,6 +18,7 @@ namespace DataLoaderWithEFCore.GraphApi
         public GraphController(GraphQLEngine engine, IServiceProvider serviceProvider)
         {
             _engine = engine;
+            _serviceProvider = serviceProvider;
         }
 
         [HttpPost]
