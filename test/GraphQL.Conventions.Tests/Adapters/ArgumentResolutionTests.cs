@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.Conventions;
@@ -659,7 +659,7 @@ namespace Tests.Adapters
                 .WithQueryString(query)
                 .WithVariables(inputs)
                 .WithUserContext(userContext)
-                .WithDependencyInjector(new DependencyInjector())
+                .WithServiceProvider(new DependencyInjector())
                 .ExecuteAsync();
 
             return result;
@@ -670,11 +670,11 @@ namespace Tests.Adapters
             public int SomeValue { get; set; }
         }
 
-        private class DependencyInjector : IDependencyInjector
+        private class DependencyInjector : IServiceProvider
         {
-            public object Resolve(TypeInfo typeInfo)
+            public object GetService(Type type)
             {
-                if (typeInfo.AsType() == typeof(IDependency))
+                if (type == typeof(IDependency))
                 {
                     return new Dependency();
                 }

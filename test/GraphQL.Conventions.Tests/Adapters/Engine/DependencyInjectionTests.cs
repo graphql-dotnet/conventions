@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.Conventions;
-using GraphQL.Conventions.Execution;
 using GraphQL.Execution;
 using GraphQL.Types;
 using GraphQLParser.AST;
+using Microsoft.Extensions.DependencyInjection;
 using Tests.Templates;
 using Tests.Templates.Extensions;
 
@@ -36,7 +35,7 @@ namespace Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("{ field }")
-                .WithDependencyInjector(new DependencyInjector())
+                .WithServiceProvider(new DependencyInjector())
                 .ExecuteAsync();
 
             result.ShouldHaveNoErrors();
@@ -51,12 +50,12 @@ namespace Tests.Adapters.Engine
             var executor1 = engine
                 .NewExecutor()
                 .WithQueryString("{ field }")
-                .WithDependencyInjector(new DependencyInjector("Injector1"));
+                .WithServiceProvider(new DependencyInjector("Injector1"));
 
             var executor2 = engine
                 .NewExecutor()
                 .WithQueryString("{ field }")
-                .WithDependencyInjector(new DependencyInjector("Injector2"));
+                .WithServiceProvider(new DependencyInjector("Injector2"));
 
             var result1 = await executor1.ExecuteAsync();
             var result2 = await executor2.ExecuteAsync();
@@ -78,7 +77,7 @@ namespace Tests.Adapters.Engine
             var executor1 = engine
                 .NewExecutor()
                 .WithQueryString("{ field }")
-                .WithDependencyInjector(new DependencyInjector("Injector"));
+                .WithServiceProvider(new DependencyInjector("Injector"));
 
             var result1 = await executor1.ExecuteAsync();
 
@@ -108,7 +107,7 @@ namespace Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("{ withDependency }")
-                .WithDependencyInjector(new DependencyInjector())
+                .WithServiceProvider(new DependencyInjector())
                 .ExecuteAsync();
 
             result.ShouldHaveNoErrors();
@@ -159,7 +158,7 @@ namespace Tests.Adapters.Engine
             public T Get<T>(T value) => value;
         }
 
-        private class DependencyInjector : IDependencyInjector
+        private class DependencyInjector : IServiceProvider
         {
             private readonly string _value;
 
@@ -168,23 +167,23 @@ namespace Tests.Adapters.Engine
                 _value = value;
             }
 
-            public object Resolve(TypeInfo typeInfo)
+            public object GetService(Type type)
             {
-                if (typeInfo.AsType() == typeof(Query))
+                if (type == typeof(Query))
                 {
                     return new Query(new Repository(_value));
                 }
-                if (typeInfo.AsType() == typeof(IDependency))
+                if (type == typeof(IDependency))
                 {
                     return new Dependency();
                 }
-                if (typeInfo.AsType() == typeof(ChildDependencyInjector))
+                if (type == typeof(ChildDependencyInjector))
                 {
                     return new ChildDependencyInjector($"{_value}->ChildScope");
                 }
-                if (typeInfo.GetConstructor(Type.EmptyTypes) != null)
+                if (type.GetConstructor(Type.EmptyTypes) != null)
                 {
-                    return Activator.CreateInstance(typeInfo.AsType());
+                    return Activator.CreateInstance(type);
                 }
                 return null;
             }
@@ -199,39 +198,31 @@ namespace Tests.Adapters.Engine
         {
             protected override IExecutionStrategy SelectExecutionStrategy(ExecutionContext context)
             {
-                var injector = GetChildInjector(context.GetDependencyInjector());
+                var injector = GetChildInjector(context.RequestServices);
                 return new ScopedExecutionStrategy(injector, base.SelectExecutionStrategy(context));
             }
 
-            private IDependencyInjector GetChildInjector(IDependencyInjector dependencyInjector)
-                => dependencyInjector.Resolve<ChildDependencyInjector>() ?? dependencyInjector;
+            private IServiceProvider GetChildInjector(IServiceProvider serviceProvider)
+                => serviceProvider.GetService<ChildDependencyInjector>() ?? serviceProvider;
 
             private class ScopedExecutionStrategy : IExecutionStrategy
             {
-                private readonly IDependencyInjector _injector;
+                private readonly IServiceProvider _serviceProvider;
                 private readonly IExecutionStrategy _innerStrategy;
 
-                public ScopedExecutionStrategy(IDependencyInjector injector, IExecutionStrategy innerStrategy)
+                public ScopedExecutionStrategy(IServiceProvider serviceProvider, IExecutionStrategy innerStrategy)
                 {
-                    _injector = injector;
+                    _serviceProvider = serviceProvider;
                     _innerStrategy = innerStrategy;
                 }
 
 
-                public async Task<ExecutionResult> ExecuteAsync(ExecutionContext context)
+                public Task<ExecutionResult> ExecuteAsync(ExecutionContext context)
                 {
-                    var key = typeof(IDependencyInjector).FullName ?? nameof(IDependencyInjector);
-                    var outerInjector = context.UserContext[key];
-
-                    try
+                    return _innerStrategy.ExecuteAsync(new ExecutionContext(context)
                     {
-                        context.UserContext[key] = _injector;
-                        return await _innerStrategy.ExecuteAsync(context);
-                    }
-                    finally
-                    {
-                        context.UserContext[key] = outerInjector;
-                    }
+                        RequestServices = _serviceProvider
+                    });
                 }
 
                 public async Task ExecuteNodeTreeAsync(ExecutionContext context, ExecutionNode rootNode)

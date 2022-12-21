@@ -36,7 +36,6 @@ namespace DataLoaderWithEFCore
                 .WithFieldResolutionStrategy(FieldResolutionStrategy.Normal)
                 .BuildSchema(typeof(SchemaDefinition<Schema.Query, Schema.Mutation>)));
 
-            services.AddScoped<IDependencyInjector, Injector>();
             services.AddScoped<Schema.Query>();
             services.AddScoped<Schema.Mutation>();
 

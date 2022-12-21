@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Execution;
@@ -26,7 +28,7 @@ namespace GraphQL.Conventions
 
         private CancellationToken _cancellationToken;
 
-        private IDependencyInjector _dependencyInjector;
+        private IServiceProvider _serviceProvider;
 
         private bool _enableValidation = true;
 
@@ -93,9 +95,28 @@ namespace GraphQL.Conventions
             return this;
         }
 
+        [Obsolete("Please use WithServiceProvider instead.")]
         public IGraphQLExecutor<ExecutionResult> WithDependencyInjector(IDependencyInjector injector)
         {
-            _dependencyInjector = injector;
+            _serviceProvider = new DependencyInjectorWrapper(injector);
+            return this;
+        }
+
+        private class DependencyInjectorWrapper : IServiceProvider
+        {
+            private readonly IDependencyInjector _injector;
+
+            public DependencyInjectorWrapper(IDependencyInjector injector)
+            {
+                _injector = injector;
+            }
+
+            public object GetService(Type serviceType) => _injector.Resolve(serviceType.GetTypeInfo());
+        }
+
+        public IGraphQLExecutor<ExecutionResult> WithServiceProvider(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
             return this;
         }
 
@@ -141,7 +162,7 @@ namespace GraphQL.Conventions
 
         public Task<ExecutionResult> ExecuteAsync()
             => _engine.ExecuteAsync(
-                _rootObject, _queryString, _operationName, _inputs, _userContext, _dependencyInjector,
+                _rootObject, _queryString, _operationName, _inputs, _userContext, _serviceProvider,
                 enableValidation: _enableValidation,
                 enableProfiling: _enableProfiling,
                 rules: _validationRules,

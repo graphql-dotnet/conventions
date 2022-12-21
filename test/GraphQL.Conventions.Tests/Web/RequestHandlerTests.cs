@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using GraphQL.Conventions;
 using GraphQL.Conventions.Web;
@@ -173,13 +172,13 @@ namespace Tests.Web
             ");
         }
 
-        private class DependencyInjector : IDependencyInjector
+        private class DependencyInjector : IServiceProvider
         {
-            public object Resolve(TypeInfo typeInfo)
+            public object GetService(Type type)
             {
-                if (typeInfo.GetConstructor(Type.EmptyTypes) != null)
+                if (type.GetConstructor(Type.EmptyTypes) != null)
                 {
-                    return Activator.CreateInstance(typeInfo.AsType());
+                    return Activator.CreateInstance(type);
                 }
                 return null;
             }

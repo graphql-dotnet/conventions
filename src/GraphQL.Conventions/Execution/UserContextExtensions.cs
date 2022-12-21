@@ -8,9 +8,6 @@ namespace GraphQL.Conventions.Execution
         public static IUserContext GetUserContext(this IProvideUserContext context) => GetValue<IUserContext>(context.UserContext);
         public static void SetUserContext(this IProvideUserContext context, IUserContext value) => SetValue(context.UserContext, value);
 
-        public static IDependencyInjector GetDependencyInjector(this IProvideUserContext context) => GetValue<IDependencyInjector>(context.UserContext);
-        public static void SetDependencyInjector(this IProvideUserContext context, IDependencyInjector value) => SetValue(context.UserContext, value);
-
         private static T GetValue<T>(IDictionary<string, object> dictionary)
         {
             var key = typeof(T).FullName ?? nameof(T);

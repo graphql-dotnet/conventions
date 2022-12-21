@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -12,12 +13,12 @@ namespace DataLoaderWithEFCore.GraphApi
     public class GraphController : ControllerBase
     {
         private readonly GraphQLEngine _engine;
-        private readonly IDependencyInjector _injector;
+        private readonly IServiceProvider _serviceProvider;
 
-        public GraphController(GraphQLEngine engine, IDependencyInjector injector)
+        public GraphController(GraphQLEngine engine, IServiceProvider serviceProvider)
         {
             _engine = engine;
-            _injector = injector;
+            _serviceProvider = serviceProvider;
         }
 
         [HttpPost]
@@ -29,7 +30,7 @@ namespace DataLoaderWithEFCore.GraphApi
 
             var result = await _engine
                 .NewExecutor()
-                .WithDependencyInjector(_injector)
+                .WithServiceProvider(_serviceProvider)
                 .WithRequest(requestBody)
                 .ExecuteAsync();
 
