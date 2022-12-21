@@ -64,7 +64,7 @@ namespace GraphQL.Conventions.Handlers
                 }
                 else
                 {
-                    obj = resolutionContext.DependencyInjector?.GetService(argumentType);
+                    obj = resolutionContext.ServiceProvider?.GetService(argumentType);
                 }
                 resolutionContext.SetArgument(argument.Name, obj);
             }

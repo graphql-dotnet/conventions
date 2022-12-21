@@ -20,7 +20,7 @@ namespace GraphQL.Conventions
 
         IUserContext UserContext { get; }
 
-        IServiceProvider DependencyInjector { get; }
+        IServiceProvider ServiceProvider { get; }
 
         GraphFieldInfo FieldInfo { get; }
 
