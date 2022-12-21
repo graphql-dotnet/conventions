@@ -70,7 +70,7 @@ namespace Tests.Web
             var request = Request.New("{ \"query\": \"{ a: foo(ms: 10) b: foo(ms: 20) }\" }");
             var response = await RequestHandler
                 .New()
-                .WithDependencyInjector(new DependencyInjector())
+                .WithServiceProvider(new DependencyInjector())
                 .WithQuery<ProfiledQuery>()
                 .WithProfiling()
                 .Generate()
@@ -87,7 +87,7 @@ namespace Tests.Web
             var request = Request.New("{ \"query\": \"{ earth { hello } mars { hello } } \" }");
             var response = await RequestHandler
                 .New()
-                .WithDependencyInjector(new DependencyInjector())
+                .WithServiceProvider(new DependencyInjector())
                 .WithQuery<CompositeQuery>()
                 .Generate()
                 .ProcessRequestAsync(request, null);

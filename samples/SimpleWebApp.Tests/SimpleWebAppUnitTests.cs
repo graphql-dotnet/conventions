@@ -17,7 +17,7 @@ public class SimpleWebAppSchemaCreationTests
 
         var requestHandler = RequestHandler
             .New()
-            .WithDependencyInjector(dependencyInjector)
+            .WithServiceProvider(dependencyInjector)
             .WithQueryAndMutation<Query, Mutation>()
             .Generate();
 

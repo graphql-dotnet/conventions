@@ -37,12 +37,13 @@ namespace GraphQL.Conventions.Web
                 _serviceProvider = this;
             }
 
-            public RequestHandlerBuilder WithDependencyInjector(IServiceProvider serviceProvider)
+            public RequestHandlerBuilder WithServiceProvider(IServiceProvider serviceProvider)
             {
                 _serviceProvider = serviceProvider;
                 return this;
             }
 
+            [Obsolete("Please use WithServiceProvider instead.")]
             public RequestHandlerBuilder WithDependencyInjector(ResolveTypeDelegate resolveTypeDelegate)
             {
                 _resolveTypeDelegate = resolveTypeDelegate;
