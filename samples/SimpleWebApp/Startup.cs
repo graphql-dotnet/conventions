@@ -27,7 +27,7 @@ namespace GraphQL.Conventions.Tests.Server
 
             _requestHandler = RequestHandler
                 .New()
-                .WithDependencyInjector(dependencyInjector)
+                .WithServiceProvider(dependencyInjector)
                 .WithQueryAndMutation<Schema.Query, Schema.Mutation>()
                 .Generate();
 
