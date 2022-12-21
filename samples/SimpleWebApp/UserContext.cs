@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Tests.Server.Data.Repositories;
@@ -8,7 +7,7 @@ using GraphQL.Conventions.Tests.Server.Schema.Types;
 
 namespace GraphQL.Conventions.Tests.Server
 {
-    public class UserContext : IUserContext, IDataLoaderContextProvider
+    public class UserContext : IUserContext
     {
         private readonly IBookRepository _bookRepository = new BookRepository();
 
@@ -42,11 +41,6 @@ namespace GraphQL.Conventions.Tests.Server
             {
                 yield return new Author(dto);
             }
-        }
-
-        public Task FetchData(CancellationToken token)
-        {
-            return Task.CompletedTask;
         }
     }
 }
