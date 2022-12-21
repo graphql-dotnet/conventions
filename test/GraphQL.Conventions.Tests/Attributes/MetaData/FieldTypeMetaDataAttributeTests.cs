@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.Conventions;
-using GraphQL.Conventions.Execution;
 using GraphQL.Validation;
 using GraphQLParser.AST;
 using Tests.Templates;
@@ -92,7 +90,7 @@ namespace Tests.Attributes.MetaData
         }
     }
 
-    public class TestUserContext : Dictionary<string, object>, IUserContext
+    public class TestUserContext : UserContextBase
     {
         public TestUserContext(params string[] accessPermissions)
         {
@@ -141,7 +139,7 @@ namespace Tests.Attributes.MetaData
     {
         public ValueTask<INodeVisitor> ValidateAsync(ValidationContext context)
         {
-            return new ValueTask<INodeVisitor>(new TestValidationNodeVisitor(context.GetUserContext() as TestUserContext));
+            return new ValueTask<INodeVisitor>(new TestValidationNodeVisitor(context.UserContext as TestUserContext));
         }
     }
 

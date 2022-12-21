@@ -8,7 +8,7 @@ using GraphQL.Conventions.Tests.Server.Schema.Types;
 
 namespace GraphQL.Conventions.Tests.Server
 {
-    public class UserContext : Dictionary<string, object>, IUserContext, IDataLoaderContextProvider
+    public class UserContext : UserContextBase, IDataLoaderContextProvider
     {
         private readonly IBookRepository _bookRepository = new BookRepository();
 
