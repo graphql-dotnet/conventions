@@ -3,7 +3,6 @@
   <PropertyGroup>
     <Description>GraphQL Conventions for .NET</Description>
     <VersionPrefix>7.2.0</VersionPrefix>
-    <PackageVersion>7.2.0</PackageVersion>
     <Authors>Tommy Lillehagen</Authors>
     <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
     <LangVersion>9.0</LangVersion>
