@@ -665,7 +665,7 @@ namespace Tests.Adapters
             return result;
         }
 
-        private class UserContext : IUserContext
+        private class UserContext : Dictionary<string, object>, IUserContext
         {
             public int SomeValue { get; set; }
         }

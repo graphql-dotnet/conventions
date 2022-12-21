@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Conventions.Adapters;
 using GraphQL.Conventions.Adapters.Engine.ErrorTransformations;
-using GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader;
 using GraphQL.Conventions.Builders;
 using GraphQL.Conventions.Extensions;
 using GraphQL.Conventions.Types.Resolution;
@@ -320,10 +319,7 @@ namespace GraphQL.Conventions
                 OperationName = operationName,
                 Variables = variables,
                 EnableMetrics = enableProfiling,
-                UserContext = new Dictionary<string, object>()
-                {
-                    { typeof(IUserContext).FullName ?? nameof(IUserContext), userContext },
-                },
+                UserContext = userContext,
                 RequestServices = serviceProvider,
                 ValidationRules = rules,
                 CancellationToken = cancellationToken,
@@ -334,11 +330,6 @@ namespace GraphQL.Conventions
             {
                 foreach (var listener in listeners)
                     configuration.Listeners.Add(listener);
-            }
-
-            if (userContext is IDataLoaderContextProvider)
-            {
-                configuration.Listeners.Add(new DataLoaderListener());
             }
 
             if (enableProfiling)

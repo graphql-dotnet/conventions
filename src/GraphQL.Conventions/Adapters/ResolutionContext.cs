@@ -59,7 +59,7 @@ namespace GraphQL.Conventions.Adapters
 
         public object RootValue => FieldContext.RootValue;
 
-        public IUserContext UserContext => FieldContext.GetUserContext();
+        public IUserContext UserContext => FieldContext.UserContext as IUserContext;
 
         public IServiceProvider ServiceProvider => FieldContext.RequestServices;
 

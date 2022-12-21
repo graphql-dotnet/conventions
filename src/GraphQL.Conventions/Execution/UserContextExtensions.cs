@@ -1,31 +1,9 @@
-using System.Collections.Generic;
 using GraphQL.Execution;
 
 namespace GraphQL.Conventions.Execution
 {
     public static class UserContextExtensions
     {
-        public static IUserContext GetUserContext(this IProvideUserContext context) => GetValue<IUserContext>(context.UserContext);
-        public static void SetUserContext(this IProvideUserContext context, IUserContext value) => SetValue(context.UserContext, value);
-
-        private static T GetValue<T>(IDictionary<string, object> dictionary)
-        {
-            var key = typeof(T).FullName ?? nameof(T);
-            return dictionary != null && dictionary.TryGetValue(key, out var value)
-                ? (T)value
-                : default;
-        }
-
-        private static void SetValue<T>(IDictionary<string, object> dictionary, T value)
-        {
-            var key = typeof(T).FullName ?? nameof(T);
-            if (dictionary != null)
-            {
-                if (dictionary.ContainsKey(key))
-                    dictionary[key] = value;
-                else
-                    dictionary.Add(key, value);
-            }
-        }
+        public static IUserContext GetUserContext(this IProvideUserContext context) => context.UserContext as IUserContext;
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GraphQL;
@@ -91,7 +92,7 @@ namespace Tests.Attributes.MetaData
         }
     }
 
-    public class TestUserContext : IUserContext
+    public class TestUserContext : Dictionary<string, object>, IUserContext
     {
         public TestUserContext(params string[] accessPermissions)
         {
