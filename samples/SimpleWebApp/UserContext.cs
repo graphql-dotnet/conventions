@@ -7,7 +7,7 @@ using GraphQL.Conventions.Tests.Server.Schema.Types;
 
 namespace GraphQL.Conventions.Tests.Server
 {
-    public class UserContext : IUserContext
+    public class UserContext : UserContextBase
     {
         private readonly IBookRepository _bookRepository = new BookRepository();
 

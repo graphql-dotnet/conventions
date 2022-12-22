@@ -319,10 +319,7 @@ namespace GraphQL.Conventions
                 OperationName = operationName,
                 Variables = variables,
                 EnableMetrics = enableProfiling,
-                UserContext = new Dictionary<string, object>()
-                {
-                    { typeof(IUserContext).FullName ?? nameof(IUserContext), userContext },
-                },
+                UserContext = userContext,
                 RequestServices = serviceProvider,
                 ValidationRules = rules,
                 CancellationToken = cancellationToken,
