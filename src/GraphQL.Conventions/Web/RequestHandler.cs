@@ -9,6 +9,7 @@ using Type = System.Type;
 
 namespace GraphQL.Conventions.Web
 {
+    [Obsolete("Please use the GraphQL.DocumentExecuter class or the GraphQL.Server project to execute queries.")]
     public static class RequestHandler
     {
         public delegate object ResolveTypeDelegate(Type type);

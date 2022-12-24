@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GraphQL.NewtonsoftJson;
 
 namespace GraphQL.Conventions.Web
 {
+    [Obsolete("Please use the GraphQL.DocumentExecuter class or the GraphQL.Server project to execute queries. Please use a GraphQL serialization library such as GraphQL.SystemTextJson to serialize responses.")]
     public class Response
     {
         private static readonly GraphQLSerializer Serializer = new GraphQLSerializer();

@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +19,6 @@ using GraphQL.Utilities;
 using GraphQL.Validation;
 using GraphQL.Validation.Complexity;
 using GraphQL.Validation.Rules.Custom;
-using GraphQLParser.AST;
 
 // ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
@@ -30,49 +31,43 @@ namespace GraphQL.Conventions
 
         private readonly SchemaConstructor<ISchema, IGraphType> _constructor;
 
+        [Obsolete]
         private readonly IDocumentExecuter _documentExecutor;
 
+        [Obsolete]
         private readonly IDocumentBuilder _documentBuilder = new GraphQLDocumentBuilder();
 
+        [Obsolete]
         private readonly DocumentValidator _documentValidator = new DocumentValidator();
 
+        [Obsolete]
         private readonly GraphQLSerializer _documentSerializer = new GraphQLSerializer();
 
-        private SchemaPrinter _schemaPrinter;
+        [Obsolete]
+        private SchemaPrinter? _schemaPrinter;
 
-        private ISchema _schema;
+        private ISchema? _schema;
 
         private readonly object _schemaLock = new object();
 
         private readonly List<Type> _schemaTypes = new List<Type>();
 
+        [Obsolete]
         private readonly List<Type> _middleware = new List<Type>();
 
+        [Obsolete]
         private IErrorTransformation _errorTransformation = new DefaultErrorTransformation();
 
+        [Obsolete]
         private bool _includeFieldDescriptions;
+        [Obsolete]
         private bool _throwUnhandledExceptions;
-
+        [Obsolete]
         private bool _includeFieldDeprecationReasons;
 
         private class NoopValidationRule : IValidationRule
         {
-            public ValueTask<INodeVisitor> ValidateAsync(ValidationContext context) => new(new NoopNodeVisitor());
-        }
-
-        private class NoopNodeVisitor : INodeVisitor
-        {
-            public ValueTask EnterAsync(ASTNode node, ValidationContext context)
-            {
-                /* Noop */
-                return default;
-            }
-
-            public ValueTask LeaveAsync(ASTNode node, ValidationContext context)
-            {
-                /* Noop */
-                return default;
-            }
+            public ValueTask<INodeVisitor?> ValidateAsync(ValidationContext context) => new((INodeVisitor?)null);
         }
 
         private class WrappedDependencyInjector : IServiceProvider
@@ -90,7 +85,8 @@ namespace GraphQL.Conventions
             }
         }
 
-        public GraphQLEngine(Func<Type, object> typeResolutionDelegate = null, ITypeResolver typeResolver = null, IDocumentExecuter documentExecutor = null)
+        [Obsolete("Please use GraphQLEngine.New instead.")]
+        public GraphQLEngine(Func<Type, object>? typeResolutionDelegate = null, ITypeResolver? typeResolver = null, IDocumentExecuter? documentExecutor = null)
         {
             _documentExecutor = documentExecutor ?? new GraphQL.DocumentExecuter();
             _typeResolver = typeResolver ?? _typeResolver;
@@ -98,26 +94,29 @@ namespace GraphQL.Conventions
             {
                 TypeResolutionDelegate = typeResolutionDelegate != null
                     ? type => typeResolutionDelegate(type) ?? CreateInstance(type)
-                    : (Func<Type, object>)CreateInstance
+                    : CreateInstance
             };
         }
 
+        [Obsolete("Please use IDocumentExecuter to execute queries.")]
         public static GraphQLEngine New(IDocumentExecuter documentExecutor)
             => new GraphQLEngine(null, null, documentExecutor);
 
-        public static GraphQLEngine New(Func<Type, object> typeResolutionDelegate = null)
+        public static GraphQLEngine New(Func<Type, object>? typeResolutionDelegate = null)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             return new GraphQLEngine(typeResolutionDelegate);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
-        public static GraphQLEngine New<TQuery>(Func<Type, object> typeResolutionDelegate = null)
+        public static GraphQLEngine New<TQuery>(Func<Type, object>? typeResolutionDelegate = null)
         {
             return New(typeResolutionDelegate)
                 .WithQuery<TQuery>()
                 .BuildSchema();
         }
 
-        public static GraphQLEngine New<TQuery, TMutation>(Func<Type, object> typeResolutionDelegate = null)
+        public static GraphQLEngine New<TQuery, TMutation>(Func<Type, object>? typeResolutionDelegate = null)
         {
             return New(typeResolutionDelegate)
                 .WithQueryAndMutation<TQuery, TMutation>()
@@ -187,17 +186,20 @@ namespace GraphQL.Conventions
             return this;
         }
 
+        [Obsolete("Please use IGraphQLBuilder.AddMiddleware instead.")]
         public GraphQLEngine WithMiddleware(Type type)
         {
             _middleware.Add(type);
             return this;
         }
 
+        [Obsolete("Please use IGraphQLBuilder.AddMiddleware instead.")]
         public GraphQLEngine WithMiddleware<T>()
         {
             return WithMiddleware(typeof(T));
         }
 
+        [Obsolete("Please use AddErrorInfoProvider or ConfigureExecution to transform returned errors. You can also use ConfigureExecutionOptions and set the UnhandledExceptionDelegate property.")]
         public GraphQLEngine WithCustomErrorTransformation(IErrorTransformation errorTransformation)
         {
             _errorTransformation = errorTransformation;
@@ -210,18 +212,21 @@ namespace GraphQL.Conventions
             return this;
         }
 
+        [Obsolete("Please use the GraphQL.Utilities.SchemaPrinter class to export the SDL.")]
         public GraphQLEngine PrintFieldDescriptions(bool include = true)
         {
             _includeFieldDescriptions = include;
             return this;
         }
 
+        [Obsolete("Please call IGraphQLBuilder.ConfigureExecutionOptions and set the ThrowOnUnhandledException property.")]
         public GraphQLEngine ThrowUnhandledExceptions(bool throwUnhandledExceptions = true)
         {
             _throwUnhandledExceptions = throwUnhandledExceptions;
             return this;
         }
 
+        [Obsolete("Please use the GraphQL.Utilities.SchemaPrinter class to export the SDL.")]
         public GraphQLEngine PrintFieldDeprecationReasons(bool include = true)
         {
             _includeFieldDeprecationReasons = include;
@@ -230,56 +235,67 @@ namespace GraphQL.Conventions
 
         public GraphQLEngine BuildSchema(params Type[] types)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             return BuildSchema(null, types);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
-        public GraphQLEngine BuildSchema(SchemaPrinterOptions options, params Type[] types)
+        [Obsolete("Please use BuildSchema(params Type[] types) instead.")]
+        public GraphQLEngine BuildSchema(SchemaPrinterOptions? options, params Type[] types)
         {
             if (_schema != null)
                 return this;
-            if (types.Length > 0)
-            {
-                _schemaTypes.AddRange(types);
-            }
             lock (_schemaLock)
-                _schema = _constructor.Build(_schemaTypes.ToArray());
-            _schemaPrinter = new SchemaPrinter(_schema, options ?? new SchemaPrinterOptions
             {
-                IncludeDescriptions = _includeFieldDescriptions,
-                IncludeDeprecationReasons = _includeFieldDeprecationReasons,
-            });
+                if (_schema != null)
+                    return this;
+                if (types.Length > 0)
+                {
+                    _schemaTypes.AddRange(types);
+                }
+                _schema = _constructor.Build(_schemaTypes.ToArray());
+                _schemaPrinter = new SchemaPrinter(_schema, options ?? new SchemaPrinterOptions
+                {
+                    IncludeDescriptions = _includeFieldDescriptions,
+                    IncludeDeprecationReasons = _includeFieldDeprecationReasons,
+                });
+            }
             return this;
         }
 
-        public string Describe(Func<ISchema, SchemaPrinter> ctor = null)
+        [Obsolete("Please use the GraphQL.Utilities.SchemaPrinter class to export the SDL.")]
+        public string Describe(Func<ISchema, SchemaPrinter>? ctor = null)
         {
             BuildSchema(); // Ensure that the schema has been constructed
             if (ctor != null)
-                _schemaPrinter = ctor(_schema);
-            return _schemaPrinter.Print();
+                _schemaPrinter = ctor(_schema!);
+            return _schemaPrinter!.Print();
         }
 
         public ISchema GetSchema()
         {
             BuildSchema(); // Ensure that the schema has been constructed
-            return _schema;
+            return _schema!;
         }
 
-        public GraphQLExecutor NewExecutor(IRequestDeserializer requestDeserializer = null)
+        [Obsolete("Please use IDocumentExecuter to execute queries.")]
+        public GraphQLExecutor NewExecutor(IRequestDeserializer? requestDeserializer = null)
         {
             BuildSchema(); // Ensure that the schema has been constructed
             return new GraphQLExecutor(this, requestDeserializer ?? new RequestDeserializer());
         }
 
-        public GraphQLEngine RegisterScalarType<TType, TGraphType>(string name = null)
+        public GraphQLEngine RegisterScalarType<TType, TGraphType>(string? name = null)
         {
             _typeResolver.RegisterScalarType<TType>(name ?? typeof(TType).Name);
             _graphTypeAdapter.RegisterScalarType<TGraphType>(name ?? typeof(TType).Name);
             return this;
         }
 
+        [Obsolete("Please use a GraphQL serialization library such as GraphQL.SystemTextJson to serialize responses.")]
         public string SerializeResult(ExecutionResult result) => _documentSerializer.Serialize(result);
 
+        [Obsolete("Please use IDocumentExecuter to execute queries.")]
         internal async Task<ExecutionResult> ExecuteAsync(
             object rootObject,
             string query,
@@ -352,6 +368,7 @@ namespace GraphQL.Conventions
             return result;
         }
 
+        [Obsolete]
         internal async Task<IValidationResult> ValidateAsync(string queryString)
         {
             var document = _documentBuilder.Build(queryString);
@@ -364,7 +381,7 @@ namespace GraphQL.Conventions
             return result.validationResult;
         }
 
-        private object CreateInstance(Type type)
+        private object? CreateInstance(Type type)
         {
             var typeInfo = type.GetTypeInfo();
             if (!typeInfo.IsAbstract && !typeInfo.ContainsGenericParameters)

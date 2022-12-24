@@ -26,6 +26,9 @@ namespace GraphQL.Conventions.Extensions
         public static bool IsIdentifierForType<T>(this NonNull<string> id) =>
             id.Value.IsIdentifierForType<T>();
 
+        public static string IdentifierForTypeOrNull<T>(this Id id) =>
+            id.IsIdentifierForType<T>() ? id.IdentifierForType<T>() : null;
+
         /// <summary>
         /// Invokes a method represented by a specified <see cref="MethodInfo"/>, using
         /// the specified parameters.

@@ -8,6 +8,7 @@ using GraphQL.Validation;
 // ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
+    [Obsolete("Please use the GraphQL.DocumentExecuter class directly.")]
     public class DocumentExecuter : IDocumentExecuter
     {
         private readonly GraphQLEngine _engine;

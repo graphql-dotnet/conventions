@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 // ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
+    [Obsolete("Please use a GraphQL serialization library such as GraphQL.SystemTextJson to deserialize JSON requests.")]
     public class RequestDeserializer : IRequestDeserializer
     {
         public QueryInput GetQueryFromRequestBody(string requestBody)

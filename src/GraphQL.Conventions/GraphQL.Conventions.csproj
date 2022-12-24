@@ -27,8 +27,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphQL.DataLoader" Version="7.2.0" />
-    <PackageReference Include="GraphQL.NewtonsoftJson" Version="7.2.0" />
+    <PackageReference Include="GraphQL.DataLoader" Version="7.2.1" />
+    <PackageReference Include="GraphQL.NewtonsoftJson" Version="7.2.1" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
