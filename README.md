@@ -64,8 +64,12 @@ using GraphQL.Conventions;
 services.AddGraphQL(b => b
     .AddConventionsSchema<Query>()
     .AddSystemTextJson());
+```
 
-// optionally you may add a configuration delegate for additional options
+Optionally you may add a configuration delegate to the `AddConventionsSchema`
+call for additional options:
+
+```csharp
 services.AddGraphQL(b => b
     .AddConventionsSchema<Query>(s => s
         .WithMutation<Mutation>())
