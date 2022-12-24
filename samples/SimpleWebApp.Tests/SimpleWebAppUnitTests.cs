@@ -28,4 +28,29 @@ public class SimpleWebAppSchemaCreationTests
         Assert.False(result.HasErrors);
         Assert.True(result.IsValid);
     }
+
+    [Fact]
+    public async Task TestSimpleWebAppNewAsync()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<IBookRepository>(new BookRepository());
+        services.AddSingleton<IAuthorRepository>(new AuthorRepository());
+        var serviceProvider = services.BuildServiceProvider();
+
+        var schema = GraphQLEngine
+            .New()
+            .WithQueryAndMutation<Query, Mutation>()
+            .GetSchema();
+        var executer = new GraphQL.DocumentExecuter();
+
+        var result = await executer.ExecuteAsync(new()
+        {
+            Schema = schema,
+            Query = "{ __schema { types { name } } }",
+            RequestServices = serviceProvider,
+        });
+
+        Assert.Null(result.Errors);
+        Assert.NotNull(result.Data);
+    }
 }
