@@ -23,7 +23,7 @@ namespace SubscriptionExample
                 .AddSystemTextJson()
                 .AddErrorInfoProvider(option => option.ExposeExceptionDetails = true)
                 .AddDataLoader()
-                //.UseApolloTracing()
+                // .UseApolloTracing()
                 .ConfigureExecutionOptions(options =>
                 {
                     var logger = options.RequestServices.GetRequiredService<ILogger<Startup>>();
