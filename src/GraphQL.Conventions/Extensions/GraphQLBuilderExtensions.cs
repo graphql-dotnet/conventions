@@ -35,7 +35,7 @@ namespace GraphQL.Conventions
         public static IGraphQLBuilder AddConventionsSchema(this IGraphQLBuilder builder, Action<GraphQLEngine, IServiceProvider> configure)
             => AddConventionsSchema(builder, provider =>
             {
-                var engine = GraphQLEngine.New();
+                var engine = GraphQLEngine.New(provider.GetService);
                 configure(engine, provider);
                 return engine;
             });
@@ -46,7 +46,7 @@ namespace GraphQL.Conventions
         public static IGraphQLBuilder AddConventionsSchema<TQuery>(this IGraphQLBuilder builder, Action<GraphQLEngine, IServiceProvider> configure)
             => AddConventionsSchema(builder, provider =>
             {
-                var engine = GraphQLEngine.New<TQuery>();
+                var engine = GraphQLEngine.New<TQuery>(provider.GetService);
                 configure?.Invoke(engine, provider);
                 return engine;
             });
@@ -57,7 +57,7 @@ namespace GraphQL.Conventions
         public static IGraphQLBuilder AddConventionsSchema<TQuery, TMutation>(this IGraphQLBuilder builder, Action<GraphQLEngine, IServiceProvider> configure)
             => AddConventionsSchema(builder, provider =>
             {
-                var engine = GraphQLEngine.New<TQuery, TMutation>();
+                var engine = GraphQLEngine.New<TQuery, TMutation>(provider.GetService);
                 configure.Invoke(engine, provider);
                 return engine;
             });
