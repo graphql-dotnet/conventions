@@ -9,8 +9,8 @@ namespace GraphQL.Conventions.Tests.Server
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<BookRepository>();
-            services.AddSingleton<AuthorRepository>();
+            services.AddSingleton<IBookRepository, BookRepository>();
+            services.AddSingleton<IAuthorRepository, AuthorRepository>();
             services.AddGraphQL(b => b
                 .AddSystemTextJson()
                 .AddConventionsSchema<Schema.Query, Schema.Mutation>()
