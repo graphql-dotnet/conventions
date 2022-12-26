@@ -2,10 +2,9 @@ using System;
 using GraphQL.Conventions;
 using SubscriptionExample.Core;
 
-namespace SubscriptionExample.GraphQl
+namespace SubscriptionExample.GraphQl;
+
+public class Subscription
 {
-    public class Subscription
-    {
-        public IObservable<Message> MessageUpdate([Inject] MessageService service) => service.ObservableMessages();
-    }
+    public IObservable<Message> MessageUpdate([Inject] MessageService service) => service.ObservableMessages();
 }

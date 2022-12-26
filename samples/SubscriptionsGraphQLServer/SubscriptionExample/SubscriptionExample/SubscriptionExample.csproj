@@ -1,11 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
-    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <UserSecretsId>753d5ae8-af8c-469c-963e-7c45ef13bd7d</UserSecretsId>
-    <LangVersion>9.0</LangVersion>
+    <TargetFrameworks>net7.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,4 +18,7 @@
     <ProjectReference Include="..\..\..\..\src\GraphQL.Conventions\GraphQL.Conventions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="SubscriptionExample.Tests"/>
+  </ItemGroup>
 </Project>
