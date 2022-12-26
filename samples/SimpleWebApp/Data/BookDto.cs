@@ -1,16 +1,12 @@
-using System;
-using System.Collections.Generic;
+namespace GraphQL.Conventions.Tests.Server.Data;
 
-namespace GraphQL.Conventions.Tests.Server.Data
+public class BookDto
 {
-    public class BookDto
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public string Title { get; set; }
+    public string Title { get; set; }
 
-        public List<int> AuthorIds { get; set; }
+    public List<int> AuthorIds { get; set; }
 
-        public DateTime? ReleaseDate { get; set; }
-    }
+    public DateTime? ReleaseDate { get; set; }
 }

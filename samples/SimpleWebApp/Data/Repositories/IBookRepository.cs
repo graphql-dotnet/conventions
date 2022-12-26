@@ -1,15 +1,12 @@
-using System.Collections.Generic;
+namespace GraphQL.Conventions.Tests.Server.Data.Repositories;
 
-namespace GraphQL.Conventions.Tests.Server.Data.Repositories
+public interface IBookRepository
 {
-    public interface IBookRepository
-    {
-        int AddBook(BookDto book);
+    int AddBook(BookDto book);
 
-        BookDto GetBookById(int id);
+    BookDto GetBookById(int id);
 
-        IEnumerable<BookDto> GetBooksByIds(List<int> ids);
+    IEnumerable<BookDto> GetBooksByIds(List<int> ids);
 
-        IEnumerable<BookDto> SearchForBooksByTitle(string searchString);
-    }
+    IEnumerable<BookDto> SearchForBooksByTitle(string searchString);
 }

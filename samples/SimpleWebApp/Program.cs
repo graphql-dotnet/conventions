@@ -1,23 +1,21 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using GraphQL;
+using GraphQL.Conventions;
+using GraphQL.Conventions.Tests.Server;
+using GraphQL.Conventions.Tests.Server.Data.Repositories;
+using GraphQL.Conventions.Tests.Server.Schema;
 
-namespace GraphQL.Conventions.Tests.Server
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var host = CreateHostBuilder(args).Build();
+var builder = WebApplication.CreateBuilder(args);
 
-            host.Run();
-        }
+builder.Services.AddSingleton<BookRepository>();
+builder.Services.AddSingleton<AuthorRepository>();
+builder.Services.AddGraphQL(b => b
+    .AddSystemTextJson()
+    .AddConventionsSchema<Query, Mutation>()
+    .AddUserContextBuilder(_ => new UserContext()));
+builder.Logging.AddConsole();
 
-        public static IHostBuilder CreateHostBuilder(string[] args) => Host
-            .CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder => webBuilder
-                .UseStartup<Startup>()
-                .ConfigureKestrel(options => options.AllowSynchronousIO = true)) // for Newtonsoft.Json support
-            .ConfigureLogging(l => l.AddConsole());
-    }
-}
+var app = builder.Build();
+app.UseGraphQL();
+app.UseGraphQLPlayground("/");
+
+await app.RunAsync();

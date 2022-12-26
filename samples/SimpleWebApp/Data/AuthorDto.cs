@@ -1,11 +1,10 @@
-namespace GraphQL.Conventions.Tests.Server.Data
+namespace GraphQL.Conventions.Tests.Server.Data;
+
+public class AuthorDto
 {
-    public class AuthorDto
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public string FirstName { get; set; }
+    public string FirstName { get; set; }
 
-        public string LastName { get; set; }
-    }
+    public string LastName { get; set; }
 }

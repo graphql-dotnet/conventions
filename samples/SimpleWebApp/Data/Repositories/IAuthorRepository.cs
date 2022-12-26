@@ -1,15 +1,12 @@
-using System.Collections.Generic;
+namespace GraphQL.Conventions.Tests.Server.Data.Repositories;
 
-namespace GraphQL.Conventions.Tests.Server.Data.Repositories
+public interface IAuthorRepository
 {
-    public interface IAuthorRepository
-    {
-        int AddAuthor(AuthorDto author);
+    int AddAuthor(AuthorDto author);
 
-        AuthorDto GetAuthorById(int id);
+    AuthorDto GetAuthorById(int id);
 
-        IEnumerable<AuthorDto> GetAuthorsByIds(List<int> ids);
+    IEnumerable<AuthorDto> GetAuthorsByIds(List<int> ids);
 
-        IEnumerable<AuthorDto> SearchForAuthorsByLastName(string searchString);
-    }
+    IEnumerable<AuthorDto> SearchForAuthorsByLastName(string searchString);
 }

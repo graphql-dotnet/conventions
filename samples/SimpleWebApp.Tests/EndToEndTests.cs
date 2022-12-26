@@ -66,7 +66,7 @@ public class EndToEndTests
             }
             """;
 
-        using var webApp = new WebApplicationFactory<GraphQL.Conventions.Tests.Server.Program>();
+        using var webApp = new WebApplicationFactory<Program>();
         using var server = webApp.Server;
         server.AllowSynchronousIO = true; // for Newtonsoft.Json support
         await VerifyGraphQLPostAsync(server, "/graphql", query, expected).ConfigureAwait(false);
