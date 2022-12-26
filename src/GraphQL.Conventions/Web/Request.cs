@@ -9,6 +9,7 @@ namespace GraphQL.Conventions.Web
     /// <summary>
     /// Representation of a web request.
     /// </summary>
+    [Obsolete("Please use the GraphQL.DocumentExecuter class or the GraphQL.Server project to execute queries. Please use a GraphQL serialization library such as GraphQL.SystemTextJson to deserialize requests.")]
     public class Request
     {
         private static readonly IRequestDeserializer RequestDeserializer = new RequestDeserializer();

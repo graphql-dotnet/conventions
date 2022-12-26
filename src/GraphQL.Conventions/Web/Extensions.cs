@@ -1,13 +1,12 @@
+using System;
 using System.IO;
 
 namespace GraphQL.Conventions.Web
 {
     public static class Extensions
     {
+        [Obsolete("Please use a GraphQL serialization library such as GraphQL.SystemTextJson to deserialize requests.")]
         public static Request ToGraphQLRequest(this Stream stream) =>
             Request.New(stream);
-
-        public static string IdentifierForTypeOrNull<T>(this Id id) =>
-            id.IsIdentifierForType<T>() ? id.IdentifierForType<T>() : null;
     }
 }

@@ -9,6 +9,7 @@ using GraphQL.Validation.Complexity;
 // ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
+    [Obsolete("Please use the GraphQL.DocumentExecuter class to execute queries.")]
     public interface IGraphQLExecutor<TResult>
     {
         IGraphQLExecutor<TResult> WithRequest(string requestBody);

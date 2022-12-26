@@ -28,7 +28,7 @@ This project targets [.NET Standard] 2.0.
 
 Implement your query type:
 
-```cs
+```csharp
 [ImplementViewer(OperationType.Query)]
 public class Query
 {
@@ -55,18 +55,33 @@ public class Query
 }
 ```
 
-Construct your schema and run your query:
+Configure your service provider:
 
-```cs
+```csharp
+using GraphQL;
 using GraphQL.Conventions;
 
-var engine = GraphQLEngine.New<Query>();
-var result = await engine
-    .NewExecutor()
-    .WithUserContext(userContext)
-    .WithServiceProvider(serviceProvider)
-    .WithRequest(requestBody)
-    .Execute();
+services.AddGraphQL(b => b
+    .AddConventionsSchema<Query>()
+    .AddSystemTextJson());
+```
+
+Optionally you may add a configuration delegate to the `AddConventionsSchema`
+call for additional options:
+
+```csharp
+services.AddGraphQL(b => b
+    .AddConventionsSchema<Query>(s => s
+        .WithMutation<Mutation>())
+    .AddSystemTextJson());
+```
+
+Use the [GraphQL.Server.Transports.AspNetCore](https://github.com/graphql-dotnet/server) project to host
+an endpoint at `/graphql` and user interface at `/ui/playground`:
+
+```csharp
+app.UseGraphQL();
+app.UseGraphQLPlayground();
 ```
 
 ## Examples
