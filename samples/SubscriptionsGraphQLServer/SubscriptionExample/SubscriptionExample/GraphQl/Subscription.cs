@@ -1,4 +1,3 @@
-using System;
 using GraphQL.Conventions;
 using SubscriptionExample.Core;
 

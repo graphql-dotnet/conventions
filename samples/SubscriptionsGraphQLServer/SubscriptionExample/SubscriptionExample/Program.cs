@@ -1,9 +1,5 @@
-using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.Conventions;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using SubscriptionExample.Core;
 using SubscriptionExample.GraphQl;
 
@@ -16,7 +12,7 @@ builder.Services.AddGraphQL(b => b
     .AddDataLoader()
     .ConfigureExecutionOptions(options =>
     {
-        var logger = options.RequestServices.GetRequiredService<ILogger<Program>>();
+        var logger = options.RequestServices!.GetRequiredService<ILogger<Program>>();
         options.UnhandledExceptionDelegate = ctx =>
         {
             logger.LogError($"GraphQL Unhandled Exception: {ctx.ErrorMessage}.", ctx.OriginalException);
