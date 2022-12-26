@@ -6,8 +6,8 @@ using GraphQL.Conventions.Tests.Server.Schema;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<BookRepository>();
-builder.Services.AddSingleton<AuthorRepository>();
+builder.Services.AddSingleton<IBookRepository, BookRepository>();
+builder.Services.AddSingleton<IAuthorRepository, AuthorRepository>();
 builder.Services.AddGraphQL(b => b
     .AddSystemTextJson()
     .AddConventionsSchema<Query, Mutation>()
