@@ -226,7 +226,7 @@ public class EndToEndTests
             }
             """;
 
-        using var webApp = new WebApplicationFactory<GraphQL.Conventions.Tests.Server.Program>();
+        using var webApp = new WebApplicationFactory<Program>();
         using var server = webApp.Server;
         await VerifyGraphQLPostAsync(server, "/graphql", query1, expected1).ConfigureAwait(false);
         await VerifyGraphQLPostAsync(server, "/graphql", query2, expected2).ConfigureAwait(false);
