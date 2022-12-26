@@ -57,7 +57,7 @@ namespace GraphQL.Conventions
         public static IGraphQLBuilder AddConventionsSchema<TQuery, TMutation>(this IGraphQLBuilder builder, Action<GraphQLEngine, IServiceProvider> configure)
             => AddConventionsSchema(builder, provider =>
             {
-                var engine = GraphQLEngine.New<TQuery>();
+                var engine = GraphQLEngine.New<TQuery, TMutation>();
                 configure.Invoke(engine, provider);
                 return engine;
             });

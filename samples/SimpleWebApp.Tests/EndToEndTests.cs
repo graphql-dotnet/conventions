@@ -133,6 +133,105 @@ public class EndToEndTests
         await VerifyGraphQLPostAsync(server, "/graphql", query, expected).ConfigureAwait(false);
     }
 
+    [Fact]
+    public async Task MutationTest()
+    {
+        var query1 = """
+            mutation {
+              addAuthor(input: {
+                author: {
+                  firstName: "Jane"
+                  lastName: "Austen"
+                }
+              }) {
+                __typename
+                clientMutationId
+                author {
+                  __typename
+                  id
+                  firstName
+                  lastName
+                }
+              }
+            }
+            """;
+
+        var expected1 = """
+            {
+              "data": {
+                "addAuthor": {
+                  "__typename": "AddAuthorResult",
+                  "clientMutationId": null,
+                  "author": {
+                    "__typename": "Author",
+                    "id": "QXV0aG9yOjE=",
+                    "firstName": "Jane",
+                    "lastName": "Austen"
+                  }
+                }
+              }
+            }
+            """;
+
+        var query2 = """
+            mutation {
+              addBook(
+                input: {
+                  clientMutationId: "abc"
+                  book: {
+                    title: "Pride and Prejudice"
+                    releaseDate: "1813-01-28T00:00:00"
+                    authors: ["QXV0aG9yOjE="]
+                  }
+                }
+              ) {
+                __typename
+                clientMutationId
+                book {
+                  __typename
+                  id
+                  title
+                  releaseDate
+                  authors {
+                    id
+                    firstName
+                    lastName
+                  }
+                }
+              }
+            }
+            """;
+
+        var expected2 = """
+            {
+              "data": {
+                "addBook": {
+                  "__typename": "AddBookResult",
+                  "clientMutationId": "abc",
+                  "book": {
+                    "__typename": "Book",
+                    "id": "Qm9vazo1",
+                    "title": "Pride and Prejudice",
+                    "releaseDate": "1813-01-28T00:00:00Z",
+                    "authors": [
+                      {
+                        "id": "QXV0aG9yOjE=",
+                        "firstName": "Jane",
+                        "lastName": "Austen"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+            """;
+
+        using var webApp = new WebApplicationFactory<GraphQL.Conventions.Tests.Server.Program>();
+        using var server = webApp.Server;
+        await VerifyGraphQLPostAsync(server, "/graphql", query1, expected1).ConfigureAwait(false);
+        await VerifyGraphQLPostAsync(server, "/graphql", query2, expected2).ConfigureAwait(false);
+    }
+
     private static async Task VerifyGraphQLPostAsync(
         TestServer server,
         string url,
