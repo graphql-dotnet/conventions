@@ -1,25 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>  
-    <LangVersion>9.0</LangVersion>
+    <TargetFrameworks>net7.0</TargetFrameworks>  
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <Compile Remove="wwwroot\**" />
-    <Content Remove="wwwroot\**" />
-    <EmbeddedResource Remove="wwwroot\**" />
-    <None Remove="wwwroot\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="GraphQL.DataLoader" Version="7.2.1" />
+    <PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="7.2.0" />
     <PackageReference Include="GraphQL.Server.Ui.Playground" Version="7.2.0" />
-    <ProjectReference Include="../../../src/GraphQL.Conventions/GraphQL.Conventions.csproj" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.6" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.6" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="../../../src/GraphQL.Conventions/GraphQL.Conventions.csproj" />
+  </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="DataLoaderWithEFCore.Tests"/>
+    <Using Include="System.ComponentModel.DataAnnotations"/>
+  </ItemGroup>
 </Project>
