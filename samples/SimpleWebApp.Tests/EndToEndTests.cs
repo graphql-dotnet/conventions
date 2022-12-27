@@ -12,12 +12,17 @@ public class EndToEndTests
     {
         var query = """
             {
-              search (forString:"") {
+              search (forString: "", first: 100) {
                 items {
                   __typename
                   ... on Book {
                     id
                     title
+                    authors {
+                      id
+                      firstName
+                      lastName
+                    }
                   }
                   ... on Author {
                     id
@@ -37,28 +42,84 @@ public class EndToEndTests
                     {
                       "__typename": "Book",
                       "id": "Qm9vazox",
-                      "title": "A Lone Wolf in the Forest"
+                      "title": "A Lone Wolf in the Forest",
+                      "authors": [
+                        {
+                          "id": "QXV0aG9yOjE=",
+                          "firstName": "Benny",
+                          "lastName": "Frank"
+                        },
+                        {
+                          "id": "QXV0aG9yOjI=",
+                          "firstName": "Amalie",
+                          "lastName": "Jones"
+                        }
+                      ]
                     },
                     {
                       "__typename": "Book",
                       "id": "Qm9vazoy",
-                      "title": "Surfer Boy"
+                      "title": "Surfer Boy",
+                      "authors": [
+                        {
+                          "id": "QXV0aG9yOjI=",
+                          "firstName": "Amalie",
+                          "lastName": "Jones"
+                        }
+                      ]
                     },
                     {
                       "__typename": "Book",
                       "id": "Qm9vazoz",
-                      "title": "GraphQL, a Love Story"
+                      "title": "GraphQL, a Love Story",
+                      "authors": [
+                        {
+                          "id": "QXV0aG9yOjQ=",
+                          "firstName": "Sony",
+                          "lastName": "Mahony"
+                        }
+                      ]
                     },
                     {
                       "__typename": "Book",
                       "id": "Qm9vazo0",
-                      "title": "Dare I Say What?"
+                      "title": "Dare I Say What?",
+                      "authors": [
+                        {
+                          "id": "QXV0aG9yOjM=",
+                          "firstName": "Stewart",
+                          "lastName": "Clarksen"
+                        },
+                        {
+                          "id": "QXV0aG9yOjQ=",
+                          "firstName": "Sony",
+                          "lastName": "Mahony"
+                        }
+                      ]
                     },
                     {
                       "__typename": "Author",
                       "id": "QXV0aG9yOjE=",
                       "firstName": "Benny",
                       "lastName": "Frank"
+                    },
+                    {
+                      "__typename": "Author",
+                      "id": "QXV0aG9yOjI=",
+                      "firstName": "Amalie",
+                      "lastName": "Jones"
+                    },
+                    {
+                      "__typename": "Author",
+                      "id": "QXV0aG9yOjM=",
+                      "firstName": "Stewart",
+                      "lastName": "Clarksen"
+                    },
+                    {
+                      "__typename": "Author",
+                      "id": "QXV0aG9yOjQ=",
+                      "firstName": "Sony",
+                      "lastName": "Mahony"
                     }
                   ]
                 }
@@ -66,7 +127,7 @@ public class EndToEndTests
             }
             """;
 
-        using var webApp = new WebApplicationFactory<GraphQL.Conventions.Tests.Server.Program>();
+        using var webApp = new WebApplicationFactory<Program>();
         using var server = webApp.Server;
         server.AllowSynchronousIO = true; // for Newtonsoft.Json support
         await VerifyGraphQLPostAsync(server, "/graphql", query, expected).ConfigureAwait(false);
@@ -165,7 +226,7 @@ public class EndToEndTests
             }
             """;
 
-        using var webApp = new WebApplicationFactory<GraphQL.Conventions.Tests.Server.Program>();
+        using var webApp = new WebApplicationFactory<Program>();
         using var server = webApp.Server;
         await VerifyGraphQLPostAsync(server, "/graphql", query1, expected1).ConfigureAwait(false);
         await VerifyGraphQLPostAsync(server, "/graphql", query2, expected2).ConfigureAwait(false);
