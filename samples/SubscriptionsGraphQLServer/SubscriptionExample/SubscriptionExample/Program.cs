@@ -1,17 +1,32 @@
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+using GraphQL;
+using GraphQL.Conventions;
+using SubscriptionExample.Core;
+using SubscriptionExample.GraphQl;
 
-namespace SubscriptionExample
-{
-    public class Program
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSingleton<MessageService>();
+builder.Services.AddGraphQL(b => b
+    .AddSystemTextJson()
+    .AddErrorInfoProvider(option => option.ExposeExceptionDetails = true)
+    .AddDataLoader()
+    .ConfigureExecutionOptions(options =>
     {
-        public static void Main(string[] args)
+        var logger = options.RequestServices!.GetRequiredService<ILogger<Program>>();
+        options.UnhandledExceptionDelegate = ctx =>
         {
-            CreateWebHostBuilder(args).Build().Run();
-        }
+            logger.LogError($"GraphQL Unhandled Exception: {ctx.ErrorMessage}.", ctx.OriginalException);
+            return Task.CompletedTask;
+        };
+    })
+    .AddConventionsSchema(s => s
+        .WithFieldResolutionStrategy(FieldResolutionStrategy.Normal)
+        .WithQuery<Query>()
+        .WithMutation<Mutation>()
+        .WithSubscription<Subscription>()));
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
-    }
-}
+var app = builder.Build();
+app.UseGraphQL();
+app.UseGraphQLPlayground();
+
+await app.RunAsync();

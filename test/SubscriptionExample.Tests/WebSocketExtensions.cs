@@ -35,7 +35,7 @@ public static class WebSocketExtensions
         Assert.Equal(WebSocketMessageType.Text, response.MessageType);
         mem.Position = 0;
         var message = await _serializer.ReadAsync<OperationMessage>(mem);
-        return message;
+        return message!;
     }
 
     public static async Task ReceiveCloseMessageAsync(this WebSocket socket)

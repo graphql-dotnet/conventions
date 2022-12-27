@@ -1,11 +1,9 @@
-using System.Collections.Generic;
 using GraphQL.Conventions;
 using SubscriptionExample.Core;
 
-namespace SubscriptionExample.GraphQl
+namespace SubscriptionExample.GraphQl;
+
+public class Query
 {
-    public class Query
-    {
-        public IEnumerable<Message> Messages([Inject] MessageService service) => service.Messages;
-    }
+    public IEnumerable<Message> Messages([Inject] MessageService service) => service.Messages;
 }
