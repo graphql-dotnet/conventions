@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFrameworks>net7.0</TargetFrameworks>
@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\src\GraphQL.Conventions\GraphQL.Conventions.csproj" />
+    <ProjectReference Include="..\..\src\GraphQL.Conventions\GraphQL.Conventions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

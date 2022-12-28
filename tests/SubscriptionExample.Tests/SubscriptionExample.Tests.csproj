@@ -18,7 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\samples\SubscriptionsGraphQLServer\SubscriptionExample\SubscriptionExample\SubscriptionExample.csproj" />
+	  <ProjectReference Include="..\..\samples\SubscriptionExample\SubscriptionExample.csproj" />
 	</ItemGroup>
 
 </Project>
