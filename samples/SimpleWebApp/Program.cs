@@ -1,5 +1,4 @@
 using GraphQL;
-using GraphQL.Conventions;
 using GraphQL.Conventions.Tests.Server;
 using GraphQL.Conventions.Tests.Server.Data.Repositories;
 using GraphQL.Conventions.Tests.Server.Schema;

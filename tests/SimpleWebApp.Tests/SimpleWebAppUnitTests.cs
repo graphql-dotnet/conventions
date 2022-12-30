@@ -14,7 +14,7 @@ public class SimpleWebAppSchemaCreationTests
         var services = new ServiceCollection();
         services.AddSingleton<IBookRepository>(new BookRepository());
         services.AddSingleton<IAuthorRepository>(new AuthorRepository());
-        var serviceProvider = services.BuildServiceProvider();
+        using var serviceProvider = services.BuildServiceProvider();
 
         var requestHandler = RequestHandler
             .New()
@@ -35,7 +35,7 @@ public class SimpleWebAppSchemaCreationTests
         var services = new ServiceCollection();
         services.AddSingleton<IBookRepository>(new BookRepository());
         services.AddSingleton<IAuthorRepository>(new AuthorRepository());
-        var serviceProvider = services.BuildServiceProvider();
+        using var serviceProvider = services.BuildServiceProvider();
 
         var schema = GraphQLEngine
             .New()
