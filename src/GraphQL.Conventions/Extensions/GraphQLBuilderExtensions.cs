@@ -2,9 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+using GraphQL.Conventions;
 using GraphQL.DI;
 
-namespace GraphQL.Conventions
+namespace GraphQL
 {
     public static class GraphQLBuilderExtensions
     {
