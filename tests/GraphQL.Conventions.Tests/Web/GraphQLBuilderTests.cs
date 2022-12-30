@@ -30,6 +30,7 @@ namespace Tests.Web
             var serializer = services.GetRequiredService<IGraphQLTextSerializer>();
             var body = serializer.Serialize(result);
             Assert.AreEqual("{\"data\":{\"hello\":\"World\"}}", body);
+            // also ensure that configurations through ConfigureSchema run exactly one time
             Assert.AreEqual(1, schemaRunCount);
         }
 
