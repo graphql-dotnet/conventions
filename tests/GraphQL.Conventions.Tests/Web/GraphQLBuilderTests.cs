@@ -19,7 +19,7 @@ namespace Tests.Web
                 .AddSystemTextJson()
                 .ConfigureSchema(_ => schemaRunCount++));
 
-            var services = serviceCollection.BuildServiceProvider();
+            using var services = serviceCollection.BuildServiceProvider();
 
             var executer = services.GetRequiredService<IDocumentExecuter<ISchema>>();
             var result = await executer.ExecuteAsync(new ExecutionOptions
