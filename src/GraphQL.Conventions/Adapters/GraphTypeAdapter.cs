@@ -86,10 +86,12 @@ namespace GraphQL.Conventions.Adapters
 
         private FieldType DeriveField(GraphFieldInfo fieldInfo)
         {
+            bool resolvable = fieldInfo.DeclaringType.IsOutputType && !fieldInfo.DeclaringType.IsInterfaceType;
+
             if (fieldInfo.Type.IsObservable)
             {
-                var resolver = FieldResolverFactory(fieldInfo);
-                var streamResolver = new EventStreamResolver(resolver);
+                var resolver = resolvable ? FieldResolverFactory(fieldInfo) : null;
+                var streamResolver = resolvable ? new EventStreamResolver(resolver) : null;
                 return new FieldType
                 {
                     Name = fieldInfo.Name,
@@ -110,7 +112,7 @@ namespace GraphQL.Conventions.Adapters
                 DefaultValue = fieldInfo.DefaultValue,
                 Type = GetType(fieldInfo.Type),
                 Arguments = new QueryArguments(fieldInfo.Arguments.Where(arg => !arg.IsInjected).Select(DeriveArgument)),
-                Resolver = FieldResolverFactory(fieldInfo),
+                Resolver = resolvable ? FieldResolverFactory(fieldInfo) : null,
             };
         }
 

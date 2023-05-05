@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphQL.SystemTextJson" Version="7.2.0" />
-    <PackageReference Include="GraphQL.MicrosoftDI" Version="7.2.0" />
+    <PackageReference Include="GraphQL.SystemTextJson" Version="7.4.1" />
+    <PackageReference Include="GraphQL.MicrosoftDI" Version="7.4.1" />
     <PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="7.1.1" />
     <PackageReference Include="GraphQL.Server.Ui.Playground" Version="7.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.16.1" />
