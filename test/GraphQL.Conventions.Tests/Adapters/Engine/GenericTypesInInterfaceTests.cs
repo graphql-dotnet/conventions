@@ -1,8 +1,9 @@
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
 using System.Threading.Tasks;
+using GraphQL.Conventions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters.Engine
+namespace Tests.Adapters.Engine
 {
     public class GenericTypesInInterfaceTests : TestBase
     {
@@ -32,26 +33,28 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .NewExecutor()
                 .WithQueryString("{ account { id } }")
                 .EnableValidation()
-                .Execute();
+                .ExecuteAsync();
 
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("account", "id", 123);
         }
 
-        interface IEntity<T>
+        private interface IEntity<T>
         {
             T Id { get; }
         }
 
-        interface IAccount : IEntity<int> { }
+        private interface IAccount : IEntity<int> { }
 
-        class Account : IAccount
+        private class Account : IAccount
         {
             public int Id { get; } = 123;
         }
 
-        class Query
+        private class Query
         {
+            // ReSharper disable once UnusedMember.Local
+            // ReSharper disable once MemberHidesStaticFromOuterClass
             public IAccount Account { get; } = new Account();
         }
     }

@@ -1,10 +1,16 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GraphQL;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Relay;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
+using Tests.Types;
 
-namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedAutoPropertyAccessor.Local
+
+namespace Tests.Attributes.Execution.Relay
 {
     public class RelayMutationAttributeTests : TestBase
     {
@@ -102,12 +108,15 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
         {
             var engine = GraphQLEngine
                 .New()
+                .WithQuery<TestQuery>()
                 .WithMutation<T>();
+
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(query)
-                .WithInputs(inputs)
-                .Execute();
+                .WithVariables(inputs)
+                .ExecuteAsync();
+
             return result;
         }
 
@@ -116,7 +125,7 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
             return await ExecuteMutation<Mutation>(query, inputs);
         }
 
-        class Mutation
+        private class Mutation
         {
             [RelayMutation]
             public DoSomethingOutput DoSomething(DoSomethingInput input) =>
@@ -139,7 +148,7 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
         }
 
         [RelayMutationType]
-        class MutationType
+        private class MutationType
         {
             public DoSomethingOutput DoSomething(DoSomethingInput input) =>
                 new DoSomethingOutput
@@ -158,21 +167,21 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
             }
         }
 
-        class DoSomethingInput : IRelayMutationInputObject
+        private class DoSomethingInput : IRelayMutationInputObject
         {
             public string ClientMutationId { get; set; }
 
             public ActionType Action { get; set; }
         }
 
-        class DoSomethingOutput : IRelayMutationOutputObject
+        private class DoSomethingOutput : IRelayMutationOutputObject
         {
             public string ClientMutationId { get; set; }
 
             public bool WasSuccessful { get; set; }
         }
 
-        enum ActionType
+        private enum ActionType
         {
             Add,
             Update,

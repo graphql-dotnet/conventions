@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using DataLoaderWithEFCore.Data.Models;
 using Microsoft.EntityFrameworkCore;

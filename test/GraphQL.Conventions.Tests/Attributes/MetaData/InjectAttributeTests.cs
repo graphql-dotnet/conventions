@@ -1,8 +1,11 @@
 using System.Linq;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedParameter.Local
 
-namespace GraphQL.Conventions.Tests.Attributes.MetaData
+namespace Tests.Attributes.MetaData
 {
     public class InjectAttributeTests : TestBase
     {
@@ -16,7 +19,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
             field.ShouldHaveArgumentWithName("arg3").AndNotFlaggedAsInjected();
         }
 
-        class ArgumentData
+        private class ArgumentData
         {
             public int Field(string arg1, [Inject] bool arg2, int arg3) { return 0; }
         }

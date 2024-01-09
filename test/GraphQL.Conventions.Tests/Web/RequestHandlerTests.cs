@@ -1,10 +1,15 @@
+using System;
+using System.Reflection;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Web;
 using GraphQL.Validation.Complexity;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Web
+// ReSharper disable UnusedMember.Local
+
+namespace Tests.Web
 {
     public class RequestHandlerTests : TestBase
     {
@@ -16,12 +21,14 @@ namespace GraphQL.Conventions.Tests.Web
                 .New()
                 .WithQuery<TestQuery>()
                 .Generate()
-                .ProcessRequest(request, null, null);
+                .ProcessRequestAsync(request, null);
 
             response.ExecutionResult.Data.ShouldHaveFieldWithValue("hello", "World");
-            response.Body.ShouldEqual("{\"data\":{\"hello\":\"World\"}}");
             response.Errors.Count.ShouldEqual(0);
             response.Warnings.Count.ShouldEqual(0);
+
+            var body = response.GetBody();
+            body.ShouldEqual("{\"data\":{\"hello\":\"World\"}}");
         }
 
         [Test]
@@ -33,12 +40,14 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithQuery<TestQuery>()
                 .WithComplexityConfiguration(new ComplexityConfiguration { MaxDepth = 2 })
                 .Generate()
-                .ProcessRequest(request, null, null);
+                .ProcessRequestAsync(request, null);
 
             response.ExecutionResult.Data.ShouldHaveFieldWithValue("hello", "World");
-            response.Body.ShouldEqual("{\"data\":{\"hello\":\"World\"}}");
             response.Errors.Count.ShouldEqual(0);
             response.Warnings.Count.ShouldEqual(0);
+
+            var body = response.GetBody();
+            body.ShouldEqual("{\"data\":{\"hello\":\"World\"}}");
         }
 
         [Test]
@@ -50,7 +59,7 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithQuery<TestQuery>()
                 .WithComplexityConfiguration(new ComplexityConfiguration { MaxDepth = 1 })
                 .Generate()
-                .ProcessRequest(request, null, null);
+                .ProcessRequestAsync(request, null);
 
             response.Errors.Count.ShouldEqual(1);
             response.Errors[0].Message.ShouldEqual("Query is too nested to execute. Depth is 2 levels, maximum allowed on this endpoint is 1.");
@@ -62,11 +71,14 @@ namespace GraphQL.Conventions.Tests.Web
             var request = Request.New("{ \"query\": \"{ a: foo(ms: 10) b: foo(ms: 20) }\" }");
             var response = await RequestHandler
                 .New()
+                .WithDependencyInjector(new DependencyInjector())
                 .WithQuery<ProfiledQuery>()
                 .WithProfiling()
                 .Generate()
-                .ProcessRequest(request, null, null);
-            response.Body.ShouldContain("\"extensions\":{\"tracing\":");
+                .ProcessRequestAsync(request, null);
+
+            var body = response.GetBody();
+            body.ShouldContain("\"extensions\":{\"tracing\":");
         }
 
         [Test]
@@ -76,22 +88,27 @@ namespace GraphQL.Conventions.Tests.Web
             var request = Request.New("{ \"query\": \"{ earth { hello } mars { hello } } \" }");
             var response = await RequestHandler
                 .New()
+                .WithDependencyInjector(new DependencyInjector())
                 .WithQuery<CompositeQuery>()
                 .Generate()
-                .ProcessRequest(request, null, null);
-            response.Body.ShouldEqual("{\"data\":{\"earth\":{\"hello\":\"World\"},\"mars\":{\"hello\":\"World From Mars\"}}}");
+                .ProcessRequestAsync(request, null);
+
+            var body = response.GetBody();
+            body.ShouldEqual("{\"data\":{\"earth\":{\"hello\":\"World\"},\"mars\":{\"hello\":\"World From Mars\"}}}");
 
             // Exclude types from 'Unwanted' namespace, i.e. TypeQuery2 from CompositeQuery schema
             request = Request.New("{ \"query\": \"{ earth { hello } mars { hello } } \" }");
             response = await RequestHandler
                 .New()
-                .IgnoreTypesFromNamespacesStartingWith("GraphQL.Conventions.Tests.Web.Unwanted")
+                .IgnoreTypesFromNamespacesStartingWith("Tests.Web.Unwanted")
                 .WithQuery<CompositeQuery>()
                 .Generate()
-                .ProcessRequest(request, null, null);
+                .ProcessRequestAsync(request, null);
             response.Errors.Count.ShouldEqual(1);
-            response.Errors[0].Message.ShouldContain("Cannot query field \"hello\" on type \"TestQuery2\".");
-            response.Body.ShouldContain("VALIDATION_ERROR");
+            response.Errors[0].Message.ShouldContain("Cannot query field 'mars' on type 'CompositeQuery'.");
+
+            body = response.GetBody();
+            body.ShouldContain("FIELD_RESOLUTION");
         }
 
         [Test]
@@ -103,12 +120,14 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithQuery<SimpleQuery>()
                 .WithQueryExtensions(typeof(QueryExtensions))
                 .Generate()
-                .ProcessRequest(request, null, null);
+                .ProcessRequestAsync(request, null);
 
             response.ExecutionResult.Data.ShouldHaveFieldWithValue("helloExtended", "Extended-10");
-            response.Body.ShouldEqual("{\"data\":{\"helloExtended\":\"Extended-10\"}}");
             response.Errors.Count.ShouldEqual(0);
             response.Warnings.Count.ShouldEqual(0);
+
+            var body = response.GetBody();
+            body.ShouldEqual("{\"data\":{\"helloExtended\":\"Extended-10\"}}");
         }
 
         [Test]
@@ -120,22 +139,24 @@ namespace GraphQL.Conventions.Tests.Web
                 .WithQuery<SimpleQuery>()
                 .WithQueryExtensions(typeof(QueryExtensions))
                 .Generate()
-                .ProcessRequest(request, null, null);
+                .ProcessRequestAsync(request, null);
 
-            response.Body.ShouldEqual("{\"data\":{\"helloType\":{\"myName\":\"Name-1\"}}}");
             response.Errors.Count.ShouldEqual(0);
             response.Warnings.Count.ShouldEqual(0);
+
+            var body = response.GetBody();
+            body.ShouldEqual("{\"data\":{\"helloType\":{\"myName\":\"Name-1\"}}}");
         }
 
         [Test]
-        public void Can_Construct_And_Describe_Schema_With_Extensions()
+        public async void Can_Construct_And_Describe_Schema_With_Extensions()
         {
-            var schema = RequestHandler
+            var schema = await RequestHandler
                 .New()
                 .WithQuery<SimpleQuery>()
                 .WithQueryExtensions(typeof(QueryExtensions))
                 .Generate()
-                .DescribeSchema(false, false, false);
+                .DescribeSchemaAsync(false, false, false);
 
             schema.ShouldEqualWhenReformatted(@"
                 schema {
@@ -152,21 +173,33 @@ namespace GraphQL.Conventions.Tests.Web
             ");
         }
 
-        class TestQuery
+        private class DependencyInjector : IDependencyInjector
+        {
+            public object Resolve(TypeInfo typeInfo)
+            {
+                if (typeInfo.GetConstructor(Type.EmptyTypes) != null)
+                {
+                    return Activator.CreateInstance(typeInfo.AsType());
+                }
+                return null;
+            }
+        }
+
+        private class TestQuery
         {
             public string Hello => "World";
 
             public Nested Sub => new Nested();
         }
 
-        class Nested
+        private class Nested
         {
             public Nested Sub => new Nested();
 
             public string End => string.Empty;
         }
 
-        class ProfiledQuery
+        private class ProfiledQuery
         {
             public async Task<int> Foo(int ms)
             {
@@ -175,20 +208,20 @@ namespace GraphQL.Conventions.Tests.Web
             }
         }
 
-        class CompositeQuery
+        private class CompositeQuery
         {
             public TestQuery Earth => new TestQuery();
             public Unwanted.TestQuery2 Mars => new Unwanted.TestQuery2();
         }
     }
 
-    class SimpleQuery
+    internal class SimpleQuery
     {
         public string Hello => "World";
         public HelloType HelloType(int v) => new HelloType(v);
     }
 
-    class HelloType
+    internal class HelloType
     {
         [Ignore]
         public int HiddenVersion { get; set; }
@@ -199,7 +232,7 @@ namespace GraphQL.Conventions.Tests.Web
         }
     }
 
-    static class QueryExtensions
+    internal static class QueryExtensions
     {
         public static string HelloExtended(this SimpleQuery query, int v) => $"Extended-{v}";
 
@@ -208,7 +241,7 @@ namespace GraphQL.Conventions.Tests.Web
 
     namespace Unwanted
     {
-        class TestQuery2
+        internal class TestQuery2
         {
             public string Hello => "World From Mars";
         }

@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters.Engine
+namespace Tests.Adapters.Engine
 {
     public class GraphQLExecutorTests : TestBase
     {
@@ -14,15 +15,14 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var engine = GraphQLEngine.New<Query>();
             var result = await engine
                 .NewExecutor()
-                .WithQueryString("{ test }")
+                .WithQueryString("query Test($arg: Int!, $arg: Int!) { hello(var: $arg) }")
+                .WithVariables(new Dictionary<string, object> { { "arg", 1 } })
                 .DisableValidation()
-                .Execute();
-
-            result.Data.ShouldNotBeNull();
-            var dict = result.Data as Dictionary<string, object>;
-            dict.Count.ShouldEqual(0);
+                .ExecuteAsync();
 
             result.Errors.ShouldBeNull();
+            result.Data.ShouldNotBeNull();
+            result.Data.ShouldHaveFieldWithValue("hello", "World");
         }
 
         [Test]
@@ -31,13 +31,19 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var engine = GraphQLEngine.New<Query>();
             var result = await engine
                 .NewExecutor()
-                .WithQueryString("{ test }")
+                .WithQueryString("query Test($arg: Int!, $arg: Int!) { hello(var: $arg) }")
+                .WithVariables(new Dictionary<string, object> { { "arg", 1 } })
                 .EnableValidation()
-                .Execute();
+                .ExecuteAsync();
 
             result.Errors.ShouldNotBeNull();
             result.Errors.Count.ShouldEqual(1);
-            result.Errors.First().Message.ShouldEqual("Cannot query field \"test\" on type \"Query\".");
+            result.Errors.First().Message.ShouldEqual("There can be only one variable named 'arg'");
+        }
+
+        public class Query
+        {
+            public string Hello(int var) => "World";
         }
     }
 }

@@ -1,10 +1,11 @@
 using System;
 using System.Reflection;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Types.Resolution;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Types.Descriptors;
+using GraphQL.Conventions.Types.Resolution;
+using Tests.Templates;
 
-namespace GraphQL.Conventions.Tests.Types
+namespace Tests.Types
 {
     public class OptionalTests : TestBase
     {
@@ -20,13 +21,13 @@ namespace GraphQL.Conventions.Tests.Types
             Assert.ThrowsException<TypeInitializationException>(() => Optional<int>.ValidateType());
         }
 
-         [Test]
+        [Test]
         public void Can_Define_Nullable_Int()
         {
             Optional<int?>.ValidateType();
         }
 
-       [Test]
+        [Test]
         public void Cannot_Define_NonNullable_DateTime()
         {
             Assert.ThrowsException<TypeInitializationException>(() => Optional<DateTime>.ValidateType());
@@ -116,7 +117,7 @@ namespace GraphQL.Conventions.Tests.Types
             var typeResolver = new TypeResolver();
             var typeInfo = typeof(Optional<int?>).GetTypeInfo();
             var graphTypeInfo = new GraphTypeInfo(typeResolver, typeInfo);
-            var optional = (Optional<int?>) Optional.Construct(graphTypeInfo, null, true);
+            var optional = (Optional<int?>)Optional.Construct(graphTypeInfo, null, true);
             Assert.IsNotNull(optional);
             Assert.IsNull(optional.Value);
         }

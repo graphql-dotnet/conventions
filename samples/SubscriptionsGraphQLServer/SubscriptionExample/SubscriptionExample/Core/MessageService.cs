@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Reactive.Subjects;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace SubscriptionExample.Core
 {
     public class MessageService
     {
-        private List<Message> _messages;
-        private ISubject<Message> _messageStream = new ReplaySubject<Message>(1);
+        private readonly List<Message> _messages;
+        private readonly ISubject<Message> _messageStream = new ReplaySubject<Message>(1);
 
         public MessageService()
         {

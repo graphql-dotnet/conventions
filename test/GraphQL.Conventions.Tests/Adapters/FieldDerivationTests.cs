@@ -1,12 +1,15 @@
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
-using GraphQL.Conventions.Types.Resolution;
-using GraphQL.Types;
 using System;
 using System.Linq;
-using Extended = GraphQL.Conventions.Adapters.Types;
+using GraphQL.Conventions;
+using GraphQL.Conventions.Types.Resolution;
+using GraphQL.Types;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters
+using Extended = GraphQL.Conventions.Adapters.Types;
+// ReSharper disable UnusedMember.Local
+
+namespace Tests.Adapters
 {
     public class FieldDerivationTests : ConstructionTestBase
     {
@@ -139,19 +142,19 @@ namespace GraphQL.Conventions.Tests.Adapters
         {
             var type = OutputType<FooSub>();
             type.ShouldHaveFields(1);
-            type.Fields.ToList()[0].ShouldBeOfType<EventStreamFieldType>();
+            type.Fields.ToList()[0].ShouldBeOfType<FieldType>();
         }
 
-        class OutputTypeWithNoFields
+        private class OutputTypeWithNoFields
         {
         }
 
         [InputType]
-        class InputTypeWithNoFields
+        private class InputTypeWithNoFields
         {
         }
 
-        class OutputTypeWithFields
+        private class OutputTypeWithFields
         {
             public int Field1 => 1;
 
@@ -159,14 +162,14 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [InputType]
-        class InputTypeWithFields
+        private class InputTypeWithFields
         {
             public int Field1 { get; set; }
 
             public int Field2 { get; set; }
         }
 
-        class Fields
+        private class Fields
         {
             public int NormalField => 0;
 
@@ -190,7 +193,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Name("Fooz")]
-        class FooDto
+        private class FooDto
         {
             public string Id => "A";
 
@@ -202,7 +205,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         }
 
         [Description("Foo bar baz")]
-        class Foo : FooDto
+        private class Foo : FooDto
         {
             public new Id Id => base.Id;
 
@@ -210,8 +213,9 @@ namespace GraphQL.Conventions.Tests.Adapters
             public new string C => string.Empty;
         }
 
-        class FooSub
+        private class FooSub
         {
+            // ReSharper disable once UnassignedGetOnlyAutoProperty
             public IObservable<Foo> Foos { get; }
         }
     }

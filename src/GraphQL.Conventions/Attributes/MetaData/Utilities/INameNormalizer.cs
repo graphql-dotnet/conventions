@@ -7,7 +7,7 @@ namespace GraphQL.Conventions.Attributes.MetaData.Utilities
         string AsFieldName(string name);
 
         string AsArgumentName(string name);
-        
+
         string AsEnumMemberName(string name);
     }
 }

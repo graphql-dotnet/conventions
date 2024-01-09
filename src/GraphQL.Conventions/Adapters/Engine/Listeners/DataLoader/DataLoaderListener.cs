@@ -1,16 +1,16 @@
-using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Execution;
+using GraphQL.Validation;
 
 namespace GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader
 {
-    class DataLoaderListener : DocumentExecutionListenerBase<IDataLoaderContextProvider>
+    internal class DataLoaderListener : DocumentExecutionListenerBase
     {
-        public override async Task BeforeExecutionStepAwaitedAsync(
-            IDataLoaderContextProvider userContext,
-            CancellationToken token)
+        public override async Task AfterValidationAsync(IExecutionContext context, IValidationResult validationResult)
         {
-            await userContext.FetchData(token).ConfigureAwait(false);
+            var key = typeof(IUserContext).FullName ?? nameof(IUserContext);
+            if (context.UserContext.ContainsKey(key) && context.UserContext[key] is IDataLoaderContextProvider provider)
+                await provider.FetchData(context.CancellationToken).ConfigureAwait(false);
         }
     }
 }

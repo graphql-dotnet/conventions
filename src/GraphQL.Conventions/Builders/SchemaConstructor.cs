@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -28,8 +28,8 @@ namespace GraphQL.Conventions.Builders
 
         public Func<Type, object> TypeResolutionDelegate
         {
-            get { return _typeResolutionDelegate ?? (type => Activator.CreateInstance(type)); }
-            set { _typeResolutionDelegate = value; }
+            get => _typeResolutionDelegate ?? (type => Activator.CreateInstance(type));
+            set => _typeResolutionDelegate = value;
         }
 
         public TSchemaType Build<TSchema>() =>
@@ -43,6 +43,11 @@ namespace GraphQL.Conventions.Builders
             var schemaInfos = schemaTypes?
                 .Select(_typeResolver.DeriveSchema)
                 .ToList() ?? new List<GraphSchemaInfo>();
+
+            if (schemaInfos.All(s => s.Query == null))
+            {
+                throw new ArgumentException("Schema has no query type.");
+            }
 
             var schemaInfo = schemaInfos.FirstOrDefault();
             if (schemaInfo == null)
@@ -119,9 +124,10 @@ namespace GraphQL.Conventions.Builders
                 typeof(ImplementViewerAttribute.SubscriptionViewerReferrer),
             };
 
+            var graphFieldInfos = existingFields.ToList();
             foreach (var field in fields ?? new List<GraphFieldInfo>())
             {
-                if (existingFields.Any(existingField => existingField.Name == "viewer") &&
+                if (graphFieldInfos.Any(existingField => existingField.Name == "viewer") &&
                     field.Name == "viewer" &&
                     registeredViewerClasses.Contains(field.DeclaringType.TypeRepresentation.AsType()))
                 {

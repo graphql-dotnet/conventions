@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using AutoMapper;
 using DataLoaderWithEFCore.Data.Repositories;
@@ -8,10 +8,19 @@ namespace DataLoaderWithEFCore.GraphApi.Schema
 {
     public sealed class Query
     {
+        private readonly IMapper _mapper;
+
+        public Query(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
+
         public async Task<Movie> Movie([Inject] IMovieRepository repository, Guid id)
-            => Mapper.Map<Movie>(await repository.FindMovie(id));
+        {
+            return _mapper.Map<Movie>(await repository.FindMovie(id));
+        }
 
         public async Task<Movie[]> Movies([Inject] IMovieRepository repository)
-            => Mapper.Map<Movie[]>(await repository.GetMovies());
+            => _mapper.Map<Movie[]>(await repository.GetMovies());
     }
 }

@@ -1,9 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using GraphQL.Conventions.Extensions;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
     // Asynchronous Helper Functions; source: http://bit.ly/1HAxjNy
@@ -44,25 +46,18 @@ namespace GraphQL.Conventions
 
         public static object RunTask(Delegate task, TypeInfo typeInfo)
         {
-            try
-            {
-                var asyncMethod = typeof(AsyncHelpers)
-                    .GetMethod(nameof(RunSync))
-                    .MakeGenericMethod(typeInfo.AsType());
-                return asyncMethod.Invoke(null, new object[] { task });
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            var asyncMethod = typeof(AsyncHelpers)
+                .GetMethod(nameof(RunSync))?.MakeGenericMethod(typeInfo.AsType());
+            return asyncMethod.InvokeEnhanced(null, new object[] { task });
         }
 
         private class ExclusiveSynchronizationContext : SynchronizationContext
         {
             private bool _done;
             public Exception InnerException { get; set; }
-            readonly AutoResetEvent _workItemsWaiting = new AutoResetEvent(false);
-            readonly Queue<Tuple<SendOrPostCallback, object>> _items =
+
+            private readonly AutoResetEvent _workItemsWaiting = new AutoResetEvent(false);
+            private readonly Queue<Tuple<SendOrPostCallback, object>> _items =
                 new Queue<Tuple<SendOrPostCallback, object>>();
 
             public override void Send(SendOrPostCallback d, object state)

@@ -5,6 +5,7 @@ using GraphQL.Execution;
 using GraphQL.Validation;
 using GraphQL.Validation.Complexity;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
     public class GraphQLExecutor : IGraphQLExecutor<ExecutionResult>
@@ -23,17 +24,17 @@ namespace GraphQL.Conventions
 
         private Inputs _inputs;
 
-        private CancellationToken _cancellationToken = default;
+        private CancellationToken _cancellationToken;
 
         private IDependencyInjector _dependencyInjector;
 
         private bool _enableValidation = true;
 
-        private bool _enableProfiling = false;
+        private bool _enableProfiling;
 
-        private IEnumerable<IValidationRule> _validationRules = null;
+        private IEnumerable<IValidationRule> _validationRules;
 
-        private ComplexityConfiguration _complexityConfiguration = null;
+        private ComplexityConfiguration _complexityConfiguration;
 
         private IEnumerable<IDocumentExecutionListener> _documentExecutionListeners;
 
@@ -48,7 +49,7 @@ namespace GraphQL.Conventions
             var query = _requestDeserializer.GetQueryFromRequestBody(requestBody);
             _queryString = query.QueryString;
             _operationName = query.OperationName;
-            return this.WithInputs(query.Variables);
+            return WithVariables(query.Variables);
         }
 
         public IGraphQLExecutor<ExecutionResult> WithQueryString(string queryString)
@@ -63,9 +64,14 @@ namespace GraphQL.Conventions
             return this;
         }
 
-        public IGraphQLExecutor<ExecutionResult> WithInputs(Dictionary<string, object> inputs)
+        public IGraphQLExecutor<ExecutionResult> WithVariables(Dictionary<string, object> inputs)
         {
-            _inputs = inputs != null ? new Inputs(inputs) : new Inputs();
+            return WithVariables(new Inputs(inputs ?? new Dictionary<string, object>()));
+        }
+
+        public IGraphQLExecutor<ExecutionResult> WithVariables(Inputs inputs)
+        {
+            _inputs = inputs;
             return this;
         }
 
@@ -119,7 +125,7 @@ namespace GraphQL.Conventions
 
         public IGraphQLExecutor<ExecutionResult> DisableValidation()
         {
-            return this.EnableValidation(false);
+            return EnableValidation(false);
         }
 
         public IGraphQLExecutor<ExecutionResult> EnableProfiling(bool enableProfiling = true)
@@ -130,21 +136,19 @@ namespace GraphQL.Conventions
 
         public IGraphQLExecutor<ExecutionResult> DisableProfiling()
         {
-            return this.EnableProfiling(false);
+            return EnableProfiling(false);
         }
 
-        public async Task<ExecutionResult> Execute() =>
-            await _engine
-                .Execute(
-                    _rootObject, _queryString, _operationName, _inputs, _userContext, _dependencyInjector,
-                    enableValidation: _enableValidation,
-                    enableProfiling: _enableProfiling,
-                    rules: _validationRules,
-                    complexityConfiguration: _complexityConfiguration,
-                    cancellationToken: _cancellationToken,
-                    listeners: _documentExecutionListeners)
-                .ConfigureAwait(false);
+        public Task<ExecutionResult> ExecuteAsync()
+            => _engine.ExecuteAsync(
+                _rootObject, _queryString, _operationName, _inputs, _userContext, _dependencyInjector,
+                enableValidation: _enableValidation,
+                enableProfiling: _enableProfiling,
+                rules: _validationRules,
+                complexityConfiguration: _complexityConfiguration,
+                cancellationToken: _cancellationToken,
+                listeners: _documentExecutionListeners);
 
-        public IValidationResult Validate() => _engine.Validate(_queryString);
+        public Task<IValidationResult> ValidateAsync() => _engine.ValidateAsync(_queryString);
     }
 }

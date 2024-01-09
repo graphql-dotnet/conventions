@@ -2,9 +2,10 @@ using System;
 using GraphQL.Conventions.Attributes;
 using GraphQL.Conventions.Types.Descriptors;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
-    [AttributeUsage(Everywhere, AllowMultiple = true, Inherited = true)]
+    [AttributeUsage(Everywhere, AllowMultiple = true)]
     public class DescriptionAttribute : MetaDataAttributeBase
     {
         private readonly string _description;

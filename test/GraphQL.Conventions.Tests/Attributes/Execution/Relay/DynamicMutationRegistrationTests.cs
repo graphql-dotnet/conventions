@@ -1,9 +1,14 @@
 using System.Threading.Tasks;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Relay;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
+using Tests.Types;
 
-namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
+// ReSharper disable UnusedType.Local
+// ReSharper disable UnusedAutoPropertyAccessor.Local
+
+namespace Tests.Attributes.Execution.Relay
 {
     public class DynamicMutationRegistrationTests : TestBase
     {
@@ -27,11 +32,14 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
                 typeof(SchemaDefinitionWithMutation<FooMutation>),
                 typeof(SchemaDefinitionWithMutation<BarMutation>),
             };
-            var engine = GraphQLEngine.New().BuildSchema(mutations);
+            var engine = GraphQLEngine.New()
+                .WithQuery<TestQuery>()
+                .BuildSchema(mutations);
+
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(query)
-                .Execute();
+                .ExecuteAsync();
 
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("foo", "clientMutationId", "some-mutation-id-1");
@@ -42,9 +50,9 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
 
         // Scaffolding
 
-        interface IMutation { }
+        private interface IMutation { }
 
-        interface IMutation<TInput, TOutput>
+        private interface IMutation<TInput, TOutput>
             where TInput : class, IRelayMutationInputObject
             where TOutput : class, IRelayMutationOutputObject
         {
@@ -52,12 +60,12 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
             TOutput Mutate(NonNull<TInput> input);
         }
 
-        abstract class RelayInput : IRelayMutationInputObject
+        private abstract class RelayInput : IRelayMutationInputObject
         {
             public string ClientMutationId { get; set; }
         }
 
-        abstract class RelayOutput : IRelayMutationOutputObject
+        private abstract class RelayOutput : IRelayMutationOutputObject
         {
             public string ClientMutationId { get; set; }
         }
@@ -65,19 +73,19 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
         // Foo
 
         [RelayMutationType]
-        class FooMutation : IMutation<FooInput, FooOutput>
+        private class FooMutation : IMutation<FooInput, FooOutput>
         {
             [Name("foo")]
             public FooOutput Mutate(NonNull<FooInput> input) =>
                 new FooOutput { Result = 2 * input.Value.A };
         }
 
-        class FooInput : RelayInput
+        private class FooInput : RelayInput
         {
             public int A { get; set; }
         }
 
-        class FooOutput : RelayOutput
+        private class FooOutput : RelayOutput
         {
             public int Result { get; set; }
         }
@@ -85,21 +93,26 @@ namespace GraphQL.Conventions.Tests.Attributes.Execution.Relay
         // Bar
 
         [RelayMutationType]
-        class BarMutation : IMutation<BarInput, BarOutput>
+        private class BarMutation : IMutation<BarInput, BarOutput>
         {
             [Name("bar")]
             public BarOutput Mutate(NonNull<BarInput> input) =>
                 new BarOutput { Result = 100 + input.Value.B };
         }
 
-        class BarInput : RelayInput
+        private class BarInput : RelayInput
         {
             public int B { get; set; }
         }
 
-        class BarOutput : RelayOutput
+        private class BarOutput : RelayOutput
         {
             public int Result { get; set; }
+        }
+
+        private class Query
+        {
+            public string Hello => "World";
         }
     }
 }

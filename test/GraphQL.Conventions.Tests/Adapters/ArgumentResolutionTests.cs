@@ -2,10 +2,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL;
+using GraphQL.Conventions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedAutoPropertyAccessor.Local
+// ReSharper disable CollectionNeverUpdated.Local
+
+namespace Tests.Adapters
 {
     public class ArgumentResolutionTests : TestBase
     {
@@ -93,7 +99,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         {
             var id = Id.New<Dependency>("12345");
             var result = await ExecuteQuery(
-                @"{ nullableIdField(idArg: """ + id +  @""") }");
+                @"{ nullableIdField(idArg: """ + id + @""") }");
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("nullableIdField", id.IdentifierForType<Dependency>());
 
@@ -109,7 +115,7 @@ namespace GraphQL.Conventions.Tests.Adapters
         {
             var id = Id.New<Dependency>("12345");
             var result = await ExecuteQuery(
-                @"{ nonNullableIdField(idArg: """ + id +  @""") }");
+                @"{ nonNullableIdField(idArg: """ + id + @""") }");
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("nonNullableIdField", id.IdentifierForType<Dependency>());
 
@@ -143,7 +149,7 @@ namespace GraphQL.Conventions.Tests.Adapters
                 @"query Test($arg: Int) { defaultNullableArgumentValueField(arg: $arg) }",
                 new Dictionary<string, object> { { "arg", null } });
             result.ShouldHaveNoErrors();
-            result.Data.ShouldHaveFieldWithValue("defaultNullableArgumentValueField", 999);
+            result.Data.ShouldHaveFieldWithValue("defaultNullableArgumentValueField", null);
         }
 
         [Test]
@@ -487,7 +493,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("result", 0, "A-B-1-2");
             result.Data.ShouldHaveFieldWithValue("result", 1, "X-Y-9-0");
-       }
+        }
 
         [Test]
         public async Task Can_Resolve_Enumerable_Of_Nullable_InputObject_Argument()
@@ -651,19 +657,20 @@ namespace GraphQL.Conventions.Tests.Adapters
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(query)
-                .WithInputs(inputs)
+                .WithVariables(inputs)
                 .WithUserContext(userContext)
                 .WithDependencyInjector(new DependencyInjector())
-                .Execute();
+                .ExecuteAsync();
+
             return result;
         }
 
-        class UserContext : IUserContext
+        private class UserContext : IUserContext
         {
             public int SomeValue { get; set; }
         }
 
-        class DependencyInjector : IDependencyInjector
+        private class DependencyInjector : IDependencyInjector
         {
             public object Resolve(TypeInfo typeInfo)
             {
@@ -675,17 +682,17 @@ namespace GraphQL.Conventions.Tests.Adapters
             }
         }
 
-        interface IDependency
+        private interface IDependency
         {
             string GetValue();
         }
 
-        class Dependency : IDependency
+        private class Dependency : IDependency
         {
             public string GetValue() => "Injection";
         }
 
-        class Query
+        private class Query
         {
             public string DependencyInjectionField([Inject] IDependency dependency) =>
                 dependency.GetValue();
@@ -758,16 +765,16 @@ namespace GraphQL.Conventions.Tests.Adapters
                 context.SomeValue.ToString();
         }
 
-        enum TestEnum
+        private enum TestEnum
         {
             Foo,
 
-            [Name("BAZ")]
+            [GraphQL.Conventions.Name("BAZ")]
             Bar,
         }
 
-        [InputType]
-        class InputObject
+        [GraphQL.Conventions.InputType]
+        private class InputObject
         {
             public string Field1 { get; set; }
 
@@ -781,8 +788,8 @@ namespace GraphQL.Conventions.Tests.Adapters
                 $"{Field1}-{Field2}-{Field3}-{Field4}";
         }
 
-        [InputType]
-        class ComplexInputObject
+        [GraphQL.Conventions.InputType]
+        private class ComplexInputObject
         {
             public Id Identifier { get; set; }
 

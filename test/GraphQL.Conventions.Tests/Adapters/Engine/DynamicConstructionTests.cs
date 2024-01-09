@@ -1,14 +1,17 @@
 using System.Reflection;
 using System.Threading.Tasks;
+using GraphQL;
 using GraphQL.Conventions.Adapters;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Resolvers;
 using GraphQL.Types;
 using GraphQL.Utilities;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters.Engine
+// ReSharper disable UnusedAutoPropertyAccessor.Local
+
+namespace Tests.Adapters.Engine
 {
     public class DynamicConstructionTests : TestBase
     {
@@ -53,7 +56,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             }
             ");
 
-            var executer = new GraphQL.DocumentExecuter();
+            var executer = new DocumentExecuter();
             var result = await executer.ExecuteAsync(new ExecutionOptions
             {
                 Schema = schema,
@@ -71,7 +74,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             return typeAdapter.DeriveType(graphTypeInfo);
         }
 
-        class CustomResolver : IFieldResolver
+        private class CustomResolver : IFieldResolver
         {
             private readonly UserRepository _userRepository;
 
@@ -80,23 +83,25 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 _userRepository = userRepository;
             }
 
-            public object Resolve(ResolveFieldContext context) =>
-                _userRepository;
+            public ValueTask<object> ResolveAsync(IResolveFieldContext context)
+            {
+                return new ValueTask<object>(_userRepository);
+            }
         }
 
-        class User
+        private class User
         {
             public string Id { get; set; }
 
             public string Name { get; set; }
         }
 
-        interface IUserRepository
+        private interface IUserRepository
         {
             User GetUserById(string id);
         }
 
-        class UserRepository : IUserRepository
+        private class UserRepository : IUserRepository
         {
             public User GetUserById(string id) =>
                 new User

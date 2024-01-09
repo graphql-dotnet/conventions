@@ -1,16 +1,20 @@
-﻿using GraphQL.Conventions.Relay;
-using GraphQL.Conventions.Tests.Templates;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GraphQL.Conventions.Relay;
+using GraphQL.NewtonsoftJson;
+using Tests.Templates;
 
-namespace GraphQL.Conventions.Tests.Execution
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnassignedGetOnlyAutoProperty
+
+namespace Tests.Execution
 {
     public class TaskUnwrappingTests : ConstructionTestBase
     {
         [Test]
-        public void Schema_Will_Execute_With_No_Errors_When_A_Type_Is_In_A_Task()
+        public async Task Schema_Will_Execute_With_No_Errors_When_A_Type_Is_In_A_Task()
         {
-            const string query = @"{
+            const string Query = @"{
                 holders {
                     items {
                         interfaceConnection {
@@ -21,11 +25,12 @@ namespace GraphQL.Conventions.Tests.Execution
             }";
 
             var schema = Schema<BugReproSchemaTaskFirst>();
-            var result = schema.Execute((e) => e.Query = query);
+
+            var result = await schema.ExecuteAsync((e) => e.Query = Query);
             ResultHelpers.AssertNoErrorsInResult(result);
 
             schema = Schema<BugReproSchemaTaskSecond>();
-            result = schema.Execute((e) => e.Query = query);
+            result = await schema.ExecuteAsync((e) => e.Query = Query);
             ResultHelpers.AssertNoErrorsInResult(result);
         }
 
@@ -51,9 +56,7 @@ namespace GraphQL.Conventions.Tests.Execution
                         new Edge<Holder>
                         {
                             Cursor = Cursor.New<Holder>(0),
-                            Node = new Holder
-                            {
-                            }
+                            Node = new Holder()
                         }
                     },
                     PageInfo = new PageInfo
@@ -79,9 +82,7 @@ namespace GraphQL.Conventions.Tests.Execution
                         new Edge<Holder>
                         {
                             Cursor = Cursor.New<Holder>(0),
-                            Node = new Holder
-                            {
-                            }
+                            Node = new Holder()
                         }
                     },
                     PageInfo = new PageInfo
@@ -97,9 +98,7 @@ namespace GraphQL.Conventions.Tests.Execution
 
         private class Holder
         {
-            #pragma warning disable 1998
-            public async Task<IEnumerable<ICommonInterface>> InterfaceConnection() => new[] { new Broken() };
-            #pragma warning restore 1998
+            public async Task<IEnumerable<ICommonInterface>> InterfaceConnection() => await Task.FromResult(new[] { new Broken() });
         }
 
         private interface ICommonInterface

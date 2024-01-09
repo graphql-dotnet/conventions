@@ -1,11 +1,13 @@
-﻿using GraphQL.Conventions;
-using GraphQL.Conventions.Relay;
-using GraphQL.Conventions.Tests;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
 using System.Threading.Tasks;
+using GraphQL.Conventions;
+using GraphQL.Conventions.Relay;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace Tests.Adapters.Engine.Bugs
+// ReSharper disable ClassNeverInstantiated.Global
+// ReSharper disable InconsistentNaming
+
+namespace Tests.Adapters
 {
     public class BugUnexpectedTypeTests : TestBase
     {
@@ -24,7 +26,8 @@ namespace Tests.Adapters.Engine.Bugs
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("query { node { ... on ParentNode {  id, nested { id } } } }")
-                .Execute();
+                .ExecuteAsync();
+
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("node", "id", "UGFyZW50Tm9kZTox");
             result.Data.ShouldHaveFieldWithValue("node", "nested", "id", "Q2hpbGROb2RlOjE=");

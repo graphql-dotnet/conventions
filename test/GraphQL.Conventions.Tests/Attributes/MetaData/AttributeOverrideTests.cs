@@ -1,7 +1,8 @@
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Attributes.MetaData
+namespace Tests.Attributes.MetaData
 {
     public class AttributeOverrideTests : TestBase
     {
@@ -30,21 +31,21 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
         }
 
         [Name("First")]
-        class FirstClass
+        private class FirstClass
         {
         }
 
         [Name("Second")]
-        class SecondClass : FirstClass
+        private class SecondClass : FirstClass
         {
         }
 
         [Name("Third")]
-        class ThirdClass : SecondClass
+        private class ThirdClass : SecondClass
         {
         }
 
-        class ForthClass : ThirdClass
+        private class ForthClass : ThirdClass
         {
         }
     }

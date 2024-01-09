@@ -1,3 +1,4 @@
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions.Relay
 {
     [Description("Information about pagination in a connection.")]

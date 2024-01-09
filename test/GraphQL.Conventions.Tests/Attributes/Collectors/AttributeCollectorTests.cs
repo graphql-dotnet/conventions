@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Attributes;
 using GraphQL.Conventions.Attributes.Collectors;
 using GraphQL.Conventions.Attributes.MetaData;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Attributes.Collectors
+namespace Tests.Attributes.Collectors
 {
     public class AttributeCollectorTests : TestBase
     {
@@ -55,7 +56,7 @@ namespace GraphQL.Conventions.Tests.Attributes.Collectors
         }
 
         [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
-        class TestAttribute : Attribute, IAttribute
+        private class TestAttribute : Attribute, IAttribute
         {
             public List<IAttribute> AssociatedAttributes => new List<IAttribute>();
 
@@ -66,18 +67,18 @@ namespace GraphQL.Conventions.Tests.Attributes.Collectors
             public int Identifier { get; set; }
         }
 
-        class TypeWithDefaultAttribute
+        private class TypeWithDefaultAttribute
         {
         }
 
         [Test(Identifier = 1)]
-        class TypeWithExplicitAttribute
+        private class TypeWithExplicitAttribute
         {
         }
 
         [Test(Identifier = 3)]
         [Test(Identifier = 2)]
-        class DerivedTypeWithExplicitAttribute : TypeWithExplicitAttribute
+        private class DerivedTypeWithExplicitAttribute : TypeWithExplicitAttribute
         {
         }
     }

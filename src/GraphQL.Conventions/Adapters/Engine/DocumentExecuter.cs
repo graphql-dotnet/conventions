@@ -1,10 +1,11 @@
-﻿using GraphQL.Types;
-using GraphQL.Validation;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using GraphQL.Types;
+using GraphQL.Validation;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
     public class DocumentExecuter : IDocumentExecuter
@@ -26,10 +27,10 @@ namespace GraphQL.Conventions
                 .WithRootObject(root)
                 .WithQueryString(query)
                 .WithOperationName(operationName)
-                .WithInputs(inputs)
+                .WithVariables(inputs)
                 .WithCancellationToken(cancellationToken)
                 .WithValidationRules(rules)
-                .Execute();
+                .ExecuteAsync();
         }
 
         public async Task<ExecutionResult> ExecuteAsync(ExecutionOptions options)
@@ -40,10 +41,10 @@ namespace GraphQL.Conventions
                 .WithRootObject(options.Root)
                 .WithQueryString(options.Query)
                 .WithOperationName(options.OperationName)
-                .WithInputs(options.Inputs)
+                .WithVariables(options.Variables)
                 .WithCancellationToken(options.CancellationToken)
                 .WithValidationRules(options.ValidationRules)
-                .Execute();
+                .ExecuteAsync();
         }
 
         public Task<ExecutionResult> ExecuteAsync(Action<ExecutionOptions> configure)

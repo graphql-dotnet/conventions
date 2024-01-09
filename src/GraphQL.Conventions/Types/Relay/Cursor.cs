@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions.Relay
 {
     [Description("Cursor used in pagination.")]
@@ -20,13 +21,13 @@ namespace GraphQL.Conventions.Relay
         }
 
         public override bool Equals(object obj) =>
-            obj is Cursor ? Equals((Cursor)obj) : false;
+            obj is Cursor cursor ? Equals(cursor) : false;
 
         public bool Equals(Cursor other) =>
             _id.Equals(other._id);
 
         public int CompareTo(object other) =>
-            other is Cursor ? CompareTo((Cursor)other) : -1;
+            other is Cursor cursor ? CompareTo(cursor) : -1;
 
         public int CompareTo(Cursor other) =>
             _id.CompareTo(other._id);
@@ -38,6 +39,7 @@ namespace GraphQL.Conventions.Relay
             _id.ToString();
 
         public bool IsCursorForType(Type type) =>
+            // ReSharper disable once PossiblyImpureMethodCallOnReadonlyVariable
             _id.IsIdentifierForType(type);
 
         public bool IsCursorForType<TType>() =>
@@ -46,11 +48,13 @@ namespace GraphQL.Conventions.Relay
         public string CursorForType(Type type)
         {
             var typeName = Id.GetTypeName(type);
+            // ReSharper disable once PossiblyImpureMethodCallOnReadonlyVariable
             if (!_id.IsIdentifierForType(type))
             {
                 throw new ArgumentException(
                     $"Expected cursor of type '{typeName}' (unencoded identifier '{_id._unencodedIdentifier}').");
             }
+            // ReSharper disable once PossiblyImpureMethodCallOnReadonlyVariable
             return _id.IdentifierForType(type);
         }
 
@@ -59,14 +63,12 @@ namespace GraphQL.Conventions.Relay
 
         public int? IntegerForCursor<TType>()
         {
-            int intVal;
-            return int.TryParse(CursorForType(typeof(TType)), out intVal) ? intVal : (int?)null;
+            return int.TryParse(CursorForType(typeof(TType)), out int intVal) ? intVal : (int?)null;
         }
 
         public long? LongForCursor<TType>()
         {
-            long intVal;
-            return long.TryParse(CursorForType(typeof(TType)), out intVal) ? intVal : (long?)null;
+            return long.TryParse(CursorForType(typeof(TType)), out long intVal) ? intVal : (long?)null;
         }
 
         public static Cursor New(Type type, string index, bool? serializeUsingColon = null) =>

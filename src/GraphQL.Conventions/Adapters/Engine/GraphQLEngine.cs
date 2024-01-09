@@ -8,17 +8,19 @@ using GraphQL.Conventions.Adapters;
 using GraphQL.Conventions.Adapters.Engine.ErrorTransformations;
 using GraphQL.Conventions.Adapters.Engine.Listeners.DataLoader;
 using GraphQL.Conventions.Builders;
-using GraphQL.Conventions.Execution;
-using GraphQL.Conventions.Types.Descriptors;
+using GraphQL.Conventions.Extensions;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Execution;
-using GraphQL.Http;
 using GraphQL.Instrumentation;
+using GraphQL.NewtonsoftJson;
 using GraphQL.Types;
 using GraphQL.Utilities;
 using GraphQL.Validation;
 using GraphQL.Validation.Complexity;
+using GraphQL.Validation.Rules.Custom;
+using GraphQLParser.AST;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
     public class GraphQLEngine
@@ -35,37 +37,50 @@ namespace GraphQL.Conventions
 
         private readonly DocumentValidator _documentValidator = new DocumentValidator();
 
-        private readonly DocumentWriter _documentWriter = new DocumentWriter();
+        private readonly GraphQLSerializer _documentSerializer = new GraphQLSerializer();
 
         private SchemaPrinter _schemaPrinter;
 
         private ISchema _schema;
 
-        private List<System.Type> _schemaTypes = new List<System.Type>();
+        private readonly object _schemaLock = new object();
 
-        private List<System.Type> _middleware = new List<System.Type>();
+        private readonly List<Type> _schemaTypes = new List<Type>();
+
+        private readonly List<Type> _middleware = new List<Type>();
 
         private IErrorTransformation _errorTransformation = new DefaultErrorTransformation();
 
         private bool _includeFieldDescriptions;
+        private bool _throwUnhandledExceptions;
 
         private bool _includeFieldDeprecationReasons;
 
-        private bool _exposeExceptions;
-
         private class NoopValidationRule : IValidationRule
         {
-            public INodeVisitor Validate(ValidationContext context)
+            public ValueTask<INodeVisitor> ValidateAsync(ValidationContext context) => new(new NoopNodeVisitor());
+        }
+
+        private class NoopNodeVisitor : INodeVisitor
+        {
+            public ValueTask EnterAsync(ASTNode node, ValidationContext context)
             {
-                return new EnterLeaveListener(_ => { });
+                /* Noop */
+                return default;
+            }
+
+            public ValueTask LeaveAsync(ASTNode node, ValidationContext context)
+            {
+                /* Noop */
+                return default;
             }
         }
 
         private class WrappedDependencyInjector : IDependencyInjector
         {
-            private readonly Func<System.Type, object> _typeResolutionDelegate;
+            private readonly Func<Type, object> _typeResolutionDelegate;
 
-            public WrappedDependencyInjector(Func<System.Type, object> typeResolutionDelegate)
+            public WrappedDependencyInjector(Func<Type, object> typeResolutionDelegate)
             {
                 _typeResolutionDelegate = typeResolutionDelegate;
             }
@@ -76,29 +91,34 @@ namespace GraphQL.Conventions
             }
         }
 
-        public GraphQLEngine(Func<System.Type, object> typeResolutionDelegate = null, ITypeResolver typeResolver = null, IDocumentExecuter documentExecuter = null)
+        public GraphQLEngine(Func<Type, object> typeResolutionDelegate = null, ITypeResolver typeResolver = null, IDocumentExecuter documentExecutor = null)
         {
-            _documentExecutor = documentExecuter ?? new GraphQL.DocumentExecuter();
+            _documentExecutor = documentExecutor ?? new GraphQL.DocumentExecuter();
             _typeResolver = typeResolver ?? _typeResolver;
-            _constructor = new SchemaConstructor<ISchema, IGraphType>(_graphTypeAdapter, _typeResolver);
-            _constructor.TypeResolutionDelegate = typeResolutionDelegate != null
-                ? (Func<System.Type, object>)(type => typeResolutionDelegate(type) ?? CreateInstance(type))
-                : (Func<System.Type, object>)CreateInstance;
+            _constructor = new SchemaConstructor<ISchema, IGraphType>(_graphTypeAdapter, _typeResolver)
+            {
+                TypeResolutionDelegate = typeResolutionDelegate != null
+                    ? type => typeResolutionDelegate(type) ?? CreateInstance(type)
+                    : (Func<Type, object>)CreateInstance
+            };
         }
 
-        public static GraphQLEngine New(Func<System.Type, object> typeResolutionDelegate = null)
+        public static GraphQLEngine New(IDocumentExecuter documentExecutor)
+            => new GraphQLEngine(null, null, documentExecutor);
+
+        public static GraphQLEngine New(Func<Type, object> typeResolutionDelegate = null)
         {
             return new GraphQLEngine(typeResolutionDelegate);
         }
 
-        public static GraphQLEngine New<TQuery>(Func<System.Type, object> typeResolutionDelegate = null)
+        public static GraphQLEngine New<TQuery>(Func<Type, object> typeResolutionDelegate = null)
         {
             return New(typeResolutionDelegate)
                 .WithQuery<TQuery>()
                 .BuildSchema();
         }
 
-        public static GraphQLEngine New<TQuery, TMutation>(Func<System.Type, object> typeResolutionDelegate = null)
+        public static GraphQLEngine New<TQuery, TMutation>(Func<Type, object> typeResolutionDelegate = null)
         {
             return New(typeResolutionDelegate)
                 .WithQueryAndMutation<TQuery, TMutation>()
@@ -110,15 +130,15 @@ namespace GraphQL.Conventions
             switch (strategy)
             {
                 default:
-                    _graphTypeAdapter.FieldResolverFactory = (FieldInfo) => new FieldResolver(FieldInfo);
+                    _graphTypeAdapter.FieldResolverFactory = fieldInfo => new FieldResolver(fieldInfo);
                     break;
 
                 case FieldResolutionStrategy.WrappedAsynchronous:
-                    _graphTypeAdapter.FieldResolverFactory = (FieldInfo) => new WrappedAsyncFieldResolver(FieldInfo);
+                    _graphTypeAdapter.FieldResolverFactory = fieldInfo => new WrappedAsyncFieldResolver(fieldInfo);
                     break;
 
                 case FieldResolutionStrategy.WrappedSynchronous:
-                    _graphTypeAdapter.FieldResolverFactory = (FieldInfo) => new WrappedSyncFieldResolver(FieldInfo);
+                    _graphTypeAdapter.FieldResolverFactory = fieldInfo => new WrappedSyncFieldResolver(fieldInfo);
                     break;
             }
             return this;
@@ -148,7 +168,7 @@ namespace GraphQL.Conventions
             return this;
         }
 
-        public GraphQLEngine WithAttributesFromAssembly(System.Type assemblyType)
+        public GraphQLEngine WithAttributesFromAssembly(Type assemblyType)
         {
             _typeResolver.RegisterAttributesInAssembly(assemblyType);
             return this;
@@ -159,7 +179,7 @@ namespace GraphQL.Conventions
             return WithAttributesFromAssembly(typeof(TAssemblyType));
         }
 
-        public GraphQLEngine WithAttributesFromAssemblies(IEnumerable<System.Type> assemblyTypes)
+        public GraphQLEngine WithAttributesFromAssemblies(IEnumerable<Type> assemblyTypes)
         {
             foreach (var assemblyType in assemblyTypes)
             {
@@ -168,7 +188,7 @@ namespace GraphQL.Conventions
             return this;
         }
 
-        public GraphQLEngine WithMiddleware(System.Type type)
+        public GraphQLEngine WithMiddleware(Type type)
         {
             _middleware.Add(type);
             return this;
@@ -185,18 +205,7 @@ namespace GraphQL.Conventions
             return this;
         }
 
-        /// <summary>
-        /// Enables <see cref="ExecutionOptions.ExposeExceptions"/> which leads to exception stack trace
-        /// be appended to the error message when serializing response.
-        /// </summary>
-        /// <param name="expose">Indicates whether to expose exceptions.</param>
-        public GraphQLEngine WithExposedExceptions(bool expose = true)
-        {
-            _exposeExceptions = expose;
-            return this;
-        }
-
-        public GraphQLEngine WithQueryExtensions(System.Type typeExtensions)
+        public GraphQLEngine WithQueryExtensions(Type typeExtensions)
         {
             _typeResolver.AddExtensions(typeExtensions);
             return this;
@@ -208,37 +217,46 @@ namespace GraphQL.Conventions
             return this;
         }
 
+        public GraphQLEngine ThrowUnhandledExceptions(bool throwUnhandledExceptions = true)
+        {
+            _throwUnhandledExceptions = throwUnhandledExceptions;
+            return this;
+        }
+
         public GraphQLEngine PrintFieldDeprecationReasons(bool include = true)
         {
             _includeFieldDeprecationReasons = include;
             return this;
         }
 
-        public GraphQLEngine BuildSchema(params System.Type[] types)
+        public GraphQLEngine BuildSchema(params Type[] types)
         {
-            if (_schema == null)
+            return BuildSchema(null, types);
+        }
+
+        public GraphQLEngine BuildSchema(SchemaPrinterOptions options, params Type[] types)
+        {
+            if (_schema != null)
+                return this;
+            if (types.Length > 0)
             {
-                if (types.Length > 0)
-                {
-                    _schemaTypes.AddRange(types);
-                }
-                _schema = _constructor.Build(_schemaTypes.ToArray());
-                _schemaPrinter = new SchemaPrinter(
-                    _schema,
-                    new SchemaPrinterOptions
-                    {
-                        CustomScalars = new List<string> { TypeNames.Url, TypeNames.Uri, TypeNames.TimeSpan, TypeNames.Guid },
-                        IncludeDescriptions = _includeFieldDescriptions,
-                        IncludeDeprecationReasons = _includeFieldDeprecationReasons,
-                    }
-                );
+                _schemaTypes.AddRange(types);
             }
+            lock (_schemaLock)
+                _schema = _constructor.Build(_schemaTypes.ToArray());
+            _schemaPrinter = new SchemaPrinter(_schema, options ?? new SchemaPrinterOptions
+            {
+                IncludeDescriptions = _includeFieldDescriptions,
+                IncludeDeprecationReasons = _includeFieldDeprecationReasons,
+            });
             return this;
         }
 
-        public string Describe()
+        public string Describe(Func<ISchema, SchemaPrinter> ctor = null)
         {
             BuildSchema(); // Ensure that the schema has been constructed
+            if (ctor != null)
+                _schemaPrinter = ctor(_schema);
             return _schemaPrinter.Print();
         }
 
@@ -261,16 +279,13 @@ namespace GraphQL.Conventions
             return this;
         }
 
-        public string SerializeResult(ExecutionResult result)
-        {
-            return _documentWriter.Write(result);
-        }
+        public string SerializeResult(ExecutionResult result) => _documentSerializer.Serialize(result);
 
-        internal async Task<ExecutionResult> Execute(
+        internal async Task<ExecutionResult> ExecuteAsync(
             object rootObject,
             string query,
             string operationName,
-            Inputs inputs,
+            Inputs variables,
             IUserContext userContext,
             IDependencyInjector dependencyInjector,
             ComplexityConfiguration complexityConfiguration,
@@ -280,25 +295,42 @@ namespace GraphQL.Conventions
             CancellationToken cancellationToken = default,
             IEnumerable<IDocumentExecutionListener> listeners = null)
         {
+            dependencyInjector ??= new WrappedDependencyInjector(_constructor.TypeResolutionDelegate);
+
             if (!enableValidation)
             {
                 rules = new[] { new NoopValidationRule() };
             }
+
+            if (rules == null || rules.Count() == 0)
+            {
+                rules = DocumentValidator.CoreRules;
+            }
+
+            if (complexityConfiguration != null)
+            {
+                rules = rules.Append(new ComplexityValidationRule(complexityConfiguration));
+            }
+
             var configuration = new ExecutionOptions
             {
                 Schema = _schema,
                 Root = rootObject,
                 Query = query,
                 OperationName = operationName,
-                Inputs = inputs,
-                UserContext = UserContextWrapper.Create(userContext, dependencyInjector ?? new WrappedDependencyInjector(_constructor.TypeResolutionDelegate)),
-                ValidationRules = rules != null && rules.Any() ? rules : null,
-                ComplexityConfiguration = complexityConfiguration,
+                Variables = variables,
+                EnableMetrics = enableProfiling,
+                UserContext = new Dictionary<string, object>()
+                {
+                    { typeof(IUserContext).FullName ?? nameof(IUserContext), userContext },
+                    { typeof(IDependencyInjector).FullName ?? nameof(IDependencyInjector), dependencyInjector },
+                },
+                ValidationRules = rules,
                 CancellationToken = cancellationToken,
-                ExposeExceptions = _exposeExceptions
+                ThrowOnUnhandledException = _throwUnhandledExceptions,
             };
 
-            if (listeners != null && listeners.Any())
+            if (listeners != null)
             {
                 foreach (var listener in listeners)
                     configuration.Listeners.Add(listener);
@@ -311,12 +343,12 @@ namespace GraphQL.Conventions
 
             if (enableProfiling)
             {
-                configuration.FieldMiddleware.Use<InstrumentFieldsMiddleware>();
+                _schema.FieldMiddleware.Use(dependencyInjector.Resolve<InstrumentFieldsMiddleware>());
             }
 
             foreach (var middleware in _middleware)
             {
-                configuration.FieldMiddleware.Use(middleware);
+                _schema.FieldMiddleware.Use(dependencyInjector.Resolve(middleware.GetTypeInfo()) as IFieldMiddleware);
             }
 
             var result = await _documentExecutor.ExecuteAsync(configuration).ConfigureAwait(false);
@@ -329,13 +361,19 @@ namespace GraphQL.Conventions
             return result;
         }
 
-        internal IValidationResult Validate(string queryString)
+        internal async Task<IValidationResult> ValidateAsync(string queryString)
         {
             var document = _documentBuilder.Build(queryString);
-            return _documentValidator.Validate(queryString, _schema, document);
+            var result = await _documentValidator.ValidateAsync(new ValidationOptions()
+            {
+                Schema = _schema,
+                Document = document
+            });
+
+            return result.validationResult;
         }
 
-        private object CreateInstance(System.Type type)
+        private object CreateInstance(Type type)
         {
             var typeInfo = type.GetTypeInfo();
             if (!typeInfo.IsAbstract && !typeInfo.ContainsGenericParameters)
@@ -352,7 +390,7 @@ namespace GraphQL.Conventions
                     var parameterValues = parameters
                         .Select(parameter => _constructor.TypeResolutionDelegate(parameter.ParameterType))
                         .ToArray();
-                    return ctor.Invoke(parameterValues);
+                    return ctor.InvokeEnhanced(parameterValues);
                 }
             }
 

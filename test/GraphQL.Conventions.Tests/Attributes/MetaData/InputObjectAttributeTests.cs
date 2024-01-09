@@ -1,7 +1,8 @@
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Attributes.MetaData
+namespace Tests.Attributes.MetaData
 {
     public class InputObjectAttributeTests : TestBase
     {
@@ -29,16 +30,16 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
             type.IsInputType.ShouldEqual(true);
         }
 
-        class TestOutputObject
+        private class TestOutputObject
         {
         }
 
         [InputType]
-        class TestInputObject
+        private class TestInputObject
         {
         }
 
-        struct TestStruct
+        private struct TestStruct
         {
         }
     }

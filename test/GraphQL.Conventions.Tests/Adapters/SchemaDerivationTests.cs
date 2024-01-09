@@ -1,7 +1,11 @@
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution;
+using Tests;
+using Tests.Templates;
+using Tests.Templates.Extensions;
+
+// ReSharper disable UnusedMember.Local
+// ReSharper disable CheckNamespace
 
 namespace GraphQL.Conventions.Tests.Adapters
 {
@@ -71,17 +75,17 @@ namespace GraphQL.Conventions.Tests.Adapters
             schema.Subscription.Name.ShouldEqual(nameof(SimpleSubscriptionType));
         }
 
-        class SimpleQueryType
+        private class SimpleQueryType
         {
             public string TestQuery() => string.Empty;
         }
 
-        class SimpleMutationType
+        private class SimpleMutationType
         {
             public string TestMutation() => string.Empty;
         }
 
-        class SimpleSubscriptionType
+        private class SimpleSubscriptionType
         {
             public string TestSubscription() => string.Empty;
         }

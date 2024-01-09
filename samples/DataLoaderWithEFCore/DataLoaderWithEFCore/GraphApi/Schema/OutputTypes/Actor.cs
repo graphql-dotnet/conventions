@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using AutoMapper;
 using DataLoaderWithEFCore.Data.Repositories;
@@ -18,10 +18,10 @@ namespace DataLoaderWithEFCore.GraphApi.Schema
 
         public Guid MovieId { get; set; }
 
-        public async Task<Country> Country([Inject] ICountryRepository repository, [Inject] DataLoaderContext dataLoaderContext)
+        public async Task<Country> Country([Inject] IMapper mapper, [Inject] ICountryRepository repository, [Inject] DataLoaderContext dataLoaderContext)
         {
             var loader = dataLoaderContext.GetOrAddBatchLoader<string, Models.Country>("Actor_Country", repository.GetCountries);
-            return Mapper.Map<Country>(await loader.LoadAsync(CountryCode));
+            return mapper.Map<Country>(await loader.LoadAsync(CountryCode).GetResultAsync());
         }
     }
 }

@@ -1,12 +1,13 @@
 using GraphQL.Conventions.Adapters;
 using GraphQL.Conventions.Builders;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Types;
-using System;
-using System.Reflection;
+using Tests.Templates;
+using Tests.Templates.Extensions;
+// ReSharper disable UnassignedGetOnlyAutoProperty
 
-namespace GraphQL.Conventions.Tests.Builders
+// ReSharper disable UnusedMember.Local
+
+namespace Tests.Builders
 {
     public class SchemaConstructorTests : ConstructionTestBase
     {
@@ -25,6 +26,7 @@ namespace GraphQL.Conventions.Tests.Builders
         public void Can_Combine_Schemas()
         {
             var schema = Schema<SchemaType1, SchemaType2>();
+            schema.Initialize();
             schema.ShouldHaveQueries(3);
             schema.ShouldHaveMutations(1);
             schema.Query.ShouldHaveFieldWithName("foo");
@@ -42,6 +44,7 @@ namespace GraphQL.Conventions.Tests.Builders
                 typeof(Unwanted.SchemaType3)
             );
 
+            schema.Initialize();
             schema.ShouldHaveQueries(4);
             schema.ShouldHaveMutations(2);
             schema.Query.ShouldHaveFieldWithName("foo");
@@ -56,13 +59,13 @@ namespace GraphQL.Conventions.Tests.Builders
             // Ignore all types from the 'Unwanted' namespace.
 
             var unwantedNamespaces = new[] {
-                "GraphQL.Conventions.Tests.Builders.U",
-                "GraphQL.Conventions.Tests.Builders.Un",
-                "GraphQL.Conventions.Tests.Builders.Unw",
-                "GraphQL.Conventions.Tests.Builders.Unwan",
-                "GraphQL.Conventions.Tests.Builders.Unwant",
-                "GraphQL.Conventions.Tests.Builders.Unwante",
-                "GraphQL.Conventions.Tests.Builders.Unwanted"
+                "Tests.Builders.U",
+                "Tests.Builders.Un",
+                "Tests.Builders.Unw",
+                "Tests.Builders.Unwan",
+                "Tests.Builders.Unwant",
+                "Tests.Builders.Unwante",
+                "Tests.Builders.Unwanted"
             };
 
             foreach (var namespaceStartFragment in unwantedNamespaces)
@@ -75,6 +78,7 @@ namespace GraphQL.Conventions.Tests.Builders
                         typeof(Unwanted.SchemaType3)
                     );
 
+                schema.Initialize();
                 schema.ShouldHaveQueries(3);
                 schema.ShouldHaveMutations(1);
                 schema.Query.ShouldHaveFieldWithName("foo");
@@ -92,11 +96,16 @@ namespace GraphQL.Conventions.Tests.Builders
             // Ignore specific types from the 'Unwanted' namespace.
 
             var schema = new SchemaConstructor<ISchema, IGraphType>(new GraphTypeAdapter())
-                    .IgnoreTypes((Type t, MemberInfo m) => {
+                    .IgnoreTypes((t, m) =>
+                    {
                         // Ignore based on the type:
-                        if (t == typeof(Unwanted.QueryType3)) { return true; }
+                        if (t == typeof(Unwanted.QueryType3))
+                            return true;
+
                         // Ignore based on name of the method:
-                        if (m != null && m.Name == "UpdateSomethingIgnored") { return true; }
+                        if (m != null && m.Name == "UpdateSomethingIgnored")
+                            return true;
+
                         return false;
                     })
                     .Build(
@@ -115,14 +124,14 @@ namespace GraphQL.Conventions.Tests.Builders
             schema.Mutation.ShouldNotHaveFieldWithName("updateSomethingIgnored");
         }
 
-        class SchemaType1
+        private class SchemaType1
         {
             public QueryType1 Query { get; }
 
             public MutationType1 Mutation { get; }
         }
 
-        class QueryType1
+        private class QueryType1
         {
             public string Foo => "Test";
 
@@ -131,23 +140,23 @@ namespace GraphQL.Conventions.Tests.Builders
             public void Ignored() { }
         }
 
-        class MutationType1
+        private class MutationType1
         {
         }
 
-        class SchemaType2
+        private class SchemaType2
         {
             public QueryType2 Query { get; }
 
             public MutationType2 Mutation { get; }
         }
 
-        class QueryType2
+        private class QueryType2
         {
             public bool Baz => false;
         }
 
-        class MutationType2
+        private class MutationType2
         {
             public bool UpdateSomething() => false;
         }
@@ -155,19 +164,19 @@ namespace GraphQL.Conventions.Tests.Builders
 
     namespace Unwanted
     {
-        class SchemaType3
+        internal class SchemaType3
         {
             public QueryType3 Query { get; }
 
             public MutationType3 Mutation { get; }
         }
 
-        class QueryType3
+        internal class QueryType3
         {
             public bool BazIgnored => false;
         }
 
-        class MutationType3
+        internal class MutationType3
         {
             public bool UpdateSomethingIgnored() => false;
         }

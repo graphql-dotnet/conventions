@@ -1,22 +1,21 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using GraphQL.Conventions.Attributes.Execution.Unwrappers;
-using GraphQL.Conventions.Attributes.Execution.Wrappers;
+using GraphQL.Conventions.Extensions;
 using GraphQL.Conventions.Handlers;
 using GraphQL.Conventions.Relay;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Resolvers;
-using GraphQL.Types;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions.Adapters
 {
-    public class FieldResolver : IFieldResolver<object>
+    public class FieldResolver : IFieldResolver
     {
         protected static readonly ExecutionFilterAttributeHandler ExecutionFilterHandler =
             new ExecutionFilterAttributeHandler();
-
-        private static readonly IWrapper Wrapper = new ValueWrapper();
 
         protected static readonly IUnwrapper Unwrapper = new ValueUnwrapper();
 
@@ -27,12 +26,7 @@ namespace GraphQL.Conventions.Adapters
             _fieldInfo = fieldInfo;
         }
 
-        public virtual object Resolve(ResolveFieldContext context)
-        {
-            return Resolve(new ResolveFieldContext<object>(context));
-        }
-
-        public object Resolve(ResolveFieldContext<object> context)
+        public async ValueTask<object> ResolveAsync(IResolveFieldContext context)
         {
             Func<IResolutionContext, object> resolver;
             if (_fieldInfo.IsMethod)
@@ -44,7 +38,7 @@ namespace GraphQL.Conventions.Adapters
                 resolver = ctx => GetValue(_fieldInfo, ctx);
             }
             var resolutionContext = new ResolutionContext(_fieldInfo, context);
-            return ExecutionFilterHandler.Execute(resolutionContext, resolver);
+            return await ExecutionFilterHandler.Execute(resolutionContext, resolver);
         }
 
         private object GetValue(GraphFieldInfo fieldInfo, IResolutionContext context)
@@ -67,7 +61,7 @@ namespace GraphQL.Conventions.Adapters
             {
                 arguments = new[] { source }.Concat(arguments);
             }
-            var result = methodInfo?.Invoke(source, arguments.ToArray());
+            var result = methodInfo?.InvokeEnhanced(source, arguments.ToArray());
             return result;
         }
 

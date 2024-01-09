@@ -1,13 +1,17 @@
 using System;
 using System.Linq;
+using GraphQL;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Relay;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Types;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 using Extended = GraphQL.Conventions.Adapters.Types;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnassignedGetOnlyAutoProperty
 
-namespace GraphQL.Conventions.Tests.Adapters
+namespace Tests.Adapters
 {
     public class TypeConstructionTests : ConstructionTestBase
     {
@@ -130,11 +134,11 @@ namespace GraphQL.Conventions.Tests.Adapters
         public void Bug190_Discover_Possible_Types_From_Lists()
         {
             var schema = GraphQLEngine.New<Bug190Query_2>().GetSchema();
-            var type = schema.FindType(nameof(Bug190Query_2.TestImpl));
+            var type = new SchemaTypes(schema, new DefaultServiceProvider())[nameof(Bug190Query_2.TestImpl)];
             type.ShouldNotBeNull();
         }
 
-        class Bug190Query
+        private class Bug190Query
         {
             public NonNull<Node1> Test() => throw new NotImplementedException();
 
@@ -151,7 +155,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             }
         }
 
-        class Bug190Query_2
+        private class Bug190Query_2
         {
             public ITest[] Field { get; }
 
@@ -159,67 +163,67 @@ namespace GraphQL.Conventions.Tests.Adapters
             {
                 int Test { get; }
             }
-            public class TestImpl: ITest
+            public class TestImpl : ITest
             {
                 public int Test { get; }
             }
         }
 
-        class OutputType
+        private class OutputType
         {
         }
 
-        [InputType]
-        class InputType
+        [GraphQL.Conventions.InputType]
+        private class InputType
         {
         }
 
-        class TypeWithoutDescription
+        private class TypeWithoutDescription
         {
         }
 
         [Description("Some Description")]
-        class TypeWithDescription
+        private class TypeWithDescription
         {
         }
 
-        [Name("Foo")]
-        class TypeWithOverriddenName
+        [GraphQL.Conventions.Name("Foo")]
+        private class TypeWithOverriddenName
         {
         }
 
-        class TypeWithoutDeprecationReason
+        private class TypeWithoutDeprecationReason
         {
         }
 
         [Deprecated("Some Deprecation Reason")]
-        class TypeWithDeprecationReason
+        private class TypeWithDeprecationReason
         {
         }
 
-        interface IInterface
+        private interface IInterface
         {
             int InterfaceField { get; }
         }
 
-        class TypeImplementingInterfaces : IInterface
+        private class TypeImplementingInterfaces : IInterface
         {
             public int InterfaceField => 1;
 
             public int TypeField => 2;
         }
 
-        interface IInterface1
+        private interface IInterface1
         {
             int Field1 { get; }
         }
 
-        interface IInterface2
+        private interface IInterface2
         {
             int Field2 { get; }
         }
 
-        class TypeImplementingTwoInterfaces : IInterface1, IInterface2
+        private class TypeImplementingTwoInterfaces : IInterface1, IInterface2
         {
             public int Field1 => 1;
 

@@ -1,9 +1,9 @@
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
-using GraphQL.Language.AST;
 using GraphQL.Types;
+using GraphQLParser.AST;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters.Types
+namespace Tests.Adapters.Types
 {
     public abstract class ScalarTypeTestBase<TType, TSerializedRepresentation, TNativeRepresentation> : TestBase
         where TType : ScalarGraphType, new()
@@ -20,7 +20,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Types
             _graphType.ParseValue(data).ShouldEqual(expected);
         }
 
-        protected void ShouldParseLiteral(IValue data, TNativeRepresentation expected)
+        protected void ShouldParseLiteral(GraphQLValue data, TNativeRepresentation expected)
         {
             _graphType.ParseLiteral(data).ShouldEqual(expected);
         }

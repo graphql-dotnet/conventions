@@ -1,11 +1,11 @@
 using System.Reflection;
 using GraphQL.Conventions.Attributes.MetaData.Utilities;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Attributes.MetaData.Utilities
+namespace Tests.Attributes.MetaData.Utilities
 {
     public class EntityMapperTests : TestBase
     {
@@ -15,7 +15,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData.Utilities
             var target = new MappableTarget();
             var entityMapper = new EntityMapper(target);
             var typeResolver = new TypeResolver();
-            var argumentInfo = typeof(TestObject).GetTypeInfo().GetMethod(nameof(TestObject.Field)).GetParameters()[0];
+            var argumentInfo = typeof(TestObject).GetTypeInfo().GetMethod(nameof(TestObject.Field))?.GetParameters()[0];
             entityMapper.MapEntity(new GraphArgumentInfo(typeResolver, argumentInfo));
             target.HasMappedArgument.ShouldEqual(true);
             target.HasMappedEnumMember.ShouldEqual(false);
@@ -65,17 +65,17 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData.Utilities
             target.HasMappedType.ShouldEqual(true);
         }
 
-        class TestObject
+        private class TestObject
         {
             public int Field(int argument) => argument;
         }
 
-        enum TestEnum
+        private enum TestEnum
         {
             Member,
         }
 
-        class MappableTarget : IMappableTarget
+        private class MappableTarget : IMappableTarget
         {
             public bool HasMappedArgument { get; private set; }
 

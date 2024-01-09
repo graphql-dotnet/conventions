@@ -5,12 +5,14 @@ using System.Reflection;
 
 namespace GraphQL.Conventions.Attributes.Collectors
 {
+    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class AttributeCollector<TAttribute>
         where TAttribute : IAttribute
     {
-        class WrappedAttribute : IComparable<WrappedAttribute>
+        private class WrappedAttribute : IComparable<WrappedAttribute>
         {
-            private static long _currentIndex = 0;
+            // ReSharper disable once StaticMemberInGenericType
+            private static long _currentIndex;
 
             public WrappedAttribute(TAttribute attribute)
             {
@@ -37,7 +39,7 @@ namespace GraphQL.Conventions.Attributes.Collectors
                 }
                 if (Attribute.ApplicationOrder != other.Attribute.ApplicationOrder)
                 {
-                    return (int)(Attribute.ApplicationOrder - other.Attribute.ApplicationOrder);
+                    return Attribute.ApplicationOrder - other.Attribute.ApplicationOrder;
                 }
                 return (int)(InternalOrder - other.InternalOrder);
             }
@@ -58,16 +60,13 @@ namespace GraphQL.Conventions.Attributes.Collectors
                 .ToList();
         }
 
-        protected void AddDefaultAttributes(params TAttribute[] defaultAttributes)
+        private void AddDefaultAttributes(params TAttribute[] defaultAttributes)
         {
-            if (_defaultAttributes == null)
-            {
-                _defaultAttributes = new List<TAttribute>();
-            }
+            _defaultAttributes ??= new List<TAttribute>();
             _defaultAttributes.AddRange(defaultAttributes.Except(_defaultAttributes));
         }
 
-        protected virtual IEnumerable<TAttribute> CollectCoreAttributes(ICustomAttributeProvider obj)
+        protected virtual IEnumerable<TAttribute> CollectCoreAttributes(ICustomAttributeProvider _)
         {
             return new TAttribute[0];
         }
@@ -125,8 +124,7 @@ namespace GraphQL.Conventions.Attributes.Collectors
             attributes
                 .Reverse()
                 .Select(attribute => new WrappedAttribute(attribute))
-                .SelectMany(wrappedAttribute => AllAttributes(wrappedAttribute))
-                ?? new WrappedAttribute[0];
+                .SelectMany(AllAttributes);
 
         private static IEnumerable<WrappedAttribute> AllAttributes(WrappedAttribute attribute) =>
             new[] { attribute }.Union(attribute.AssociatedAttributes);

@@ -1,14 +1,16 @@
 using System;
+using System.ComponentModel;
 using GraphQL.Conventions.Attributes.MetaData.Utilities;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
-    public struct Id
-        : IComparable, IComparable<Id>, IEquatable<Id>
+    [TypeConverter(typeof(IdConverter))]
+    public struct Id : IComparable, IComparable<Id>, IEquatable<Id>
     {
         public static bool SerializeUsingColon { get; set; } = true;
 
-        private readonly static INameNormalizer _normalizer = new NameNormalizer();
+        private static readonly INameNormalizer Normalizer = new NameNormalizer();
 
         internal readonly string _unencodedIdentifier;
 
@@ -46,13 +48,13 @@ namespace GraphQL.Conventions
         }
 
         public override bool Equals(object obj) =>
-            obj is Id ? Equals((Id)obj) : false;
+            obj is Id id ? Equals(id) : false;
 
         public bool Equals(Id other) =>
             _encodedIdentifier.Equals(other._encodedIdentifier);
 
         public int CompareTo(object other) =>
-            other is Id ? CompareTo((Id)other) : -1;
+            other is Id id ? CompareTo(id) : -1;
 
         public int CompareTo(Id other) =>
             Types.Utilities.Identifier.Compare(_unencodedIdentifier, other._unencodedIdentifier);
@@ -133,6 +135,29 @@ namespace GraphQL.Conventions
             id1.CompareTo(id2) >= 0;
 
         internal static string GetTypeName(Type type) =>
-            _normalizer.AsTypeName(type.Name);
+            Normalizer.AsTypeName(type.Name);
+    }
+
+    public class IdConverter : TypeConverter
+    {
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            return sourceType == typeof(string);
+        }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+        {
+            switch (value)
+            {
+                case string s:
+                    return new Id(s);
+
+                case null:
+                    return null;
+
+                default:
+                    throw new NotSupportedException($"Invalid conversion from {value.GetType().FullName} to {typeof(Id).FullName}.");
+            }
+        }
     }
 }

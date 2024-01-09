@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters.Engine.Bugs
+namespace Tests.Adapters.Engine.Bugs
 {
     public class Bug73NullableInputListTests : TestBase
     {
@@ -16,7 +17,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine.Bugs
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(@"query _ { example(testInputs:null) }")
-                .Execute();
+                .ExecuteAsync();
+
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("example", "null");
         }
@@ -29,11 +31,12 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine.Bugs
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(@"query _($inputs:[TestInput]) { example(testInputs:$inputs) }")
-                .WithInputs(new Dictionary<string, object>
+                .WithVariables(new Dictionary<string, object>
                 {
                     { "inputs", null} ,
                 })
-                .Execute();
+                .ExecuteAsync();
+
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("example", "null");
         }

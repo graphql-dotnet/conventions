@@ -1,25 +1,31 @@
-﻿using GraphQL.Conventions.Tests.Templates;
-using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using GraphQL.Conventions;
+using GraphQL.NewtonsoftJson;
+using Newtonsoft.Json.Linq;
+using Tests.Templates;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnassignedGetOnlyAutoProperty
 
-namespace GraphQL.Conventions.Tests.Execution
+namespace Tests.Execution
 {
     public class LinqIteratorUnwrappingTests : ConstructionTestBase
     {
         [Test]
-        public void Schema_Will_Execute_With_No_Errors_When_A_Type_Is_In_A_Linq_Iterator()
+        public async Task Schema_Will_Execute_With_No_Errors_When_A_Type_Is_In_A_Linq_Iterator()
         {
-            const string query = @"{
+            const string Query = @"{
                 testSelectIterator
                 testWhereIterator
             }";
 
             var schema = Schema<BugReproSchemaTaskFirst>();
-            var result = schema.Execute((e) => e.Query = query);
+
+            var result = await schema.ExecuteAsync((e) => e.Query = Query);
             ResultHelpers.AssertNoErrorsInResult(result);
-            string testSelectIterator = (string)JObject.Parse(result)["data"]["testSelectIterator"][0];
-            string testWhereIterator = (string)JObject.Parse(result)["data"]["testWhereIterator"][0];
+            string testSelectIterator = (string)JObject.Parse(result)["data"]?["testSelectIterator"]?[0];
+            string testWhereIterator = (string)JObject.Parse(result)["data"]?["testWhereIterator"]?[0];
 
             Assert.AreEqual("Test", testSelectIterator);
             Assert.AreEqual("Test", testWhereIterator);
@@ -36,7 +42,7 @@ namespace GraphQL.Conventions.Tests.Execution
                 new NonNull<IEnumerable<NonNull<string>>>(new[] { "Test" }.Select(x => new NonNull<string>(x)));
 
             public NonNull<IEnumerable<NonNull<string>>> TestWhereIterator() =>
-                new NonNull<IEnumerable<NonNull<string>>>(new[] { new NonNull<string>("Test") }.Where(x => 1 == 1));
+                new NonNull<IEnumerable<NonNull<string>>>(new[] { new NonNull<string>("Test") }.Where(x => x.Value != null));
         }
     }
 }

@@ -3,30 +3,28 @@ using System.Reflection;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
     public struct Optional<T> : IOptional
     {
-        private readonly T _value;
-        private readonly bool _isSpecified;
-
         public Optional(T value, bool isSpecified)
         {
-            _value = value;
-            _isSpecified = isSpecified;
+            Value = value;
+            IsSpecified = isSpecified;
         }
 
-        public T Value => _value;
+        public T Value { get; private set; }
 
-        public bool IsSpecified => _isSpecified;
+        public bool IsSpecified { get; private set; }
 
-        public object ObjectValue => _value;
+        public object ObjectValue => Value;
 
         public override int GetHashCode() =>
-            _value.GetHashCode();
+            Value.GetHashCode();
 
         public override string ToString() =>
-            _value?.ToString();
+            Value?.ToString();
 
         static Optional()
         {
@@ -34,7 +32,7 @@ namespace GraphQL.Conventions
         }
 
         public static void ValidateType()
-        { 
+        {
             var typeInfo = typeof(T).GetTypeInfo();
             if ((typeInfo.IsValueType && !typeInfo.IsGenericType(typeof(Nullable<>))) || typeInfo.IsGenericType(typeof(NonNull<>)))
             {

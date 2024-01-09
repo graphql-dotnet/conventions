@@ -38,8 +38,8 @@ namespace GraphQL.Conventions.Execution
             {
                 return exception.InnerException;
             }
-            else if (exception is AggregateException &&
-                ((AggregateException)exception).InnerExceptions.Count == 1)
+            else if (exception is AggregateException aggregateException &&
+                aggregateException.InnerExceptions.Count == 1)
             {
                 return exception.InnerException;
             }

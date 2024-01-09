@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GraphQL;
 using GraphQL.Types;
 
-namespace GraphQL.Conventions.Tests.Templates.Extensions
+namespace Tests.Templates.Extensions
 {
-    static class ConstructionTestExtensions
+    internal static class ConstructionTestExtensions
     {
         public static void ShouldHaveQueries(this ISchema schema, int numberOfQueries)
         {
@@ -96,13 +97,13 @@ namespace GraphQL.Conventions.Tests.Templates.Extensions
             Assert.AreEqual(typeof(NonNullGraphType<ListGraphType<TType>>), type.GetType());
         }
 
-        public static void OfType<TType>(this IFieldType field)
+        public static void OfType<TType>(this FieldType field)
             where TType : GraphType
         {
             field.Type.ShouldBeOfType<TType>();
         }
 
-        public static void OfNonNullableType<TType>(this IFieldType field)
+        public static void OfNonNullableType<TType>(this FieldType field)
             where TType : GraphType
         {
             field.Type.ShouldBeOfNonNullableType<TType>();
@@ -140,7 +141,7 @@ namespace GraphQL.Conventions.Tests.Templates.Extensions
                     ? string.Join("\n---\n", result.Errors.Select(ExceptionToString))
                     : "(none)";
                 throw new Exception(
-                    $"Expected {count} errors, but got {result?.Errors.Count}:\n\n{messages}\n");
+                    $"Expected {count} errors, but got {result?.Errors?.Count}:\n\n{messages}\n");
             }
         }
 

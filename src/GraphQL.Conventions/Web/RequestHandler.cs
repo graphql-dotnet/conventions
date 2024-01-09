@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Instrumentation;
 using GraphQL.Validation.Complexity;
-using GraphQL.Conventions.Types.Resolution;
 using Type = System.Type;
 
 namespace GraphQL.Conventions.Web
@@ -21,29 +21,17 @@ namespace GraphQL.Conventions.Web
 
         public class RequestHandlerBuilder : IDependencyInjector
         {
-            readonly List<Type> _schemaTypes = new List<Type>();
-
-            readonly List<Type> _assemblyTypes = new List<Type>();
-
-            readonly List<Type> _exceptionsTreatedAsWarnings = new List<Type>();
-
-            readonly List<Type> _middleware = new List<Type>();
-
-            readonly ITypeResolver _typeResolver = new TypeResolver();
-
-            IDependencyInjector _dependencyInjector;
-
-            ResolveTypeDelegate _resolveTypeDelegate;
-
-            bool _useValidation = true;
-
-            bool _useProfiling = false;
-
-            bool _outputViolationsAsWarnings;
-
-            FieldResolutionStrategy _fieldResolutionStrategy = FieldResolutionStrategy.Normal;
-
-            ComplexityConfiguration _complexityConfiguration;
+            private readonly List<Type> _schemaTypes = new List<Type>();
+            private readonly List<Type> _assemblyTypes = new List<Type>();
+            private readonly List<Type> _exceptionsTreatedAsWarnings = new List<Type>();
+            private readonly List<Type> _middleware = new List<Type>();
+            private readonly ITypeResolver _typeResolver = new TypeResolver();
+            private IDependencyInjector _dependencyInjector;
+            private ResolveTypeDelegate _resolveTypeDelegate;
+            private bool _useValidation = true;
+            private bool _useProfiling;
+            private FieldResolutionStrategy _fieldResolutionStrategy = FieldResolutionStrategy.Normal;
+            private ComplexityConfiguration _complexityConfiguration;
 
             internal RequestHandlerBuilder()
             {
@@ -136,7 +124,6 @@ namespace GraphQL.Conventions.Web
             public RequestHandlerBuilder WithoutValidation(bool outputViolationsAsWarnings = false)
             {
                 _useValidation = false;
-                _outputViolationsAsWarnings = outputViolationsAsWarnings;
                 return this;
             }
 
@@ -179,7 +166,6 @@ namespace GraphQL.Conventions.Web
                     _exceptionsTreatedAsWarnings,
                     _useValidation,
                     _useProfiling,
-                    _outputViolationsAsWarnings,
                     _fieldResolutionStrategy,
                     _complexityConfiguration,
                     _middleware,
@@ -192,21 +178,14 @@ namespace GraphQL.Conventions.Web
             }
         }
 
-        class RequestHandlerImpl : IRequestHandler
+        private class RequestHandlerImpl : IRequestHandler
         {
-            readonly GraphQLEngine _engine;
-
-            readonly IDependencyInjector _dependencyInjector;
-
-            readonly List<Type> _exceptionsTreatedAsWarnings = new List<Type>();
-
-            readonly bool _useValidation;
-
-            readonly bool _useProfiling;
-
-            readonly bool _outputViolationsAsWarnings;
-
-            readonly ComplexityConfiguration _complexityConfiguration;
+            private readonly GraphQLEngine _engine;
+            private readonly IDependencyInjector _dependencyInjector;
+            private readonly List<Type> _exceptionsTreatedAsWarnings = new List<Type>();
+            private readonly bool _useValidation;
+            private readonly bool _useProfiling;
+            private readonly ComplexityConfiguration _complexityConfiguration;
 
             internal RequestHandlerImpl(
                 IDependencyInjector dependencyInjector,
@@ -215,7 +194,6 @@ namespace GraphQL.Conventions.Web
                 IEnumerable<Type> exceptionsTreatedAsWarning,
                 bool useValidation,
                 bool useProfiling,
-                bool outputViolationsAsWarnings,
                 FieldResolutionStrategy fieldResolutionStrategy,
                 ComplexityConfiguration complexityConfiguration,
                 IEnumerable<Type> middleware,
@@ -227,7 +205,6 @@ namespace GraphQL.Conventions.Web
                 _exceptionsTreatedAsWarnings.AddRange(exceptionsTreatedAsWarning);
                 _useValidation = useValidation;
                 _useProfiling = useProfiling;
-                _outputViolationsAsWarnings = outputViolationsAsWarnings;
                 _engine.WithFieldResolutionStrategy(fieldResolutionStrategy);
                 _engine.BuildSchema(schemaTypes.ToArray());
                 _complexityConfiguration = complexityConfiguration;
@@ -238,33 +215,33 @@ namespace GraphQL.Conventions.Web
                 }
             }
 
-            public async Task<Response> ProcessRequest(Request request, IUserContext userContext, IDependencyInjector dependencyInjector = null)
+            public async Task<Response> ProcessRequestAsync(Request request, IUserContext userContext, IDependencyInjector dependencyInjector = null)
             {
                 var start = DateTime.UtcNow;
 
                 var result = await _engine
                     .NewExecutor()
                     .WithQueryString(request.QueryString)
-                    .WithInputs(request.Variables)
+                    .WithVariables(request.Variables)
                     .WithOperationName(request.OperationName)
                     .WithDependencyInjector(dependencyInjector ?? _dependencyInjector)
                     .WithUserContext(userContext)
                     .WithComplexityConfiguration(_complexityConfiguration)
                     .EnableValidation(_useValidation)
                     .EnableProfiling(_useProfiling)
-                    .Execute()
+                    .ExecuteAsync()
                     .ConfigureAwait(false);
 
                 if (_useProfiling)
                 {
-                  result.EnrichWithApolloTracing(start);
+                    result.EnrichWithApolloTracing(start);
                 }
 
                 var response = new Response(request, result);
                 var errors = result?.Errors?.Where(e => !string.IsNullOrWhiteSpace(e?.Message));
                 foreach (var error in errors ?? new List<ExecutionError>())
                 {
-                    if (_exceptionsTreatedAsWarnings.Contains(error.InnerException.GetType()))
+                    if (_exceptionsTreatedAsWarnings.Contains(error.InnerException?.GetType()))
                     {
                         response.Warnings.Add(error);
                     }
@@ -273,32 +250,37 @@ namespace GraphQL.Conventions.Web
                         response.Errors.Add(error);
                     }
                 }
+
+                if (result == null)
+                    return response;
                 result.Errors = new ExecutionErrors();
                 result.Errors.AddRange(response.Errors);
-                response.Body = _engine.SerializeResult(result);
+                response.SetBody(_engine.SerializeResult(result));
+
                 return response;
             }
 
-            public Response Validate(Request request)
+            public async Task<Response> ValidateAsync(Request request)
             {
-                var result = _engine.Validate(request.QueryString);
+                var result = await _engine.ValidateAsync(request.QueryString);
                 return new Response(request, result);
             }
 
-            public string DescribeSchema(
+            public async Task<string> DescribeSchemaAsync(
                 bool returnJson = false,
                 bool includeFieldDescriptions = false,
                 bool includeFieldDeprecationReasons = true)
             {
                 if (returnJson)
                 {
-                    var result = _engine
+                    var result = await _engine
                         .NewExecutor()
                         .WithQueryString(IntrospectionQuery)
-                        .Execute()
-                        .Result;
+                        .ExecuteAsync();
+
                     return _engine.SerializeResult(result);
                 }
+
                 _engine.PrintFieldDescriptions(includeFieldDescriptions);
                 _engine.PrintFieldDeprecationReasons(includeFieldDeprecationReasons);
                 return _engine.Describe();
@@ -306,7 +288,7 @@ namespace GraphQL.Conventions.Web
 
             #region Queries
             // Source: https://github.com/graphql/graphql-js/blob/master/src/utilities/introspectionQuery.js
-            const string IntrospectionQuery = @"
+            private const string IntrospectionQuery = @"
             query IntrospectionQuery {
                 __schema {
                     queryType { name }

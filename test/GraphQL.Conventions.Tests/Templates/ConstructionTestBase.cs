@@ -3,7 +3,7 @@ using GraphQL.Conventions.Builders;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Types;
 
-namespace GraphQL.Conventions.Tests.Templates
+namespace Tests.Templates
 {
     public abstract class ConstructionTestBase : TestBase
     {

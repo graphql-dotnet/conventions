@@ -1,3 +1,4 @@
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
     public class SchemaDefinition<TQuery>
@@ -6,20 +7,20 @@ namespace GraphQL.Conventions
     }
 
     public class SchemaDefinitionWithMutation<TMutation>
-        : SchemaDefinition<Query, TMutation>
     {
+        public TMutation Mutation { get; set; }
     }
 
     public class SchemaDefinitionWithSubscription<TSubscription>
     {
-        public Query Query { get; set; }
-
         public TSubscription Subscription { get; set; }
     }
 
     public class SchemaDefinitionWithMutationAndSubscription<TMutation, TSubscription>
-        : SchemaDefinition<Query, TMutation, TSubscription>
     {
+        public TMutation Mutation { get; set; }
+
+        public TSubscription Subscription { get; set; }
     }
 
     public class SchemaDefinition<TQuery, TMutation>
@@ -36,9 +37,5 @@ namespace GraphQL.Conventions
         public TMutation Mutation { get; set; }
 
         public TSubscription Subscription { get; set; }
-    }
-
-    public class Query
-    {
     }
 }

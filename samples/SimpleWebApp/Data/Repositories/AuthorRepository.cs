@@ -56,8 +56,7 @@ namespace GraphQL.Conventions.Tests.Server.Data.Repositories
 
         public AuthorDto GetAuthorById(int id)
         {
-            AuthorDto author;
-            if (_authors.TryGetValue(id, out author))
+            if (_authors.TryGetValue(id, out var author))
             {
                 return author;
             }

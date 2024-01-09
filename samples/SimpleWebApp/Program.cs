@@ -1,6 +1,6 @@
-using System.IO;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace GraphQL.Conventions.Tests.Server
 {
@@ -8,14 +8,16 @@ namespace GraphQL.Conventions.Tests.Server
     {
         public static void Main(string[] args)
         {
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseStartup<Startup>()
-                .Build();
+            var host = CreateHostBuilder(args).Build();
 
             host.Run();
         }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) => Host
+            .CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder => webBuilder
+                .UseStartup<Startup>()
+                .ConfigureKestrel(options => options.AllowSynchronousIO = true)) // for Newtonsoft.Json support
+            .ConfigureLogging(l => l.AddConsole());
     }
 }

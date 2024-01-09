@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using GraphQL.Conventions.Attributes;
 using GraphQL.Conventions.Execution;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions.Relay
 {
     [AttributeUsage(Fields, AllowMultiple = true, Inherited = true)]

@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions;
 using Newtonsoft.Json;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters.Engine.Utilities
+// ReSharper disable InconsistentNaming
+
+namespace Tests.Adapters.Engine.Utilities
 {
     public class RequestDeserializerTests : TestBase
     {
@@ -73,8 +76,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine.Utilities
             variables.Count.ShouldEqual(1);
             variables.Keys.ShouldContain("obj");
 
-            var obj = variables["obj"] as Dictionary<string, object>;
-            obj.ShouldNotBeNull();
+            var obj = (Dictionary<string, object>)variables["obj"];
             obj.Count.ShouldEqual(2);
             obj.Keys.ShouldContain("field1");
             obj.Keys.ShouldContain("field2");

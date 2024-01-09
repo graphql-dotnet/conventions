@@ -7,13 +7,15 @@ using GraphQL.Conventions.Attributes.Collectors;
 using GraphQL.Conventions.Attributes.MetaData.Utilities;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
+using GraphQL.DataLoader;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
-    [AttributeUsage(Everywhere, AllowMultiple = true, Inherited = true)]
+    [AttributeUsage(Everywhere, AllowMultiple = true)]
     public class NameAttribute : MetaDataAttributeBase, IDefaultAttribute
     {
-        private static INameNormalizer _nameNormalizer = new NameNormalizer();
+        private static readonly INameNormalizer _nameNormalizer = new NameNormalizer();
 
         private readonly string _name;
 
@@ -61,7 +63,17 @@ namespace GraphQL.Conventions
                 return;
             }
 
+            while (typeInfo.IsGenericType(typeof(IDataLoaderResult<>)))
+            {
+                typeInfo = typeInfo.TypeParameter();
+            }
+
             if (typeInfo.IsGenericType(typeof(Task<>)))
+            {
+                typeInfo = typeInfo.TypeParameter();
+            }
+
+            if (typeInfo.IsGenericType(typeof(IObservable<>)))
             {
                 typeInfo = typeInfo.TypeParameter();
             }

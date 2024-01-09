@@ -1,10 +1,10 @@
-namespace GraphQL.Conventions.Tests
+namespace Tests
 {
-    public class Program
+    public static class Program
     {
-        public static void Main(string[] args)
+        public static void Main()
         {
-            new GraphQL.Conventions.Tests.Web.RequestHandlerTests().Can_Ignore_Types_From_Unwanted_Namespaces().Wait();
+            // new RequestHandlerTests().Can_Ignore_Types_From_Unwanted_Namespaces().Wait();
         }
     }
 }

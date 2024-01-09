@@ -1,7 +1,9 @@
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
+// ReSharper disable UnusedMember.Local
 
-namespace GraphQL.Conventions.Tests.Attributes.MetaData
+namespace Tests.Attributes.MetaData
 {
     public class IgnoreAttributeTests : TestBase
     {
@@ -22,7 +24,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
             type.ShouldHaveFieldWithName("DEPRECATED_MEMBER").AndWithDeprecationReason("Some enum member reason");
         }
 
-        class FieldData
+        private class FieldData
         {
             public int NormalField { get; set; }
 
@@ -30,7 +32,7 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
             public bool IgnoredField { get; set; }
         }
 
-        class EnumData
+        private class EnumData
         {
             public enum Enum
             {

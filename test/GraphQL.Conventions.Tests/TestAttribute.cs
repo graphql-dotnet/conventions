@@ -1,4 +1,4 @@
-namespace GraphQL.Conventions.Tests
+namespace Tests
 {
     public class TestAttribute : Xunit.FactAttribute
     {

@@ -1,13 +1,14 @@
-﻿using System;
+using System;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
+using GraphQL;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Adapters.Engine.ErrorTransformations;
 using GraphQL.Conventions.Execution;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters.Engine
+namespace Tests.Adapters.Engine
 {
     public class CustomErrorTransformationTests : TestBase
     {
@@ -18,14 +19,14 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("query { queryData }")
-                .Execute();
+                .ExecuteAsync();
 
             result.Errors.ShouldNotBeNull();
             result.Errors.Count.ShouldEqual(1);
             var error = result.Errors.First();
             error.ShouldBeOfType<ExecutionError>();
             error.InnerException.ShouldBeOfType<FieldResolutionException>();
-            error.InnerException.InnerException.ShouldBeOfType<CustomException>();
+            error.InnerException?.InnerException.ShouldBeOfType<CustomException>();
         }
 
         [Test]
@@ -36,27 +37,27 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 .WithCustomErrorTransformation(new CustomErrorTransformation())
                 .NewExecutor()
                 .WithQueryString("query { queryData }")
-                .Execute();
+                .ExecuteAsync();
 
             result.Errors.ShouldNotBeNull();
             result.Errors.Count.ShouldEqual(1);
             var error = result.Errors.First();
             error.ShouldBeOfType<ExecutionError>();
-            error.InnerException.ShouldBeOfType<TargetInvocationException>();
-            error.InnerException.InnerException.ShouldBeOfType<CustomException>();
+            error.InnerException.ShouldBeOfType<CustomException>();
         }
 
-        class Query
+        private class Query
         {
+            // ReSharper disable once UnusedMember.Local
             public string QueryData() => throw new CustomException();
         }
 
-        class CustomErrorTransformation : IErrorTransformation
+        private class CustomErrorTransformation : IErrorTransformation
         {
             public ExecutionErrors Transform(ExecutionErrors errors)
                 => errors;
         }
 
-        class CustomException : Exception { }
+        private class CustomException : Exception { }
     }
 }

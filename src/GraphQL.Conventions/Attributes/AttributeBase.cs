@@ -11,14 +11,12 @@ namespace GraphQL.Conventions.Attributes
         public const AttributeTargets FieldsAndParameters = Fields | AttributeTargets.Parameter;
         public const AttributeTargets Parameters = AttributeTargets.Parameter;
 
-        private readonly AttributeApplicationPhase _phase;
-
         protected AttributeBase(AttributeApplicationPhase? phase = null)
         {
-            _phase = phase ?? AttributeApplicationPhase.MetaDataDerivation;
+            Phase = phase ?? AttributeApplicationPhase.MetaDataDerivation;
         }
 
-        public AttributeApplicationPhase Phase => _phase;
+        public AttributeApplicationPhase Phase { get; private set; }
 
         public int ApplicationOrder { get; set; }
 

@@ -1,10 +1,14 @@
 using System.Linq;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Types.Resolution;
 using GraphQL.Types;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedParameter.Local
+
+namespace Tests.Adapters
 {
     public class ArgumentDerivationTests : ConstructionTestBase
     {
@@ -81,7 +85,7 @@ namespace GraphQL.Conventions.Tests.Adapters
             field.Arguments.First().Type.ShouldEqual(typeof(NonNullGraphType<StringGraphType>));
         }
 
-        class Arguments
+        private class Arguments
         {
             public int FieldWithNoArguments() => 0;
 

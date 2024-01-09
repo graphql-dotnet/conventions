@@ -1,9 +1,14 @@
 using System;
 using System.Linq;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
+// ReSharper disable UnusedTypeParameter
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedParameter.Local
+// ReSharper disable InconsistentNaming
 
-namespace GraphQL.Conventions.Tests.Attributes.MetaData
+namespace Tests.Attributes.MetaData
 {
     public class NameAttributeTests : TestBase
     {
@@ -58,22 +63,22 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
             type.ShouldNotHaveFieldWithName("OVERRIDDEN_MEMBER");
         }
 
-        class NormalType { }
+        private class NormalType { }
 
         [Name("SomeType")]
-        class OverriddenType { }
+        private class OverriddenType { }
 
-        interface NormalInterface { }
+        private interface NormalInterface { }
 
         [Name("SomeInterface")]
-        interface OverriddenInterface { }
+        private interface OverriddenInterface { }
 
-        class GenericType<T> { }
+        private class GenericType<T> { }
 
         [Name("SomeGenericType")]
-        class OverriddenGenericType<T> { }
+        private class OverriddenGenericType<T> { }
 
-        class FieldData
+        private class FieldData
         {
             public int Field1 { get; set; }
 
@@ -86,12 +91,12 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData
             public DateTime OverriddenField2() { return DateTime.UtcNow; }
         }
 
-        class ArgumentData
+        private class ArgumentData
         {
             public int Field(bool normalArg, [Name("someArg")] bool overriddenArg) { return 0; }
         }
 
-        class EnumData
+        private class EnumData
         {
             public enum Enum
             {

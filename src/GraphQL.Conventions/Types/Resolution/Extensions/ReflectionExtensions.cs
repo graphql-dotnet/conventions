@@ -5,7 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using GraphQL.Conventions.Extensions;
 using GraphQL.Conventions.Types.Descriptors;
+using GraphQL.DataLoader;
 
 namespace GraphQL.Conventions.Types.Resolution.Extensions
 {
@@ -39,7 +41,7 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
         {
             if (type.IsArray)
             {
-                return type.GetElementType().GetTypeInfo();
+                return type.GetElementType()?.GetTypeInfo();
             }
             return type.IsGenericType
                 ? type.GenericTypeArguments.First().GetTypeInfo()
@@ -73,14 +75,20 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
 
         public static async Task<object> GetTaskResult(this object obj)
         {
-            var task = obj as Task;
+            if (!(obj is Task task))
+                return null;
             await task.ConfigureAwait(false);
             var propertyInfo = task.GetType().GetTypeInfo().GetProperty("Result");
-            return propertyInfo.GetValue(task);
+            return propertyInfo?.GetValue(task);
         }
 
         public static TypeInfo GetTypeRepresentation(this TypeInfo typeInfo)
         {
+            while (typeInfo.IsGenericType(typeof(IDataLoaderResult<>)))
+            {
+                typeInfo = typeInfo.TypeParameter();
+            }
+
             if (typeInfo.IsGenericType(typeof(Task<>)))
             {
                 typeInfo = typeInfo.TypeParameter();
@@ -114,8 +122,10 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
             var convertMethod = typeof(ReflectionExtensions)
                 .GetTypeInfo()
                 .GetMethod("ConvertToArray", BindingFlags.Static | BindingFlags.Public);
+            if (convertMethod == null)
+                return null;
             var genericMethod = convertMethod.MakeGenericMethod(elementType);
-            return genericMethod.Invoke(null, new object[] { list });
+            return genericMethod.InvokeEnhanced(null, new object[] { list });
         }
 
         public static bool IsExtensionMethod(this MethodInfo methodInfo)

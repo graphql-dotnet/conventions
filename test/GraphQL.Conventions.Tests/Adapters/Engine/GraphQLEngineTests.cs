@@ -2,12 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Tests.Adapters.Engine.Types;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions;
 using GraphQL.Validation.Complexity;
+using Tests.Adapters.Engine.Types;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters.Engine
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnassignedGetOnlyAutoProperty
+// ReSharper disable UnusedParameter.Local
+// ReSharper disable UnusedAutoPropertyAccessor.Local
+// ReSharper disable InconsistentNaming
+
+namespace Tests.Adapters.Engine
 {
     public class GraphQLEngineTests : TestBase
     {
@@ -31,6 +38,8 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 floatField2: Float!
                 fooField1: Foo
                 fooField2: Foo!
+                guidField1: GUID
+                guidField2: GUID!
                 intField1: Int
                 intField2: Int!
                 stringField1: String
@@ -132,7 +141,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                     field4(input: { yetAnotherField: SOME_VALUE1 })
                     field5
                 }")
-                .Execute();
+                .ExecuteAsync();
 
             result.Data.ShouldHaveFieldWithValue("field3", "SOME_VALUE2");
             result.Data.ShouldHaveFieldWithValue("field4", "SOME_VALUE2");
@@ -157,7 +166,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             type QueryWithInterfaces {
                 field: TypeFromTwoInterfaces
             }
-            type TypeFromTwoInterfaces implements Interface1, Interface2 {
+            type TypeFromTwoInterfaces implements Interface1 & Interface2 {
                 field1: String
                 field2: String
             }
@@ -174,9 +183,24 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(@"{ customScalarType(arg:""CUSTOM:Test"") }")
-                .Execute();
+                .ExecuteAsync();
             result.ShouldHaveNoErrors();
             result.Data.ShouldHaveFieldWithValue("customScalarType", "CUSTOM:WRAPPED:Test");
+        }
+
+        [Test]
+        public async Task Can_Register_And_Use_Custom_Json_Scalar_Types()
+        {
+            var engine = GraphQLEngine
+                .New()
+                .RegisterScalarType<JSON, JSONScalarGraphType>()
+                .WithQuery<CustomJsonTypeQuery>();
+            var result = await engine
+                .NewExecutor()
+                .WithQueryString(@"{ customJsonScalarType }")
+                .ExecuteAsync();
+            result.ShouldHaveNoErrors();
+            result.Data.ShouldHaveFieldWithValue("customJsonScalarType", new Dictionary<string, object> { { "test", true } });
         }
 
         [Test]
@@ -193,7 +217,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                         title
                         releaseDate
                     }")
-                .Execute();
+                .ExecuteAsync();
 
             result.Data.ShouldHaveFieldWithValue("title", "Movie 1");
         }
@@ -216,14 +240,14 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                             lastName
                         }
                     }")
-                .Execute();
+                .ExecuteAsync();
 
             result.ShouldHaveErrors(1);
-            var error = result.Errors.First().InnerException.ToString();
+            var error = result.Errors.First().InnerException?.ToString();
             error.ShouldContainWhenReformatted("Query is too nested to execute. Depth is 1 levels, maximum allowed on this endpoint is 0.");
         }
 
-        class BasicQuery
+        private class BasicQuery
         {
             public bool? BooleanField1 { get; }
 
@@ -260,14 +284,18 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             public Url UrlField1 { get; }
 
             public NonNull<Url> UrlField2 { get; }
+
+            public Guid? GuidField1 { get; }
+
+            public Guid GuidField2 { get; }
         }
 
-        class Foo
+        private class Foo
         {
             public Id Id => Id.New<Foo>("12345");
         }
 
-        class Query
+        private class Query
         {
             public ISemanticVersion Version(string branchName) =>
                 new ExtendedVersion
@@ -283,7 +311,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
                 };
         }
 
-        interface ISemanticVersion
+        private interface ISemanticVersion
         {
             int MajorVersion { get; }
 
@@ -292,7 +320,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             int Revision { get; }
         }
 
-        class ExtendedVersion : ISemanticVersion
+        private class ExtendedVersion : ISemanticVersion
         {
             public int MajorVersion { get; set; }
 
@@ -303,7 +331,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             public NonNull<string> BranchName { get; set; }
         }
 
-        class Movie
+        private class Movie
         {
             public NonNull<string> Title { get; set; } = "Movie 1";
 
@@ -312,7 +340,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             public DateTime? ReleaseDate { get; set; }
         }
 
-        class Actor
+        private class Actor
         {
             public string FirstName { get; set; }
 
@@ -321,11 +349,11 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             public DateTime? DateOfBirth { get; set; }
         }
 
-        class SearchResultItem : Union<Movie, Actor>
+        private class SearchResultItem : Union<Movie, Actor>
         {
         }
 
-        class SearchResult
+        private class SearchResult
         {
             public SearchResult(double score, Movie movie)
             {
@@ -344,13 +372,21 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             public SearchResultItem Node { get; set; }
         }
 
-        class CustomTypesQuery
+        private class CustomJsonTypeQuery
+        {
+            public JSON CustomJsonScalarType()
+            {
+                return new JSON(new Dictionary<string, object> { { "test", true } });
+            }
+        }
+
+        private class CustomTypesQuery
         {
             public Custom CustomScalarType(Custom arg) =>
                 new Custom { Value = $"WRAPPED:{arg.Value}" };
         }
 
-        class QueryWithEnums
+        private class QueryWithEnums
         {
             public Enum1 Field1 => Enum1.Option1;
 
@@ -363,7 +399,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             public Enum1? Field5(Enum1? arg = null) => arg;
         }
 
-        enum Enum1
+        private enum Enum1
         {
             Option1,
             Option2,
@@ -371,42 +407,42 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
         }
 
         [Name("RenamedEnum")]
-        enum Enum2
+        private enum Enum2
         {
             SomeValue1,
             SomeValue2,
         }
 
         [InputType]
-        class InputObject
+        private class InputObject
         {
-              [DefaultValue(Enum2.SomeValue1)]
-              public Enum2? SomeField { get; set; }
+            [DefaultValue(Enum2.SomeValue1)]
+            public Enum2? SomeField { get; set; }
 
-              public Enum2? AnotherField { get; set; }
+            public Enum2? AnotherField { get; set; }
 
-              public Enum2 YetAnotherField { get; set; }
+            public Enum2 YetAnotherField { get; set; }
 
-              [DefaultValue(Enum2.SomeValue2)]
-              public Enum2? YetAnotherDummyField { get; set; }
+            [DefaultValue(Enum2.SomeValue2)]
+            public Enum2? YetAnotherDummyField { get; set; }
         }
 
-        class QueryWithInterfaces
+        private class QueryWithInterfaces
         {
             public TypeFromTwoInterfaces Field => null;
         }
 
-        interface Interface1
+        private interface Interface1
         {
             string Field1 { get; }
         }
 
-        interface Interface2
+        private interface Interface2
         {
             string Field2 { get; }
         }
 
-        class TypeFromTwoInterfaces : Interface1, Interface2
+        private class TypeFromTwoInterfaces : Interface1, Interface2
         {
             public string Field1 => string.Empty;
 

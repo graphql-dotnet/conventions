@@ -1,10 +1,10 @@
 using System;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
 using GraphQL.Conventions.Types.Utilities;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 using static GraphQL.Conventions.Utilities;
 
-namespace GraphQL.Conventions.Tests.Types
+namespace Tests.Types
 {
     public class IdTests : TestBase
     {
@@ -27,8 +27,6 @@ namespace GraphQL.Conventions.Tests.Types
         {
             Assert.ThrowsException<ArgumentException>(() => Id(null));
             Assert.ThrowsException<ArgumentException>(() => Id(string.Empty));
-            var nullableId = (Id?)null;
-            nullableId.HasValue.ShouldEqual(false);
         }
 
         [Test]
@@ -40,11 +38,11 @@ namespace GraphQL.Conventions.Tests.Types
         [Test]
         public void Can_Sort_Identifiers_Serialized_Using_Colon_Separators()
         {
-            var id0 = Id<IdTests>("12345", true);
-            var id1 = Id<IdTests>("12345", true);
-            var id2 = Id<IdTests>("1235", true);
-            var id3 = Id<IdTests>("99231", true);
-            var id4 = Id<TestBase>("99231", true);
+            var id0 = Id<IdTests>("12345");
+            var id1 = Id<IdTests>("12345");
+            var id2 = Id<IdTests>("1235");
+            var id3 = Id<IdTests>("99231");
+            var id4 = Id<TestBase>("99231");
 
             Assert.IsTrue(Identifier.Decode(id0.ToString()).Contains(":"));
             Assert.IsTrue(id0 == id1);
@@ -108,21 +106,21 @@ namespace GraphQL.Conventions.Tests.Types
         [Test]
         public void Cannot_Decode_Empty_Identifiers()
         {
-            Assert.ThrowsException<ArgumentException>(() => Id<Test>("", true).IdentifierForType<Test>());
+            Assert.ThrowsException<ArgumentException>(() => Id<Test>("").IdentifierForType<Test>());
             Assert.ThrowsException<ArgumentException>(() => Id<Test>("", false).IdentifierForType<Test>());
             Assert.ThrowsException<ArgumentException>(() => Id("VGVzdDo=").IdentifierForType<Test>());
             Assert.ThrowsException<ArgumentException>(() => Id("VGVzdA==").IdentifierForType<Test>());
         }
 
-        class Test
+        private class Test
         {
         }
 
-        class AnotherTest
+        private class AnotherTest
         {
         }
 
-        class TestItem
+        private class TestItem
         {
         }
     }

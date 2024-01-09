@@ -3,9 +3,10 @@ using System.Reflection;
 using GraphQL.Conventions.Attributes;
 using GraphQL.Conventions.Types.Descriptors;
 
+// ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
 {
-    [AttributeUsage(Parameters, AllowMultiple = true, Inherited = true)]
+    [AttributeUsage(Parameters, AllowMultiple = true)]
     public class InjectAttribute : MetaDataAttributeBase
     {
         public InjectAttribute()

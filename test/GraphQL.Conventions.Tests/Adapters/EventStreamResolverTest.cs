@@ -1,39 +1,40 @@
-﻿using GraphQL.Conventions.Adapters.Resolvers;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Subscription;
-using GraphQL.Types;
 using System;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
+using GraphQL.Conventions;
+using Tests.Templates;
+using Tests.Types;
 
-namespace GraphQL.Conventions.Tests.Adapters
+namespace Tests.Adapters
 {
     public class EventStreamResolverTest : TestBase
     {
         [Test]
-        public void Can_Resolve_Value()
-        {
-            var result = "testring";
-            var context = new ResolveFieldContext { Source = result };
-            var resolver = new EventStreamResolver(null);
-
-            Assert.AreEqual(result, resolver.Resolve(context));
-        }
-
-        [Test]
         public async Task Can_Subscribe()
         {
-            var engine = GraphQLEngine.New().WithSubscription<Subscription>();
+            var engine = GraphQLEngine.New(new GraphQL.DocumentExecuter())
+                .WithQuery<TestQuery>()
+                .WithSubscription<Subscription>();
             var result = await engine
                 .NewExecutor()
                 .WithQueryString("subscription { test }")
-                .Execute();
+                .ExecuteAsync();
 
-            Assert.AreEqual(1, ((SubscriptionExecutionResult)result).Streams.Count);
+            Assert.AreEqual(1, result.Streams.Count);
         }
     }
 
-    class Subscription
+    internal class Subscription
     {
-        public IObservable<string> Test { get; }
+        private readonly Subject<string> _subject;
+
+        public Subscription()
+        {
+            _subject = new Subject<string>();
+        }
+
+        // ReSharper disable once UnusedMember.Global
+        // ReSharper disable once UnassignedGetOnlyAutoProperty
+        public IObservable<string> Test => _subject;
     }
 }

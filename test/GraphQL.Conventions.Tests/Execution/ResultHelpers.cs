@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 
-namespace GraphQL.Conventions.Tests.Execution
+namespace Tests.Execution
 {
     public static class ResultHelpers
     {

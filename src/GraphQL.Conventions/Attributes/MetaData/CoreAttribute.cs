@@ -25,7 +25,7 @@ namespace GraphQL.Conventions.Attributes.MetaData
 
         private void DeclareUnionType(GraphTypeInfo entity, TypeInfo typeInfo)
         {
-            var unionType = typeInfo.BaseType.GetTypeInfo();
+            var unionType = typeInfo.BaseType?.GetTypeInfo();
             if (unionType != null &&
                 unionType.Name.StartsWith(nameof(Union), StringComparison.Ordinal) &&
                 unionType.IsSubclassOf(typeof(Union)) &&

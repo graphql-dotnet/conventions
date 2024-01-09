@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GraphQL.Conventions.Adapters.Resolvers;
 using GraphQL.Conventions.Types.Descriptors;
 using GraphQL.Conventions.Types.Resolution.Extensions;
 using GraphQL.Resolvers;
@@ -13,6 +14,8 @@ namespace GraphQL.Conventions.Adapters
         private readonly CachedRegistry<Type, IGraphType> _typeDescriptors = new CachedRegistry<Type, IGraphType>();
 
         private readonly Dictionary<string, Type> _registeredScalarTypes = new Dictionary<string, Type>();
+
+        private readonly Dictionary<string, IGraphType> _constructedGraphTypes = new();
 
         public Func<GraphFieldInfo, IFieldResolver> FieldResolverFactory { get; set; } = (fieldInfo) => new FieldResolver(fieldInfo);
 
@@ -33,7 +36,7 @@ namespace GraphQL.Conventions.Adapters
             var possibleTypes = interfaces
                 .Where(t => !t.IsIgnored)
                 .SelectMany(t => t.PossibleTypes)
-                .Select(typeInfo => (typeInfo.IsIgnored || !typeInfo.IsNullable || typeInfo.Interfaces.Any(x => x.IsIgnored == true))
+                .Select(typeInfo => (typeInfo.IsIgnored || !typeInfo.IsNullable || typeInfo.Interfaces.Any(x => x.IsIgnored))
                     ? null
                     : DeriveType(typeInfo)
                 )
@@ -41,13 +44,14 @@ namespace GraphQL.Conventions.Adapters
                 .GroupBy(t => t.Name)
                 .Select(g => g.First())
                 .ToArray();
-            var schema = new Schema(new FuncDependencyResolver(DeriveTypeFromTypeInfo))
+            var schema = new Schema(new FuncServiceProvider(DeriveTypeFromTypeInfo))
             {
                 Query = DeriveOperationType(schemaInfo.Query),
                 Mutation = DeriveOperationType(schemaInfo.Mutation),
                 Subscription = DeriveOperationType(schemaInfo.Subscription),
-            };            
+            };
             schema.RegisterTypes(possibleTypes);
+
             return schema;
         }
 
@@ -65,14 +69,14 @@ namespace GraphQL.Conventions.Adapters
             _registeredScalarTypes.Add(name, typeof(TType));
         }
 
-        private IGraphType DeriveTypeFromTypeInfo(Type type)
+        private object DeriveTypeFromTypeInfo(Type type)
         {
             var graphType = _typeDescriptors.GetEntity(type);
             if (graphType != null)
             {
                 return graphType;
             }
-            return (IGraphType)Activator.CreateInstance(type);
+            return type.IsInterface ? null : Activator.CreateInstance(type);
         }
 
         private IObjectGraphType DeriveOperationType(GraphTypeInfo typeInfo) =>
@@ -82,10 +86,13 @@ namespace GraphQL.Conventions.Adapters
 
         private FieldType DeriveField(GraphFieldInfo fieldInfo)
         {
+            bool resolvable = fieldInfo.DeclaringType.IsOutputType && !fieldInfo.DeclaringType.IsInterfaceType;
+
             if (fieldInfo.Type.IsObservable)
             {
-                var resolver = new Resolvers.EventStreamResolver(fieldInfo);
-                return new EventStreamFieldType
+                var resolver = resolvable ? FieldResolverFactory(fieldInfo) : null;
+                var streamResolver = resolvable ? new EventStreamResolver(resolver) : null;
+                return new FieldType
                 {
                     Name = fieldInfo.Name,
                     Description = fieldInfo.Description,
@@ -94,8 +101,8 @@ namespace GraphQL.Conventions.Adapters
                     DefaultValue = fieldInfo.DefaultValue,
                     Type = GetType(fieldInfo.Type),
                     Arguments = new QueryArguments(fieldInfo.Arguments.Where(arg => !arg.IsInjected).Select(DeriveArgument)),
-                    Resolver = resolver,
-                    Subscriber = resolver
+                    Resolver = streamResolver,
+                    StreamResolver = streamResolver
                 };
             }
             return new FieldType
@@ -107,7 +114,7 @@ namespace GraphQL.Conventions.Adapters
                 Metadata = DeriveFieldTypeMetaData(fieldInfo.AttributeProvider.GetCustomAttributes(false)),
                 Type = GetType(fieldInfo.Type),
                 Arguments = new QueryArguments(fieldInfo.Arguments.Where(arg => !arg.IsInjected).Select(DeriveArgument)),
-                Resolver = FieldResolverFactory(fieldInfo),
+                Resolver = resolvable ? FieldResolverFactory(fieldInfo) : null,
             };
         }
 
@@ -117,8 +124,8 @@ namespace GraphQL.Conventions.Adapters
                 return default;
 
             return attributes
-               .OfType<FieldTypeMetaDataAttribute>()
-               .ToDictionary(x => x.Key(), x => x.Value());
+                .OfType<FieldTypeMetaDataAttribute>()
+                .ToDictionary(x => x.Key(), x => x.Value());
         }
 
         private QueryArgument DeriveArgument(GraphArgumentInfo argumentInfo)
@@ -235,10 +242,19 @@ namespace GraphQL.Conventions.Adapters
             return obj is TType castType ? castType : default;
         }
 
-        private IGraphType WrapNonNullableType(GraphTypeInfo typeInfo, IGraphType graphType) =>
-            typeInfo.IsNullable
-                ? graphType
-                : CreateTypeInstance<GraphType>(typeof(NonNullGraphType<>).MakeGenericType(graphType.GetType()));
+        private IGraphType WrapNonNullableType(GraphTypeInfo typeInfo, IGraphType graphType)
+        {
+            if (typeInfo.IsNullable)
+                return graphType;
+
+            if (_constructedGraphTypes.TryGetValue(typeInfo.QualifiedName, out var existingGraphType))
+                return existingGraphType;
+
+            var nonNullableGraphType = CreateTypeInstance<GraphType>(typeof(NonNullGraphType<>).MakeGenericType(graphType.GetType()));
+            _constructedGraphTypes.Add(typeInfo.QualifiedName, nonNullableGraphType);
+
+            return nonNullableGraphType;
+        }
 
         private TReturnType ConstructType<TReturnType>(Type template, GraphTypeInfo typeInfo)
             where TReturnType : class, IGraphType
@@ -257,24 +273,34 @@ namespace GraphQL.Conventions.Adapters
 
         private IGraphType ConstructEnumerationType(GraphTypeInfo typeInfo)
         {
+            if (_constructedGraphTypes.TryGetValue(typeInfo.Name, out var existingGraphType))
+                return WrapNonNullableType(typeInfo, existingGraphType);
+
             var graphType = ConstructType<EnumerationGraphType>(typeof(Types.EnumerationGraphType<>), typeInfo);
+            _constructedGraphTypes.Add(typeInfo.Name, graphType);
+
             foreach (var value in typeInfo.Fields)
             {
-                graphType.AddValue(value.Name, value.Description, value.Value, value.DeprecationReason);
+                graphType.Add(value.Name, value.Value, value.Description, value.DeprecationReason);
             }
             return WrapNonNullableType(typeInfo, graphType);
         }
 
         private IGraphType ConstructInterfaceType(GraphTypeInfo typeInfo)
         {
+            if (_constructedGraphTypes.TryGetValue(typeInfo.Name, out var existingGraphType))
+                return WrapNonNullableType(typeInfo, existingGraphType);
+
             var graphType = ConstructType<IInterfaceGraphType>(typeof(Types.InterfaceGraphType<>), typeInfo);
+            _constructedGraphTypes.Add(typeInfo.Name, graphType);
+
             if (typeInfo.IsIgnored)
             {
                 return WrapNonNullableType(typeInfo, graphType);
             }
             foreach (var possibleType in typeInfo
-                .PossibleTypes
-                .Select(t => DeriveType(t) as IObjectGraphType))
+                         .PossibleTypes
+                         .Select(t => DeriveType(t) as IObjectGraphType))
             {
                 if (possibleType == null)
                 {
@@ -288,31 +314,48 @@ namespace GraphQL.Conventions.Adapters
 
         private IGraphType ConstructUnionType(GraphTypeInfo typeInfo)
         {
+            if (_constructedGraphTypes.TryGetValue(typeInfo.Name, out var existingGraphType))
+                return WrapNonNullableType(typeInfo, existingGraphType);
+
             var graphType = ConstructType<UnionGraphType>(typeof(Types.UnionGraphType<>), typeInfo);
+            _constructedGraphTypes.Add(typeInfo.Name, graphType);
+
             foreach (var possibleType in typeInfo.PossibleTypes.Select(t => DeriveType(t) as IObjectGraphType))
             {
-                if (possibleType != null) graphType.Type(possibleType.GetType());
+                if (possibleType != null)
+                    graphType.Type(possibleType.GetType());
             }
             return WrapNonNullableType(typeInfo, graphType);
         }
 
         private IGraphType ConstructListType(GraphTypeInfo typeInfo)
         {
-            var type = typeof(ListGraphType<>).MakeGenericType(GetType(typeInfo.TypeParameter));
+            var typeParameter = GetType(typeInfo.TypeParameter);
+            var type = typeof(ListGraphType<>).MakeGenericType(typeParameter);
             var graphType = CacheType(typeInfo, CreateTypeInstance<GraphType>(type));
             return WrapNonNullableType(typeInfo, graphType);
         }
 
         private IGraphType ConstructInputType(GraphTypeInfo typeInfo)
         {
+            if (_constructedGraphTypes.TryGetValue(typeInfo.Name, out var existingGraphType))
+                return WrapNonNullableType(typeInfo, existingGraphType);
+
             var graphType = ConstructType<InputObjectGraphType>(typeof(Types.InputObjectGraphType<>), typeInfo);
+            _constructedGraphTypes.Add(typeInfo.Name, graphType);
+
             DeriveFields(typeInfo, graphType);
             return WrapNonNullableType(typeInfo, graphType);
         }
 
         private IGraphType ConstructOutputType(GraphTypeInfo typeInfo)
         {
+            if (_constructedGraphTypes.TryGetValue(typeInfo.Name, out var existingGraphType))
+                return WrapNonNullableType(typeInfo, existingGraphType);
+
             var graphType = ConstructType<ObjectGraphType>(typeof(Types.OutputObjectGraphType<>), typeInfo);
+            _constructedGraphTypes.Add(typeInfo.Name, graphType);
+
             foreach (var iface in typeInfo.Interfaces.Select(GetType))
             {
                 graphType.Interface(iface);
@@ -329,9 +372,9 @@ namespace GraphQL.Conventions.Adapters
 
         private static object UnwrapObject(object obj)
         {
-            if (obj is INonNull @null)
+            if (obj is INonNull nonnull)
             {
-                obj = @null.ObjectValue;
+                obj = nonnull.ObjectValue;
             }
             if (obj is Union union)
             {
@@ -342,9 +385,15 @@ namespace GraphQL.Conventions.Adapters
 
         private void DeriveFields(GraphTypeInfo typeInfo, IComplexGraphType graphType)
         {
-            foreach (var field in typeInfo.Fields.Select(DeriveField))
+            foreach (var field in typeInfo.Fields)
             {
-                graphType.AddField(field);
+                var derivedField = DeriveField(field);
+                var derivedMetadata = DeriveFieldTypeMetaData(field.AttributeProvider.GetCustomAttributes(false));
+
+                foreach (var item in derivedMetadata)
+                    derivedField.Metadata[item.Key] = item.Value;
+
+                graphType.AddField(derivedField);
             }
         }
     }

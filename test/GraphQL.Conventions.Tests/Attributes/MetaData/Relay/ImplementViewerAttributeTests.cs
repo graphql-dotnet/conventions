@@ -1,11 +1,14 @@
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using GraphQL;
+using GraphQL.Conventions;
 using GraphQL.Conventions.Relay;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
+// ReSharper disable UnusedMember.Local
 
-namespace GraphQL.Conventions.Tests.Attributes.MetaData.Relay
+namespace Tests.Attributes.MetaData.Relay
 {
     public class ImplementViewerAttributeTests : TestBase
     {
@@ -140,30 +143,31 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData.Relay
             var result = await engine
                 .NewExecutor()
                 .WithQueryString(query)
-                .Execute();
+                .ExecuteAsync();
+
             return result;
         }
 
         [ImplementViewer(OperationType.Query)]
-        class Query1
+        private class Query1
         {
             public string IntToString(int value) => value.ToString();
         }
 
         [ImplementViewer(OperationType.Query)]
-        class Query2
+        private class Query2
         {
-            public string FloatToString(float value) => value.ToString();
+            public string FloatToString(float value) => value.ToString(CultureInfo.InvariantCulture);
         }
 
         [ImplementViewer(OperationType.Mutation)]
-        class Mutation1
+        private class Mutation1
         {
             public bool? DoSomething(bool? value) => value;
         }
 
         [ImplementViewer(OperationType.Mutation)]
-        class Mutation2
+        private class Mutation2
         {
             public bool? DoSomethingElse(bool? value) => value;
         }

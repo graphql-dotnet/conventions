@@ -1,6 +1,6 @@
-﻿using GraphQL.Conventions;
-using SubscriptionExample.Core;
 using System;
+using GraphQL.Conventions;
+using SubscriptionExample.Core;
 
 namespace SubscriptionExample.GraphQl
 {

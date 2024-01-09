@@ -1,4 +1,4 @@
-﻿namespace GraphQL.Conventions.Adapters.Engine.ErrorTransformations
+namespace GraphQL.Conventions.Adapters.Engine.ErrorTransformations
 {
     public interface IErrorTransformation
     {

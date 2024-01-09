@@ -1,7 +1,7 @@
 using GraphQL.Conventions.Attributes.MetaData.Utilities;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Attributes.MetaData.Utilities
+namespace Tests.Attributes.MetaData.Utilities
 {
     public class NameNormalizerTests
     {
@@ -77,10 +77,10 @@ namespace GraphQL.Conventions.Tests.Attributes.MetaData.Utilities
 
         private string AsTypeName(string name) => _normalizer.AsTypeName(name);
 
-        private string AsFieldName(string name) =>  _normalizer.AsFieldName(name);
+        private string AsFieldName(string name) => _normalizer.AsFieldName(name);
 
-        private string AsArgumentName(string name) =>  _normalizer.AsArgumentName(name);
+        private string AsArgumentName(string name) => _normalizer.AsArgumentName(name);
 
-        private string AsEnumMemberName(string name) =>  _normalizer.AsEnumMemberName(name);
+        private string AsEnumMemberName(string name) => _normalizer.AsEnumMemberName(name);
     }
 }

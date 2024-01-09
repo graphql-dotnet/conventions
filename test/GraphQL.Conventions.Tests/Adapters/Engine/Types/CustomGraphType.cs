@@ -1,7 +1,7 @@
-using GraphQL.Language.AST;
 using GraphQL.Types;
+using GraphQLParser.AST;
 
-namespace GraphQL.Conventions.Tests.Adapters.Engine.Types
+namespace Tests.Adapters.Engine.Types
 {
     public class CustomGraphType : ScalarGraphType
     {
@@ -20,13 +20,13 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine.Types
         {
             return new Custom
             {
-                Value = value?.ToString().Replace("\"", "").Replace("CUSTOM:", ""),
+                Value = value?.ToString()?.Replace("\"", "").Replace("CUSTOM:", ""),
             };
         }
 
-        public override object ParseLiteral(IValue value)
+        public override object ParseLiteral(GraphQLValue value)
         {
-            if (value is StringValue str)
+            if (value is GraphQLStringValue str)
             {
                 return ParseValue(str.Value);
             }

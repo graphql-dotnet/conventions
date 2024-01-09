@@ -1,9 +1,11 @@
-using System;
 using System.Threading.Tasks;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
+using GraphQL.Conventions;
+using Tests.Templates;
+using Tests.Templates.Extensions;
 
-namespace GraphQL.Conventions.Tests.Adapters.Engine
+// ReSharper disable UnusedMember.Local
+
+namespace Tests.Adapters.Engine
 {
     public class AbstractTypeConstructionTests : TestBase
     {
@@ -14,7 +16,7 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
             type Query {
-                commonField(value: DateTime!): DateTime!
+                commonField(value: Int!): Int!
                 someOtherField: String
             }
             ");
@@ -26,21 +28,21 @@ namespace GraphQL.Conventions.Tests.Adapters.Engine
             var engine = GraphQLEngine.New<Query>();
             var result = await engine
                 .NewExecutor()
-                .WithQueryString("{ commonField(value: \"1970-01-01T00:00:00Z\") someOtherField }")
+                .WithQueryString("{ commonField(value: 1) someOtherField }")
                 .EnableValidation()
-                .Execute();
+                .ExecuteAsync();
 
             result.ShouldHaveNoErrors();
-            result.Data.ShouldHaveFieldWithValue("commonField", new DateTime(1970, 1, 1));
+            result.Data.ShouldHaveFieldWithValue("commonField", 1);
             result.Data.ShouldHaveFieldWithValue("someOtherField", string.Empty);
         }
 
-        abstract class EntityQuery<T>
+        private abstract class EntityQuery<T>
         {
             public T CommonField(T value) => value;
         }
 
-        class Query : EntityQuery<DateTime>
+        private class Query : EntityQuery<int>
         {
             public string SomeOtherField => string.Empty;
         }
