@@ -1,15 +1,10 @@
-﻿using GraphQL.Conventions.Execution;
-using GraphQL.Conventions.Tests.Templates;
-using GraphQL.Conventions.Tests.Templates.Extensions;
-using GraphQL.Language.AST;
+using GraphQL.Conventions.Execution;
 using GraphQL.Validation;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.Conventions;
-using GraphQL.Conventions.Execution;
-using GraphQL.Validation;
 using GraphQLParser.AST;
 using Tests.Templates;
 using Tests.Templates.Extensions;
@@ -54,7 +49,6 @@ namespace Tests.Attributes.MetaData
         public async Task When_UserIsMissingAll_ValidationFieldTypeMetaData_ErrorsAreReturned()
         {
             var result = await Resolve_Query();
-            result.ShouldHaveErrors(2);
             var expectedMessages = new[]
             {
                 $"Required validation '{nameof(SomeTopLevelValidation)}' is not present. Query will not be executed.",

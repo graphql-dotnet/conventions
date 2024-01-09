@@ -92,30 +92,40 @@ namespace GraphQL.Conventions.Adapters
             {
                 var resolver = resolvable ? FieldResolverFactory(fieldInfo) : null;
                 var streamResolver = resolvable ? new EventStreamResolver(resolver) : null;
-                return new FieldType
+                var observableField = new FieldType
                 {
                     Name = fieldInfo.Name,
                     Description = fieldInfo.Description,
                     DeprecationReason = fieldInfo.DeprecationReason,
-                    Metadata = DeriveFieldTypeMetaData(fieldInfo.AttributeProvider.GetCustomAttributes(false)),
                     DefaultValue = fieldInfo.DefaultValue,
                     Type = GetType(fieldInfo.Type),
                     Arguments = new QueryArguments(fieldInfo.Arguments.Where(arg => !arg.IsInjected).Select(DeriveArgument)),
                     Resolver = streamResolver,
                     StreamResolver = streamResolver
                 };
+                var observableFieldMetaData = DeriveFieldTypeMetaData(fieldInfo.AttributeProvider.GetCustomAttributes(false));
+                foreach (var data in observableFieldMetaData)
+                {
+                    observableField.WithMetadata(data.Key, data.Value);
+                }
+                return observableField;
             }
-            return new FieldType
+            var field = new FieldType
             {
                 Name = fieldInfo.Name,
                 Description = fieldInfo.Description,
                 DeprecationReason = fieldInfo.DeprecationReason,
                 DefaultValue = fieldInfo.DefaultValue,
-                Metadata = DeriveFieldTypeMetaData(fieldInfo.AttributeProvider.GetCustomAttributes(false)),
                 Type = GetType(fieldInfo.Type),
                 Arguments = new QueryArguments(fieldInfo.Arguments.Where(arg => !arg.IsInjected).Select(DeriveArgument)),
                 Resolver = resolvable ? FieldResolverFactory(fieldInfo) : null,
             };
+            var fieldMetaData = DeriveFieldTypeMetaData(fieldInfo.AttributeProvider.GetCustomAttributes(false));
+            foreach (var data in fieldMetaData)
+            {
+                field.WithMetadata(data.Key, data.Value);
+            }
+            return field;
         }
 
         private IDictionary<string, object> DeriveFieldTypeMetaData(object[] attributes)
