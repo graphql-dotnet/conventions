@@ -92,7 +92,7 @@ namespace GraphQL.Conventions.Adapters
             {
                 var resolver = resolvable ? FieldResolverFactory(fieldInfo) : null;
                 var streamResolver = resolvable ? new EventStreamResolver(resolver) : null;
-                var observableField = new FieldType
+                return new FieldType
                 {
                     Name = fieldInfo.Name,
                     Description = fieldInfo.Description,
@@ -103,14 +103,8 @@ namespace GraphQL.Conventions.Adapters
                     Resolver = streamResolver,
                     StreamResolver = streamResolver
                 };
-                var observableFieldMetaData = DeriveFieldTypeMetaData(fieldInfo.AttributeProvider.GetCustomAttributes(false));
-                foreach (var data in observableFieldMetaData)
-                {
-                    observableField.WithMetadata(data.Key, data.Value);
-                }
-                return observableField;
             }
-            var field = new FieldType
+            return new FieldType
             {
                 Name = fieldInfo.Name,
                 Description = fieldInfo.Description,
@@ -120,12 +114,6 @@ namespace GraphQL.Conventions.Adapters
                 Arguments = new QueryArguments(fieldInfo.Arguments.Where(arg => !arg.IsInjected).Select(DeriveArgument)),
                 Resolver = resolvable ? FieldResolverFactory(fieldInfo) : null,
             };
-            var fieldMetaData = DeriveFieldTypeMetaData(fieldInfo.AttributeProvider.GetCustomAttributes(false));
-            foreach (var data in fieldMetaData)
-            {
-                field.WithMetadata(data.Key, data.Value);
-            }
-            return field;
         }
 
         private IDictionary<string, object> DeriveFieldTypeMetaData(object[] attributes)
