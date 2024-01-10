@@ -1,10 +1,10 @@
-using GraphQL.Conventions.Execution;
-using GraphQL.Validation;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.Conventions;
+using GraphQL.Conventions.Execution;
+using GraphQL.Validation;
 using GraphQLParser.AST;
 using Tests.Templates;
 using Tests.Templates.Extensions;
