@@ -31,9 +31,7 @@ namespace DataLoaderWithEFCore.Data.Repositories
 
         public async Task<Movie> UpdateMovieTitle(Guid id, string newTitle)
         {
-            var movie = await FindMovie(id);
-            if (movie == null)
-                throw new InvalidOperationException($"Movie with id {id} not found");
+            var movie = await FindMovie(id) ?? throw new InvalidOperationException($"Movie with id {id} not found");
 
             movie.Title = newTitle;
             _context.Movies.Update(movie);
