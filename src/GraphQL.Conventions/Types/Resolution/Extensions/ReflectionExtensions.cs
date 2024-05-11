@@ -30,27 +30,32 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
             return type.IsGenericType(typeof(Nullable<>));
         }
 
-        public static bool ImplementInterface(this Type type, Type interfaceType, bool fuseGeneric = false)
+        public static Type GetImplementInterface(this Type type, Type interfaceType, bool fuseGeneric = true)
         {
-            if (!interfaceType.IsInterface) return false;
+            if (!interfaceType.IsInterface) return null;
             while (type is not null)
             {
-                var interfaces = type.GetInterfaces() as IEnumerable<Type>;
-                if (fuseGeneric)
+                var interfaces = type.GetInterfaces();
+                var mayFusedGenericInterface = fuseGeneric
+                    ? interfaces.Select(t => t.IsGenericType ? t.GetGenericTypeDefinition() : t).ToArray()
+                    : interfaces;
+
+                for (int i = 0; i < interfaces.Length; i++)
                 {
-                    interfaces = interfaces
-                        .Where(t => t.IsGenericType)
-                        .Select(t => t.GetGenericTypeDefinition())
-                        .Concat(interfaces.Where(t => !t.IsGenericType));
+                    var @interface = mayFusedGenericInterface[i];
+                    if (@interface == interfaceType) return interfaces[i];
+                    var ni = @interface.GetImplementInterface(interfaceType, fuseGeneric);
+                    if (ni is not null) return ni;
                 }
 
-                if (interfaces.Any(t => t == interfaceType || t.ImplementInterface(interfaceType, fuseGeneric)))
-                    return true;
                 type = type.BaseType;
             }
 
-            return false;
+            return null;
         }
+
+        public static bool ImplementInterface(this Type type, Type interfaceType, bool fuseGeneric = true) =>
+            type.GetImplementInterface(interfaceType, fuseGeneric) is not null;
 
 
         public static TypeInfo BaseType(this TypeInfo type)
@@ -68,13 +73,18 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
             }
             return type.IsGenericType
                 ? type.GenericTypeArguments.First().GetTypeInfo()
-                : null;
+                : type.TypeParameterCollection();
         }
 
         public static TypeInfo TypeParameter(this GraphTypeInfo type)
         {
             return type.TypeRepresentation.TypeParameter();
         }
+
+        public static TypeInfo TypeParameterCollection(this TypeInfo type) => (
+            type.GetImplementInterface(typeof(ICollection<>)) ??
+            type.GetImplementInterface(typeof(IReadOnlyList<>))
+        )?.GetTypeInfo();
 
         public static bool IsPrimitiveGraphType(this TypeInfo type)
         {
@@ -86,7 +96,7 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
 
         public static bool IsEnumerableGraphType(this TypeInfo type)
         {
-            return type.ImplementInterface(typeof(ICollection<>), true) ||
+            return type.ImplementInterface(typeof(ICollection<>)) ||
                    type.ImplementInterface(typeof(IReadOnlyCollection<>), true) ||
                    type.IsGenericType(typeof(IEnumerable<>)) ||
                    (type.IsGenericType && type.DeclaringType == typeof(Enumerable)) || // Handles internal Iterator implementations for LINQ; for reference https://referencesource.microsoft.com/#system.core/System/Linq/Enumerable.cs
@@ -116,16 +126,19 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
             {
                 typeInfo = typeInfo.TypeParameter();
             }
+
             if (typeInfo.IsGenericType(typeof(IObservable<>)))
             {
                 typeInfo = typeInfo.TypeParameter();
             }
+
             if (typeInfo.IsGenericType(typeof(Nullable<>)) ||
                 typeInfo.IsGenericType(typeof(NonNull<>)) ||
                 typeInfo.IsGenericType(typeof(Optional<>)))
             {
                 typeInfo = typeInfo.TypeParameter();
             }
+
             return typeInfo;
         }
 
