@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Reflection;
 using GraphQL.Conventions.Types.Resolution.Extensions;
 using Xunit;
 
@@ -6,6 +9,25 @@ namespace Tests.Types.Resolution.Extensions
 {
     public class ReflectionExtensionsTests
     {
+        [Theory]
+        [MemberData(nameof(IsEnumerableGraphType_Should_ReturnTrue_For_Common_Collection_Types__Data))]
+        public void IsEnumerableGraphType_Should_ReturnTrue_For_Common_Collection_Types(Type type)
+        {
+            Assert.IsTrue(type.GetTypeInfo().IsEnumerableGraphType());
+        }
+
+        public static TheoryData<Type> IsEnumerableGraphType_Should_ReturnTrue_For_Common_Collection_Types__Data() => new()
+        {
+            typeof(IEnumerable<>),
+            typeof(ConcurrentQueue<>),
+            typeof(HashSet<>),
+            typeof(int[]),
+            typeof(List<>),
+            typeof(IList<>),
+            typeof(IReadOnlyList<>),
+            typeof(IReadOnlyCollection<>)
+        };
+
         [Theory]
         [MemberData(nameof(GetImplementInterface_WithoutFuse_AcquireSpecifyInterfaceOnly__Data))]
         public void GetImplementInterface_WithoutFuse_AcquireSpecifyInterfaceOnly(Type type, Type assignableInterface)
