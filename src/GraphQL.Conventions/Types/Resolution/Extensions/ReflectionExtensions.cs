@@ -30,6 +30,29 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
             return type.IsGenericType(typeof(Nullable<>));
         }
 
+        public static bool ImplementInterface(this Type type, Type interfaceType, bool fuseGeneric = false)
+        {
+            if (!interfaceType.IsInterface) return false;
+            while (type is not null)
+            {
+                var interfaces = type.GetInterfaces() as IEnumerable<Type>;
+                if (fuseGeneric)
+                {
+                    interfaces = interfaces
+                        .Where(t => t.IsGenericType)
+                        .Select(t => t.GetGenericTypeDefinition())
+                        .Concat(interfaces.Where(t => !t.IsGenericType));
+                }
+
+                if (interfaces.Any(t => t == interfaceType || t.ImplementInterface(interfaceType, fuseGeneric)))
+                    return true;
+                type = type.BaseType;
+            }
+
+            return false;
+        }
+
+
         public static TypeInfo BaseType(this TypeInfo type)
         {
             return type.IsNullableType()
@@ -63,8 +86,8 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
 
         public static bool IsEnumerableGraphType(this TypeInfo type)
         {
-            return type.IsGenericType(typeof(List<>)) ||
-                   type.IsGenericType(typeof(IList<>)) ||
+            return type.ImplementInterface(typeof(ICollection<>), true) ||
+                   type.ImplementInterface(typeof(IReadOnlyCollection<>), true) ||
                    type.IsGenericType(typeof(IEnumerable<>)) ||
                    (type.IsGenericType && type.DeclaringType == typeof(Enumerable)) || // Handles internal Iterator implementations for LINQ; for reference https://referencesource.microsoft.com/#system.core/System/Linq/Enumerable.cs
                    type.IsArray;
