@@ -32,12 +32,14 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
 
         public static Type GetImplementInterface(this Type type, Type interfaceType, bool fuseGeneric = true)
         {
-            if (!interfaceType.IsInterface) return null;
+            if (!interfaceType.IsInterface)
+                return null;
             fuseGeneric &= interfaceType.IsGenericType;
             if (type.IsGenericType && fuseGeneric
                     ? type.GetGenericTypeDefinition() == interfaceType.GetGenericTypeDefinition()
                     : type == interfaceType
-               ) return interfaceType;
+               )
+                return interfaceType;
             while (type is not null)
             {
                 var interfaces = type.GetInterfaces();
@@ -48,9 +50,11 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
                 for (int i = 0; i < interfaces.Length; i++)
                 {
                     var @interface = mayFusedGenericInterface[i];
-                    if (@interface == interfaceType) return interfaces[i];
+                    if (@interface == interfaceType)
+                        return interfaces[i];
                     var ni = @interface.GetImplementInterface(interfaceType, fuseGeneric);
-                    if (ni is not null) return ni;
+                    if (ni is not null)
+                        return ni;
                 }
 
                 type = type.BaseType;
