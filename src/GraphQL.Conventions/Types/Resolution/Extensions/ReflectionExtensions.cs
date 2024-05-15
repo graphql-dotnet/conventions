@@ -49,8 +49,8 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
 
                 for (int i = 0; i < interfaces.Length; i++)
                 {
-                    var @interface = mayFusedGenericInterface[i];
-                    if (@interface == interfaceType)
+                    var @interface = interfaces[i];
+                    if (mayFusedGenericInterface[i] == interfaceType)
                         return interfaces[i];
                     var ni = @interface.GetImplementInterface(interfaceType, fuseGeneric);
                     if (ni is not null)
