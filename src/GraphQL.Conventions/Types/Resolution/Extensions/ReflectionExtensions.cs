@@ -105,6 +105,10 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
 
         public static bool IsEnumerableGraphType(this TypeInfo type)
         {
+            if (type.ImplementInterface(typeof(IDictionary)) || type.ImplementInterface(typeof(IDictionary<,>)))
+            {
+                return false;
+            }
             return type.ImplementInterface(typeof(ICollection<>)) ||
                    type.ImplementInterface(typeof(IReadOnlyCollection<>), true) ||
                    type.IsGenericType(typeof(IEnumerable<>)) ||
