@@ -110,7 +110,7 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
                 return false;
             }
             return type.ImplementInterface(typeof(ICollection<>)) ||
-                   type.ImplementInterface(typeof(IReadOnlyCollection<>), true) ||
+                   type.ImplementInterface(typeof(IReadOnlyCollection<>)) ||
                    type.IsGenericType(typeof(IEnumerable<>)) ||
                    (type.IsGenericType && type.DeclaringType == typeof(Enumerable)) || // Handles internal Iterator implementations for LINQ; for reference https://referencesource.microsoft.com/#system.core/System/Linq/Enumerable.cs
                    type.IsArray;
