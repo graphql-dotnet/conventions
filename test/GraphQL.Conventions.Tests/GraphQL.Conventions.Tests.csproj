@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphQL.DataLoader" Version="7.7.2" />
+    <PackageReference Include="GraphQL.DataLoader" Version="7.8.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
     <PackageReference Include="xunit" Version="2.4.2" />
