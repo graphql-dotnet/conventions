@@ -30,16 +30,19 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
             return type.IsGenericType(typeof(Nullable<>));
         }
 
-        public static Type GetImplementInterface(this Type type, Type interfaceType, bool fuseGeneric = true)
+        public static Type GetImplementationInterface(this Type type, Type interfaceType, bool fuseGeneric = true)
         {
             if (!interfaceType.IsInterface)
                 return null;
+
             fuseGeneric &= interfaceType.IsGenericType;
             if (type.IsGenericType && fuseGeneric
                     ? type.GetGenericTypeDefinition() == interfaceType.GetGenericTypeDefinition()
-                    : type == interfaceType
-               )
+                    : type == interfaceType)
+            {
                 return interfaceType;
+            }
+
             while (type is not null)
             {
                 var interfaces = type.GetInterfaces();
@@ -52,7 +55,7 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
                     var @interface = interfaces[i];
                     if (mayFusedGenericInterface[i] == interfaceType)
                         return interfaces[i];
-                    var ni = @interface.GetImplementInterface(interfaceType, fuseGeneric);
+                    var ni = @interface.GetImplementationInterface(interfaceType, fuseGeneric);
                     if (ni is not null)
                         return ni;
                 }
@@ -63,8 +66,8 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
             return null;
         }
 
-        public static bool ImplementInterface(this Type type, Type interfaceType, bool fuseGeneric = true) =>
-            type.GetImplementInterface(interfaceType, fuseGeneric) is not null;
+        public static bool IsImplementingInterface(this Type type, Type interfaceType, bool fuseGeneric = true) =>
+            type.GetImplementationInterface(interfaceType, fuseGeneric) is not null;
 
 
         public static TypeInfo BaseType(this TypeInfo type)
@@ -91,8 +94,8 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
         }
 
         public static TypeInfo TypeParameterCollection(this TypeInfo type) => (
-            type.GetImplementInterface(typeof(ICollection<>)) ??
-            type.GetImplementInterface(typeof(IReadOnlyList<>))
+            type.GetImplementationInterface(typeof(ICollection<>)) ??
+            type.GetImplementationInterface(typeof(IReadOnlyList<>))
         )?.GetTypeInfo();
 
         public static bool IsPrimitiveGraphType(this TypeInfo type)
@@ -105,12 +108,13 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
 
         public static bool IsEnumerableGraphType(this TypeInfo type)
         {
-            if (type.ImplementInterface(typeof(IDictionary)) || type.ImplementInterface(typeof(IDictionary<,>)))
+            if (type.IsImplementingInterface(typeof(IDictionary)) || type.IsImplementingInterface(typeof(IDictionary<,>)))
             {
                 return false;
             }
-            return type.ImplementInterface(typeof(ICollection<>)) ||
-                   type.ImplementInterface(typeof(IReadOnlyCollection<>)) ||
+
+            return type.IsImplementingInterface(typeof(ICollection<>)) ||
+                   type.IsImplementingInterface(typeof(IReadOnlyCollection<>)) ||
                    type.IsGenericType(typeof(IEnumerable<>)) ||
                    (type.IsGenericType && type.DeclaringType == typeof(Enumerable)) || // Handles internal Iterator implementations for LINQ; for reference https://referencesource.microsoft.com/#system.core/System/Linq/Enumerable.cs
                    type.IsArray;
