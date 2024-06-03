@@ -250,17 +250,27 @@ namespace GraphQL.Conventions.Types.Resolution
                 .ImplementedInterfaces
                 .SelectMany(iface => iface.GetMethods(DefaultBindingFlags));
 
-            return typeInfo
+            var fields = typeInfo
                 .GetMethods(DefaultBindingFlags)
                 .Union(implementedMethods)
                 .Union(GetExtensionMethods(typeInfo))
                 .Where(IsValidMember)
                 .Where(methodInfo => !methodInfo.IsSpecialName)
                 .Cast<MemberInfo>()
-                .Union(properties)
-                .Select(DeriveField)
+                .Union(properties);
+
+            var deduped = fields
+                .GroupBy(prop => prop.Name)
+                .Select(g => g.First());
+
+            var derivedFields = deduped
+                .Select(DeriveField);
+
+            var filteredFields = derivedFields
                 .Where(field => !field.IsIgnored)
                 .OrderBy(field => field.Name);
+
+            return filteredFields;
         }
 
         private IEnumerable<GraphArgumentInfo> GetArguments(MethodInfo methodInfo)
