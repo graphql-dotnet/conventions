@@ -200,10 +200,20 @@ namespace Tests.Templates.Extensions
                 if (k is int intValue)
                 {
                     var node = obj as ArrayExecutionNode;
-                    node.Items.ShouldNotBeNull();
-                    node.Items.Count.ShouldBeGreaterThan(intValue);
-                    obj = node.Items[intValue];
-                    obj.ShouldNotBeNull();
+                    if (node.SerializedResult != null)
+                    {
+                        node.SerializedResult.ShouldNotBeNull();
+                        node.SerializedResult.Cast<object>().Count().ShouldBeGreaterThan(intValue);
+                        node.SerializedResult.Cast<object>().Skip(intValue).First().ShouldEqual(value);
+                        return;
+                    }
+                    else
+                    {
+                        node.Items.ShouldNotBeNull();
+                        node.Items.Count.ShouldBeGreaterThan(intValue);
+                        obj = node.Items[intValue];
+                        obj.ShouldNotBeNull();
+                    }
                 }
                 else
                 {

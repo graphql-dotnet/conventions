@@ -85,24 +85,27 @@ namespace Tests.Attributes.MetaData.Relay
         public void Can_Generate_Viewers_For_Multiple_Operations()
         {
             GetSchemaDefinition(true, true).ShouldEqualWhenReformatted(@"
-            type Mutation {
-              doSomething(value: Boolean): Boolean
-              doSomethingElse(value: Boolean): Boolean
-              viewer: MutationViewer
-            }
-            type MutationViewer {
-              doSomething(value: Boolean): Boolean
-              doSomethingElse(value: Boolean): Boolean
-            }
-            type Query {
-              floatToString(value: Float!): String
-              intToString(value: Int!): String
-              viewer: QueryViewer
-            }
-            type QueryViewer {
-              floatToString(value: Float!): String
-              intToString(value: Int!): String
-            }
+                type Mutation {
+                  doSomething(value: Boolean): Boolean
+                  doSomethingElse(value: Boolean): Boolean
+                  viewer: MutationViewer
+                }
+
+                type MutationViewer {
+                  doSomething(value: Boolean): Boolean
+                  doSomethingElse(value: Boolean): Boolean
+                }
+
+                type Query {
+                  floatToString(value: Float!): String
+                  intToString(value: Int!): String
+                  viewer: QueryViewer
+                }
+
+                type QueryViewer {
+                  floatToString(value: Float!): String
+                  intToString(value: Int!): String
+                }
             ");
         }
 

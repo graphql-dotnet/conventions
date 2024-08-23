@@ -66,31 +66,39 @@ namespace Tests.Adapters.Engine
                 firstName: String
                 lastName: String!
             }
+
+                scalar DateTime
+
             type ExtendedVersion implements ISemanticVersion {
                 branchName: String!
                 majorVersion: Int!
                 minorVersion: Int!
                 revision: Int!
             }
+
             interface ISemanticVersion {
                 majorVersion: Int!
                 minorVersion: Int!
                 revision: Int!
             }
+
             type Movie {
                 actors: [Actor]
                 releaseDate: DateTime
                 title: String!
             }
+
             type Query {
                 search(searchFor: String!): [SearchResult]
                 version(branchName: String): ISemanticVersion
             }
+
             type SearchResult {
                 node: SearchResultItem
                 score: Float!
             }
-            union SearchResultItem = Movie | Actor
+
+                union SearchResultItem = Actor | Movie
             ");
         }
 
