@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,7 +31,10 @@ namespace GraphQL.Conventions
 
         IGraphQLExecutor<TResult> WithValidationRules(IEnumerable<IValidationRule> rules);
 
-        IGraphQLExecutor<TResult> WithComplexityConfiguration(ComplexityConfiguration complexityConfiguration);
+        [Obsolete("Please use the WithComplexityOptions method instead.")]
+        IGraphQLExecutor<TResult> WithComplexityConfiguration(LegacyComplexityConfiguration complexityConfiguration);
+
+        IGraphQLExecutor<TResult> WithComplexityOptions(ComplexityOptions complexityOptions);
 
         IGraphQLExecutor<TResult> WithListeners(params IDocumentExecutionListener[] listeners);
 

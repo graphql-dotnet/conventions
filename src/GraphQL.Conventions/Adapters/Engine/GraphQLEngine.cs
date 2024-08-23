@@ -56,8 +56,8 @@ namespace GraphQL.Conventions
         private bool _includeFieldDeprecationReasons;
 
         private class NoopValidationRule : ValidationRuleBase
-            {
-            }
+        {
+        }
 
         private class WrappedDependencyInjector : IDependencyInjector
         {
@@ -270,7 +270,8 @@ namespace GraphQL.Conventions
             Inputs variables,
             IUserContext userContext,
             IDependencyInjector dependencyInjector,
-            ComplexityConfiguration complexityConfiguration,
+            LegacyComplexityConfiguration complexityConfiguration,
+            ComplexityOptions complexityOptions,
             bool enableValidation = true,
             bool enableProfiling = false,
             IEnumerable<IValidationRule> rules = null,
@@ -291,7 +292,11 @@ namespace GraphQL.Conventions
 
             if (complexityConfiguration != null)
             {
-                rules = rules.Append(new ComplexityValidationRule(complexityConfiguration));
+                rules = rules.Append(new LegacyComplexityValidationRule(complexityConfiguration));
+            }
+            if (complexityOptions != null)
+            {
+                rules = rules.Append(new ComplexityValidationRule(complexityOptions));
             }
 
             var configuration = new ExecutionOptions

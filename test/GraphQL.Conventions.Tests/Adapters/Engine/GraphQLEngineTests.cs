@@ -61,42 +61,42 @@ namespace Tests.Adapters.Engine
             var engine = GraphQLEngine.New<Query>();
             var schema = engine.Describe();
             schema.ShouldEqualWhenReformatted(@"
-            type Actor {
-                dateOfBirth: DateTime
-                firstName: String
-                lastName: String!
-            }
+                type Actor {
+                  dateOfBirth: DateTime
+                  firstName: String
+                  lastName: String!
+                }
 
                 scalar DateTime
 
-            type ExtendedVersion implements ISemanticVersion {
-                branchName: String!
-                majorVersion: Int!
-                minorVersion: Int!
-                revision: Int!
-            }
+                type ExtendedVersion implements ISemanticVersion {
+                  branchName: String!
+                  majorVersion: Int!
+                  minorVersion: Int!
+                  revision: Int!
+                }
 
-            interface ISemanticVersion {
-                majorVersion: Int!
-                minorVersion: Int!
-                revision: Int!
-            }
+                interface ISemanticVersion {
+                  majorVersion: Int!
+                  minorVersion: Int!
+                  revision: Int!
+                }
 
-            type Movie {
-                actors: [Actor]
-                releaseDate: DateTime
-                title: String!
-            }
+                type Movie {
+                  actors: [Actor]
+                  releaseDate: DateTime
+                  title: String!
+                }
 
-            type Query {
-                search(searchFor: String!): [SearchResult]
-                version(branchName: String): ISemanticVersion
-            }
+                type Query {
+                  search(searchFor: String!): [SearchResult]
+                  version(branchName: String): ISemanticVersion
+                }
 
-            type SearchResult {
-                node: SearchResultItem
-                score: Float!
-            }
+                type SearchResult {
+                  node: SearchResultItem
+                  score: Float!
+                }
 
                 union SearchResultItem = Actor | Movie
             ");
@@ -212,14 +212,14 @@ namespace Tests.Adapters.Engine
         }
 
         [Test]
-        public async Task Can_Run_Simple_Query_Using_ComplexityConfiguration()
+        public async Task Can_Run_Simple_Query_Using_ComplexityOptions()
         {
             var executor = GraphQLEngine
                 .New<Movie>()
                 .NewExecutor();
 
             var result = await executor
-                .WithComplexityConfiguration(new ComplexityConfiguration { MaxDepth = 0 })
+                .WithComplexityOptions(new ComplexityOptions { MaxDepth = 1 })
                 .WithQueryString(@"
                     {
                         title
@@ -238,7 +238,7 @@ namespace Tests.Adapters.Engine
                 .NewExecutor();
 
             var result = await executor
-                .WithComplexityConfiguration(new ComplexityConfiguration { MaxDepth = 0 })
+                .WithComplexityOptions(new ComplexityOptions { MaxDepth = 1 })
                 .WithQueryString(@"
                     {
                         title
@@ -252,7 +252,7 @@ namespace Tests.Adapters.Engine
 
             result.ShouldHaveErrors(1);
             var error = result.Errors.First().InnerException?.ToString();
-            error.ShouldContainWhenReformatted("Query is too nested to execute. Depth is 1 levels, maximum allowed on this endpoint is 0.");
+            error.ShouldContainWhenReformatted("Query is too nested to execute. Maximum depth is 2 levels; maximum allowed on this endpoint is 1.");
         }
 
         private class BasicQuery

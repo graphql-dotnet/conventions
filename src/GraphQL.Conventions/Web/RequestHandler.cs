@@ -31,7 +31,8 @@ namespace GraphQL.Conventions.Web
             private bool _useValidation = true;
             private bool _useProfiling;
             private FieldResolutionStrategy _fieldResolutionStrategy = FieldResolutionStrategy.Normal;
-            private ComplexityConfiguration _complexityConfiguration;
+            private LegacyComplexityConfiguration _complexityConfiguration;
+            private ComplexityOptions _complexityOptions;
 
             internal RequestHandlerBuilder()
             {
@@ -139,9 +140,16 @@ namespace GraphQL.Conventions.Web
                 return this;
             }
 
-            public RequestHandlerBuilder WithComplexityConfiguration(ComplexityConfiguration complexityConfiguration)
+            [Obsolete("Please use the WithComplexityOptions method instead.")]
+            public RequestHandlerBuilder WithComplexityConfiguration(LegacyComplexityConfiguration complexityConfiguration)
             {
                 _complexityConfiguration = complexityConfiguration;
+                return this;
+            }
+
+            public RequestHandlerBuilder WithComplexityOptions(ComplexityOptions complexityOptions)
+            {
+                _complexityOptions = complexityOptions;
                 return this;
             }
 
@@ -168,6 +176,7 @@ namespace GraphQL.Conventions.Web
                     _useProfiling,
                     _fieldResolutionStrategy,
                     _complexityConfiguration,
+                    _complexityOptions,
                     _middleware,
                     _typeResolver);
             }
@@ -185,7 +194,8 @@ namespace GraphQL.Conventions.Web
             private readonly List<Type> _exceptionsTreatedAsWarnings = new List<Type>();
             private readonly bool _useValidation;
             private readonly bool _useProfiling;
-            private readonly ComplexityConfiguration _complexityConfiguration;
+            private readonly LegacyComplexityConfiguration _complexityConfiguration;
+            private readonly ComplexityOptions _complexityOptions;
 
             internal RequestHandlerImpl(
                 IDependencyInjector dependencyInjector,
@@ -195,7 +205,8 @@ namespace GraphQL.Conventions.Web
                 bool useValidation,
                 bool useProfiling,
                 FieldResolutionStrategy fieldResolutionStrategy,
-                ComplexityConfiguration complexityConfiguration,
+                LegacyComplexityConfiguration complexityConfiguration,
+                ComplexityOptions complexityOptions,
                 IEnumerable<Type> middleware,
                 ITypeResolver typeResolver)
             {
@@ -208,6 +219,7 @@ namespace GraphQL.Conventions.Web
                 _engine.WithFieldResolutionStrategy(fieldResolutionStrategy);
                 _engine.BuildSchema(schemaTypes.ToArray());
                 _complexityConfiguration = complexityConfiguration;
+                _complexityOptions = complexityOptions;
 
                 foreach (var type in middleware)
                 {
@@ -227,6 +239,7 @@ namespace GraphQL.Conventions.Web
                     .WithDependencyInjector(dependencyInjector ?? _dependencyInjector)
                     .WithUserContext(userContext)
                     .WithComplexityConfiguration(_complexityConfiguration)
+                    .WithComplexityOptions(_complexityOptions)
                     .EnableValidation(_useValidation)
                     .EnableProfiling(_useProfiling)
                     .ExecuteAsync()

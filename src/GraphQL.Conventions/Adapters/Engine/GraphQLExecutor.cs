@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,7 +35,8 @@ namespace GraphQL.Conventions
 
         private IEnumerable<IValidationRule> _validationRules;
 
-        private ComplexityConfiguration _complexityConfiguration;
+        private LegacyComplexityConfiguration _complexityConfiguration;
+        private ComplexityOptions _complexityOptions;
 
         private IEnumerable<IDocumentExecutionListener> _documentExecutionListeners;
 
@@ -117,9 +119,16 @@ namespace GraphQL.Conventions
             return this;
         }
 
-        public IGraphQLExecutor<ExecutionResult> WithComplexityConfiguration(ComplexityConfiguration complexityConfiguration)
+        [Obsolete("Please use the WithComplexityOptions method instead.")]
+        public IGraphQLExecutor<ExecutionResult> WithComplexityConfiguration(LegacyComplexityConfiguration complexityConfiguration)
         {
             _complexityConfiguration = complexityConfiguration;
+            return this;
+        }
+
+        public IGraphQLExecutor<ExecutionResult> WithComplexityOptions(ComplexityOptions complexityOptions)
+        {
+            _complexityOptions = complexityOptions;
             return this;
         }
 
@@ -146,6 +155,7 @@ namespace GraphQL.Conventions
                 enableProfiling: _enableProfiling,
                 rules: _validationRules,
                 complexityConfiguration: _complexityConfiguration,
+                complexityOptions: _complexityOptions,
                 cancellationToken: _cancellationToken,
                 listeners: _documentExecutionListeners);
 
