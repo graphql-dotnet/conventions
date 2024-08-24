@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using AutoMapper;
 using DataLoaderWithEFCore.Data.Repositories;
+using GraphQL;
 using GraphQL.Conventions;
 using GraphQL.DataLoader;
 using Models = DataLoaderWithEFCore.Data.Models;

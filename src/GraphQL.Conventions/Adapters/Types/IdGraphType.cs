@@ -11,5 +11,8 @@ namespace GraphQL.Conventions.Adapters.Types
             }
             return new Id(value.ToString());
         }
+
+        public override object Serialize(object value)
+            => value is Id idValue ? idValue.ToString() : base.Serialize(value);
     }
 }

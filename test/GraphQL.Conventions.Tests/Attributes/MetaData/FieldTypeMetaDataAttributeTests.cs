@@ -136,9 +136,9 @@ namespace Tests.Attributes.MetaData
         public override object Value() => Permission;
     }
 
-    public class TestValidation : IValidationRule
+    public class TestValidation : ValidationRuleBase
     {
-        public ValueTask<INodeVisitor> ValidateAsync(ValidationContext context)
+        public override ValueTask<INodeVisitor> GetPreNodeVisitorAsync(ValidationContext context)
         {
             return new ValueTask<INodeVisitor>(new TestValidationNodeVisitor(context.GetUserContext() as TestUserContext));
         }

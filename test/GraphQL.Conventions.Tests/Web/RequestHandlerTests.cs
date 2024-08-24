@@ -32,13 +32,13 @@ namespace Tests.Web
         }
 
         [Test]
-        public async Task Can_Run_Simple_Query_Using_ComplexityConfiguration()
+        public async Task Can_Run_Simple_Query_Using_ComplexityOptions()
         {
             var request = Request.New("{ \"query\": \"{ hello }\" }");
             var response = await RequestHandler
                 .New()
                 .WithQuery<TestQuery>()
-                .WithComplexityConfiguration(new ComplexityConfiguration { MaxDepth = 2 })
+                .WithComplexityOptions(new ComplexityOptions { MaxDepth = 2 })
                 .Generate()
                 .ProcessRequestAsync(request, null);
 
@@ -51,18 +51,18 @@ namespace Tests.Web
         }
 
         [Test]
-        public async Task Cannot_Run_Too_Complex_Query_Using_ComplexityConfiguration()
+        public async Task Cannot_Run_Too_Complex_Query_Using_ComplexityOptions()
         {
             var request = Request.New("{ \"query\": \"{ sub { sub { end } } }\" }");
             var response = await RequestHandler
                 .New()
                 .WithQuery<TestQuery>()
-                .WithComplexityConfiguration(new ComplexityConfiguration { MaxDepth = 1 })
+                .WithComplexityOptions(new ComplexityOptions { MaxDepth = 2 })
                 .Generate()
                 .ProcessRequestAsync(request, null);
 
             response.Errors.Count.ShouldEqual(1);
-            response.Errors[0].Message.ShouldEqual("Query is too nested to execute. Depth is 2 levels, maximum allowed on this endpoint is 1.");
+            response.Errors[0].Message.ShouldEqual("Query is too nested to execute. Maximum depth is 3 levels; maximum allowed on this endpoint is 2.");
         }
 
         [Test]

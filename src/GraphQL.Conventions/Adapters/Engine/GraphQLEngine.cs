@@ -18,7 +18,6 @@ using GraphQL.Utilities;
 using GraphQL.Validation;
 using GraphQL.Validation.Complexity;
 using GraphQL.Validation.Rules.Custom;
-using GraphQLParser.AST;
 
 // ReSharper disable once CheckNamespace
 namespace GraphQL.Conventions
@@ -39,7 +38,7 @@ namespace GraphQL.Conventions
 
         private readonly GraphQLSerializer _documentSerializer = new GraphQLSerializer();
 
-        private SchemaPrinter _schemaPrinter;
+        private PrintOptions _printOptions;
 
         private ISchema _schema;
 
@@ -56,24 +55,8 @@ namespace GraphQL.Conventions
 
         private bool _includeFieldDeprecationReasons;
 
-        private class NoopValidationRule : IValidationRule
+        private class NoopValidationRule : ValidationRuleBase
         {
-            public ValueTask<INodeVisitor> ValidateAsync(ValidationContext context) => new(new NoopNodeVisitor());
-        }
-
-        private class NoopNodeVisitor : INodeVisitor
-        {
-            public ValueTask EnterAsync(ASTNode node, ValidationContext context)
-            {
-                /* Noop */
-                return default;
-            }
-
-            public ValueTask LeaveAsync(ASTNode node, ValidationContext context)
-            {
-                /* Noop */
-                return default;
-            }
         }
 
         private class WrappedDependencyInjector : IDependencyInjector
@@ -234,7 +217,7 @@ namespace GraphQL.Conventions
             return BuildSchema(null, types);
         }
 
-        public GraphQLEngine BuildSchema(SchemaPrinterOptions options, params Type[] types)
+        public GraphQLEngine BuildSchema(PrintOptions options, params Type[] types)
         {
             if (_schema != null)
                 return this;
@@ -244,20 +227,19 @@ namespace GraphQL.Conventions
             }
             lock (_schemaLock)
                 _schema = _constructor.Build(_schemaTypes.ToArray());
-            _schemaPrinter = new SchemaPrinter(_schema, options ?? new SchemaPrinterOptions
+            _printOptions = options ?? new PrintOptions()
             {
                 IncludeDescriptions = _includeFieldDescriptions,
                 IncludeDeprecationReasons = _includeFieldDeprecationReasons,
-            });
+                StringComparison = StringComparison.InvariantCultureIgnoreCase,
+            };
             return this;
         }
 
-        public string Describe(Func<ISchema, SchemaPrinter> ctor = null)
+        public string Describe(PrintOptions printOptions = null)
         {
             BuildSchema(); // Ensure that the schema has been constructed
-            if (ctor != null)
-                _schemaPrinter = ctor(_schema);
-            return _schemaPrinter.Print();
+            return _schema.Print(_printOptions = printOptions ?? _printOptions);
         }
 
         public ISchema GetSchema()
@@ -288,7 +270,8 @@ namespace GraphQL.Conventions
             Inputs variables,
             IUserContext userContext,
             IDependencyInjector dependencyInjector,
-            ComplexityConfiguration complexityConfiguration,
+            LegacyComplexityConfiguration complexityConfiguration,
+            ComplexityOptions complexityOptions,
             bool enableValidation = true,
             bool enableProfiling = false,
             IEnumerable<IValidationRule> rules = null,
@@ -309,7 +292,11 @@ namespace GraphQL.Conventions
 
             if (complexityConfiguration != null)
             {
-                rules = rules.Append(new ComplexityValidationRule(complexityConfiguration));
+                rules = rules.Append(new LegacyComplexityValidationRule(complexityConfiguration));
+            }
+            if (complexityOptions != null)
+            {
+                rules = rules.Append(new ComplexityValidationRule(complexityOptions));
             }
 
             var configuration = new ExecutionOptions
@@ -370,7 +357,7 @@ namespace GraphQL.Conventions
                 Document = document
             });
 
-            return result.validationResult;
+            return result;
         }
 
         private object CreateInstance(Type type)
