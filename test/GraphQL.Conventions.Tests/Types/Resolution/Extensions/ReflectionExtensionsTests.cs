@@ -40,6 +40,7 @@ namespace Tests.Types.Resolution.Extensions
         {
             typeof(IDictionary<,>),
             typeof(IDictionary),
+            typeof(IReadOnlyDictionary<,>)
         };
 
         [Theory]
