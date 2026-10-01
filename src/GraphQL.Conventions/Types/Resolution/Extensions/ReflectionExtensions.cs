@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -13,6 +14,8 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
 {
     public static class ReflectionExtensions
     {
+        private static readonly ConcurrentDictionary<Type, bool> _isEnumerableGraphTypeCache = new();
+
         public static TType CreateInstance<TType>(this Type type, TypeInfo typeArg, params object[] args)
             where TType : class
         {
@@ -106,7 +109,10 @@ namespace GraphQL.Conventions.Types.Resolution.Extensions
                    type.AsType() == typeof(string);
         }
 
-        public static bool IsEnumerableGraphType(this TypeInfo type)
+        public static bool IsEnumerableGraphType(this TypeInfo type) =>
+            _isEnumerableGraphTypeCache.GetOrAdd(type.AsType(), static t => t.GetTypeInfo().IsEnumerableGraphTypeUncached());
+
+        private static bool IsEnumerableGraphTypeUncached(this TypeInfo type)
         {
             if (type.IsImplementingInterface(typeof(IDictionary))
                 || type.IsImplementingInterface(typeof(IDictionary<,>))
